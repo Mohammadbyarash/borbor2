@@ -1,0 +1,23 @@
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #3498db #172047;
+}
+
+/* کروم، سافاری، اج و مرورگرهای مبتنی بر Webkit */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #172047;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}

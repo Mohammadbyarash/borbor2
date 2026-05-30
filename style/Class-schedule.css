@@ -1,0 +1,1125 @@
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Vazirmatn", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #202b59;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Hamburger Menu Button */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: #172047;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background: #202b59;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: #172047;
+  padding: 30px 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.logo {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.menu-item {
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.menu-item a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.menu-item a i {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-item a:hover {
+  background: #202b59;
+  color: white;
+}
+
+.menu-item.active a {
+  background: #202b59;
+  color: white;
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-right: 280px;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #202b59;
+  z-index: 10;
+  padding-bottom: 15px;
+}
+
+.page-title {
+  color: white;
+  font-size: 28px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+}
+
+.admin-info {
+  color: white;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Action Buttons */
+.action-buttons-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.action-btn-main {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-excel {
+  background: #171E44;
+  color: white;
+}
+
+.btn-excel:hover {
+  background: #202c6d;
+}
+
+.btn-add-class {
+  background: #171E44;
+  color: white;
+}
+
+.btn-add-class:hover {
+  background: #202c6d;
+}
+
+/* Classes Grid */
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  padding-bottom: 30px;
+}
+
+.class-card {
+  background: #1f285a;
+  border-radius: 15px;
+  padding: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  border-color: #3498db;
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+}
+
+.class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.class-number {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+}
+
+.class-grade {
+  color: #3498db;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.class-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.info-value {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.class-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-schedule {
+  background: #3D6BBE;
+  color: white;
+}
+
+.btn-schedule:hover {
+  background: #2a4e92;
+}
+
+.btn-edit {
+  background: #139781;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #0d7462;
+}
+
+.btn-add {
+  background: #77159e;
+  color: white;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.btn-add:hover {
+  background: #961eca;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+  padding: 8px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+/* Delete Class Button - Improved */
+.delete-class-btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  z-index: 10;
+}
+
+.delete-class-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.delete-class-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal.active {
+  display: flex;
+}
+
+/* Close Button - Improved */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  z-index: 10;
+}
+
+.close-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.close-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Schedule Modal */
+.schedule-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 30px;
+  width: 95%;
+  max-width: 1400px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Schedule Grid Layout (replacing table) */
+.schedule-grid-layout {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.schedule-container {
+  width: 100%;
+  min-width: 800px;
+}
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: 150px repeat(6, 1fr);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.schedule-row:last-child {
+  border-bottom: none;
+}
+
+.schedule-header {
+  background: #1e2957;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.schedule-cell {
+  padding: 15px 10px;
+  text-align: center;
+  color: white;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  background: #1f285a;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "Vazirmatn", sans-serif;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.schedule-cell:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.schedule-cell:last-child {
+  border-left: none;
+}
+
+.time-header,
+.day-header {
+  background: #1e2957;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.time-col {
+  background: #172047;
+  font-weight: 500;
+}
+
+.lesson-cell {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.lesson-name {
+  font-weight: 600;
+  color: #3498db;
+}
+
+.lesson-teacher {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.workshop-cell {
+  background: #1f285a;
+  color: white;
+  font-weight: 500;
+}
+
+.empty-cell {
+  background: #1e2553;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+/* Edit Modal */
+.edit-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 95%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.edit-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #3498db;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.form-input,
+.form-select {
+  background: #1e2957;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.day-schedule {
+  background: #1e2957;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.day-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.period-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr 40px;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.period-time {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 15px;
+  background: #139781;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.save-btn:hover {
+  background: #166e60;
+}
+
+/* Excel Modal */
+.excel-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 30px;
+  width: 650px;
+  max-width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.excel-section {
+  margin-bottom: 25px;
+}
+
+.excel-section-title {
+  color: #27ae60;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(39, 174, 96, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.excel-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.excel-option-btn {
+  background: #1e2957;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.excel-option-btn:hover {
+  background: #202c6d;
+}
+
+.excel-option-btn .badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.excel-option-btn .icon {
+  font-size: 18px;
+}
+
+.excel-option-btn-cancel {
+  background: #95a5a6;
+  border-color: #95a5a6;
+  margin-top: 10px;
+}
+
+.excel-option-btn-cancel:hover {
+  background: #7f8c8d;
+  border-color: #7f8c8d;
+  transform: translateX(0);
+}
+
+.individual-classes-wrapper {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.individual-classes-header {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.individual-classes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.individual-class-btn {
+  background: #172047;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.individual-class-btn:hover {
+  background: #202c6d;
+}
+
+.individual-class-btn .class-num {
+  font-weight: 700;
+  font-size: 15px;
+  font-family: "Shabnam", sans-serif;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.individual-class-btn .class-info {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Delete Modal - Improved */
+.delete-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 450px;
+  max-width: 90%;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.delete-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+  box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+}
+
+.delete-modal-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-btn-confirm {
+  background: #984754;
+  color: white;
+}
+
+.modal-btn-confirm:hover {
+  background: #C0392B;
+}
+
+.modal-btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.modal-btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+/* Add Class Modal */
+.add-class-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 500px;
+  max-width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+/* Success Message Animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .classes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .period-row {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-row {
+    grid-template-columns: 120px repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(100%);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-right: 0;
+    width: 100%;
+    padding: 80px 20px 20px;
+  }
+
+  .top-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .admin-info {
+    font-size: 16px;
+  }
+
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Schedule Modal Mobile */
+  .schedule-modal-content {
+    padding: 20px 15px;
+    width: 95%;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .schedule-grid-layout {
+    margin: 0 -15px;
+    padding: 0 15px;
+  }
+
+  .schedule-container {
+    min-width: 700px;
+  }
+
+  .schedule-row {
+    grid-template-columns: 90px repeat(6, minmax(90px, 1fr));
+  }
+
+  .schedule-cell {
+    padding: 10px 5px;
+    font-size: 11px;
+    min-height: 50px;
+  }
+
+  .time-header,
+  .day-header {
+    font-size: 12px;
+    padding: 8px 5px;
+  }
+
+  .lesson-name {
+    font-size: 11px;
+  }
+
+  .lesson-teacher {
+    font-size: 9px;
+  }
+
+  .action-buttons-container {
+    flex-direction: column;
+  }
+
+  .individual-classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .excel-modal-content {
+    width: 95%;
+    padding: 25px;
+  }
+
+  .edit-modal-content {
+    width: 95%;
+    padding: 25px;
+  }
+
+  .delete-modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .main-content {
+    padding: 70px 15px 15px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .action-btn-main {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .class-card {
+    padding: 20px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .close-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+    top: 10px;
+    left: 10px;
+  }
+
+  .delete-class-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  /* Schedule Mobile Optimization */
+  .schedule-modal-content {
+    padding: 15px 10px;
+  }
+
+  .schedule-grid-layout {
+    margin: 0 -10px;
+    padding: 0 10px;
+  }
+
+  .schedule-container {
+    min-width: 600px;
+  }
+
+  .schedule-row {
+    grid-template-columns: 70px repeat(6, minmax(70px, 1fr));
+  }
+
+  .schedule-cell {
+    padding: 8px 3px;
+    font-size: 10px;
+    min-height: 45px;
+  }
+
+  .time-header,
+  .day-header {
+    font-size: 11px;
+    padding: 6px 3px;
+  }
+
+  .time-col {
+    font-size: 9px;
+  }
+
+  .lesson-name {
+    font-size: 10px;
+  }
+
+  .lesson-teacher {
+    font-size: 8px;
+  }
+
+  .empty-cell {
+    font-size: 9px;
+  }
+}

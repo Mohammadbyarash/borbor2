@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - مدیریت کاربران</title>
+    <link rel="icon" href="../image/iconB.png">
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="../style/users.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo">بوربور</div>
+            <div class="menu-item">
+                <a href="dashbord.html">
+                    <i class="fas fa-chart-line"></i>
+                    داشبورد
+                </a>
+            </div>
+            <div class="menu-item active">
+                <a href="#">
+                    <i class="fas fa-users"></i>
+                    مدیریت کاربران
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="../html/Class-lessons.html">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    مدیریت کلاس ها
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="../html/student.html">
+                    <i class="fas fa-user-graduate"></i>
+                    مدیریت دانش‌آموزان
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="../html/Pre-registration.html">
+                    <i class="fas fa-clipboard-list"></i>
+                    پیش ثبت نام ها
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="../html/reports.html">
+                    <i class="fas fa-file-alt"></i>
+                    گزارش ها
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="../html/notife.html">
+                    <i class="fas fa-bell"></i>
+                    اطلاعیه ها
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    تنظیمات
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    خروج
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">مدیریت کاربران</h1>
+                <div class="admin-info">مدیر : آقای بیارش</div>
+            </div>
+
+            <div class="search">
+                <input class="inp-search" type="text" placeholder="جستجوی کاربران ..." />
+            </div>
+
+            <div class="Category">
+                <ul class="CategoryA">
+                    <li>فیلتر بر اساس:</li>
+                    <li>
+                        <select>
+                            <option value="">حروف الفبا</option>
+                            <option value="">الف تا د</option>
+                            <option value="">د تا ی</option>
+                        </select>
+                    </li>
+                    <li>
+                        <select>
+                            <option value="">نقش</option>
+                            <option value="">مدیر</option>
+                            <option value="">معلم</option>
+                            <option value="">معاون</option>
+                        </select>
+                    </li>
+                </ul>
+
+                <ul class="CategoryB">
+                    <li>
+                        <button onclick="openExportModal()">
+                            <i class="fas fa-file-excel"></i>
+                            خروجی Excel
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="openAddUserModal()">
+                            <i class="fas fa-user-plus"></i>
+                            اضافه کردن کاربر
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="table-container" dir="ltr">
+                <!-- Header Row -->
+                <div class="data-grid">
+                    <div class="grid-header">
+                        <div class="grid-cell">عملیات ها</div>
+                        <div class="grid-cell">تاریخ تولد</div>
+                        <div class="grid-cell">کد ملی</div>
+                        <div class="grid-cell">شماره موبایل</div>
+                        <div class="grid-cell">نقش</div>
+                        <div class="grid-cell">نام</div>
+                        <div class="grid-cell">عکس</div>
+                    </div>
+
+                    <!-- Body Rows -->
+                    <div class="grid-body" id="userTableBody">
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1370/05/12</div>
+                            <div class="grid-cell" data-label="کد ملی">0123456789</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121212</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">حمید خلیلی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1375/03/20</div>
+                            <div class="grid-cell" data-label="کد ملی">0987654321</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121213</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">علی احمدی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1385/08/15</div>
+                            <div class="grid-cell" data-label="کد ملی">1234567890</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121214</div>
+                            <div class="grid-cell" data-label="نقش">معاون</div>
+                            <div class="grid-cell" data-label="نام">محمد رضایی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1372/11/05</div>
+                            <div class="grid-cell" data-label="کد ملی">5678901234</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121215</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">حسین محمدی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1378/07/18</div>
+                            <div class="grid-cell" data-label="کد ملی">2345678901</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121216</div>
+                            <div class="grid-cell" data-label="نقش">معاون</div>
+                            <div class="grid-cell" data-label="نام">امیر حسینی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1368/12/25</div>
+                            <div class="grid-cell" data-label="کد ملی">3456789012</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121217</div>
+                            <div class="grid-cell" data-label="نقش">مدیر</div>
+                            <div class="grid-cell" data-label="نام">رضا کریمی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1380/02/10</div>
+                            <div class="grid-cell" data-label="کد ملی">4567890123</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121218</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">اکبر نوری</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1373/09/18</div>
+                            <div class="grid-cell" data-label="کد ملی">5678901234</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121219</div>
+                            <div class="grid-cell" data-label="نقش">معاون</div>
+                            <div class="grid-cell" data-label="نام">اصغر محمودی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1376/04/22</div>
+                            <div class="grid-cell" data-label="کد ملی">6789012345</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121220</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">مهدی صادقی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1369/06/30</div>
+                            <div class="grid-cell" data-label="کد ملی">7890123456</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121221</div>
+                            <div class="grid-cell" data-label="نقش">معلم</div>
+                            <div class="grid-cell" data-label="نام">ممد موسوی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="grid-cell" data-label="عملیات ها">
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-specs" onclick="showSpecs(this)">مشخصات</button>
+                                    <button class="action-btn btn-edit" onclick="enableEdit(this)">ویرایش</button>
+                                    <button class="action-btn btn-delete" onclick="openDeleteModal(this)">حذف</button>
+                                </div>
+                            </div>
+                            <div class="grid-cell" data-label="تاریخ تولد">1382/01/14</div>
+                            <div class="grid-cell" data-label="کد ملی">8901234567</div>
+                            <div class="grid-cell" data-label="شماره موبایل">09182121222</div>
+                            <div class="grid-cell" data-label="نقش">معاون</div>
+                            <div class="grid-cell" data-label="نام">پوریا حسینی</div>
+                            <div class="grid-cell" data-label="عکس">
+                                <div class="user-photo-container">
+                                    <div class="no-photo">بدون عکس</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div dir="ltr" class="pagination">
+                    <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">‹</button>
+                    <span id="pageInfo">صفحه 1 از 1</span>
+                    <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">›</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h2 class="modal-title">حذف کاربر</h2>
+            <p class="modal-text">آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟<br>این عملیات قابل بازگشت نیست.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">حذف کاربر</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for User Specifications -->
+    <div class="modal" id="specsModal">
+        <div class="specs-modal-content">
+            <h2 class="specs-modal-title">مشخصات کاربر</h2>
+            <div class="specs-info">
+                <div class="specs-row" style="justify-content: center;">
+                    <div class="user-photo-container" id="specPhotoContainer">
+                        <div class="no-photo" style="width: 100px; height: 100px; font-size: 14px;">بدون عکس</div>
+                    </div>
+                </div>
+                <div class="specs-row">
+                    <span class="specs-label">نام و نام خانوادگی:</span>
+                    <span class="specs-value" id="specName">-</span>
+                </div>
+                <div class="specs-row">
+                    <span class="specs-label">نقش:</span>
+                    <span class="specs-value" id="specRole">-</span>
+                </div>
+                <div class="specs-row">
+                    <span class="specs-label">شماره موبایل:</span>
+                    <span class="specs-value" id="specPhone">-</span>
+                </div>
+                <div class="specs-row">
+                    <span class="specs-label">کد ملی:</span>
+                    <span class="specs-value" id="specNationalId">-</span>
+                </div>
+                <div class="specs-row">
+                    <span class="specs-label">تاریخ تولد:</span>
+                    <span class="specs-value" id="specBirthDate">-</span>
+                </div>
+            </div>
+            <button class="specs-close-btn" onclick="closeSpecsModal()">بستن</button>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="image-preview-modal" id="imagePreviewModal" onclick="closeImagePreview()">
+        <button class="image-preview-close" onclick="closeImagePreview()">×</button>
+        <img class="image-preview-content" id="imagePreviewContent" src="" alt="Preview">
+    </div>
+
+    <!-- Export Excel Modal -->
+    <div class="modal" id="exportModal">
+        <div class="options-modal-content">
+            <h2 class="options-modal-title">انتخاب گروه برای خروجی Excel</h2>
+            <div class="option-list">
+                <button class="option-btn" onclick="exportToExcel('all')">
+                    <i class="fas fa-users"></i>
+                    همه کاربران
+                </button>
+                <button class="option-btn" onclick="exportToExcel('admin')">
+                    <i class="fas fa-user-tie"></i>
+                    مدیران
+                </button>
+                <button class="option-btn" onclick="exportToExcel('teacher')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    معلمان
+                </button>
+                <button class="option-btn" onclick="exportToExcel('assistant')">
+                    <i class="fas fa-user-cog"></i>
+                    معاونان
+                </button>
+            </div>
+            <button class="modal-btn modal-btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeExportModal()">انصراف</button>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="addUserModal">
+        <div class="options-modal-content">
+            <h2 class="options-modal-title">اضافه کردن کاربر</h2>
+            <div class="option-list">
+                <button class="option-btn" onclick="addUserManual()">
+                    <i class="fas fa-pen"></i>
+                    افزودن دستی
+                </button>
+                <button class="option-btn" onclick="addUserExcel()">
+                    <i class="fas fa-file-excel"></i>
+                    افزودن از طریق Excel
+                </button>
+            </div>
+            <button class="modal-btn modal-btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeAddUserModal()">انصراف</button>
+        </div>
+    </div>
+    <script src="../javaScript/user.js"></script>
+</body>
+</html>

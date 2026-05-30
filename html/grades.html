@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور - مدیریت نمرات</title>
+    <link rel="stylesheet" href="../style/grades.css" />
+    <link rel="stylesheet" href="../style/menu.css" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../css/all.min.css" />
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css" />
+    <link rel="stylesheet" href="../date/dist/jalalidatepicker.min.css" />
+    <script defer src="../javaScript/auth.js"></script>
+    <script defer src="../javaScript/theme-loader.js"></script>
+    <script defer src="../javaScript/permission-guard.js"></script>
+    <script defer src="../javaScript/sidebar-permissions.js"></script>
+    <style>
+        #pageLoader {
+            position: fixed; inset: 0; background: #0f1b3d;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 10000; gap: 18px; transition: opacity 0.5s ease;
+        }
+        #pageLoader.hide { opacity: 0; pointer-events: none; }
+        .loader-spinner {
+            width: 58px; height: 58px;
+            border: 5px solid rgba(255,255,255,0.12);
+            border-top-color: #4da3ff;
+            border-radius: 50%; animation: spin 0.85s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text { color: #c8d8f0; font-family: Vazirmatn, sans-serif; font-size: 15px; }
+        .loader-sub  { color: #6a8ab0; font-family: Vazirmatn, sans-serif; font-size: 12px; margin-top: -8px; }
+    </style>
+</head>
+<body>
+
+<div id="pageLoader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">در حال بارگذاری...</div>
+    <div class="loader-sub">در حال دریافت اطلاعات...</div>
+</div>
+
+<button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="container">
+    <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+        <div class="menu-item">
+            <a href="../html/dashbord.html">
+                <i class="fas fa-chart-line"></i>
+                داشبورد
+            </a>
+        </div>
+        <div class="menu-item has-submenu">
+            <a href="#" class="menu-link">
+                <i class="fas fa-users"></i>
+                مدیریت کاربران
+                <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <div class="submenu">
+                <a href="../html/Assistant_management.html" class="submenu-item">
+                    <i class="fas fa-user-tie"></i>
+                    مدیریت معاونان
+                </a>
+                <a href="../html/Teacher_management.html" class="submenu-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    مدیریت معلمین
+                </a>
+                <a href="../html/student.html" class="submenu-item">
+                    <i class="fas fa-user-graduate"></i>
+                    مدیریت دانش‌آموزان
+                </a>
+                <a href="../html/Parents.html" class="submenu-item">
+                    <i class="fas fa-users"></i>
+                    مدیریت اولیا
+                </a>
+            </div>
+        </div>
+        <div class="menu-item has-submenu">
+            <a href="" class="menu-link">
+                <i class="fas fa-chalkboard-teacher"></i>
+                مدیریت کلاس ها
+                <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <div class="submenu">
+                <a href="../html/Courses.html" class="submenu-item">
+                    <i class="fas fa-list"></i>
+                    مدیریت دروس
+                </a>
+                <a href="../html/Class-schedule.html" class="submenu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    برنامه و لیست کلاسی
+                </a>
+                <a href="../html/Attendance.html" class="submenu-item">
+                    <i class="fas fa-clipboard-check"></i>
+                    حضور و غیاب
+                </a>
+                <a href="../html/grades.html" class="submenu-item">
+                    <i class="fas fa-star"></i>
+                    نمرات
+                </a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <a href="../html/Pre-registration.html">
+                <i class="fas fa-clipboard-list"></i>
+                پیش ثبت نام ها
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../html/reports.html">
+                <i class="fas fa-file-alt"></i>
+                گزارش ها
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../html/notife.html">
+                <i class="fas fa-bell"></i>
+                اطلاعیه ها
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../html/archive.html">
+                <i class="fas fa-archive"></i>
+                ارشیو
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../html/permissions.html">
+                <i class="fas fa-shield-alt"></i>
+                مدیریت دسترسی‌ها
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../html/settings.html">
+                <i class="fas fa-cog"></i>
+                تنظیمات
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="../api/logout">
+                <i class="fas fa-sign-out-alt"></i>
+                خروج
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-header">
+            <h1 class="page-title">مدیریت نمرات و ارزیابی</h1>
+            <div class="admin-info" id="adminInfoDisplay">در حال بارگذاری...</div>
+        </div>
+        <div class="current-date-display">
+            <i class="fas fa-calendar-day"></i>
+            <span id="currentDateDisplay">در حال بارگذاری...</span>
+        </div>
+        <div class="action-buttons-container">
+            <button class="action-btn-main btn-excel" onclick="exportGradesExcel()">
+                <i class="fas fa-file-excel"></i>
+                <span>خروجی Excel</span>
+            </button>
+            <button class="action-btn-main btn-stats" onclick="openStatsModal()">
+                <i class="fas fa-chart-pie"></i>
+                <span>آمار کلی</span>
+            </button>
+            <button class="action-btn-main" style="background: #9b59b6" onclick="openExamCalendarModal()">
+                <i class="fas fa-calendar-alt"></i>
+                <span>تقویم آزمون‌ها</span>
+            </button>
+        </div>
+        <div class="classes-grid" id="classesGrid"></div>
+    </div>
+</div>
+
+<div class="modal" id="enterGradesModal">
+    <div class="grades-modal-content">
+        <button class="close-btn" onclick="closeEnterGradesModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title" id="enterGradesModalTitle">ثبت نمرات</h2>
+        <div class="term-subject-selection">
+            <div class="selection-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-check"></i>
+                    انتخاب ترم:
+                </label>
+                <div class="term-buttons">
+                    <button class="term-btn active" data-term="1" onclick="selectTerm(1)">
+                        <i class="fas fa-calendar"></i>
+                        نیمسال اول
+                    </button>
+                    <button class="term-btn" data-term="2" onclick="selectTerm(2)">
+                        <i class="fas fa-calendar"></i>
+                        نیمسال دوم
+                    </button>
+                </div>
+            </div>
+            <div class="selection-group">
+                <label class="form-label">
+                    <i class="fas fa-book"></i>
+                    انتخاب درس:
+                </label>
+                <select class="form-select" id="subjectSelect" onchange="loadStudentsForGrading()">
+                    <option value="">-- انتخاب کنید --</option>
+                </select>
+            </div>
+            <div class="selection-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-day"></i>
+                    تاریخ ثبت نمره:
+                </label>
+                <input data-jdp type="text" class="form-input jalali-datepicker" id="gradeDate" placeholder="1404/08/15" />
+            </div>
+        </div>
+        <div class="grade-type-tabs">
+            <button class="grade-tab active" data-type="continuous" onclick="selectGradeType('continuous')">
+                <i class="fas fa-clipboard-list"></i>
+                نمره مستمر (20)
+            </button>
+            <button class="grade-tab" data-type="midterm" onclick="selectGradeType('midterm')">
+                <i class="fas fa-file-alt"></i>
+                میان‌ترم (20)
+            </button>
+            <button class="grade-tab" data-type="final" onclick="selectGradeType('final')">
+                <i class="fas fa-graduation-cap"></i>
+                نهایی (20)
+            </button>
+        </div>
+        <div class="students-grades-list" id="studentsGradesList">
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <p>لطفاً ترم، درس و نوع نمره را انتخاب کنید</p>
+            </div>
+        </div>
+        <button class="save-grades-btn" onclick="saveGrades()" style="display: none">
+            <i class="fas fa-save"></i>
+            ثبت نمرات
+        </button>
+    </div>
+</div>
+
+<div class="modal" id="viewGradesModal">
+    <div class="view-grades-modal-content">
+        <button class="close-btn" onclick="closeViewGradesModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title" id="viewGradesModalTitle">مشاهده نمرات کلاس</h2>
+        <div class="view-filter-section">
+            <div class="filter-group">
+                <label class="form-label">فیلتر ترم:</label>
+                <select class="form-select" id="filterTerm" onchange="applyGradesFilter()">
+                    <option value="">همه ترم‌ها</option>
+                    <option value="1">نیمسال اول</option>
+                    <option value="2">نیمسال دوم</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="form-label">فیلتر درس:</label>
+                <select class="form-select" id="filterSubject" onchange="applyGradesFilter()">
+                    <option value="">همه دروس</option>
+                </select>
+            </div>
+        </div>
+        <div class="search-section">
+            <input type="text" class="search-input" id="studentGradesSearchInput" placeholder="جستجوی دانش‌آموز..." onkeyup="searchStudentGrades()" />
+        </div>
+        <div class="grades-summary-cards">
+            <div class="summary-card card-excellent">
+                <div class="summary-icon"><i class="fas fa-star"></i></div>
+                <div class="summary-info">
+                    <div class="summary-label">عالی (18-20)</div>
+                    <div class="summary-value" id="excellentCount">0</div>
+                </div>
+            </div>
+            <div class="summary-card card-good">
+                <div class="summary-icon"><i class="fas fa-thumbs-up"></i></div>
+                <div class="summary-info">
+                    <div class="summary-label">خوب (15-17.99)</div>
+                    <div class="summary-value" id="goodCount">0</div>
+                </div>
+            </div>
+            <div class="summary-card card-average">
+                <div class="summary-icon"><i class="fas fa-check"></i></div>
+                <div class="summary-info">
+                    <div class="summary-label">متوسط (12-14.99)</div>
+                    <div class="summary-value" id="averageCount">0</div>
+                </div>
+            </div>
+            <div class="summary-card card-weak">
+                <div class="summary-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="summary-info">
+                    <div class="summary-label">ضعیف (<12)</div>
+                    <div class="summary-value" id="weakCount">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="grades-list-container">
+            <div class="grades-list-header">
+                <div class="list-col col-index">ردیف</div>
+                <div class="list-col col-code">کد</div>
+                <div class="list-col col-name">نام و نام خانوادگی</div>
+                <div class="list-col col-avg">معدل کل</div>
+                <div class="list-col col-actions">عملیات</div>
+            </div>
+            <div class="grades-list-body" id="gradesListBody"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="studentDashboardModal">
+    <div class="student-dashboard-content">
+        <button class="close-btn" onclick="closeStudentDashboardModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title" id="studentDashboardTitle">داشبورد دانش‌آموز</h2>
+        <div class="student-info-header">
+            <div class="student-avatar-large" id="studentAvatarLarge">A</div>
+            <div class="student-details-large">
+                <div class="student-name-large" id="studentNameLarge">نام دانش‌آموز</div>
+                <div class="student-code-large" id="studentCodeLarge">کد: ------</div>
+                <div class="student-class-large" id="studentClassLarge">کلاس: ---</div>
+            </div>
+            <div class="student-overall-stats">
+                <div class="overall-stat">
+                    <div class="overall-stat-label">معدل کل</div>
+                    <div class="overall-stat-value" id="overallAverage">--</div>
+                </div>
+                <div class="overall-stat">
+                    <div class="overall-stat-label">رتبه کلاس</div>
+                    <div class="overall-stat-value" id="classRank">--</div>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-tabs">
+            <button class="dashboard-tab active" onclick="switchDashboardTab('report-card')">
+                <i class="fas fa-file-invoice"></i>
+                کارنامه
+            </button>
+            <button class="dashboard-tab" onclick="switchDashboardTab('monthly-progress')">
+                <i class="fas fa-chart-line"></i>
+                پیشرفت ماهانه
+            </button>
+            <button class="dashboard-tab" onclick="switchDashboardTab('comparison')">
+                <i class="fas fa-balance-scale"></i>
+                مقایسه
+            </button>
+        </div>
+        <div id="reportCardTab" class="dashboard-tab-content active">
+            <div class="report-card-actions">
+                <button class="action-btn" onclick="printReportCard()">
+                    <i class="fas fa-print"></i>
+                    چاپ کارنامه
+                </button>
+                <button class="action-btn" onclick="downloadReportCardPDF()">
+                    <i class="fas fa-file-pdf"></i>
+                    دانلود PDF
+                </button>
+            </div>
+            <div class="report-card" id="reportCardContainer"></div>
+        </div>
+        <div id="monthlyProgressTab" class="dashboard-tab-content">
+            <div class="month-selector">
+                <button class="month-nav-btn" onclick="navigateMonth('prev')">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <span class="current-month-display" id="currentMonthDisplay">مهر 1404</span>
+                <button class="month-nav-btn" onclick="navigateMonth('next')">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <div class="monthly-grades-grid" id="monthlyGradesGrid"></div>
+            <div class="chart-section">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-line"></i>
+                    نمودار پیشرفت نمرات
+                </h3>
+                <div class="chart-canvas-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div id="comparisonTab" class="dashboard-tab-content">
+            <div class="comparison-info">
+                <i class="fas fa-info-circle"></i>
+                مقایسه نمرات دانش‌آموز با میانگین کلاس
+            </div>
+            <div class="chart-section">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-radar"></i>
+                    نمودار رادار - مقایسه با کلاس
+                </h3>
+                <div class="chart-canvas-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+            <div class="comparison-table" id="comparisonTableContainer"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="examCalendarModal">
+    <div class="exam-calendar-content">
+        <button class="close-btn" onclick="closeExamCalendarModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">تقویم آزمون‌ها و رویدادها</h2>
+        <div class="exam-actions">
+            <button class="action-btn" onclick="openAddExamEventModal()">
+                <i class="fas fa-plus"></i>
+                افزودن رویداد امتحانی
+            </button>
+        </div>
+        <div class="calendar-navigation-header">
+            <button class="calendar-nav-btn" onclick="navigateExamCalendar('prev')">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <span class="calendar-month-display" id="examCalendarMonth">بهمن 1404</span>
+            <button class="calendar-nav-btn" onclick="navigateExamCalendar('next')">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        <div class="exam-calendar-grid">
+            <div class="exam-weekdays">
+                <div class="exam-weekday">شنبه</div>
+                <div class="exam-weekday">یکشنبه</div>
+                <div class="exam-weekday">دوشنبه</div>
+                <div class="exam-weekday">سه‌شنبه</div>
+                <div class="exam-weekday">چهارشنبه</div>
+                <div class="exam-weekday">پنجشنبه</div>
+                <div class="exam-weekday">جمعه</div>
+            </div>
+            <div class="exam-days" id="examDaysGrid"></div>
+        </div>
+        <div class="upcoming-exams">
+            <h3 class="section-title">
+                <i class="fas fa-clock"></i>
+                آزمون‌های پیش رو
+            </h3>
+            <div class="upcoming-exams-list" id="upcomingExamsList"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="addExamEventModal">
+    <div class="add-exam-content">
+        <button class="close-btn" onclick="closeAddExamEventModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">افزودن رویداد امتحانی</h2>
+        <div class="exam-form">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-chalkboard"></i>
+                    کلاس:
+                </label>
+                <select class="form-select" id="examEventClass" onchange="loadSubjectsForExam()">
+                    <option value="">-- انتخاب کنید --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-book"></i>
+                    درس:
+                </label>
+                <select class="form-select" id="examEventSubject">
+                    <option value="">-- ابتدا کلاس را انتخاب کنید --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-tag"></i>
+                    نوع آزمون:
+                </label>
+                <select class="form-select" id="examEventType">
+                    <option value="midterm">میان‌ترم</option>
+                    <option value="final">نهایی</option>
+                    <option value="quiz">آزمونک</option>
+                    <option value="project">پروژه</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-check-circle"></i>
+                    وضعیت برگزاری:
+                </label>
+                <select class="form-select" id="examEventStatus">
+                    <option value="pending">برنامه‌ریزی شده</option>
+                    <option value="completed">برگزار شده</option>
+                    <option value="cancelled">لغو شده</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar"></i>
+                    تاریخ آزمون:
+                </label>
+                <input data-jdp type="text" class="form-input jalali-datepicker" id="examEventDate" placeholder="1404/08/15" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-clock"></i>
+                    ساعت شروع:
+                </label>
+                <input type="time" class="form-input" id="examEventTime" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-align-right"></i>
+                    توضیحات:
+                </label>
+                <textarea class="form-textarea" id="examEventDescription" placeholder="توضیحات اختیاری..."></textarea>
+            </div>
+            <button class="save-exam-event-btn" onclick="saveExamEvent()">
+                <i class="fas fa-save"></i>
+                ذخیره رویداد
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="overallStatsModal">
+    <div class="stats-modal-content">
+        <button class="close-btn" onclick="closeStatsModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">آمار کلی نمرات</h2>
+        <div class="overall-stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #3498db">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">تعداد دانش‌آموزان</div>
+                    <div class="stat-value" id="totalStudentsCount">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #2ecc71">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">میانگین کل مدرسه</div>
+                    <div class="stat-value" id="schoolAverage">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #f39c12">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">بالاترین معدل</div>
+                    <div class="stat-value" id="highestAverage">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e74c3c">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">پایین‌ترین معدل</div>
+                    <div class="stat-value" id="lowestAverage">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="chart-section">
+            <h3 class="chart-title">
+                <i class="fas fa-chart-bar"></i>
+                توزیع معدل دانش‌آموزان
+            </h3>
+            <div class="chart-canvas-container">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-section">
+            <h3 class="chart-title">
+                <i class="fas fa-chart-pie"></i>
+                نمودار دایره‌ای وضعیت نمرات
+            </h3>
+            <div class="chart-canvas-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('grade-input')) {
+            if (typeof validateGradeInput === 'function') {
+                validateGradeInput(e.target);
+            }
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.target.classList.contains('grade-input')) {
+            if (typeof validateGradeKey === 'function') {
+                return validateGradeKey(e, e.target);
+            }
+        }
+    });
+    
+    document.addEventListener('blur', function(e) {
+        if (e.target.classList.contains('grade-input')) {
+            if (typeof formatGradeInput === 'function') {
+                formatGradeInput(e.target);
+            }
+        }
+    }, true);
+});
+</script>
+<script src="../lib/jalaali.min.js"></script>
+<script src="../date/dist/jalalidatepicker.min.js"></script>
+<script src="../lib/chart.min.js"></script>
+<script src="../lib/xlsx.full.min.js"></script>
+<script src="../lib/html2pdf.bundle.min.js"></script>
+
+<script src="../javaScript/grades.js"></script>
+<script src="../javaScript/menu.js"></script>
+</body>
+</html>

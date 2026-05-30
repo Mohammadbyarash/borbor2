@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BorBor — Loading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+
+<style>
+/* صفحه از اول سفید نباشه */
+html { background: #050810; }
+body { visibility: hidden; background: #050810; }
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body { width:100%; min-height:100%; }
+
+#bb-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #050810;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.65s ease;
+}
+#bb-loader.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+canvas#bb-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bb-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bb-word {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bb-ltr {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: clamp(50px, 13vw, 110px);
+  line-height: 1;
+  display: inline-block;
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.bb-ltr.shown { opacity:1; transform:translateY(0); }
+
+.bb-ltr .bb-face {
+  display: block;
+  background: linear-gradient(160deg, #ffffff 0%, #a0bfff 60%, #6a9fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.bb-ltr.accent .bb-face {
+  background: linear-gradient(160deg, #7eb8ff 0%, #4a90d9 40%, #8e5fd4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.bb-ltr .bb-shad {
+  position: absolute;
+  top:0; left:0;
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: clamp(50px, 13vw, 110px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(74,144,217,0.18);
+  transform: skewX(-8deg) scaleY(-0.28) translateY(4px);
+  transform-origin: bottom center;
+  opacity: 0.45;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.bb-divider {
+  width: 2px;
+  height: clamp(42px, 9vw, 76px);
+  background: linear-gradient(to bottom, transparent, rgba(74,144,217,0.6), transparent);
+  margin: 0 clamp(4px,1vw,8px);
+  align-self: center;
+  opacity: 0;
+  transition: opacity 0.6s 1.2s;
+}
+.bb-divider.shown { opacity:1; }
+
+.bb-tagline {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(7px, 1.6vw, 11px);
+  letter-spacing: 8px;
+  color: rgba(130,170,255,0);
+  text-transform: uppercase;
+  margin-top: clamp(10px,2.5vw,18px);
+  white-space: nowrap;
+  transition: color 1s 1.6s, letter-spacing 1s 1.6s;
+}
+.bb-tagline.shown { color:rgba(130,170,255,0.4); letter-spacing:11px; }
+
+.bb-strip {
+  margin-top: clamp(16px,4vw,30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  opacity: 0;
+  transition: opacity 0.7s 2s;
+}
+.bb-strip.shown { opacity:1; }
+
+.bb-track {
+  width: clamp(130px,36vw,240px);
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.bb-track::after {
+  content:'';
+  position:absolute;
+  top:0; left:-60%;
+  width:55%; height:100%;
+  border-radius:2px;
+  background: linear-gradient(90deg, transparent, #4a90d9, #8e5fd4, transparent);
+  animation: bb-sweep 1.8s cubic-bezier(0.4,0,0.6,1) infinite;
+}
+@keyframes bb-sweep { 0%{left:-60%} 100%{left:110%} }
+
+.bb-dots { display:flex; gap:7px; align-items:center; }
+.bb-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:rgba(74,144,217,0.5);
+  animation: bb-dp 1.4s ease-in-out infinite;
+}
+.bb-dot:nth-child(2){ animation-delay:.2s; background:rgba(142,95,212,0.5); }
+.bb-dot:nth-child(3){ animation-delay:.4s; background:rgba(6,214,160,0.5); }
+@keyframes bb-dp {
+  0%,100%{ transform:scale(1);   opacity:0.4; }
+  50%    { transform:scale(1.7); opacity:1;   }
+}
+
+.bb-burst {
+  position:absolute; border-radius:50%;
+  border:1.5px solid rgba(74,144,217,0.6);
+  transform:scale(0); opacity:0; pointer-events:none;
+  animation: bb-bst 1s ease-out forwards;
+}
+@keyframes bb-bst { 0%{transform:scale(0);opacity:.8} 100%{transform:scale(1);opacity:0} }
+
+.bb-beam {
+  position:absolute; bottom:0; width:1px;
+  background:linear-gradient(to top,rgba(74,144,217,0.8),transparent);
+  opacity:0; pointer-events:none;
+  animation: bb-bm 2s ease-out forwards;
+}
+@keyframes bb-bm { 0%{height:0;opacity:.9} 100%{height:100vh;opacity:0} }
+
+@media (max-width:480px){
+  .bb-tagline { letter-spacing:4px; }
+  .bb-tagline.shown { letter-spacing:6px; }
+  .bb-ltr .bb-shad { display:none; }
+}
+</style>
+
+<!-- جلوگیری از فلش سفید قبل از لود CSS -->
+<script>document.documentElement.style.background='#050810';</script>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="bb-loader">
+  <canvas id="bb-bg"></canvas>
+  <div class="bb-center">
+    <div class="bb-word" id="bb-word"></div>
+    <div class="bb-tagline" id="bb-tag">School Management System</div>
+    <div class="bb-strip" id="bb-strip">
+      <div class="bb-track"></div>
+      <div class="bb-dots">
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- محتوای اصلی سایت اینجا میاد -->
+<main id="bb-main" style="opacity:0; transition: opacity 0.5s ease;">
+  <!-- صفحه اصلی شما -->
+</main>
+
+<script>
+(function(){
+  const loader = document.getElementById('bb-loader');
+  const main   = document.getElementById('bb-main');
+  const wordEl = document.getElementById('bb-word');
+  const tagEl  = document.getElementById('bb-tag');
+  const strip  = document.getElementById('bb-strip');
+  const canvas = document.getElementById('bb-bg');
+  const ctx    = canvas.getContext('2d');
+
+  /* body رو نشون بده ولی لودر رو */
+  document.body.style.visibility = 'visible';
+
+  /* ── canvas resize ── */
+  let W, H;
+  function resize(){
+    W = canvas.offsetWidth;  canvas.width  = W;
+    H = canvas.offsetHeight; canvas.height = H;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── particles ── */
+  const COLS=['rgba(74,144,217,','rgba(142,95,212,','rgba(6,214,160,','rgba(255,200,80,'];
+  const pts = Array.from({length:70}, ()=>({
+    x:Math.random()*900, y:Math.random()*600,
+    vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+    a:Math.random(), va:(Math.random()-.5)*.015,
+    r:Math.random()*1.6+.4,
+    c:COLS[Math.floor(Math.random()*COLS.length)]
+  }));
+
+  /* ── aurora ── */
+  let aT=0;
+  function drawAurora(){
+    aT+=.004;
+    [{y:.28,col:'rgba(74,144,217,',amp:32,freq:.6,ph:0},
+     {y:.52,col:'rgba(142,95,212,',amp:25,freq:.8,ph:1.2},
+     {y:.72,col:'rgba(6,214,160,', amp:20,freq:1.0,ph:2.5}
+    ].forEach(b=>{
+      ctx.save(); ctx.beginPath();
+      const by=H*b.y; ctx.moveTo(0,by);
+      for(let x=0;x<=W;x+=4){
+        ctx.lineTo(x,
+          by+Math.sin((x/W)*Math.PI*b.freq*2+aT+b.ph)*b.amp
+            +Math.sin((x/W)*Math.PI*b.freq*3-aT*.7)*b.amp*.4);
+      }
+      ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+      const g=ctx.createLinearGradient(0,by-60,0,by+60);
+      g.addColorStop(0,b.col+'0)');
+      g.addColorStop(.5,b.col+'0.06)');
+      g.addColorStop(1,b.col+'0)');
+      ctx.fillStyle=g; ctx.fill(); ctx.restore();
+    });
+  }
+
+  /* ── render loop ── */
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(74,144,217,0.035)'; ctx.lineWidth=.5;
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    drawAurora();
+    pts.forEach(p=>{
+      p.x=(p.x+p.vx+W)%W; p.y=(p.y+p.vy+H)%H;
+      p.a=Math.max(0,Math.min(1,p.a+p.va)); if(p.a<=0||p.a>=1)p.va*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.c+p.a.toFixed(2)+')'; ctx.fill();
+    });
+    pts.forEach((p,i)=>{for(let j=i+1;j<pts.length;j++){
+      const dx=pts[j].x-p.x,dy=pts[j].y-p.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<80){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.strokeStyle=`rgba(74,144,217,${((1-d/80)*.1).toFixed(3)})`;
+        ctx.lineWidth=.4;ctx.stroke();}
+    }});
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  /* ── letters ── */
+  const chars=['B','O','R','B','O','R'];
+  const accents=new Set([3,4,5]);
+  const delays=[0,120,240,480,600,720];
+
+  chars.forEach((ch,i)=>{
+    if(i===3){
+      const dv=document.createElement('div');
+      dv.className='bb-divider';
+      wordEl.appendChild(dv);
+      setTimeout(()=>dv.classList.add('shown'),1100);
+    }
+    const el=document.createElement('div');
+    el.className='bb-ltr'+(accents.has(i)?' accent':'');
+    el.innerHTML=`<span class="bb-face">${ch}</span><span class="bb-shad">${ch}</span>`;
+    wordEl.appendChild(el);
+    setTimeout(()=>{ el.classList.add('shown'); spawnBurst(el); }, delays[i]+200);
+  });
+
+  setTimeout(()=>tagEl.classList.add('shown'), 1600);
+  setTimeout(()=>strip.classList.add('shown'), 2000);
+
+  /* ── burst + beam ── */
+  function spawnBurst(el){
+    const r=el.getBoundingClientRect(), sr=loader.getBoundingClientRect();
+    const cx=r.left-sr.left+r.width/2, cy=r.top-sr.top+r.height/2;
+    [60,110,160].forEach((size,k)=>{
+      const b=document.createElement('div');
+      b.className='bb-burst';
+      b.style.cssText=`width:${size}px;height:${size}px;left:${cx-size/2}px;top:${cy-size/2}px;animation-delay:${k*.12}s;border-color:${['rgba(74,144,217,.7)','rgba(142,95,212,.5)','rgba(6,214,160,.4)'][k]};`;
+      loader.appendChild(b);
+      setTimeout(()=>b.remove(),1300);
+    });
+    const bm=document.createElement('div');
+    bm.className='bb-beam'; bm.style.left=cx+'px';
+    loader.appendChild(bm);
+    setTimeout(()=>bm.remove(),2200);
+  }
+
+  /* ══════════════════════════════════════════════════
+     تابع اصلی پنهان کردن لودر
+     وقتی همه چیز لود شد صدا زده می‌شه
+  ══════════════════════════════════════════════════ */
+  function hideBorBorLoader(){
+    loader.classList.add('hide');
+    if(main) main.style.opacity = '1';
+    setTimeout(()=>{ loader.style.display='none'; }, 700);
+  }
+
+  /* ── فونت + همه منابع لود بشن بعد لودر حذف بشه ── */
+  let resourcesReady = false;
+  let minTimeDone    = false;
+
+  /* حداقل ۲.۲ ثانیه لودر نمایش داده بشه (برای انیمیشن حروف کامل بشه) */
+  setTimeout(()=>{
+    minTimeDone = true;
+    if(resourcesReady) hideBorBorLoader();
+  }, 2200);
+
+  /* منتظر لود کامل صفحه (تصاویر، فونت، CSS، همه چیز) */
+  if(document.fonts && document.fonts.ready){
+    Promise.all([
+      document.fonts.ready,
+      new Promise(res => {
+        if(document.readyState==='complete') res();
+        else window.addEventListener('load', res);
+      })
+    ]).then(()=>{
+      resourcesReady = true;
+      if(minTimeDone) hideBorBorLoader();
+    });
+  } else {
+    window.addEventListener('load', ()=>{
+      resourcesReady = true;
+      if(minTimeDone) hideBorBorLoader();
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>

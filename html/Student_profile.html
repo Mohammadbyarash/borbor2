@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور - پروفایل دانش‌آموز</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg-main:    #202b59;
+  --bg-card:    #1f285a;
+  --bg-card2:   #1e2957;
+  --bg-sidebar: #172047;
+  --accent:     #3498db;
+  --accent2:    #9b59b6;
+  --accent3:    #06d6a0;
+  --accent4:    #f39c12;
+  --accent5:    #e74c3c;
+  --present:    #27ae60;
+  --text:       #ffffff;
+  --text-muted: rgba(255,255,255,.55);
+  --border:     rgba(255,255,255,.09);
+  --border-hover: rgba(79,142,247,.35);
+  --glow:       0 0 30px rgba(52,152,219,.15);
+  --sidebar-w:  260px;
+  --radius:     14px;
+  --input-bg:   rgba(255,255,255,.04);
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content:'';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(79,142,247,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(124,58,237,.07) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ════════ SIDEBAR ════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  padding: 28px 16px;
+  border-left: 1px solid var(--border);
+  position: fixed; right: 0; top: 0;
+  height: 100vh; overflow-y: auto;
+  z-index: 200; transition: transform .3s ease;
+}
+.logo { color: #fff; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 40px; }
+.nav-item { margin-bottom: 6px; }
+.nav-item a {
+  color: rgba(255,255,255,.72); text-decoration: none;
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  border-radius: 10px; font-size: 14px; transition: all .25s;
+}
+.nav-item a i { font-size: 15px; width: 20px; text-align: center; }
+.nav-item a:hover, .nav-item.active a { background: var(--bg-main); color: #fff; }
+.nav-item.active a { font-weight: 600; }
+.nav-badge {
+  margin-right: auto; background: var(--accent5); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+}
+
+/* ════════ MAIN ════════ */
+.main-content {
+  margin-right: var(--sidebar-w);
+  min-height: 100vh; padding: 28px 24px;
+  position: relative; z-index: 1;
+}
+
+/* ════════ TOP BAR ════════ */
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px; gap: 12px;
+}
+.greeting-block h1 { font-size: 20px; font-weight: 700; }
+.greeting-block h1 span { color: var(--accent); }
+.greeting-block p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.top-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.notif-btn {
+  position: relative; width: 38px; height: 38px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s;
+}
+.notif-btn:hover { color: var(--text); background: var(--bg-card2); }
+.notif-dot {
+  position: absolute; top: 7px; left: 7px;
+  width: 7px; height: 7px; background: var(--accent5);
+  border-radius: 50%; border: 2px solid var(--bg-main);
+}
+.profile-avatar {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+}
+
+/* ════════ PROFILE HERO ════════ */
+.profile-hero {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 28px 24px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-hero::before {
+  content: '';
+  position: absolute; top: 0; right: 0; left: 0; height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+}
+.hero-avatar-wrap { position: relative; flex-shrink: 0; }
+.hero-avatar {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 800;
+  border: 3px solid rgba(79,142,247,.3);
+  box-shadow: 0 0 30px rgba(52,152,219,.2);
+  position: relative; overflow: hidden; cursor: pointer;
+}
+.hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.hero-avatar-overlay {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+  font-size: 18px; color: #fff; cursor: pointer;
+}
+.hero-avatar:hover .hero-avatar-overlay { opacity: 1; }
+.hero-avatar-badge {
+  position: absolute; bottom: 2px; left: 2px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--present); border: 2px solid var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #fff;
+}
+.hero-info { flex: 1; min-width: 0; }
+.hero-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.hero-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-meta span { display: flex; align-items: center; gap: 5px; }
+.hero-meta i { color: var(--accent); font-size: 10px; }
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-badge {
+  font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+}
+.hb-blue   { background: rgba(52,152,219,.15); color: var(--accent); border: 1px solid rgba(52,152,219,.25); }
+.hb-green  { background: rgba(39,174,96,.15);  color: var(--present); border: 1px solid rgba(39,174,96,.25); }
+.hb-purple { background: rgba(155,89,182,.15); color: var(--accent2); border: 1px solid rgba(155,89,182,.25); }
+.hero-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+.save-btn {
+  font-family: 'Vazirmatn', sans-serif;
+  padding: 10px 24px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; color: #fff; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .25s; display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 4px 20px rgba(52,152,219,.3);
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(52,152,219,.4); }
+.save-btn:active { transform: translateY(0); }
+.last-save { font-size: 10px; color: var(--text-muted); text-align: left; }
+
+/* ════════ TABS ════════ */
+.tabs-bar {
+  display: flex; gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.tab-btn {
+  font-family: 'Vazirmatn', sans-serif;
+  padding: 10px 18px; border-radius: 10px;
+  border: none; background: transparent;
+  color: var(--text-muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .25s; white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
+}
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,.05); }
+.tab-btn.active {
+  background: rgba(52,152,219,.18);
+  color: var(--accent); font-weight: 700;
+  border: 1px solid rgba(52,152,219,.25);
+}
+.tab-btn i { font-size: 13px; }
+
+/* ════════ TAB PANELS ════════ */
+.tab-panel { display: none; animation: fadeUp .35s ease both; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ════════ SECTION CARD ════════ */
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 18px;
+  transition: border-color .2s;
+}
+.section-card:hover { border-color: rgba(79,142,247,.18); }
+
+.sec-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 22px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.si-blue   { background: rgba(52,152,219,.15);  color: var(--accent); }
+.si-green  { background: rgba(39,174,96,.15);   color: var(--present); }
+.si-purple { background: rgba(155,89,182,.15);  color: var(--accent2); }
+.si-pink   { background: rgba(236,72,153,.15);  color: #ec4899; }
+.si-orange { background: rgba(243,156,18,.15);  color: var(--accent4); }
+.si-red    { background: rgba(231,76,60,.15);   color: var(--accent5); }
+.si-teal   { background: rgba(6,214,160,.15);   color: var(--accent3); }
+
+.sec-title { font-size: 14px; font-weight: 800; }
+.sec-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* ════════ FORM GRID ════════ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.form-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.form-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+.form-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted); display: flex; align-items: center; gap: 6px;
+}
+.form-label i { font-size: 10px; color: var(--accent); opacity: .7; }
+.required-star { color: var(--accent5); font-size: 12px; }
+
+.form-input {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px; color: var(--text);
+  outline: none; width: 100%;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+  direction: rtl;
+}
+.form-input:focus {
+  border-color: var(--accent);
+  background: rgba(52,152,219,.06);
+  box-shadow: 0 0 0 3px rgba(52,152,219,.1);
+}
+.form-input::placeholder { color: rgba(255,255,255,.2); }
+.form-input.is-valid {
+  border-color: var(--present);
+  background: rgba(39,174,96,.05);
+}
+.form-input.is-invalid {
+  border-color: var(--accent5);
+  background: rgba(231,76,60,.05);
+}
+
+select.form-input { cursor: pointer; appearance: none; }
+select.form-input option { background: var(--bg-card2); color: var(--text); }
+
+.input-hint { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.input-error { font-size: 10px; color: var(--accent5); margin-top: 2px; display: none; font-weight: 600; }
+.input-error.show { display: block; }
+.input-success { font-size: 10px; color: var(--present); margin-top: 2px; display: none; font-weight: 600; }
+.input-success.show { display: block; }
+
+/* ════════ STATUS TOGGLES ════════ */
+.status-row {
+  display: flex; gap: 10px;
+  padding: 16px;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.status-label { font-size: 12px; font-weight: 700; color: var(--text-muted); align-self: center; margin-left: 4px; }
+
+.status-toggle { display: flex; gap: 6px; }
+.status-radio { display: none; }
+.status-option {
+  font-family: 'Vazirmatn', sans-serif;
+  padding: 8px 18px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all .2s; display: flex; align-items: center; gap: 6px;
+}
+.status-radio:checked + .status-option {
+  background: rgba(39,174,96,.15);
+  border-color: var(--present); color: var(--present);
+}
+.status-radio.deceased:checked + .status-option {
+  background: rgba(231,76,60,.15);
+  border-color: var(--accent5); color: var(--accent5);
+}
+
+/* ════════ GUARDIAN SECTION (slide open) ════════ */
+.guardian-section {
+  max-height: 0; overflow: hidden;
+  transition: max-height .4s ease, opacity .3s ease;
+  opacity: 0;
+}
+.guardian-section.open {
+  max-height: 1000px; opacity: 1;
+}
+.guardian-notice {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; margin-bottom: 18px;
+  background: rgba(243,156,18,.08);
+  border: 1px solid rgba(243,156,18,.25);
+  border-radius: 10px; font-size: 12px;
+  color: rgba(243,156,18,.9);
+}
+.guardian-notice i { font-size: 14px; flex-shrink: 0; }
+
+/* ════════ DIVIDER ════════ */
+.section-divider {
+  height: 1px; background: var(--border);
+  margin: 22px 0;
+}
+
+/* ════════ PASSWORD ════════ */
+.pw-strength {
+  height: 4px; border-radius: 4px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden; margin-top: 6px;
+}
+.pw-fill {
+  height: 100%; border-radius: 4px;
+  transition: width .4s ease, background .3s;
+  width: 0%;
+}
+.pw-label { font-size: 10px; margin-top: 4px; font-weight: 600; }
+
+.input-eye {
+  position: relative;
+}
+.input-eye .form-input { padding-left: 40px; }
+.eye-btn {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 13px; transition: color .2s;
+}
+.eye-btn:hover { color: var(--text); }
+
+/* ════════ UPLOAD ZONE ════════ */
+.upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  position: relative; overflow: hidden;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(52,152,219,.05);
+}
+.upload-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.upload-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px; font-size: 20px;
+  background: rgba(52,152,219,.1); color: var(--accent);
+  transition: all .25s;
+}
+.upload-zone:hover .upload-icon { transform: scale(1.08); background: rgba(52,152,219,.18); }
+.upload-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.upload-sub   { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+.upload-types {
+  display: flex; gap: 5px; justify-content: center;
+  margin-top: 12px; flex-wrap: wrap;
+}
+.upload-type-tag {
+  font-size: 9px; font-weight: 700; padding: 2px 8px;
+  border-radius: 20px; background: rgba(255,255,255,.07); color: var(--text-muted);
+}
+.upload-size-limit {
+  font-size: 10px; color: rgba(243,156,18,.8);
+  margin-top: 8px; display: flex; align-items: center; gap: 4px; justify-content: center;
+}
+
+.upload-preview {
+  display: none;
+  position: relative; margin-top: 12px;
+}
+.upload-preview.show { display: block; }
+.preview-img {
+  width: 80px; height: 80px; object-fit: cover;
+  border-radius: 10px; border: 2px solid rgba(52,152,219,.3);
+  margin: 0 auto; display: block;
+}
+.preview-name {
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 6px; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.preview-remove {
+  position: absolute; top: -6px; left: 50%; transform: translateX(28px);
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent5); border: none; color: #fff;
+  font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform .2s;
+}
+.preview-remove:hover { transform: translateX(28px) scale(1.15); }
+
+.upload-error {
+  font-size: 10px; color: var(--accent5);
+  margin-top: 6px; display: none; text-align: center;
+}
+.upload-success {
+  font-size: 10px; color: var(--present);
+  margin-top: 6px; display: none; text-align: center; align-items: center; gap: 4px; justify-content: center;
+}
+
+/* ════════ TOAST ════════ */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  z-index: 999; opacity: 0;
+  transition: all .35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: rgba(39,174,96,.4); }
+.toast.success i { color: var(--present); }
+.toast.error { border-color: rgba(231,76,60,.4); }
+.toast.error i { color: var(--accent5); }
+
+/* ════════ HAMBURGER ════════ */
+.menu-toggle {
+  display: none; position: fixed; top: 14px; right: 14px;
+  z-index: 300; background: var(--bg-card);
+  border: 1px solid var(--border); color: var(--text);
+  width: 42px; height: 42px; border-radius: 10px;
+  cursor: pointer; align-items: center; justify-content: center; font-size: 18px;
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.55); z-index: 199;
+}
+.sidebar-overlay.active { display: block; }
+
+/* ════════ RESPONSIVE ════════ */
+@media(max-width:1280px) { :root { --sidebar-w: 240px; } }
+@media(max-width:1024px) {
+  :root { --sidebar-w: 220px; }
+  .main-content { padding: 22px 18px; }
+  .form-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .col-span-3 { grid-column: span 2; }
+}
+@media(max-width:768px) {
+  .menu-toggle { display: flex; }
+  .sidebar { transform: translateX(110%); box-shadow: -5px 0 20px rgba(0,0,0,.4); }
+  .sidebar.active { transform: translateX(0); }
+  .main-content { margin-right: 0; padding: 70px 16px 20px; }
+  .profile-hero { flex-wrap: wrap; }
+  .hero-actions { width: 100%; flex-direction: row; align-items: center; }
+  .last-save { flex: 1; }
+  .form-grid, .form-grid-2, .form-grid-4 { grid-template-columns: 1fr; }
+  .col-span-2, .col-span-3 { grid-column: span 1; }
+  .upload-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:620px) {
+  .tabs-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    padding: 8px;
+  }
+  .tab-btn {
+    padding: 9px 6px;
+    font-size: 11px;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 8px;
+    justify-content: center;
+    text-align: center;
+  }
+  .tab-btn i { font-size: 14px; }
+  .tab-btn span { display: none; }
+}
+@media(max-width:480px) {
+  .main-content { padding: 66px 12px 16px; }
+  .hero-avatar { width: 72px; height: 72px; font-size: 26px; }
+  .hero-name { font-size: 18px; }
+  .status-row { flex-direction: column; align-items: flex-start; }
+  .tabs-bar { grid-template-columns: repeat(3, 1fr); }
+  .tab-btn { font-size: 10px; padding: 8px 4px; }
+}
+
+/* ════════ JALALI DATEPICKER ════════ */
+#jdp-overlay {
+  display:none; position:fixed; inset:0; z-index:9990;
+}
+#jdp-popup {
+  display:none; position:fixed; z-index:9999;
+  width: 310px;
+  background: linear-gradient(145deg, #0f1c3f, #162850);
+  border: 1px solid rgba(100,160,255,.25);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  direction: rtl;
+  overflow: hidden;
+  user-select: none;
+}
+.jdp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.jdp-nav-btn {
+  background:rgba(255,255,255,.06); border:none; color:#7eb8ff;
+  width:32px; height:32px; border-radius:8px; cursor:pointer;
+  font-size:18px; display:flex; align-items:center; justify-content:center;
+  transition:background .2s; flex-shrink:0;
+}
+.jdp-nav-btn:hover { background:rgba(255,255,255,.18); }
+.jdp-month-year {
+  color:#e0eeff; font-size:15px; font-weight:600; text-align:center;
+  flex:1; cursor:pointer; padding:4px 10px; border-radius:8px;
+  transition:background .2s;
+}
+.jdp-month-year:hover { background:rgba(255,255,255,.08); }
+.jdp-weekdays {
+  display:grid; grid-template-columns:repeat(7,1fr); gap:3px;
+  padding: 10px 14px 6px;
+}
+.jdp-weekday {
+  text-align:center; color:rgba(180,200,255,.5);
+  font-size:11px; font-weight:500; padding:3px 0;
+}
+.jdp-days {
+  display:grid; grid-template-columns:repeat(7,1fr); gap:3px;
+  padding: 0 14px 12px;
+}
+.jdp-day {
+  text-align:center; padding:7px 2px; border-radius:8px; cursor:pointer;
+  color:#c8d8f0; font-size:12px; font-weight:500; transition:all .15s;
+  border:1px solid transparent; background:rgba(255,255,255,.03);
+}
+.jdp-day:hover { background:rgba(80,150,255,.18); color:#fff; }
+.jdp-day.today { border:1px solid rgba(80,150,255,.5); color:#7eb8ff; background:rgba(80,150,255,.12); font-weight:700; }
+.jdp-day.selected { background:linear-gradient(135deg,#3d8bff,#1a5fd4); color:#fff; font-weight:700; border-color:transparent; }
+.jdp-day.empty { cursor:default; pointer-events:none; background:transparent; border-color:transparent; }
+.jdp-ym-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6px;
+  padding: 10px 14px 12px;
+}
+.jdp-ym-item {
+  text-align:center; padding:10px 4px; border-radius:10px; cursor:pointer;
+  color:#a0c0f0; font-size:12px; font-weight:500;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.07);
+  transition:all .15s;
+}
+.jdp-ym-item:hover { background:rgba(80,150,255,.2); color:#fff; }
+.jdp-ym-item.active { background:linear-gradient(135deg,#3d8bff,#1a5fd4); color:#fff; border-color:transparent; font-weight:700; }
+.jdp-footer {
+  display:flex; gap:8px; padding:10px 14px 14px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.jdp-today-btn {
+  flex:1; padding:8px; border-radius:8px;
+  border:1px solid rgba(80,150,255,.35); background:rgba(80,150,255,.15); color:#7eb8ff;
+  font-size:12px; font-family:'Vazirmatn',sans-serif; font-weight:500;
+  cursor:pointer; transition:all .2s;
+}
+.jdp-today-btn:hover { background:rgba(80,150,255,.25); }
+.jdp-clear-btn {
+  flex:1; padding:8px; border-radius:8px;
+  border:1px solid rgba(220,60,60,.3); background:rgba(220,60,60,.12); color:#f08080;
+  font-size:12px; font-family:'Vazirmatn',sans-serif; font-weight:500;
+  cursor:pointer; transition:all .2s;
+}
+.jdp-clear-btn:hover { background:rgba(220,60,60,.22); }
+.jdp-input-wrap { position:relative; }
+.jdp-cal-icon {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  color:var(--accent); font-size:13px; pointer-events:none; z-index:2;
+}
+.jdp-input-wrap .form-input { padding-left:36px; cursor:pointer; caret-color:transparent; }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">تغییرات با موفقیت ذخیره شد</span>
+</div>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بوربور</div>
+  <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item active"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1>پروفایل — <span>علی مختاری</span></h1>
+      <p>سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-avatar">ع</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="profile-hero">
+    <div class="hero-avatar-wrap">
+      <div class="hero-avatar" id="heroAvatar">
+        ع
+        <div class="hero-avatar-overlay"><i class="fas fa-camera"></i></div>
+      </div>
+      <div class="hero-avatar-badge" id="heroAvatarBadge" style="display:none"><i class="fas fa-check"></i></div>
+    </div>
+    <div class="hero-info">
+      <div class="hero-name">علی مختاری</div>
+      <div class="hero-meta">
+        <span><i class="fas fa-id-card"></i> کد ملی: ۰۰۱۲۳۴۵۶۷۸</span>
+        <span><i class="fas fa-graduation-cap"></i> پایه یازدهم تجربی</span>
+        <span><i class="fas fa-calendar"></i> سال تحصیلی ۱۴۰۴–۱۴۰۵</span>
+      </div>
+      <div class="hero-badges">
+        <span class="hero-badge hb-blue"><i class="fas fa-user-check"></i> دانش‌آموز فعال</span>
+        <span class="hero-badge hb-green"><i class="fas fa-shield-alt"></i> حضور ۹۲٪</span>
+        <span class="hero-badge hb-purple"><i class="fas fa-star"></i> معدل ۱۷.۸</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="save-btn" onclick="saveAll()">
+        <i class="fas fa-save"></i> ذخیره تغییرات
+      </button>
+      <div class="last-save">آخرین ذخیره: ۱۴۰۴/۰۲/۲۰</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('personal', this)">
+      <i class="fas fa-user"></i> اطلاعات فردی
+    </button>
+    <button class="tab-btn" onclick="switchTab('father', this)">
+      <i class="fas fa-male"></i> اطلاعات پدر
+    </button>
+    <button class="tab-btn" onclick="switchTab('mother', this)">
+      <i class="fas fa-female"></i> اطلاعات مادر
+    </button>
+    <button class="tab-btn" onclick="switchTab('address', this)">
+      <i class="fas fa-map-marker-alt"></i> محل سکونت
+    </button>
+    <button class="tab-btn" onclick="switchTab('security', this)">
+      <i class="fas fa-lock"></i> امنیت
+    </button>
+    <button class="tab-btn" onclick="switchTab('documents', this)">
+      <i class="fas fa-file-image"></i> مدارک
+    </button>
+  </div>
+
+  <!-- ═══════ TAB: PERSONAL ═══════ -->
+  <div class="tab-panel active" id="tab-personal">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-blue"><i class="fas fa-user"></i></div>
+        <div>
+          <div class="sec-title">اطلاعات فردی دانش‌آموز</div>
+          <div class="sec-sub">مشخصات شناسنامه‌ای و تماس</div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-user"></i> نام <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="student-name" value="علی" placeholder="نام" oninput="validateName(this)">
+          <span class="input-error" id="err-student-name"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-user"></i> نام خانوادگی <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="student-family" value="مختاری" placeholder="نام خانوادگی" oninput="validateName(this)">
+          <span class="input-error" id="err-student-family"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-id-card"></i> کد ملی <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="student-national-id" value="0012345678" placeholder="۱۰ رقم" maxlength="10" oninput="validateNationalId(this)">
+          <span class="input-hint">کد ملی ۱۰ رقمی بدون خط تیره</span>
+          <span class="input-error" id="err-student-national-id"></span>
+          <span class="input-success" id="suc-student-national-id">✓ کد ملی معتبر است</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-birthday-cake"></i> تاریخ تولد <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="student-birth" value="1387/05/14" placeholder="۱۳۸۷/۰۵/۱۴" oninput="validateDate(this)">
+          <span class="input-hint">فرمت: سال/ماه/روز</span>
+          <span class="input-error" id="err-student-birth"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-mobile-alt"></i> شماره همراه <span class="required-star">*</span></label>
+          <input class="form-input" type="tel" id="student-mobile" value="09121234567" placeholder="۰۹۱۲۱۲۳۴۵۶۷" maxlength="11" style="direction:ltr;text-align:right" oninput="validateMobile(this)">
+          <span class="input-error" id="err-student-mobile"></span>
+          <span class="input-success" id="suc-student-mobile">✓ شماره معتبر است</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-phone"></i> شماره تلفن ثابت</label>
+          <input class="form-input" type="tel" id="student-phone" value="02144556677" placeholder="۰۲۱۴۴۵۵۶۶۷۷" maxlength="11" style="direction:ltr;text-align:right" oninput="validatePhone(this)">
+          <span class="input-hint">با کد شهر</span>
+          <span class="input-error" id="err-student-phone"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-venus-mars"></i> جنسیت</label>
+          <select class="form-input">
+            <option selected>مذکر</option>
+            <option>مؤنث</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-globe"></i> ملیت</label>
+          <select class="form-input">
+            <option selected>ایرانی</option>
+            <option>سایر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-tint"></i> گروه خونی</label>
+          <select class="form-input">
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option selected>O+</option><option>O-</option>
+            <option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: FATHER ═══════ -->
+  <div class="tab-panel" id="tab-father">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-blue"><i class="fas fa-male"></i></div>
+        <div>
+          <div class="sec-title">اطلاعات پدر</div>
+          <div class="sec-sub">مشخصات فردی و تماس پدر دانش‌آموز</div>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span class="status-label"><i class="fas fa-heart" style="color:var(--accent5);margin-left:4px"></i>وضعیت:</span>
+        <div class="status-toggle">
+          <input type="radio" name="father-status" id="father-alive" class="status-radio" checked onchange="toggleGuardian('father', false)">
+          <label for="father-alive" class="status-option"><i class="fas fa-heart" style="color:var(--present)"></i>در قید حیات</label>
+        </div>
+        <div class="status-toggle">
+          <input type="radio" name="father-status" id="father-deceased" class="status-radio deceased" onchange="toggleGuardian('father', true)">
+          <label for="father-deceased" class="status-option"><i class="fas fa-ribbon"></i>فوت شده</label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-user"></i> نام پدر <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="father-name" value="محمد" placeholder="نام پدر" oninput="validateName(this)">
+          <span class="input-error" id="err-father-name"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-id-card"></i> کد ملی پدر <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="father-national-id" value="0019876543" placeholder="۱۰ رقم" maxlength="10" oninput="validateNationalId(this)">
+          <span class="input-error" id="err-father-national-id"></span>
+          <span class="input-success" id="suc-father-national-id">✓ کد ملی معتبر است</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-birthday-cake"></i> تاریخ تولد پدر</label>
+          <input class="form-input" type="text" id="father-birth" value="1358/03/22" placeholder="۱۳۵۸/۰۳/۲۲" oninput="validateDate(this)">
+          <span class="input-error" id="err-father-birth"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-mobile-alt"></i> شماره همراه پدر <span class="required-star">*</span></label>
+          <input class="form-input" type="tel" id="father-mobile" value="09351112233" placeholder="۰۹۳۵۱۱۱۲۲۳۳" maxlength="11" style="direction:ltr;text-align:right" oninput="validateMobile(this)">
+          <span class="input-error" id="err-father-mobile"></span>
+          <span class="input-success" id="suc-father-mobile">✓ شماره معتبر است</span>
+        </div>
+        <!-- شغل پدر: input آزاد -->
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-briefcase"></i> شغل پدر</label>
+          <input class="form-input" type="text" id="father-job" value="کارمند دولتی" placeholder="مثلاً: مهندس، معلم، آزاد...">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-graduation-cap"></i> تحصیلات پدر</label>
+          <select class="form-input">
+            <option>انتخاب کنید</option>
+            <option>زیر دیپلم</option>
+            <option>دیپلم</option>
+            <option selected>لیسانس</option>
+            <option>فوق‌لیسانس</option>
+            <option>دکترا</option>
+            <option>سایر</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Guardian section for father -->
+      <div class="guardian-section" id="guardian-father">
+        <div class="section-divider"></div>
+        <div class="sec-header" style="margin-bottom:16px;padding-bottom:12px">
+          <div class="sec-icon si-orange"><i class="fas fa-user-shield"></i></div>
+          <div>
+            <div class="sec-title">اطلاعات سرپرست</div>
+            <div class="sec-sub">با توجه به فوت پدر، لطفاً مشخصات سرپرست را وارد کنید</div>
+          </div>
+        </div>
+        <div class="guardian-notice">
+          <i class="fas fa-exclamation-triangle"></i>
+          تکمیل اطلاعات سرپرست در صورت فوت پدر الزامی است
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-tie"></i> نام سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" placeholder="نام سرپرست">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-tie"></i> نام خانوادگی سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" placeholder="نام خانوادگی سرپرست">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-id-card"></i> کد ملی سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" id="guardian-father-national-id" placeholder="۱۰ رقم" maxlength="10" oninput="validateNationalId(this)">
+            <span class="input-error" id="err-guardian-father-national-id"></span>
+            <span class="input-success" id="suc-guardian-father-national-id">✓ کد ملی معتبر است</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-mobile-alt"></i> شماره همراه سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="tel" id="guardian-father-mobile" placeholder="۰۹۱۲۳۴۵۶۷۸۹" maxlength="11" style="direction:ltr;text-align:right" oninput="validateMobile(this)">
+            <span class="input-error" id="err-guardian-father-mobile"></span>
+            <span class="input-success" id="suc-guardian-father-mobile">✓ شماره معتبر است</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-users"></i> نسبت با دانش‌آموز <span class="required-star">*</span></label>
+            <select class="form-input">
+              <option>انتخاب کنید</option>
+              <option>مادر</option>
+              <option>برادر</option>
+              <option>خواهر</option>
+              <option>جد پدری</option>
+              <option>عمو / دایی</option>
+              <option>سایر</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-briefcase"></i> شغل سرپرست</label>
+            <input class="form-input" type="text" placeholder="شغل سرپرست">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: MOTHER ═══════ -->
+  <div class="tab-panel" id="tab-mother">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-pink"><i class="fas fa-female"></i></div>
+        <div>
+          <div class="sec-title">اطلاعات مادر</div>
+          <div class="sec-sub">مشخصات فردی و تماس مادر دانش‌آموز</div>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span class="status-label"><i class="fas fa-heart" style="color:var(--accent5);margin-left:4px"></i>وضعیت:</span>
+        <div class="status-toggle">
+          <input type="radio" name="mother-status" id="mother-alive" class="status-radio" checked onchange="toggleGuardian('mother', false)">
+          <label for="mother-alive" class="status-option"><i class="fas fa-heart" style="color:var(--present)"></i>در قید حیات</label>
+        </div>
+        <div class="status-toggle">
+          <input type="radio" name="mother-status" id="mother-deceased" class="status-radio deceased" onchange="toggleGuardian('mother', true)">
+          <label for="mother-deceased" class="status-option"><i class="fas fa-ribbon"></i>فوت شده</label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-user"></i> نام مادر <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="mother-name" value="فاطمه" placeholder="نام مادر" oninput="validateName(this)">
+          <span class="input-error" id="err-mother-name"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-id-card"></i> کد ملی مادر <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="mother-national-id" value="0023456789" placeholder="۱۰ رقم" maxlength="10" oninput="validateNationalId(this)">
+          <span class="input-error" id="err-mother-national-id"></span>
+          <span class="input-success" id="suc-mother-national-id">✓ کد ملی معتبر است</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-birthday-cake"></i> تاریخ تولد مادر</label>
+          <input class="form-input" type="text" id="mother-birth" value="1362/08/10" placeholder="۱۳۶۲/۰۸/۱۰" oninput="validateDate(this)">
+          <span class="input-error" id="err-mother-birth"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-mobile-alt"></i> شماره همراه مادر <span class="required-star">*</span></label>
+          <input class="form-input" type="tel" id="mother-mobile" value="09129876543" placeholder="۰۹۱۲۹۸۷۶۵۴۳" maxlength="11" style="direction:ltr;text-align:right" oninput="validateMobile(this)">
+          <span class="input-error" id="err-mother-mobile"></span>
+          <span class="input-success" id="suc-mother-mobile">✓ شماره معتبر است</span>
+        </div>
+        <!-- شغل مادر: input آزاد -->
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-briefcase"></i> شغل مادر</label>
+          <input class="form-input" type="text" id="mother-job" value="معلم" placeholder="مثلاً: خانه‌دار، پزشک، معلم...">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-graduation-cap"></i> تحصیلات مادر</label>
+          <select class="form-input">
+            <option>انتخاب کنید</option>
+            <option>زیر دیپلم</option>
+            <option>دیپلم</option>
+            <option>لیسانس</option>
+            <option selected>فوق‌لیسانس</option>
+            <option>دکترا</option>
+            <option>سایر</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Guardian section for mother -->
+      <div class="guardian-section" id="guardian-mother">
+        <div class="section-divider"></div>
+        <div class="sec-header" style="margin-bottom:16px;padding-bottom:12px">
+          <div class="sec-icon si-orange"><i class="fas fa-user-shield"></i></div>
+          <div>
+            <div class="sec-title">اطلاعات سرپرست</div>
+            <div class="sec-sub">با توجه به فوت مادر، لطفاً مشخصات سرپرست را وارد کنید</div>
+          </div>
+        </div>
+        <div class="guardian-notice">
+          <i class="fas fa-exclamation-triangle"></i>
+          تکمیل اطلاعات سرپرست در صورت فوت مادر الزامی است
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-tie"></i> نام سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" placeholder="نام سرپرست">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user-tie"></i> نام خانوادگی سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" placeholder="نام خانوادگی سرپرست">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-id-card"></i> کد ملی سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="text" id="guardian-mother-national-id" placeholder="۱۰ رقم" maxlength="10" oninput="validateNationalId(this)">
+            <span class="input-error" id="err-guardian-mother-national-id"></span>
+            <span class="input-success" id="suc-guardian-mother-national-id">✓ کد ملی معتبر است</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-mobile-alt"></i> شماره همراه سرپرست <span class="required-star">*</span></label>
+            <input class="form-input" type="tel" id="guardian-mother-mobile" placeholder="۰۹۱۲۳۴۵۶۷۸۹" maxlength="11" style="direction:ltr;text-align:right" oninput="validateMobile(this)">
+            <span class="input-error" id="err-guardian-mother-mobile"></span>
+            <span class="input-success" id="suc-guardian-mother-mobile">✓ شماره معتبر است</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-users"></i> نسبت با دانش‌آموز <span class="required-star">*</span></label>
+            <select class="form-input">
+              <option>انتخاب کنید</option>
+              <option>پدر</option>
+              <option>برادر</option>
+              <option>خواهر</option>
+              <option>جد مادری</option>
+              <option>عمو / دایی</option>
+              <option>سایر</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-briefcase"></i> شغل سرپرست</label>
+            <input class="form-input" type="text" placeholder="شغل سرپرست">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: ADDRESS ═══════ -->
+  <div class="tab-panel" id="tab-address">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-teal"><i class="fas fa-map-marker-alt"></i></div>
+        <div>
+          <div class="sec-title">اطلاعات محل سکونت</div>
+          <div class="sec-sub">آدرس و کد پستی محل اقامت دانش‌آموز</div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group col-span-2">
+          <label class="form-label"><i class="fas fa-road"></i> آدرس کامل <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="address-full" value="خیابان سعادت آباد، کوچه گلستان، پلاک ۱۴، واحد ۳" placeholder="استان، شهر، خیابان، کوچه، پلاک و واحد">
+          <span class="input-error" id="err-address-full"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-mail-bulk"></i> کد پستی <span class="required-star">*</span></label>
+          <input class="form-input" type="text" id="address-postal" value="1998935611" placeholder="۱۰ رقم" maxlength="10" style="direction:ltr;text-align:right" oninput="validatePostalCode(this)">
+          <span class="input-hint">کد پستی ۱۰ رقمی</span>
+          <span class="input-error" id="err-address-postal"></span>
+          <span class="input-success" id="suc-address-postal">✓ کد پستی معتبر است</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: SECURITY ═══════ -->
+  <div class="tab-panel" id="tab-security">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-red"><i class="fas fa-lock"></i></div>
+        <div>
+          <div class="sec-title">تغییر رمز عبور</div>
+          <div class="sec-sub">برای امنیت بیشتر، رمز عبور قوی انتخاب کنید</div>
+        </div>
+      </div>
+
+      <div class="form-grid-2 form-grid" style="max-width:600px">
+        <div class="form-group col-span-2">
+          <label class="form-label"><i class="fas fa-key"></i> رمز عبور فعلی <span class="required-star">*</span></label>
+          <div class="input-eye">
+            <input class="form-input" type="password" id="currentPw" placeholder="رمز عبور فعلی را وارد کنید">
+            <button class="eye-btn" onclick="toggleEye('currentPw', this)" type="button"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-lock"></i> رمز عبور جدید <span class="required-star">*</span></label>
+          <div class="input-eye">
+            <input class="form-input" type="password" id="newPw" placeholder="حداقل ۸ کاراکتر" oninput="checkStrength(this.value)">
+            <button class="eye-btn" onclick="toggleEye('newPw', this)" type="button"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="pw-strength"><div class="pw-fill" id="pwFill"></div></div>
+          <div class="pw-label" id="pwLabel" style="color:var(--text-muted)">قدرت رمز عبور</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-lock"></i> تکرار رمز جدید <span class="required-star">*</span></label>
+          <div class="input-eye">
+            <input class="form-input" type="password" id="confirmPw" placeholder="رمز عبور جدید را تکرار کنید" oninput="checkMatch()">
+            <button class="eye-btn" onclick="toggleEye('confirmPw', this)" type="button"><i class="fas fa-eye"></i></button>
+          </div>
+          <div style="font-size:10px;margin-top:4px;font-weight:600" id="matchLabel"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:14px 16px;background:rgba(52,152,219,.07);border:1px solid rgba(52,152,219,.2);border-radius:10px;font-size:12px;color:var(--text-muted);line-height:1.8;">
+        <div style="font-weight:700;color:var(--accent);margin-bottom:6px;font-size:12px"><i class="fas fa-info-circle" style="margin-left:5px"></i>راهنمای رمز عبور قوی:</div>
+        <div>• حداقل ۸ کاراکتر</div>
+        <div>• ترکیب حروف بزرگ و کوچک انگلیسی</div>
+        <div>• استفاده از اعداد و نمادها (@، #، !)</div>
+        <div>• عدم استفاده از اطلاعات شخصی</div>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="save-btn" style="width:auto" onclick="changePw()">
+          <i class="fas fa-key"></i> تغییر رمز عبور
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB: DOCUMENTS ═══════ -->
+  <div class="tab-panel" id="tab-documents">
+    <div class="section-card">
+      <div class="sec-header">
+        <div class="sec-icon si-green"><i class="fas fa-file-image"></i></div>
+        <div>
+          <div class="sec-title">بارگذاری مدارک</div>
+          <div class="sec-sub">فرمت‌های مجاز: JPG, JPEG, PNG, WEBP | حداکثر حجم: ۱ مگابایت</div>
+        </div>
+      </div>
+
+      <div class="upload-grid">
+        <div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+            <span style="background:rgba(52,152,219,.15);color:var(--accent);width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-id-book"></i></span>
+            تصویر شناسنامه
+          </div>
+          <div class="upload-zone" id="zone-id"
+            ondragover="handleDrag(event, 'id')"
+            ondragleave="handleDragLeave('id')"
+            ondrop="handleDrop(event, 'id')">
+            <input type="file" accept=".jpg,.jpeg,.png,.webp" id="input-id" onchange="handleFile(event, 'id')">
+            <div class="upload-icon"><i class="fas fa-id-book"></i></div>
+            <div class="upload-title">بارگذاری شناسنامه</div>
+            <div class="upload-sub">تصویر صفحه اول شناسنامه<br>یا فایل را اینجا رها کنید</div>
+            <div class="upload-types">
+              <span class="upload-type-tag">JPG</span>
+              <span class="upload-type-tag">JPEG</span>
+              <span class="upload-type-tag">PNG</span>
+              <span class="upload-type-tag">WEBP</span>
+            </div>
+            <div class="upload-size-limit"><i class="fas fa-exclamation-circle"></i> حداکثر ۱ مگابایت</div>
+          </div>
+          <div class="upload-preview" id="preview-id">
+            <img class="preview-img" id="previewImg-id" src="" alt="">
+            <div class="preview-name" id="previewName-id"></div>
+            <button class="preview-remove" onclick="removeFile('id')"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="upload-error" id="error-id"><i class="fas fa-times-circle"></i> <span id="errorMsg-id"></span></div>
+          <div class="upload-success" id="success-id" style="display:none"><i class="fas fa-check-circle"></i> فایل با موفقیت بارگذاری شد</div>
+        </div>
+
+        <div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+            <span style="background:rgba(155,89,182,.15);color:var(--accent2);width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-portrait"></i></span>
+            عکس ۳×۴ پرسنلی
+          </div>
+          <div class="upload-zone" id="zone-photo"
+            ondragover="handleDrag(event, 'photo')"
+            ondragleave="handleDragLeave('photo')"
+            ondrop="handleDrop(event, 'photo')">
+            <input type="file" accept=".jpg,.jpeg,.png,.webp" id="input-photo" onchange="handleFile(event, 'photo')">
+            <div class="upload-icon" style="background:rgba(155,89,182,.1);color:var(--accent2)"><i class="fas fa-portrait"></i></div>
+            <div class="upload-title">بارگذاری عکس پرسنلی</div>
+            <div class="upload-sub">عکس ۳×۴ زمینه سفید<br>یا فایل را اینجا رها کنید</div>
+            <div class="upload-types">
+              <span class="upload-type-tag">JPG</span>
+              <span class="upload-type-tag">JPEG</span>
+              <span class="upload-type-tag">PNG</span>
+              <span class="upload-type-tag">WEBP</span>
+            </div>
+            <div class="upload-size-limit"><i class="fas fa-exclamation-circle"></i> حداکثر ۱ مگابایت</div>
+          </div>
+          <div class="upload-preview" id="preview-photo">
+            <img class="preview-img" id="previewImg-photo" src="" alt="">
+            <div class="preview-name" id="previewName-photo"></div>
+            <button class="preview-remove" onclick="removeFile('photo')"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="upload-error" id="error-photo"><i class="fas fa-times-circle"></i> <span id="errorMsg-photo"></span></div>
+          <div class="upload-success" id="success-photo" style="display:none;flex-direction:row;align-items:center;gap:5px;justify-content:center"><i class="fas fa-check-circle"></i> فایل با موفقیت بارگذاری شد</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:14px 16px;background:rgba(243,156,18,.06);border:1px solid rgba(243,156,18,.2);border-radius:10px;font-size:12px;color:var(--text-muted);line-height:1.8;">
+        <div style="font-weight:700;color:var(--accent4);margin-bottom:6px;font-size:12px"><i class="fas fa-exclamation-triangle" style="margin-left:5px"></i>نکات مهم:</div>
+        <div>• فایل‌ها باید با فرمت‌های JPG، JPEG، PNG یا WEBP باشند</div>
+        <div>• حجم هر فایل نباید از ۱ مگابایت بیشتر باشد</div>
+        <div>• تصاویر باید واضح و خوانا باشند</div>
+        <div>• عکس پرسنلی باید زمینه سفید و تمام‌رخ باشد</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<script>
+/* ═══════ TABS ═══════ */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ═══════ GUARDIAN TOGGLE ═══════ */
+function toggleGuardian(parent, show) {
+  const sec = document.getElementById('guardian-' + parent);
+  show ? sec.classList.add('open') : sec.classList.remove('open');
+}
+
+/* ═══════ EYE TOGGLE ═══════ */
+function toggleEye(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const icon = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    inp.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   VALIDATION HELPERS
+═══════════════════════════════════════════ */
+
+function setFieldState(input, isValid, errEl, errMsg, sucEl) {
+  input.classList.toggle('is-valid',   isValid);
+  input.classList.toggle('is-invalid', !isValid);
+  if (errEl) {
+    errEl.textContent = isValid ? '' : errMsg;
+    errEl.classList.toggle('show', !isValid);
+  }
+  if (sucEl) sucEl.classList.toggle('show', isValid);
+}
+
+/* ─── کد ملی (الگوریتم checksum ایران) ─── */
+function nationalIdChecksum(code) {
+  if (!/^\d{10}$/.test(code))        return false;
+  if (/^(\d)\1{9}$/.test(code))      return false; // همه ارقام یکسان
+
+  const digits = code.split('').map(Number);
+  const check  = digits[9];
+  let   sum    = 0;
+  for (let i = 0; i < 9; i++) sum += digits[i] * (10 - i);
+  const rem = sum % 11;
+  return (rem < 2 && check === rem) || (rem >= 2 && check === 11 - rem);
+}
+
+function validateNationalId(input) {
+  const id     = input.id;
+  const errEl  = document.getElementById('err-' + id);
+  const sucEl  = document.getElementById('suc-' + id);
+  const val    = input.value.trim();
+
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    if (sucEl) sucEl.classList.remove('show');
+    return;
+  }
+  if (!/^\d{10}$/.test(val)) {
+    setFieldState(input, false, errEl, 'کد ملی باید ۱۰ رقم عددی باشد', sucEl);
+    return;
+  }
+  if (/^(\d)\1{9}$/.test(val)) {
+    setFieldState(input, false, errEl, 'کد ملی نمی‌تواند از ارقام تکراری تشکیل شود', sucEl);
+    return;
+  }
+  if (!nationalIdChecksum(val)) {
+    setFieldState(input, false, errEl, 'کد ملی معتبر نیست (checksum اشتباه است)', sucEl);
+    return;
+  }
+  setFieldState(input, true, errEl, '', sucEl);
+}
+
+/* ─── موبایل ─── */
+function validateMobile(input) {
+  const id    = input.id;
+  const errEl = document.getElementById('err-' + id);
+  const sucEl = document.getElementById('suc-' + id);
+  const val   = input.value.trim();
+
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    if (sucEl) sucEl.classList.remove('show');
+    return;
+  }
+  const valid = /^09[0-9]{9}$/.test(val);
+  setFieldState(input, valid, errEl, 'شماره همراه باید با ۰۹ شروع شود و ۱۱ رقم باشد', sucEl);
+}
+
+/* ─── تلفن ثابت ─── */
+function validatePhone(input) {
+  const id    = input.id;
+  const errEl = document.getElementById('err-' + id);
+  const val   = input.value.trim();
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    return;
+  }
+  const valid = /^0[1-9][0-9]{9}$/.test(val);
+  setFieldState(input, valid, errEl, 'شماره تلفن باید با صفر شروع شود و ۱۱ رقم باشد', null);
+}
+
+/* ─── تاریخ شمسی ─── */
+function validateDate(input) {
+  const id    = input.id;
+  const errEl = document.getElementById('err-' + id);
+  const val   = input.value.trim();
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    return;
+  }
+  const m = val.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  if (!m) {
+    setFieldState(input, false, errEl, 'فرمت تاریخ اشتباه است (مثال: ۱۳۸۷/۰۵/۱۴)', null);
+    return;
+  }
+  const [, y, mo, d] = m.map(Number);
+  const validMo = mo >= 1 && mo <= 12;
+  const maxDay  = mo <= 6 ? 31 : mo <= 11 ? 30 : 29;
+  const validD  = d >= 1 && d <= maxDay;
+  const validY  = y >= 1300 && y <= 1420;
+  if (!validMo || !validD || !validY) {
+    setFieldState(input, false, errEl, 'تاریخ وارد شده معتبر نیست', null);
+    return;
+  }
+  setFieldState(input, true, errEl, '', null);
+}
+
+/* ─── نام (فارسی / غیر خالی) ─── */
+function validateName(input) {
+  const id    = input.id;
+  const errEl = document.getElementById('err-' + id);
+  const val   = input.value.trim();
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    return;
+  }
+  const valid = val.length >= 2;
+  setFieldState(input, valid, errEl, 'نام باید حداقل ۲ کاراکتر باشد', null);
+}
+
+/* ─── کد پستی ─── */
+function validatePostalCode(input) {
+  const id    = input.id;
+  const errEl = document.getElementById('err-' + id);
+  const sucEl = document.getElementById('suc-' + id);
+  const val   = input.value.trim();
+  if (!val) {
+    input.classList.remove('is-valid','is-invalid');
+    if (errEl) errEl.classList.remove('show');
+    if (sucEl) sucEl.classList.remove('show');
+    return;
+  }
+  const valid = /^\d{10}$/.test(val);
+  setFieldState(input, valid, errEl, 'کد پستی باید ۱۰ رقم عددی باشد', sucEl);
+}
+
+/* ═══════ PASSWORD ═══════ */
+function checkStrength(val) {
+  const fill  = document.getElementById('pwFill');
+  const label = document.getElementById('pwLabel');
+  let score = 0;
+  if (val.length >= 8)            score++;
+  if (/[A-Z]/.test(val))         score++;
+  if (/[0-9]/.test(val))         score++;
+  if (/[^A-Za-z0-9]/.test(val))  score++;
+  const map = [
+    { w:'0%',   color:'transparent',   text:'' },
+    { w:'25%',  color:'var(--accent5)', text:'ضعیف' },
+    { w:'50%',  color:'var(--accent4)', text:'متوسط' },
+    { w:'75%',  color:'var(--accent)',  text:'خوب' },
+    { w:'100%', color:'var(--present)', text:'عالی' },
+  ];
+  const m = map[score];
+  fill.style.width      = m.w;
+  fill.style.background = m.color;
+  label.textContent     = m.text;
+  label.style.color     = m.color;
+}
+
+function checkMatch() {
+  const np  = document.getElementById('newPw').value;
+  const cp  = document.getElementById('confirmPw').value;
+  const lbl = document.getElementById('matchLabel');
+  if (!cp) { lbl.textContent = ''; return; }
+  if (np === cp) { lbl.textContent = '✓ رمزها یکسان هستند'; lbl.style.color = 'var(--present)'; }
+  else           { lbl.textContent = '✗ رمزها یکسان نیستند'; lbl.style.color = 'var(--accent5)'; }
+}
+
+function changePw() {
+  const cur = document.getElementById('currentPw').value;
+  const np  = document.getElementById('newPw').value;
+  const cp  = document.getElementById('confirmPw').value;
+  if (!cur)          { showToast('رمز عبور فعلی را وارد کنید', 'error'); return; }
+  if (np.length < 8) { showToast('رمز جدید باید حداقل ۸ کاراکتر باشد', 'error'); return; }
+  if (np !== cp)     { showToast('رمزها یکسان نیستند', 'error'); return; }
+  showToast('رمز عبور با موفقیت تغییر کرد', 'success');
+}
+
+/* ═══════ FILE UPLOAD ═══════ */
+const ALLOWED  = ['image/jpeg','image/jpg','image/png','image/webp'];
+const MAX_SIZE = 1 * 1024 * 1024;
+
+function handleFile(e, id) {
+  const file = e.target.files[0];
+  if (file) processFile(file, id);
+}
+
+function processFile(file, id) {
+  hideMessages(id);
+  if (!ALLOWED.includes(file.type)) {
+    showUploadError(id, 'فرمت فایل مجاز نیست. فقط JPG, PNG, WEBP'); resetInput(id); return;
+  }
+  if (file.size > MAX_SIZE) {
+    showUploadError(id, 'حجم فایل بیشتر از ۱ مگابایت است (' + (file.size/1024/1024).toFixed(2) + ' MB)'); resetInput(id); return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('previewImg-' + id).src = ev.target.result;
+    document.getElementById('previewName-' + id).textContent = file.name;
+    document.getElementById('preview-' + id).classList.add('show');
+    document.getElementById('success-' + id).style.display = 'flex';
+    if (id === 'photo') {
+      const heroAv = document.getElementById('heroAvatar');
+      heroAv.innerHTML = `<img src="${ev.target.result}" alt=""><div class="hero-avatar-overlay"><i class="fas fa-camera"></i></div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function showUploadError(id, msg) {
+  const err = document.getElementById('error-' + id);
+  document.getElementById('errorMsg-' + id).textContent = msg;
+  err.style.display = 'block';
+}
+function hideMessages(id) {
+  document.getElementById('error-' + id).style.display   = 'none';
+  document.getElementById('success-' + id).style.display = 'none';
+}
+function resetInput(id) { document.getElementById('input-' + id).value = ''; }
+function removeFile(id) {
+  document.getElementById('preview-' + id).classList.remove('show');
+  document.getElementById('previewImg-' + id).src = '';
+  resetInput(id); hideMessages(id);
+  if (id === 'photo') {
+    document.getElementById('heroAvatar').innerHTML = 'ع<div class="hero-avatar-overlay"><i class="fas fa-camera"></i></div>';
+  }
+}
+function handleDrag(e, id)   { e.preventDefault(); document.getElementById('zone-' + id).classList.add('drag-over'); }
+function handleDragLeave(id) { document.getElementById('zone-' + id).classList.remove('drag-over'); }
+function handleDrop(e, id)   {
+  e.preventDefault();
+  document.getElementById('zone-' + id).classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file, id);
+}
+
+/* ═══════ SAVE (با اعتبارسنجی کامل) ═══════ */
+function saveAll() {
+  // اعتبارسنجی تمام فیلدهای کد ملی
+  const nationalIdFields = [
+    'student-national-id', 'father-national-id', 'mother-national-id'
+  ];
+  let hasError = false;
+
+  nationalIdFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) {
+      validateNationalId(el);
+      if (el.classList.contains('is-invalid')) hasError = true;
+    }
+  });
+
+  // اعتبارسنجی موبایل‌ها
+  const mobileFields = ['student-mobile','father-mobile','mother-mobile'];
+  mobileFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) {
+      validateMobile(el);
+      if (el.classList.contains('is-invalid')) hasError = true;
+    }
+  });
+
+  if (hasError) {
+    showToast('لطفاً خطاهای فرم را برطرف کنید', 'error');
+    return;
+  }
+  showToast('تغییرات با موفقیت ذخیره شد', 'success');
+}
+
+/* ═══════ TOAST ═══════ */
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast ' + type;
+  t.querySelector('i').className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ═══════ HAMBURGER ═══════ */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+});
+
+/* ═══════ اعتبارسنجی اولیه هنگام بارگذاری ═══════ */
+window.addEventListener('DOMContentLoaded', () => {
+  ['student-national-id','father-national-id','mother-national-id'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) validateNationalId(el);
+  });
+  ['student-mobile','father-mobile','mother-mobile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) validateMobile(el);
+  });
+  ['student-birth','father-birth','mother-birth'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) validateDate(el);
+  });
+  const postal = document.getElementById('address-postal');
+  if (postal && postal.value.trim()) validatePostalCode(postal);
+});
+</script>
+</body>
+</html>

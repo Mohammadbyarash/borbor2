@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — برنامه هفتگی</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+:root {
+  --bg-main:#1a2346; --bg-card:#1f2b52; --bg-card2:#1c2849; --bg-sidebar:#141d3d;
+  --accent:#4a90d9; --accent2:#8e5fd4; --accent3:#06d6a0; --accent4:#f39c12; --accent5:#e74c3c;
+  --text:#eaf0fb; --text-muted:rgba(220,230,255,0.52);
+  --border:rgba(255,255,255,0.08); --border-hover:rgba(74,144,217,0.3);
+  --sidebar-w:252px; --radius:16px; --radius-sm:10px;
+  --c1:#ef4444; --c1b:rgba(239,68,68,0.13); --c1s:rgba(239,68,68,0.25);
+  --c2:#4a90d9; --c2b:rgba(74,144,217,0.13); --c2s:rgba(74,144,217,0.25);
+  --c3:#06d6a0; --c3b:rgba(6,214,160,0.13); --c3s:rgba(6,214,160,0.25);
+  --c4:#f39c12; --c4b:rgba(243,156,18,0.13); --c4s:rgba(243,156,18,0.25);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 55% at 18% 8%,rgba(74,144,217,.11) 0%,transparent 60%),radial-gradient(ellipse 55% 45% at 82% 92%,rgba(142,95,212,.09) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:24px 14px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.logo{color:#fff;font-size:27px;font-weight:800;text-align:center;margin-bottom:22px;letter-spacing:-.5px}
+.logo span{color:var(--accent)}
+.teacher-block{background:linear-gradient(135deg,rgba(74,144,217,.13),rgba(142,95,212,.1));border:1px solid rgba(74,144,217,.18);border-radius:var(--radius-sm);padding:14px 12px;margin-bottom:22px;display:flex;align-items:center;gap:11px}
+.teacher-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.teacher-name{font-size:13px;font-weight:700}
+.teacher-role{font-size:10px;color:var(--text-muted);margin-top:3px}
+.teacher-badge{margin-top:6px;display:inline-block;background:rgba(6,214,160,.12);color:var(--accent3);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(6,214,160,.2)}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px 14px}
+.nav-item{margin-bottom:3px}
+.nav-item a{color:rgba(220,230,255,.65);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:10px;border-radius:var(--radius-sm);font-size:13px;transition:all .2s;position:relative}
+.nav-item a i{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-item a:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav-item.active a{background:rgba(74,144,217,.15);color:#fff;font-weight:600;border:1px solid rgba(74,144,217,.2)}
+.nav-item.active a::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:3px 0 0 3px}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center}
+
+/* ── MAIN ── */
+.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:26px 22px 40px;position:relative;z-index:1}
+
+/* ── TOP BAR ── */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+.page-title{font-size:20px;font-weight:700}
+.page-title span{color:var(--accent)}
+.page-sub{font-size:12px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+.page-sub i{color:var(--accent3);font-size:9px}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.action-btn{position:relative;height:38px;padding:0 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Vazirmatn',sans-serif;transition:all .2s;white-space:nowrap}
+.action-btn:hover{color:#fff;border-color:var(--border-hover);background:var(--bg-card2)}
+.action-btn.primary{background:linear-gradient(135deg,var(--accent),#3674c7);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(74,144,217,.3)}
+.action-btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,144,217,.4)}
+.action-btn.green{background:linear-gradient(135deg,var(--accent3),#0ba87b);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(6,214,160,.25)}
+.action-btn.green:hover{transform:translateY(-1px)}
+.icon-btn{width:38px;height:38px;padding:0;font-size:15px}
+.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main)}
+.profile-btn{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer}
+
+/* ── CLASS SUMMARY CARDS ── */
+.class-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.cs-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.cs-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;transition:height .25s}
+.cs-card.c1::before{background:linear-gradient(90deg,var(--c1),#f97316)}
+.cs-card.c2::before{background:linear-gradient(90deg,var(--c2),var(--accent2))}
+.cs-card.c3::before{background:linear-gradient(90deg,var(--c3),#2ecc71)}
+.cs-card.c4::before{background:linear-gradient(90deg,var(--c4),#e67e22)}
+.cs-card:hover{transform:translateY(-5px);box-shadow:0 10px 28px rgba(0,0,0,.28);border-color:var(--border-hover)}
+.cs-card:hover::before{height:5px}
+.cs-card.active-card{box-shadow:0 0 0 2px var(--accent),0 10px 28px rgba(0,0,0,.28)}
+.cs-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cs-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.c1 .cs-icon{background:var(--c1b);color:var(--c1)}
+.c2 .cs-icon{background:var(--c2b);color:var(--c2)}
+.c3 .cs-icon{background:var(--c3b);color:var(--c3)}
+.c4 .cs-icon{background:var(--c4b);color:var(--c4)}
+.cs-name{font-size:13px;font-weight:700;line-height:1.35}
+.cs-grade{font-size:10.5px;color:var(--text-muted);margin-top:2px}
+.cs-stats{display:flex;gap:8px}
+.cs-stat{flex:1;background:var(--bg-card2);border-radius:8px;padding:7px 8px;text-align:center}
+.cs-stat-val{font-size:18px;font-weight:800;line-height:1}
+.cs-stat-lbl{font-size:9px;color:var(--text-muted);margin-top:2px}
+.cs-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:4px}
+.cs-days{display:flex;gap:3px;flex-wrap:wrap}
+.cs-day-pill{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.c1 .cs-day-pill{background:var(--c1b);color:var(--c1)}
+.c2 .cs-day-pill{background:var(--c2b);color:var(--c2)}
+.c3 .cs-day-pill{background:var(--c3b);color:var(--c3)}
+.c4 .cs-day-pill{background:var(--c4b);color:var(--c4)}
+.cs-view-btn{font-size:10px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:3px;font-weight:600}
+
+/* ── SCHEDULE SECTION ── */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.section-title i{color:var(--accent)}
+.section-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+.schedule-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:22px}
+.schedule-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.schedule-scroll::-webkit-scrollbar{height:4px}
+.schedule-scroll::-webkit-scrollbar-track{background:var(--bg-card2)}
+.schedule-scroll::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+.sch-table{width:100%;border-collapse:collapse;min-width:680px}
+.sch-table th{padding:0;font-weight:700;font-size:12px}
+.sch-table td{padding:0;vertical-align:top}
+
+.sch-corner{background:var(--bg-card2);padding:12px 10px;text-align:center;font-size:10px;color:var(--text-muted);font-weight:700;border-bottom:2px solid var(--border)}
+.sch-day-hdr{padding:12px 8px;text-align:center;border-bottom:2px solid var(--border);border-right:1px solid var(--border);background:var(--bg-card2);transition:background .2s}
+.sch-day-hdr.is-today{background:rgba(74,144,217,.12);position:relative}
+.sch-day-hdr.is-today::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent)}
+.day-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.day-date{font-size:10px;color:var(--text-muted)}
+.is-today .day-name{color:var(--accent)}
+.is-today .day-date{color:rgba(74,144,217,.7)}
+.today-badge{display:inline-block;background:var(--accent);color:#fff;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;margin-top:3px}
+
+.sch-time-cell{background:var(--bg-card2);border-bottom:1px solid var(--border);padding:0;min-width:80px;max-width:80px;width:80px}
+.time-inner{padding:10px 8px;text-align:center}
+.time-period{font-size:10px;font-weight:800;color:var(--accent);display:block;margin-bottom:3px}
+.time-range{font-size:9px;color:var(--text-muted);line-height:1.6}
+.sch-time-cell.break-cell{background:rgba(255,255,255,.018)}
+.break-inner{padding:6px 8px;text-align:center}
+.break-label{font-size:9px;color:rgba(255,255,255,.2);font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px}
+
+.sch-cell{border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:relative;min-height:76px}
+.sch-cell.is-today-col{background:rgba(74,144,217,.04)}
+.sch-cell.break-row{min-height:28px;background:rgba(255,255,255,.015)}
+.sch-cell:last-child,.sch-time-cell:last-child{border-bottom:none}
+
+.class-block{position:absolute;inset:5px;border-radius:8px;padding:7px 8px;cursor:pointer;transition:all .22s;display:flex;flex-direction:column;justify-content:space-between;border:1px solid transparent}
+.class-block:hover{transform:scale(1.03);z-index:10;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.class-block.cb-c1{background:var(--c1b);border-color:rgba(239,68,68,.25);color:var(--c1)}
+.class-block.cb-c2{background:var(--c2b);border-color:rgba(74,144,217,.25);color:var(--c2)}
+.class-block.cb-c3{background:var(--c3b);border-color:rgba(6,214,160,.25);color:var(--c3)}
+.class-block.cb-c4{background:var(--c4b);border-color:rgba(243,156,18,.25);color:var(--c4)}
+.class-block.is-now{box-shadow:0 0 0 2px currentColor,0 4px 18px rgba(0,0,0,.3);animation:glowPulse 2.5s infinite}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 2px currentColor,0 4px 18px rgba(0,0,0,.3)}50%{box-shadow:0 0 0 3px currentColor,0 6px 22px rgba(0,0,0,.4)}}
+.cb-top{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.cb-name{font-size:11px;font-weight:800;line-height:1.3}
+.cb-grade{font-size:9.5px;opacity:.8;margin-top:2px}
+.cb-room{font-size:9px;opacity:.65;display:flex;align-items:center;gap:3px;margin-top:1px}
+.cb-now-badge{font-size:8px;font-weight:700;background:currentColor;color:white;padding:1px 5px;border-radius:8px;opacity:.9;white-space:nowrap}
+.cb-cnt{font-size:9.5px;font-weight:700;display:flex;align-items:center;gap:3px;opacity:.75}
+
+/* ── LEGEND ── */
+.sch-legend{display:flex;align-items:center;gap:16px;padding:12px 16px;border-top:1px solid var(--border);flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-sep{width:1px;height:16px;background:var(--border)}
+
+/* ── STUDENT LISTS SECTION ── */
+.student-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.stu-class-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.stu-class-tabs::-webkit-scrollbar{height:0}
+.stu-tab{padding:12px 18px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-muted);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px;background:none;border-top:none;border-left:none;border-right:none;font-family:'Vazirmatn',sans-serif;flex-shrink:0}
+.stu-tab:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.stu-tab.active{color:var(--text);border-bottom-color:var(--accent);background:rgba(74,144,217,.06)}
+.stu-tab .tab-cnt{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,.08)}
+.stu-tab.active .tab-cnt{background:var(--accent);color:#fff}
+
+.stu-toolbar{padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.search-box{position:relative;display:flex;align-items:center}
+.search-box input{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 34px 8px 10px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12px;width:200px;outline:none;transition:all .22s}
+.search-box input:focus{border-color:var(--accent);width:230px}
+.search-box input::placeholder{color:var(--text-muted)}
+.search-box i{position:absolute;right:11px;color:var(--text-muted);font-size:12px;pointer-events:none}
+.stu-count-badge{font-size:12px;color:var(--text-muted);font-weight:600}
+.stu-count-badge strong{color:var(--text)}
+.stu-export-btn{margin-right:auto;padding:7px 13px;border-radius:var(--radius-sm);border:1px solid rgba(6,214,160,.3);background:rgba(6,214,160,.08);color:var(--accent3);font-family:'Vazirmatn',sans-serif;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
+.stu-export-btn:hover{background:rgba(6,214,160,.15);border-color:rgba(6,214,160,.5)}
+
+.stu-list-wrap{max-height:420px;overflow-y:auto}
+.stu-list-wrap::-webkit-scrollbar{width:4px}
+.stu-list-wrap::-webkit-scrollbar-track{background:var(--bg-card2)}
+.stu-list-wrap::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:2px}
+
+.stu-table{width:100%;border-collapse:collapse}
+.stu-table thead th{padding:9px 14px;font-size:11px;font-weight:700;color:var(--text-muted);background:var(--bg-card2);text-align:right;white-space:nowrap;position:sticky;top:0;z-index:1}
+.stu-table thead th:first-child{border-radius:0}
+.stu-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:default}
+.stu-table tbody tr:last-child{border-bottom:none}
+.stu-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.stu-table td{padding:9px 14px;font-size:12.5px}
+.td-num{font-size:11px;color:var(--text-muted);text-align:center;width:36px}
+.td-av{width:44px}
+.av-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.td-name{font-weight:600}
+.td-name .warn-badge{font-size:9px;color:var(--accent5);font-weight:700;margin-right:6px;display:inline-flex;align-items:center;gap:2px}
+.td-code{font-size:11.5px;color:var(--text-muted);direction:ltr}
+.td-status{}
+
+.stu-empty{padding:50px 20px;text-align:center}
+.stu-empty i{font-size:40px;color:rgba(74,144,217,.2);display:block;margin-bottom:12px}
+.stu-empty p{font-size:13px;color:var(--text-muted)}
+
+.stu-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.05);flex-wrap:wrap;gap:8px}
+.stu-footer-stats{display:flex;gap:14px;flex-wrap:wrap}
+.sf-stat{font-size:11px;color:var(--text-muted)}
+.sf-stat strong{color:var(--text)}
+
+/* ── SLIDE PANEL ── */
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s}
+.panel-overlay.open{opacity:1;pointer-events:all}
+.slide-panel{position:fixed;left:0;top:0;bottom:0;width:440px;max-width:95vw;background:var(--bg-card);border-right:1px solid rgba(74,144,217,.2);z-index:401;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:6px 0 32px rgba(0,0,0,.4)}
+.slide-panel.open{transform:translateX(0)}
+.panel-hdr{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.panel-class-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.panel-info{flex:1;min-width:0}
+.panel-class-name{font-size:14px;font-weight:800;margin-bottom:3px}
+.panel-class-sub{font-size:11px;color:var(--text-muted)}
+.panel-close{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.panel-close:hover{background:rgba(231,76,60,.2);color:var(--accent5)}
+.panel-meta{padding:12px 18px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)}
+.panel-meta-item i{font-size:10px}
+.panel-sessions{padding:12px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-sessions-title{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.session-pills{display:flex;gap:6px;flex-wrap:wrap}
+.session-pill{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
+.panel-search{padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-search-box{position:relative;display:flex;align-items:center}
+.panel-search-box input{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 34px 8px 10px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.panel-search-box input:focus{border-color:var(--accent)}
+.panel-search-box input::placeholder{color:var(--text-muted)}
+.panel-search-box i{position:absolute;right:11px;color:var(--text-muted);font-size:12px;pointer-events:none}
+.panel-body{flex:1;overflow-y:auto;padding:8px 0}
+.panel-body::-webkit-scrollbar{width:3px}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:2px}
+.panel-stu-row{display:flex;align-items:center;gap:10px;padding:8px 18px;transition:background .15s}
+.panel-stu-row:hover{background:rgba(255,255,255,.03)}
+.p-num{font-size:11px;color:var(--text-muted);min-width:22px;text-align:center;flex-shrink:0}
+.p-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.p-name{flex:1;min-width:0;font-size:12.5px;font-weight:600}
+.p-code{font-size:10.5px;color:var(--text-muted);direction:ltr}
+.panel-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.panel-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;border:1px solid transparent}
+.pbtn-primary{background:linear-gradient(135deg,var(--accent),#3674c7);color:#fff;box-shadow:0 3px 12px rgba(74,144,217,.3)}
+.pbtn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(74,144,217,.4)}
+.pbtn-secondary{background:rgba(255,255,255,.05);color:var(--text-muted);border-color:var(--border)}
+.pbtn-secondary:hover{background:rgba(255,255,255,.09);color:var(--text)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--bg-card);border:1px solid rgba(46,204,113,.3);border-radius:var(--radius-sm);padding:12px 22px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#2ecc71;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:600;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{color:var(--accent5);border-color:rgba(231,76,60,.3)}
+
+/* ── MOBILE TOGGLE ── */
+.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:var(--radius-sm);cursor:pointer;align-items:center;justify-content:center;font-size:18px}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199}
+.sb-overlay.on{display:block}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.class-summary-grid{animation:fadeUp .4s .05s ease both}
+.schedule-wrap{animation:fadeUp .4s .12s ease both}
+.student-section{animation:fadeUp .4s .2s ease both}
+.cs-card:nth-child(1){animation:fadeUp .4s .05s ease both}
+.cs-card:nth-child(2){animation:fadeUp .4s .1s ease both}
+.cs-card:nth-child(3){animation:fadeUp .4s .15s ease both}
+.cs-card:nth-child(4){animation:fadeUp .4s .2s ease both}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){.class-summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1060px){:root{--sidebar-w:210px}.main-content{padding:20px 14px 32px}}
+@media(max-width:768px){
+  .menu-toggle{display:flex}.sidebar{transform:translateX(110%)}.sidebar.open{transform:translateX(0)}
+  .main-content{margin-right:0;padding:64px 12px 28px}
+  .class-summary-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .top-actions .action-btn span{display:none}.top-actions .action-btn{padding:0 10px}
+  .action-btn.primary span,.action-btn.green span{display:none}
+  .search-box input{width:160px}.search-box input:focus{width:170px}
+}
+@media(max-width:480px){
+  .class-summary-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .cs-card{padding:12px 10px}.cs-stats{gap:5px}.cs-stat-val{font-size:16px}
+  .slide-panel{width:100vw}
+}
+@media(max-width:380px){
+  .class-summary-grid{grid-template-columns:repeat(1,1fr)}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sb-overlay" id="sbOverlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بور<span>بور</span></div>
+
+  <div class="teacher-block">
+    <div class="teacher-avatar">م</div>
+    <div>
+      <div class="teacher-name">مریم رضایی</div>
+      <div class="teacher-role">معلم فیزیک</div>
+      <div class="teacher-badge">پایه یازدهم</div>
+    </div>
+  </div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_dashboard .html"><i class="fas fa-home"></i> داشبورد</a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_attendance.html"><i class="fas fa-clipboard-check"></i> ثبت حضور و غیاب</a>
+  </div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_grades.html"><i class="fas fa-star"></i> نمرات</a>
+  </div>
+  <div class="nav-item active">
+    <a href="../html/teacher_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_notices.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۴</span></a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_profile.html"><i class="fas fa-cog"></i> تنظیمات</a>
+  </div>
+  <div class="nav-item">
+    <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+  </div>
+
+  <div class="sidebar-footer">بوربور v1.0 — سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div>
+      <h1 class="page-title"><span>برنامه هفتگی</span> — مریم رضایی</h1>
+      <div class="page-sub"><i class="fas fa-circle"></i> سال تحصیلی ۱۴۰۴–۱۴۰۵ &nbsp;|&nbsp; ۴ کلاس &nbsp;|&nbsp; ۱۱۲ دانش‌آموز</div>
+    </div>
+    <div class="top-actions">
+      <button class="action-btn primary" onclick="exportAllExcel()"><i class="fas fa-file-excel"></i><span>خروجی Excel</span></button>
+      <button class="action-btn green" onclick="printSchedule()"><i class="fas fa-print"></i><span>چاپ</span></button>
+      <div class="action-btn icon-btn" style="position:relative"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">م</div>
+    </div>
+  </div>
+
+  <!-- CLASS SUMMARY CARDS -->
+  <div class="class-summary-grid" id="classSummaryGrid"></div>
+
+  <!-- WEEKLY SCHEDULE -->
+  <div class="section-header">
+    <div>
+      <div class="section-title"><i class="fas fa-calendar-week"></i> برنامه هفتگی</div>
+      <div class="section-sub">روی هر کلاس کلیک کنید تا جزئیات و دانش‌آموزان را ببینید</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div id="weekNavBtns" style="display:flex;gap:6px">
+        <button class="action-btn icon-btn" onclick="changeWeek(-1)" title="هفته قبل"><i class="fas fa-chevron-right"></i></button>
+        <button class="action-btn" onclick="goToCurrentWeek()" id="todayWeekBtn" style="font-size:11px;padding:0 12px">این هفته</button>
+        <button class="action-btn icon-btn" onclick="changeWeek(1)" title="هفته بعد"><i class="fas fa-chevron-left"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="schedule-wrap">
+    <div class="schedule-scroll">
+      <table class="sch-table" id="scheduleTable"></table>
+    </div>
+    <div class="sch-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--c1b);border:1px solid var(--c1)"></div>یازدهم تجربی الف</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--c2b);border:1px solid var(--c2)"></div>یازدهم تجربی ب</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--c3b);border:1px solid var(--c3)"></div>دوازدهم تجربی الف</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--c4b);border:1px solid var(--c4)"></div>دوازدهم تجربی ب</div>
+      <div class="legend-sep"></div>
+      <div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;border:2px solid var(--accent)"></div>الان</div>
+    </div>
+  </div>
+
+  <!-- STUDENT LISTS -->
+  <div class="section-header">
+    <div>
+      <div class="section-title"><i class="fas fa-users"></i> لیست دانش‌آموزان</div>
+      <div class="section-sub">جستجو، مرتب‌سازی و خروجی هر کلاس</div>
+    </div>
+  </div>
+
+  <div class="student-section">
+    <div class="stu-class-tabs" id="stuClassTabs"></div>
+    <div class="stu-toolbar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="stuSearchInput" placeholder="جستجوی نام یا کد..." oninput="filterStudents(this.value)">
+      </div>
+      <span class="stu-count-badge" id="stuCountBadge"></span>
+      <button class="stu-export-btn" onclick="exportClassExcel()" id="exportClassBtn">
+        <i class="fas fa-file-excel"></i> خروجی Excel این کلاس
+      </button>
+    </div>
+    <div class="stu-list-wrap">
+      <table class="stu-table">
+        <thead>
+          <tr>
+            <th class="td-num">#</th>
+            <th class="td-av"></th>
+            <th>نام و نام خانوادگی</th>
+            <th>کد دانش‌آموزی</th>
+          </tr>
+        </thead>
+        <tbody id="stuTableBody"></tbody>
+      </table>
+    </div>
+    <div class="stu-footer">
+      <div class="stu-footer-stats" id="stuFooterStats"></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- SLIDE PANEL -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="slide-panel" id="slidePanel">
+  <div class="panel-hdr">
+    <div class="panel-class-icon" id="panelIcon"></div>
+    <div class="panel-info">
+      <div class="panel-class-name" id="panelName"></div>
+      <div class="panel-class-sub" id="panelSub"></div>
+    </div>
+    <button class="panel-close" onclick="closePanel()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="panel-meta" id="panelMeta"></div>
+  <div class="panel-sessions">
+    <div class="panel-sessions-title"><i class="fas fa-clock" style="margin-left:4px"></i>جلسات این هفته</div>
+    <div class="session-pills" id="panelSessions"></div>
+  </div>
+  <div class="panel-search">
+    <div class="panel-search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="panelSearchInput" placeholder="جستجوی دانش‌آموز..." oninput="filterPanelStudents(this.value)">
+    </div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+  <div class="panel-footer">
+    <button class="panel-btn pbtn-secondary" onclick="goToAttendance()"><i class="fas fa-clipboard-check"></i> ثبت حضور</button>
+    <button class="panel-btn pbtn-primary" onclick="exportPanelExcel()"><i class="fas fa-file-excel"></i> خروجی Excel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg"></span></div>
+
+<script>
+/* ═══════════════════════════════════
+   DATA
+═══════════════════════════════════ */
+const CLASSES_DATA = [
+  { id:'c1', name:'فیزیک ۱', grade:'یازدهم تجربی الف', room:'کلاس ۲۰۴', icon:'fas fa-atom', cnt:30, colorVar:'--c1', bgVar:'--c1b', shadowVar:'--c1s', cssClass:'c1' },
+  { id:'c2', name:'فیزیک ۱', grade:'یازدهم تجربی ب',   room:'کلاس ۲۰۵', icon:'fas fa-atom', cnt:28, colorVar:'--c2', bgVar:'--c2b', shadowVar:'--c2s', cssClass:'c2' },
+  { id:'c3', name:'فیزیک ۲', grade:'دوازدهم تجربی الف', room:'آزمایشگاه ۱', icon:'fas fa-flask', cnt:28, colorVar:'--c3', bgVar:'--c3b', shadowVar:'--c3s', cssClass:'c3' },
+  { id:'c4', name:'فیزیک ۲', grade:'دوازدهم تجربی ب',  room:'کلاس ۳۰۱', icon:'fas fa-flask', cnt:26, colorVar:'--c4', bgVar:'--c4b', shadowVar:'--c4s', cssClass:'c4' },
+];
+
+const TIME_SLOTS = [
+  { id:0, start:'07:30', end:'08:15', startM:7*60+30, endM:8*60+15, label:'اول' },
+  { id:1, start:'08:20', end:'09:05', startM:8*60+20, endM:9*60+5,  label:'دوم' },
+  { id:2, start:'09:10', end:'09:55', startM:9*60+10, endM:9*60+55, label:'سوم' },
+  // break
+  { id:3, start:'10:15', end:'11:00', startM:10*60+15, endM:11*60+0, label:'چهارم' },
+  { id:4, start:'11:10', end:'11:55', startM:11*60+10, endM:11*60+55, label:'پنجم' },
+  { id:5, start:'12:05', end:'12:50', startM:12*60+5,  endM:12*60+50, label:'ششم' },
+];
+
+const DAYS = ['شنبه','یک‌شنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه'];
+
+// day: 0=Sat(شنبه) ... 5=Thu(پنج‌شنبه), slot: 0-5
+const SCHEDULE_CELLS = [
+  {day:0, slot:0, cid:'c3'}, // شنبه ساعت اول
+  {day:0, slot:3, cid:'c4'}, // شنبه ساعت چهارم
+  {day:1, slot:1, cid:'c1'}, // یک‌شنبه ساعت دوم
+  {day:1, slot:4, cid:'c2'}, // یک‌شنبه ساعت پنجم
+  {day:2, slot:2, cid:'c3'}, // دوشنبه ساعت سوم
+  {day:2, slot:4, cid:'c4'}, // دوشنبه ساعت پنجم
+  {day:3, slot:0, cid:'c1'}, // سه‌شنبه ساعت اول  ← matches dashboard
+  {day:3, slot:1, cid:'c2'}, // سه‌شنبه ساعت دوم  ← NOW in dashboard
+  {day:3, slot:3, cid:'c3'}, // سه‌شنبه ساعت چهارم ← matches dashboard
+  {day:4, slot:1, cid:'c4'}, // چهارشنبه ساعت دوم
+  {day:4, slot:3, cid:'c1'}, // چهارشنبه ساعت چهارم
+  {day:5, slot:0, cid:'c2'}, // پنج‌شنبه ساعت اول
+  {day:5, slot:2, cid:'c4'}, // پنج‌شنبه ساعت سوم
+];
+
+const STUDENTS = {
+  c1:[
+    {id:'s101',name:'نیلوفر حسینی',code:'۰۱۰۱'},{id:'s102',name:'رضا نوروزی',code:'۰۱۰۲'},
+    {id:'s103',name:'سارا کریمی',code:'۰۱۰۳'},{id:'s104',name:'محمد علوی',code:'۰۱۰۴'},
+    {id:'s105',name:'فاطمه رضایی',code:'۰۱۰۵'},{id:'s106',name:'امیر تهرانی',code:'۰۱۰۶'},
+    {id:'s107',name:'مریم صادقی',code:'۰۱۰۷'},{id:'s108',name:'حسین احمدی',code:'۰۱۰۸'},
+    {id:'s109',name:'ندا کاظمی',code:'۰۱۰۹'},{id:'s110',name:'آرش رستمی',code:'۰۱۱۰'},
+    {id:'s111',name:'شیما بهرامی',code:'۰۱۱۱'},{id:'s112',name:'پارسا نیکنام',code:'۰۱۱۲'},
+    {id:'s113',name:'الناز قاسمی',code:'۰۱۱۳'},{id:'s114',name:'یاسر محمدی',code:'۰۱۱۴'},
+    {id:'s115',name:'روژان حیدری',code:'۰۱۱۵'},{id:'s116',name:'کیانوش صفری',code:'۰۱۱۶'},
+    {id:'s117',name:'تینا مرادی',code:'۰۱۱۷'},{id:'s118',name:'سیاوش اکبری',code:'۰۱۱۸'},
+    {id:'s119',name:'گلناز شکوهی',code:'۰۱۱۹'},{id:'s120',name:'بهروز سلطانی',code:'۰۱۲۰'},
+    {id:'s121',name:'لیلا نظری',code:'۰۱۲۱'},{id:'s122',name:'میثم رحیمی',code:'۰۱۲۲'},
+    {id:'s123',name:'سوفیا اسدی',code:'۰۱۲۳'},{id:'s124',name:'فرزاد جعفری',code:'۰۱۲۴'},
+    {id:'s125',name:'مهسا ولی‌زاده',code:'۰۱۲۵'},{id:'s126',name:'دانیال پور',code:'۰۱۲۶'},
+    {id:'s127',name:'رویا کریمیان',code:'۰۱۲۷'},{id:'s128',name:'آیدا شیرازی',code:'۰۱۲۸'},
+    {id:'s129',name:'علیرضا منتظری',code:'۰۱۲۹'},{id:'s130',name:'بیتا خسروی',code:'۰۱۳۰'},
+  ],
+  c2:[
+    {id:'s201',name:'علی مختاری',code:'۰۲۰۱'},{id:'s202',name:'زهرا موسوی',code:'۰۲۰۲'},
+    {id:'s203',name:'محمد کریمی',code:'۰۲۰۳'},{id:'s204',name:'سارا احمدی',code:'۰۲۰۴'},
+    {id:'s205',name:'حامد شریفی',code:'۰۲۰۵'},{id:'s206',name:'فرناز طاهری',code:'۰۲۰۶'},
+    {id:'s207',name:'امیرعلی نصیری',code:'۰۲۰۷'},{id:'s208',name:'سمیرا داودی',code:'۰۲۰۸'},
+    {id:'s209',name:'رامین اسکندری',code:'۰۲۰۹'},{id:'s210',name:'نازنین فروغی',code:'۰۲۱۰'},
+    {id:'s211',name:'مهدی جوادی',code:'۰۲۱۱'},{id:'s212',name:'یلدا پورعلی',code:'۰۲۱۲'},
+    {id:'s213',name:'صادق معتمدی',code:'۰۲۱۳'},{id:'s214',name:'ریحانه گلزار',code:'۰۲۱۴'},
+    {id:'s215',name:'کاوه ایمانی',code:'۰۲۱۵'},{id:'s216',name:'شبنم اسماعیلی',code:'۰۲۱۶'},
+    {id:'s217',name:'حمید مصطفوی',code:'۰۲۱۷'},{id:'s218',name:'آزاده پارسا',code:'۰۲۱۸'},
+    {id:'s219',name:'بابک زارعی',code:'۰۲۱۹'},{id:'s220',name:'مینا طباطبایی',code:'۰۲۲۰'},
+    {id:'s221',name:'امید قنبری',code:'۰۲۲۱'},{id:'s222',name:'درسا حمیدی',code:'۰۲۲۲'},
+    {id:'s223',name:'وحید رهنما',code:'۰۲۲۳'},{id:'s224',name:'الهه سادات',code:'۰۲۲۴'},
+    {id:'s225',name:'ستار محمودی',code:'۰۲۲۵'},{id:'s226',name:'نرگس امینی',code:'۰۲۲۶'},
+    {id:'s227',name:'جواد حقیقی',code:'۰۲۲۷'},{id:'s228',name:'سانا رزم‌آرا',code:'۰۲۲۸'},
+  ],
+  c3:[
+    {id:'s301',name:'احمد رزاقی',code:'۰۳۰۱'},{id:'s302',name:'مرضیه تقوی',code:'۰۳۰۲'},
+    {id:'s303',name:'سینا بیات',code:'۰۳۰۳'},{id:'s304',name:'فریده سهرابی',code:'۰۳۰۴'},
+    {id:'s305',name:'مسعود صفوی',code:'۰۳۰۵'},{id:'s306',name:'حانیه دهقان',code:'۰۳۰۶'},
+    {id:'s307',name:'شاهین ملکی',code:'۰۳۰۷'},{id:'s308',name:'زینب حیدری',code:'۰۳۰۸'},
+    {id:'s309',name:'میلاد کوهی',code:'۰۳۰۹'},{id:'s310',name:'آرمین قریشی',code:'۰۳۱۰'},
+    {id:'s311',name:'لادن نجفی',code:'۰۳۱۱'},{id:'s312',name:'ایمان فلاح',code:'۰۳۱۲'},
+    {id:'s313',name:'ترانه میری',code:'۰۳۱۳'},{id:'s314',name:'رحمان خلیلی',code:'۰۳۱۴'},
+    {id:'s315',name:'یاسمن سرلک',code:'۰۳۱۵'},{id:'s316',name:'توحید باقری',code:'۰۳۱۶'},
+    {id:'s317',name:'اشکان رئیسی',code:'۰۳۱۷'},{id:'s318',name:'مژده زمانی',code:'۰۳۱۸'},
+    {id:'s319',name:'نوید قاسم‌پور',code:'۰۳۱۹'},{id:'s320',name:'سپیده محتشم',code:'۰۳۲۰'},
+    {id:'s321',name:'برزو فخری',code:'۰۳۲۱'},{id:'s322',name:'نسترن یزدانی',code:'۰۳۲۲'},
+    {id:'s323',name:'کامران داریوش',code:'۰۳۲۳'},{id:'s324',name:'هلیا طاهرزاده',code:'۰۳۲۴'},
+    {id:'s325',name:'شروین علی‌پور',code:'۰۳۲۵'},{id:'s326',name:'مهتاب سیاوشی',code:'۰۳۲۶'},
+    {id:'s327',name:'ارسلان کمالی',code:'۰۳۲۷'},{id:'s328',name:'دینا فریدپور',code:'۰۳۲۸'},
+  ],
+  c4:[
+    {id:'s401',name:'رامتین آذری',code:'۰۴۰۱'},{id:'s402',name:'ساناز شهیدی',code:'۰۴۰۲'},
+    {id:'s403',name:'کورش ملک‌زاده',code:'۰۴۰۳'},{id:'s404',name:'مهناز قربانی',code:'۰۴۰۴'},
+    {id:'s405',name:'فیروز دانشور',code:'۰۴۰۵'},{id:'s406',name:'شادی اسلامی',code:'۰۴۰۶'},
+    {id:'s407',name:'بردیا خاکی',code:'۰۴۰۷'},{id:'s408',name:'نیکا وطنی',code:'۰۴۰۸'},
+    {id:'s409',name:'هومن صدیق',code:'۰۴۰۹'},{id:'s410',name:'لاله عسگری',code:'۰۴۱۰'},
+    {id:'s411',name:'ارشیا فتحی',code:'۰۴۱۱'},{id:'s412',name:'نیایش ربیعی',code:'۰۴۱۲'},
+    {id:'s413',name:'سهند مرزبان',code:'۰۴۱۳'},{id:'s414',name:'پریسا جلالی',code:'۰۴۱۴'},
+    {id:'s415',name:'یانیس قلی‌پور',code:'۰۴۱۵'},{id:'s416',name:'تابان سهیلی',code:'۰۴۱۶'},
+    {id:'s417',name:'دامون پیروزی',code:'۰۴۱۷'},{id:'s418',name:'لیلا خان‌محمدی',code:'۰۴۱۸'},
+    {id:'s419',name:'مانی حسن‌پور',code:'۰۴۱۹'},{id:'s420',name:'ستایش نور',code:'۰۴۲۰'},
+    {id:'s421',name:'شایان رنجبر',code:'۰۴۲۱'},{id:'s422',name:'ارغوان میرزایی',code:'۰۴۲۲'},
+    {id:'s423',name:'آرتین صمدی',code:'۰۴۲۳'},{id:'s424',name:'شکوفه مرادی',code:'۰۴۲۴'},
+    {id:'s425',name:'کیارش رهبر',code:'۰۴۲۵'},{id:'s426',name:'پانته‌آ سرمدی',code:'۰۴۲۶'},
+  ],
+};
+
+/* ═══════════════════════════════════
+   STATE
+═══════════════════════════════════ */
+let activeClassId = 'c1';
+let stuSearchQuery = '';
+let panelClassId = null;
+let panelSearchQuery = '';
+let weekOffset = 0; // 0 = current week
+
+const f = n => String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+
+const AV_BG = ['rgba(74,144,217,.2)','rgba(142,95,212,.2)','rgba(6,214,160,.2)','rgba(243,156,18,.2)','rgba(231,76,60,.2)','rgba(46,204,113,.2)'];
+const AV_CL = ['#4a90d9','#8e5fd4','#06d6a0','#f39c12','#e74c3c','#2ecc71'];
+function avStyle(name, i) {
+  const idx = i % 6;
+  return `background:${AV_BG[idx]};color:${AV_CL[idx]}`;
+}
+
+function getClassById(cid) { return CLASSES_DATA.find(c => c.id === cid); }
+function getCSSVar(varName) { return getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); }
+
+/* ═══════════════════════════════════
+   TODAY / TIME HELPERS
+═══════════════════════════════════ */
+// JS: 0=Sun,1=Mon,...,6=Sat → Jalali schedule: 0=Sat,1=Sun,...,5=Thu
+function getTodayScheduleDay() {
+  const d = new Date().getDay(); // 0=Sun..6=Sat
+  const map = {6:0, 0:1, 1:2, 2:3, 3:4, 4:5};
+  return map.hasOwnProperty(d) ? map[d] : -1; // -1 = Friday
+}
+
+function getCurrentPeriod() {
+  const now = new Date();
+  const mins = now.getHours() * 60 + now.getMinutes();
+  return TIME_SLOTS.findIndex(s => mins >= s.startM && mins <= s.endM);
+}
+
+function getWeekDates() {
+  // Get current week's Saturday (Jalali week starts Sat)
+  const today = new Date();
+  const jsDay = today.getDay(); // 0=Sun,6=Sat
+  // Days since Saturday (Jalali week start)
+  const daysSinceSat = (jsDay + 1) % 7; // Sat=0, Sun=1, ..., Fri=6
+  const satDate = new Date(today);
+  satDate.setDate(today.getDate() - daysSinceSat + (weekOffset * 7));
+  
+  const dates = [];
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(satDate);
+    d.setDate(satDate.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function formatDateFa(date) {
+  // Simple Gregorian to Jalali approximation for display
+  const m = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+  // Use Jalali conversion
+  const [jy, jm, jd] = toJalali(date.getFullYear(), date.getMonth()+1, date.getDate());
+  return `${f(jd)} ${m[jm-1]}`;
+}
+
+// Minimal Jalali converter
+function toJalali(gy, gm, gd) {
+  const breaks = [-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+  const bl = breaks.length;
+  const jy1 = gy - 1600, gm1 = gm - 1, gd1 = gd - 1;
+  let gDayNo = 365*jy1 + Math.floor((jy1+3)/4) - Math.floor((jy1+99)/100) + Math.floor((jy1+399)/400);
+  const md = [31,28+((gy%4===0&&gy%100!==0)||gy%400===0?1:0),31,30,31,30,31,31,30,31,30,31];
+  for(let i=0;i<gm1;i++) gDayNo += md[i];
+  gDayNo += gd1;
+  let jDayNo = gDayNo - 79;
+  const jNp = Math.floor(jDayNo/12053); jDayNo %= 12053;
+  let jy2 = 979+33*jNp+4*Math.floor(jDayNo/1461); jDayNo %= 1461;
+  if(jDayNo >= 366){ jy2 += Math.floor((jDayNo-1)/365); jDayNo = (jDayNo-1)%365; }
+  let jm2,jd2;
+  const jmd = [31,31,31,31,31,31,30,30,30,30,30,29];
+  for(let i=0;i<11&&jDayNo>=jmd[i];i++) jDayNo -= jmd[i];
+  jm2 = i+1; jd2 = jDayNo+1;
+  return [jy2, jm2, jd2];
+}
+
+/* ═══════════════════════════════════
+   CLASS SUMMARY CARDS
+═══════════════════════════════════ */
+function renderClassSummaryCards() {
+  const grid = document.getElementById('classSummaryGrid');
+  const sessions = {};
+  CLASSES_DATA.forEach(c => { sessions[c.id] = []; });
+  SCHEDULE_CELLS.forEach(cell => {
+    if (sessions[cell.cid]) sessions[cell.cid].push(cell);
+  });
+
+  grid.innerHTML = CLASSES_DATA.map(cls => {
+    const sess = sessions[cls.id];
+    const sessionCount = sess.length;
+    const dayNames = [...new Set(sess.map(s => DAYS[s.day]))];
+    const color = getCSSVar(cls.colorVar);
+
+    return `<div class="cs-card ${cls.cssClass}" onclick="openPanelForClass('${cls.id}')" style="animation:fadeUp .4s ease both">
+      <div class="cs-top">
+        <div class="cs-icon"><i class="${cls.icon}"></i></div>
+        <div>
+          <div class="cs-name">${cls.name}</div>
+          <div class="cs-grade">${cls.grade}</div>
+        </div>
+      </div>
+      <div class="cs-stats">
+        <div class="cs-stat">
+          <div class="cs-stat-val" style="color:${color}">${f(cls.cnt)}</div>
+          <div class="cs-stat-lbl">دانش‌آموز</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-val" style="color:${color}">${f(sessionCount)}</div>
+          <div class="cs-stat-lbl">جلسه/هفته</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-val" style="color:${color}">${f(sessionCount * 4)}</div>
+          <div class="cs-stat-lbl">جلسه/ماه</div>
+        </div>
+      </div>
+      <div class="cs-footer">
+        <div class="cs-days">${dayNames.map(d=>`<span class="cs-day-pill">${d}</span>`).join('')}</div>
+        <div class="cs-view-btn"><i class="fas fa-users" style="font-size:9px"></i> ${f(cls.cnt)} نفر</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════
+   SCHEDULE TABLE
+═══════════════════════════════════ */
+function renderScheduleTable() {
+  const table = document.getElementById('scheduleTable');
+  const todayDay = getTodayScheduleDay() + (weekOffset === 0 ? 0 : 999); // only highlight today if current week
+  const currentPeriod = weekOffset === 0 ? getCurrentPeriod() : -1;
+  const weekDates = getWeekDates();
+
+  // Build lookup map: day -> slot -> cid
+  const cellMap = {};
+  SCHEDULE_CELLS.forEach(c => {
+    if (!cellMap[c.day]) cellMap[c.day] = {};
+    cellMap[c.day][c.slot] = c.cid;
+  });
+
+  // ── HEADER ROW ──
+  let thead = `<thead><tr>
+    <th><div class="sch-corner"><i class="fas fa-clock"></i></div></th>`;
+  for (let d = 0; d < 6; d++) {
+    const isToday = (weekOffset === 0 && d === getTodayScheduleDay());
+    const dateStr = formatDateFa(weekDates[d]);
+    thead += `<th><div class="sch-day-hdr${isToday ? ' is-today' : ''}">
+      <div class="day-name">${DAYS[d]}</div>
+      <div class="day-date">${dateStr}</div>
+      ${isToday ? '<div class="today-badge">امروز</div>' : ''}
+    </div></th>`;
+  }
+  thead += `</tr></thead>`;
+
+  // ── BODY ROWS ──
+  let tbody = '<tbody>';
+  const breakAfterSlot = 2; // break between slot 2 and 3
+
+  TIME_SLOTS.forEach((slot, slotIdx) => {
+    // Insert visual break row before period 3 (index 3)
+    if (slotIdx === 3) {
+      tbody += `<tr>
+        <td class="sch-time-cell break-cell">
+          <div class="break-inner"><span class="break-label"><i class="fas fa-coffee"></i> تفریح</span></div>
+        </td>`;
+      for (let d = 0; d < 6; d++) {
+        const isToday = (weekOffset === 0 && d === getTodayScheduleDay());
+        tbody += `<td class="sch-cell break-row${isToday ? ' is-today-col' : ''}"></td>`;
+      }
+      tbody += `</tr>`;
+    }
+
+    const isCurrentPeriod = (slotIdx === currentPeriod);
+    tbody += `<tr>
+      <td class="sch-time-cell">
+        <div class="time-inner">
+          <span class="time-period">${slot.label}</span>
+          <span class="time-range">${slot.start}</span>
+          <span class="time-range">–</span>
+          <span class="time-range">${slot.end}</span>
+        </div>
+      </td>`;
+
+    for (let d = 0; d < 6; d++) {
+      const isToday = (weekOffset === 0 && d === getTodayScheduleDay());
+      const cid = (cellMap[d] && cellMap[d][slotIdx]) || null;
+      const isNow = isToday && isCurrentPeriod && cid;
+
+      if (cid) {
+        const cls = getClassById(cid);
+        tbody += `<td class="sch-cell${isToday ? ' is-today-col' : ''}">
+          <div class="class-block cb-${cid}${isNow ? ' is-now' : ''}" onclick="openPanelForClass('${cid}',${d},${slotIdx})">
+            <div class="cb-top">
+              <div>
+                <div class="cb-name">${cls.name}</div>
+                <div class="cb-grade">${cls.grade.replace('تجربی ','')}</div>
+                <div class="cb-room"><i class="fas fa-door-open" style="font-size:8px"></i>${cls.room}</div>
+              </div>
+              ${isNow ? '<div class="cb-now-badge">الان</div>' : ''}
+            </div>
+            <div class="cb-cnt"><i class="fas fa-users" style="font-size:9px"></i>${f(cls.cnt)}</div>
+          </div>
+        </td>`;
+      } else {
+        tbody += `<td class="sch-cell${isToday ? ' is-today-col' : ''}"></td>`;
+      }
+    }
+    tbody += `</tr>`;
+  });
+  tbody += '</tbody>';
+
+  table.innerHTML = thead + tbody;
+}
+
+function changeWeek(delta) {
+  weekOffset += delta;
+  document.getElementById('todayWeekBtn').style.opacity = weekOffset === 0 ? '0.5' : '1';
+  renderScheduleTable();
+}
+
+function goToCurrentWeek() {
+  weekOffset = 0;
+  document.getElementById('todayWeekBtn').style.opacity = '0.5';
+  renderScheduleTable();
+}
+
+/* ═══════════════════════════════════
+   STUDENT LIST
+═══════════════════════════════════ */
+function renderClassTabs() {
+  const tabs = document.getElementById('stuClassTabs');
+  tabs.innerHTML = CLASSES_DATA.map(cls => `
+    <button class="stu-tab${cls.id === activeClassId ? ' active' : ''}" onclick="switchClassTab('${cls.id}')">
+      <i class="${cls.icon}" style="font-size:12px;color:var(${cls.colorVar})"></i>
+      ${cls.grade.replace('تجربی ','ت.')}
+      <span class="tab-cnt">${f(cls.cnt)}</span>
+    </button>`).join('');
+}
+
+function switchClassTab(cid) {
+  activeClassId = cid;
+  stuSearchQuery = '';
+  document.getElementById('stuSearchInput').value = '';
+  renderClassTabs();
+  renderStudentTable();
+}
+
+function filterStudents(q) {
+  stuSearchQuery = q.trim();
+  renderStudentTable();
+}
+
+function renderStudentTable() {
+  const cls = getClassById(activeClassId);
+  const allStudents = STUDENTS[activeClassId] || [];
+  const filtered = stuSearchQuery
+    ? allStudents.filter(s => s.name.includes(stuSearchQuery) || s.code.includes(stuSearchQuery))
+    : allStudents;
+
+  const badge = document.getElementById('stuCountBadge');
+  badge.innerHTML = stuSearchQuery
+    ? `نمایش <strong>${f(filtered.length)}</strong> از <strong>${f(allStudents.length)}</strong> نفر`
+    : `مجموع: <strong>${f(allStudents.length)}</strong> نفر`;
+
+  const body = document.getElementById('stuTableBody');
+  if (!filtered.length) {
+    body.innerHTML = `<tr><td colspan="4"><div class="stu-empty"><i class="fas fa-search"></i><p>دانش‌آموزی یافت نشد</p></div></td></tr>`;
+  } else {
+    body.innerHTML = filtered.map((s, i) => `
+      <tr>
+        <td class="td-num">${f(i + 1)}</td>
+        <td class="td-av"><div class="av-circle" style="${avStyle(s.name, i)}">${s.name[0]}</div></td>
+        <td class="td-name">${s.name}</td>
+        <td class="td-code">${s.code}</td>
+      </tr>`).join('');
+  }
+
+  // Footer stats
+  const sess = SCHEDULE_CELLS.filter(c => c.cid === activeClassId);
+  document.getElementById('stuFooterStats').innerHTML = `
+    <div class="sf-stat">کلاس: <strong>${cls.name} — ${cls.grade}</strong></div>
+    <div class="sf-stat">اتاق: <strong>${cls.room}</strong></div>
+    <div class="sf-stat">جلسات هفتگی: <strong>${f(sess.length)}</strong></div>
+    <div class="sf-stat">کل دانش‌آموز: <strong>${f(cls.cnt)}</strong></div>
+  `;
+}
+
+/* ═══════════════════════════════════
+   SLIDE PANEL
+═══════════════════════════════════ */
+function openPanelForClass(cid, day, slot) {
+  panelClassId = cid;
+  panelSearchQuery = '';
+  const cls = getClassById(cid);
+  const color = getCSSVar(cls.colorVar);
+  const bg = getCSSVar(cls.bgVar);
+
+  // Header
+  document.getElementById('panelIcon').innerHTML = `<i class="${cls.icon}" style="font-size:20px"></i>`;
+  document.getElementById('panelIcon').style.cssText = `background:${bg};color:${color};width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center`;
+  document.getElementById('panelName').textContent = `${cls.name} — ${cls.grade}`;
+  document.getElementById('panelSub').textContent = `معلم: مریم رضایی`;
+
+  // Meta
+  document.getElementById('panelMeta').innerHTML = `
+    <div class="panel-meta-item"><i class="fas fa-door-open" style="color:${color}"></i>${cls.room}</div>
+    <div class="panel-meta-item"><i class="fas fa-users" style="color:${color}"></i>${f(cls.cnt)} دانش‌آموز</div>
+    <div class="panel-meta-item"><i class="fas fa-calendar-week" style="color:${color}"></i>${f(SCHEDULE_CELLS.filter(c=>c.cid===cid).length)} جلسه در هفته</div>
+  `;
+
+  // Sessions
+  const classSessions = SCHEDULE_CELLS.filter(c => c.cid === cid);
+  document.getElementById('panelSessions').innerHTML = classSessions.map(sess => {
+    const ts = TIME_SLOTS[sess.slot];
+    const isNow = (weekOffset === 0 && sess.day === getTodayScheduleDay() && sess.slot === getCurrentPeriod());
+    return `<div class="session-pill" style="background:${bg};color:${color}">
+      <i class="${isNow ? 'fas fa-circle' : 'far fa-clock'}" style="font-size:${isNow?'7px':'10px'}"></i>
+      ${DAYS[sess.day]} ${ts.start}
+      ${isNow ? '<span style="font-size:8px;background:currentColor;color:white;padding:1px 4px;border-radius:5px">الان</span>' : ''}
+    </div>`;
+  }).join('');
+
+  // Reset search
+  document.getElementById('panelSearchInput').value = '';
+  renderPanelStudents('');
+
+  // Open
+  document.getElementById('panelOverlay').classList.add('open');
+  document.getElementById('slidePanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function filterPanelStudents(q) {
+  panelSearchQuery = q.trim();
+  renderPanelStudents(q.trim());
+}
+
+function renderPanelStudents(q) {
+  const allStudents = STUDENTS[panelClassId] || [];
+  const filtered = q
+    ? allStudents.filter(s => s.name.includes(q) || s.code.includes(q))
+    : allStudents;
+
+  const body = document.getElementById('panelBody');
+  if (!filtered.length) {
+    body.innerHTML = `<div style="padding:30px;text-align:center;color:var(--text-muted)"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>نتیجه‌ای یافت نشد</div>`;
+    return;
+  }
+
+  body.innerHTML = filtered.map((s, i) => `
+    <div class="panel-stu-row">
+      <div class="p-num">${f(i + 1)}</div>
+      <div class="p-av" style="${avStyle(s.name, i)}">${s.name[0]}</div>
+      <div class="p-name">${s.name}</div>
+      <div class="p-code">${s.code}</div>
+    </div>`).join('');
+}
+
+function closePanel() {
+  document.getElementById('panelOverlay').classList.remove('open');
+  document.getElementById('slidePanel').classList.remove('open');
+  document.body.style.overflow = '';
+  panelClassId = null;
+}
+
+function goToAttendance() {
+  showToast('در حال انتقال به صفحه حضور و غیاب...');
+  closePanel();
+}
+
+/* ═══════════════════════════════════
+   EXCEL EXPORT
+═══════════════════════════════════ */
+function buildScheduleSheetData() {
+  const header = ['ساعت / روز', ...DAYS];
+  const rows = [header];
+
+  const cellMap = {};
+  SCHEDULE_CELLS.forEach(c => {
+    if (!cellMap[c.day]) cellMap[c.day] = {};
+    cellMap[c.day][c.slot] = c.cid;
+  });
+
+  TIME_SLOTS.forEach((slot, slotIdx) => {
+    const row = [`ساعت ${slot.label} (${slot.start}–${slot.end})`];
+    for (let d = 0; d < 6; d++) {
+      const cid = (cellMap[d] && cellMap[d][slotIdx]) || null;
+      if (cid) {
+        const cls = getClassById(cid);
+        row.push(`${cls.name} — ${cls.grade}\n${cls.room}`);
+      } else {
+        row.push('');
+      }
+    }
+    rows.push(row);
+  });
+  return rows;
+}
+
+function buildStudentSheetData(cid) {
+  const cls = getClassById(cid);
+  const students = STUDENTS[cid] || [];
+  const sess = SCHEDULE_CELLS.filter(c => c.cid === cid);
+  const sessStr = sess.map(s => `${DAYS[s.day]} ${TIME_SLOTS[s.slot].start}`).join(' | ');
+
+  const header1 = [`کلاس: ${cls.name} — ${cls.grade}`];
+  const header2 = [`اتاق: ${cls.room}   |   جلسات: ${sessStr}   |   تعداد: ${students.length} نفر`];
+  const colHeader = ['ردیف', 'نام و نام خانوادگی', 'کد دانش‌آموزی'];
+  const rows = [header1, header2, [], colHeader];
+  students.forEach((s, i) => rows.push([i + 1, s.name, s.code]));
+  return rows;
+}
+
+function applySheetStyles(ws, headerRows, colCount) {
+  // Set column widths
+  const colWidths = [{ wch: 28 }, { wch: 22 }, { wch: 18 }];
+  while (colWidths.length < colCount) colWidths.push({ wch: 20 });
+  ws['!cols'] = colWidths;
+}
+
+function exportAllExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Schedule
+    const schedData = buildScheduleSheetData();
+    const ws1 = XLSX.utils.aoa_to_sheet(schedData);
+    ws1['!cols'] = [{ wch: 28 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }];
+    ws1['!rows'] = schedData.map((_, i) => ({ hpt: i === 0 ? 24 : 42 }));
+    XLSX.utils.book_append_sheet(wb, ws1, 'برنامه هفتگی');
+
+    // Sheets 2-5: Student lists
+    CLASSES_DATA.forEach(cls => {
+      const data = buildStudentSheetData(cls.id);
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      ws['!cols'] = [{ wch: 8 }, { wch: 24 }, { wch: 16 }];
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, `${cls.grade}`);
+    });
+
+    XLSX.writeFile(wb, 'برنامه_هفتگی_مریم_رضایی.xlsx');
+    showToast('فایل Excel با موفقیت دانلود شد ✓');
+  } catch(e) {
+    showToast('خطا در ایجاد فایل Excel', true);
+    console.error(e);
+  }
+}
+
+function exportClassExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+    const cls = getClassById(activeClassId);
+    const data = buildStudentSheetData(activeClassId);
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols'] = [{ wch: 8 }, { wch: 26 }, { wch: 18 }];
+    ws['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, cls.grade);
+    XLSX.writeFile(wb, `دانش_آموزان_${cls.grade.replace(/\s/g,'_')}.xlsx`);
+    showToast(`لیست ${cls.grade} دانلود شد ✓`);
+  } catch(e) {
+    showToast('خطا در ایجاد فایل', true);
+  }
+}
+
+function exportPanelExcel() {
+  if (!panelClassId) return;
+  try {
+    const wb = XLSX.utils.book_new();
+    const cls = getClassById(panelClassId);
+
+    // Sheet 1: Student list
+    const data = buildStudentSheetData(panelClassId);
+    const ws1 = XLSX.utils.aoa_to_sheet(data);
+    ws1['!cols'] = [{ wch: 8 }, { wch: 26 }, { wch: 18 }];
+    ws1['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+    ];
+    XLSX.utils.book_append_sheet(wb, ws1, 'لیست دانش‌آموزان');
+
+    // Sheet 2: Mini schedule for this class
+    const sess = SCHEDULE_CELLS.filter(c => c.cid === panelClassId);
+    const ws2Data = [
+      [`جلسات هفتگی — ${cls.name} — ${cls.grade}`],
+      [],
+      ['روز', 'ساعت شروع', 'ساعت پایان', 'اتاق'],
+      ...sess.map(s => [DAYS[s.day], TIME_SLOTS[s.slot].start, TIME_SLOTS[s.slot].end, cls.room])
+    ];
+    const ws2 = XLSX.utils.aoa_to_sheet(ws2Data);
+    ws2['!cols'] = [{ wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
+    ws2['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'جلسات هفتگی');
+
+    XLSX.writeFile(wb, `${cls.grade.replace(/\s/g,'_')}.xlsx`);
+    showToast(`فایل ${cls.grade} دانلود شد ✓`);
+  } catch(e) {
+    showToast('خطا در ایجاد فایل', true);
+  }
+}
+
+/* ═══════════════════════════════════
+   PRINT
+═══════════════════════════════════ */
+function printSchedule() {
+  window.print();
+}
+
+/* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+let toastTimer;
+function showToast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  const msgEl = document.getElementById('toastMsg');
+  el.className = 'toast' + (isError ? ' error' : '');
+  icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+  msgEl.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════
+   SIDEBAR MOBILE
+═══════════════════════════════════ */
+const sidebar = document.getElementById('sidebar');
+const sbOverlay = document.getElementById('sbOverlay');
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  sbOverlay.classList.toggle('on');
+});
+sbOverlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  sbOverlay.classList.remove('on');
+});
+
+/* ═══════════════════════════════════
+   KEYBOARD: ESC closes panel
+═══════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && panelClassId) closePanel();
+});
+
+/* ═══════════════════════════════════
+   INIT
+═══════════════════════════════════ */
+renderClassSummaryCards();
+renderScheduleTable();
+renderClassTabs();
+renderStudentTable();
+
+// Disable "این هفته" btn initially since we start at week 0
+document.getElementById('todayWeekBtn').style.opacity = '0.5';
+
+// Auto-refresh schedule every minute (for "now" indicator)
+setInterval(() => { renderScheduleTable(); }, 60000);
+</script>
+
+<!-- PRINT STYLES -->
+<style>
+@media print {
+  .sidebar, .menu-toggle, .sb-overlay, .top-actions, .stu-toolbar, .stu-class-tabs,
+  .stu-footer, .panel-overlay, .slide-panel, .toast, .sch-legend,
+  .section-header .action-btn, #weekNavBtns { display: none !important; }
+  .main-content { margin-right: 0 !important; padding: 10px !important; }
+  .schedule-wrap, .student-section { break-inside: avoid; }
+  body { background: white !important; color: black !important; }
+  .class-summary-grid { display: none; }
+}
+</style>
+</body>
+</html>

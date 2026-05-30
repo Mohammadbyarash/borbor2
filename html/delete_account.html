@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حذف حساب کاربری - مدرسه بوربور</title>
+        <link rel="icon" href="../image/iconB.png" />
+
+    
+    <!-- Font Awesome -->
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    
+    <style>
+        @font-face {
+            font-family: "Vazirmatn";
+            src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+            font-weight: 500;
+        }
+        @font-face {
+            font-family: "Vazirmatn";
+            src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: "Shabnam";
+            src: url("../font/Shabnam-Bold.woff2") format("woff2");
+            font-weight: 700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Vazirmatn", sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #202b59 50%, #172047 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .icon-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border: 3px solid rgba(231, 76, 60, 0.3);
+            border-radius: 50%;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(231, 76, 60, 0.6);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: "Shabnam", sans-serif;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid rgba(231, 76, 60, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .warning-header i {
+            color: #e74c3c;
+            font-size: 28px;
+        }
+
+        .warning-title {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: "Shabnam", sans-serif;
+        }
+
+        .warning-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .warning-list {
+            padding-right: 20px;
+            margin: 0;
+        }
+
+        .warning-list li {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .warning-list strong {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+        }
+
+        .alert i {
+            font-size: 20px;
+        }
+
+        /* Form */
+        .delete-form {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #e74c3c;
+            font-size: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 20px;
+            padding-right: 50px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: "Vazirmatn", sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #e74c3c;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2);
+        }
+
+        .form-input.error {
+            border-color: #e74c3c;
+            animation: shake 0.4s ease;
+        }
+
+        .form-input.success {
+            border-color: #10b981;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e74c3c;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Confirmation Checkbox */
+        .confirmation-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .confirmation-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .confirmation-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #e74c3c;
+        }
+
+        .confirmation-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            line-height: 1.7;
+            flex: 1;
+        }
+
+        .confirmation-error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .confirmation-error.show {
+            display: block;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: "Vazirmatn", sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-delete:hover:not(:disabled) {
+            background: linear-gradient(90deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+        }
+
+        .btn-delete:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-delete.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-delete.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .icon-wrapper {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+
+            .button-group {
+                flex-direction: column-reverse;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particle" style="width: 80px; height: 80px; left: 10%; animation-duration: 15s; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 60px; height: 60px; left: 80%; animation-duration: 12s; animation-delay: 2s;"></div>
+    <div class="particle" style="width: 40px; height: 40px; left: 50%; animation-duration: 18s; animation-delay: 4s;"></div>
+    <div class="particle" style="width: 50px; height: 50px; left: 30%; animation-duration: 20s; animation-delay: 1s;"></div>
+    <div class="particle" style="width: 70px; height: 70px; left: 70%; animation-duration: 16s; animation-delay: 3s;"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-wrapper">
+                <i class="fas fa-user-slash"></i>
+            </div>
+            <h1 class="title">حذف حساب کاربری</h1>
+            <p class="subtitle">
+                آیا مطمئن هستید که می‌خواهید حساب کاربری خود را حذف کنید؟
+            </p>
+        </div>
+
+        <!-- Warning Box -->
+        <div class="warning-box">
+            <div class="warning-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="warning-title">هشدار مهم</div>
+            </div>
+            <p class="warning-text">
+                با حذف حساب کاربری، تمامی اطلاعات شما به طور دائم پاک خواهد شد:
+            </p>
+            <ul class="warning-list">
+                <li><strong>اطلاعات شخصی:</strong> نام، شماره تماس و سایر اطلاعات ثبت شده</li>
+                <li><strong>سوابق آموزشی:</strong> نمرات، تکالیف و گزارش‌های پیشرفت</li>
+                <li><strong>محتوای آپلود شده:</strong> فایل‌ها و اسناد</li>
+                <li><strong>تاریخچه فعالیت:</strong> ورود، خروج و سایر رویدادها</li>
+            </ul>
+            <p class="warning-text" style="margin-top: 15px; color: #e74c3c; font-weight: 600;">
+                ⚠️ این عملیات غیرقابل بازگشت است!
+            </p>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="alert alert-error" id="alertError">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="alertErrorText"></span>
+        </div>
+
+        <div class="alert alert-success" id="alertSuccess">
+            <i class="fas fa-check-circle"></i>
+            <span id="alertSuccessText"></span>
+        </div>
+
+        <!-- Delete Form -->
+        <form class="delete-form" id="deleteForm">
+            <!-- رمز عبور برای تایید -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i>
+                    رمز عبور خود را برای تایید وارد کنید
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input 
+                        type="password" 
+                        class="form-input" 
+                        id="password" 
+                        placeholder="رمز عبور"
+                    >
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <!-- Confirmation Checkbox -->
+            <div class="confirmation-box">
+                <label class="confirmation-checkbox">
+                    <input type="checkbox" id="confirmDelete">
+                    <div class="confirmation-text">
+                        تأیید می‌کنم که از حذف دائمی حساب کاربری و تمامی اطلاعات خود آگاه هستم و این تصمیم را با آگاهی کامل می‌گیرم.
+                    </div>
+                </label>
+                <div class="confirmation-error" id="confirmError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    لطفاً تایید حذف را بپذیرید
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-cancel" id="cancelBtn">
+                    <i class="fas fa-times"></i>
+                    <span>انصراف و بازگشت</span>
+                </button>
+                <button type="submit" class="btn btn-delete" id="deleteBtn">
+                    <div class="spinner"></div>
+                    <span class="btn-text">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>حذف دائمی حساب</span>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Elements
+        const passwordInput = document.getElementById('password');
+        const confirmDeleteCheckbox = document.getElementById('confirmDelete');
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const alertError = document.getElementById('alertError');
+        const alertSuccess = document.getElementById('alertSuccess');
+
+        // Cancel button
+        cancelBtn.addEventListener('click', () => {
+            window.location.href = 'login.html';
+        });
+
+        // Validation
+        function validatePassword() {
+            const value = passwordInput.value;
+            const errorDiv = document.getElementById('passwordError');
+
+            if (!value) {
+                showError(passwordInput, errorDiv, 'لطفاً رمز عبور را وارد کنید');
+                return false;
+            }
+
+            hideError(passwordInput, errorDiv);
+            return true;
+        }
+
+        function validateConfirmation() {
+            const confirmError = document.getElementById('confirmError');
+            
+            if (!confirmDeleteCheckbox.checked) {
+                confirmError.classList.add('show');
+                return false;
+            }
+
+            confirmError.classList.remove('show');
+            return true;
+        }
+
+        function showError(input, errorDiv, message) {
+            input.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        function hideError(input, errorDiv) {
+            input.classList.remove('error');
+            errorDiv.classList.remove('show');
+        }
+
+        function showAlert(type, message) {
+            const alert = type === 'success' ? alertSuccess : alertError;
+            const text = type === 'success' ? document.getElementById('alertSuccessText') : document.getElementById('alertErrorText');
+            
+            alertSuccess.classList.remove('show');
+            alertError.classList.remove('show');
+            
+            text.textContent = message;
+            alert.classList.add('show');
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Form Submit
+        deleteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate
+            const isPasswordValid = validatePassword();
+            const isConfirmed = validateConfirmation();
+
+            if (!isPasswordValid || !isConfirmed) {
+                showAlert('error', 'لطفاً تمام موارد را تکمیل کنید');
+                return;
+            }
+
+            // Show loading
+            deleteBtn.classList.add('loading');
+            deleteBtn.disabled = true;
+            cancelBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                const password = passwordInput.value;
+
+                console.log('Delete Account Request:', { password });
+
+                // Simulate successful deletion
+                showAlert('success', 'حساب کاربری با موفقیت حذف شد. در حال انتقال...');
+
+                // Clear local data
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+            }, 1500);
+        });
+
+        // Real-time validation
+        passwordInput.addEventListener('blur', validatePassword);
+        confirmDeleteCheckbox.addEventListener('change', validateConfirmation);
+    </script>
+</body>
+</html>

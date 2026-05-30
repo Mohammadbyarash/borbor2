@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پیش‌ثبت‌نام - مدرسه بوربور</title>
+    <link rel="stylesheet" href="../style/sign-up.css" />
+    <link rel="icon" href="../image/iconB.png" />
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+  
+    
+    <style>
+
+      #jdp-custom-overlay { 
+  display:none; position:fixed; inset:0; z-index:999990; 
+}
+#jdp-custom-popup {
+  display:none; position:fixed; z-index:999999;
+  width: 310px;
+  background: linear-gradient(145deg, #0f1c3f, #162850);
+  border: 1px solid rgba(100,160,255,0.25);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  font-family: Vazirmatn, Tahoma, sans-serif;
+  direction: rtl;
+  overflow: hidden;
+  user-select: none;
+  padding: 0;
+}
+.jdp-header { 
+  display:flex; align-items:center; justify-content:space-between; 
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.jdp-nav-btn { 
+  background:rgba(255,255,255,0.06); border:none; color:#7eb8ff; 
+  width:32px; height:32px; border-radius:8px; cursor:pointer; 
+  font-size:18px; display:flex; align-items:center; justify-content:center; 
+  transition:background 0.2s; flex-shrink:0;
+}
+.jdp-nav-btn:hover { background:rgba(255,255,255,0.18); }
+.jdp-month-year { 
+  color:#e0eeff; font-size:15px; font-weight:600; text-align:center;
+  flex:1; cursor:pointer; padding:4px 10px; border-radius:8px; 
+  transition:background 0.2s;
+}
+.jdp-month-year:hover { background:rgba(255,255,255,0.08); }
+.jdp-weekdays { 
+  display:grid; grid-template-columns:repeat(7,1fr); gap:3px; 
+  padding:10px 14px 6px;
+}
+.jdp-weekday { 
+  text-align:center; color:rgba(180,200,255,0.5); 
+  font-size:11px; font-weight:500; padding:3px 0; 
+}
+.jdp-days { 
+  display:grid; grid-template-columns:repeat(7,1fr); gap:3px; 
+  padding:0 14px 12px;
+}
+.jdp-day { 
+  text-align:center; padding:7px 2px; border-radius:8px; cursor:pointer; 
+  color:#c8d8f0; font-size:12px; font-weight:500; transition:all 0.15s; 
+  border:1px solid transparent; background:rgba(255,255,255,0.03);
+}
+.jdp-day:hover { background:rgba(80,150,255,0.18); color:#fff; }
+.jdp-day.today { 
+  border:1px solid rgba(80,150,255,0.5); color:#7eb8ff; 
+  background:rgba(80,150,255,0.12); font-weight:700; 
+}
+.jdp-day.selected { 
+  background:linear-gradient(135deg,#3d8bff,#1a5fd4); 
+  color:#fff; font-weight:700; border-color:transparent; 
+}
+.jdp-day.empty { 
+  cursor:default; pointer-events:none; 
+  background:transparent; border-color:transparent; 
+}
+.jdp-year-nav { 
+  display:flex; align-items:center; justify-content:space-between; 
+  padding:10px 14px 6px;
+}
+.jdp-year-range { color:rgba(180,200,255,0.6); font-size:12px; font-weight:600; }
+.jdp-year-month-grid { 
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6px; 
+  padding:0 14px 12px;
+}
+.jdp-ym-item { 
+  text-align:center; padding:10px 4px; border-radius:10px; cursor:pointer; 
+  color:#a0c0f0; font-size:12px; font-weight:500;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); 
+  transition:all 0.15s;
+}
+.jdp-ym-item:hover { background:rgba(80,150,255,0.2); color:#fff; }
+.jdp-ym-item.active { 
+  background:linear-gradient(135deg,#3d8bff,#1a5fd4); 
+  color:#fff; border-color:transparent; font-weight:700; 
+}
+.jdp-footer { 
+  display:flex; gap:8px; padding:10px 14px 14px; 
+  border-top:1px solid rgba(255,255,255,0.07);
+}
+.jdp-today-btn { 
+  flex:1; padding:8px; border-radius:8px; 
+  border:1px solid rgba(80,150,255,0.35); 
+  background:rgba(80,150,255,0.15); color:#7eb8ff; 
+  font-size:12px; font-family:Vazirmatn,sans-serif; font-weight:500; 
+  cursor:pointer; transition:all 0.2s;
+}
+.jdp-today-btn:hover { background:rgba(80,150,255,0.25); }
+.jdp-clear-btn { 
+  flex:1; padding:8px; border-radius:8px; 
+  border:1px solid rgba(220,60,60,0.3); 
+  background:rgba(220,60,60,0.12); color:#f08080; 
+  font-size:12px; font-family:Vazirmatn,sans-serif; font-weight:500; 
+  cursor:pointer; transition:all 0.2s;
+}
+.jdp-clear-btn:hover { background:rgba(220,60,60,0.22); }
+
+/* override استایل input تاریخ */
+input[data-jdp] {
+  background-image: none !important;
+  padding-left: 1rem !important;
+  cursor: pointer !important;
+}
+    .tracking-input-wrap #trackingCodeInput{
+    direction: rtl;
+    }
+        /* ─── دکمه پیگیری در هدر ─── */
+.tracking-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(52,152,219,0.4);
+  cursor: pointer;
+}
+.tracking-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52,152,219,0.6);
+}
+
+/* ─── مودال پیگیری ─── */
+.tracking-modal-box {
+  position: relative;
+  max-width: 460px;
+  padding: 3rem 2.5rem 2.5rem;
+}
+
+.tracking-close-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s;
+}
+.tracking-close-btn:hover {
+  background: rgba(231,76,60,0.5);
+  color: #fff;
+}
+
+.tracking-modal-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(52,152,219,0.4);
+}
+.tracking-modal-icon i {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.tracking-modal-title {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.tracking-modal-desc {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.tracking-input-wrap {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.tracking-input {
+  width: 100%;
+  padding: 1rem 1.25rem 1rem 3rem;
+  background: #172047;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.3rem;
+  font-family: monospace;
+  letter-spacing: 4px;
+  text-align: center;
+  direction: ltr;
+  outline: none;
+  transition: all 0.3s;
+}
+.tracking-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.25);
+}
+.tracking-input::placeholder {
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 2px;
+  font-size: 1rem;
+}
+.tracking-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.35);
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.tracking-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  background: rgba(231,76,60,0.1);
+  border: 1px solid rgba(231,76,60,0.3);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+
+.tracking-go-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(52,152,219,0.4);
+  transition: all 0.3s;
+  margin-bottom: 1.25rem;
+}
+.tracking-go-btn:hover {
+  background: linear-gradient(135deg, #2980b9, #21618c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(52,152,219,0.55);
+}
+
+.tracking-note {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.82rem;
+  text-align: center;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.tracking-note i { color: #3498db; margin-top: 2px; flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .tracking-modal-box { padding: 2.5rem 1.5rem 2rem; }
+  .tracking-link span { display: none; }
+}
+    </style>
+  </head>
+  <body dir="rtl">
+    <div class="background-decoration">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+
+ 
+<header class="header">
+  <div class="header-content">
+
+    <!-- لوگو سمت راست -->
+    <div class="logo-section">
+      <i class="fas fa-graduation-cap"></i>
+      <h1>مدرسه بوربور</h1>
+    </div>
+
+    <!-- دکمه‌ها سمت چپ -->
+    <div class="header-actions">
+      <a href="#" class="tracking-link" onclick="openTrackingModal(event)">
+        <i class="fas fa-search"></i>
+        <span class="btn-text">پیگیری پیش‌ثبت‌نام</span>
+      </a>
+      <a href="../html/login.html" class="login-link">
+        <i class="fas fa-sign-in-alt"></i>
+        <span class="btn-text">ورود به سیستم</span>
+      </a>
+    </div>
+
+  </div>
+</header>
+
+    <main class="register-section">
+      <div class="form-container">
+        <div class="form-header">
+          <div class="form-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <h2>فرم پیش‌ثبت‌نام</h2>
+          <p class="form-subtitle">لطفاً اطلاعات زیر را با دقت تکمیل نمایید</p>
+        </div>
+
+        <form class="register-form" id="registerForm">
+
+          <!-- اطلاعات دانش‌آموز -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-user-graduate"></i>
+              <h3>اطلاعات دانش‌آموز</h3>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="student-name">
+                  <i class="fas fa-user"></i> نام <span class="required">*</span>
+                </label>
+                <input type="text" id="student-name" placeholder="نام دانش‌آموز را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="student-family">
+                  <i class="fas fa-user"></i> نام خانوادگی <span class="required">*</span>
+                </label>
+                <input type="text" id="student-family" placeholder="نام خانوادگی را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="student-national-id">
+                  <i class="fas fa-id-card"></i> کد ملی <span class="required">*</span>
+                </label>
+                <input type="text" id="student-national-id" placeholder="کد ملی 10 رقمی"
+                  maxlength="10" inputmode="numeric" pattern="[0-9]*" required />
+              </div>
+
+              <div class="form-group">
+                <label for="student-birthdate">
+                  <i class="fas fa-calendar-alt"></i> تاریخ تولد <span class="required">*</span>
+                </label>
+                <input data-jdp type="text" id="student-birthdate" placeholder="انتخاب تاریخ" required />
+              </div>
+
+              <div class="form-group">
+                <label for="student-grade">
+                  <i class="fas fa-graduation-cap"></i> پایه تحصیلی <span class="required">*</span>
+                </label>
+                <select id="student-grade" required>
+                  <option value="" disabled selected>انتخاب کنید</option>
+                  <option value="tenth">دهم</option>
+                  <option value="eleventh">یازدهم</option>
+                  <option value="twelfth">دوازدهم</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="student-field">
+                  <i class="fas fa-book"></i> رشته تحصیلی <span class="required">*</span>
+                </label>
+                <select id="student-field" required>
+                  <option value="" disabled selected>انتخاب کنید</option>
+                  <option value="electronics">الکترونیک</option>
+                  <option value="software">شبکه و نرم افزار</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="student-phone">
+                  <i class="fas fa-phone"></i> شماره همراه دانش‌آموز
+                  <span class="optional">(اختیاری)</span>
+                </label>
+                <input type="tel" id="student-phone" placeholder="09xxxxxxxxx" maxlength="11" />
+              </div>
+
+            </div>
+          </div>
+
+          <!-- اطلاعات پدر -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-male"></i>
+              <h3>اطلاعات پدر</h3>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="father-name">
+                  <i class="fas fa-user"></i> نام پدر <span class="required">*</span>
+                </label>
+                <input type="text" id="father-name" placeholder="نام پدر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="father-family">
+                  <i class="fas fa-user"></i> نام خانوادگی پدر <span class="required">*</span>
+                </label>
+                <input type="text" id="father-family" placeholder="نام خانوادگی پدر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="father-birthdate">
+                  <i class="fas fa-calendar-alt"></i> تاریخ تولد پدر <span class="required">*</span>
+                </label>
+                <input data-jdp type="text" id="father-birthdate" placeholder="انتخاب تاریخ" required />
+              </div>
+
+              <div class="form-group">
+                <label for="father-education">
+                  <i class="fas fa-graduation-cap"></i> تحصیلات پدر <span class="required">*</span>
+                </label>
+                <select id="father-education" required>
+                  <option value="" disabled selected>انتخاب کنید</option>
+                  <option value="bisavad">بی‌سواد</option>
+                  <option value="nahzat">نهضت سواد آموزی</option>
+                  <option value="ebtida">ابتدایی</option>
+                  <option value="sikol">سیکل</option>
+                  <option value="diplom">دیپلم</option>
+                  <option value="fawq_diplom">فوق دیپلم</option>
+                  <option value="karshenas">کارشناسی (لیسانس)</option>
+                  <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                  <option value="karshenas_arshad">کارشناسی ارشد</option>
+                  <option value="doktori">دکتری</option>
+                  <option value="fawq_doktori">فوق دکتری</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="father-job">
+                  <i class="fas fa-briefcase"></i> شغل پدر <span class="required">*</span>
+                </label>
+                <input type="text" id="father-job" placeholder="شغل پدر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="father-phone">
+                  <i class="fas fa-phone"></i> شماره همراه پدر <span class="required">*</span>
+                </label>
+                <input type="tel" id="father-phone" placeholder="09xxxxxxxxx" maxlength="11" required />
+              </div>
+
+            </div>
+          </div>
+
+          <!-- اطلاعات مادر -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-female"></i>
+              <h3>اطلاعات مادر</h3>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="mother-name">
+                  <i class="fas fa-user"></i> نام مادر <span class="required">*</span>
+                </label>
+                <input type="text" id="mother-name" placeholder="نام مادر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="mother-family">
+                  <i class="fas fa-user"></i> نام خانوادگی مادر <span class="required">*</span>
+                </label>
+                <input type="text" id="mother-family" placeholder="نام خانوادگی مادر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="mother-birthdate">
+                  <i class="fas fa-calendar-alt"></i> تاریخ تولد مادر <span class="required">*</span>
+                </label>
+                <input data-jdp type="text" id="mother-birthdate" placeholder="انتخاب تاریخ" required />
+              </div>
+
+              <div class="form-group">
+                <label for="mother-education">
+                  <i class="fas fa-graduation-cap"></i> تحصیلات مادر <span class="required">*</span>
+                </label>
+                <select id="mother-education" required>
+                  <option value="" disabled selected>انتخاب کنید</option>
+                  <option value="bisavad">بی‌سواد</option>
+                  <option value="nahzat">نهضت سواد آموزی</option>
+                  <option value="ebtida">ابتدایی</option>
+                  <option value="sikol">سیکل</option>
+                  <option value="diplom">دیپلم</option>
+                  <option value="fawq_diplom">فوق دیپلم</option>
+                  <option value="karshenas">کارشناسی (لیسانس)</option>
+                  <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                  <option value="karshenas_arshad">کارشناسی ارشد</option>
+                  <option value="doktori">دکتری</option>
+                  <option value="fawq_doktori">فوق دکتری</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="mother-job">
+                  <i class="fas fa-briefcase"></i> شغل مادر <span class="required">*</span>
+                </label>
+                <input type="text" id="mother-job" placeholder="شغل مادر را وارد کنید" required />
+              </div>
+
+              <div class="form-group">
+                <label for="mother-phone">
+                  <i class="fas fa-phone"></i> شماره همراه مادر <span class="required">*</span>
+                </label>
+                <input type="tel" id="mother-phone" placeholder="09xxxxxxxxx" maxlength="11" required />
+              </div>
+
+            </div>
+          </div>
+
+          <!-- مدارک -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-paperclip"></i>
+              <h3>اطلاعات تماس و مدارک</h3>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="second-phone">
+                  <i class="fas fa-phone-alt"></i> شماره تماس دوم
+                  <span class="optional">(اختیاری)</span>
+                </label>
+                <input type="tel" id="second-phone" placeholder="09xxxxxxxxx" maxlength="11" />
+              </div>
+
+              <div class="form-group file-upload-group">
+                <label>
+                  <i class="fas fa-file-alt"></i> کارنامه <span class="required">*</span>
+                </label>
+                <label class="upload-label" for="file-karname">
+                  <span class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                  <span class="upload-text">انتخاب فایل</span>
+                  <span class="filename"></span>
+                  <input id="file-karname" type="file" accept=".pdf,.jpg,.jpeg,.png" required />
+                </label>
+              </div>
+
+              <div class="form-group file-upload-group">
+                <label>
+                  <i class="fas fa-image"></i> عکس 3×4 <span class="required">*</span>
+                </label>
+                <label class="upload-label" for="file-photo">
+                  <span class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                  <span class="upload-text">انتخاب فایل</span>
+                  <span class="filename"></span>
+                  <input id="file-photo" type="file" accept=".png,.jpg,.jpeg" required />
+                </label>
+              </div>
+
+              <div class="form-group file-upload-group" id="hedayat-group" style="display: none;">
+                <label>
+                  <i class="fas fa-file-pdf"></i> هدایت تحصیلی <span class="required">*</span>
+                </label>
+                <label class="upload-label" for="file-hedayat">
+                  <span class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                  <span class="upload-text">انتخاب فایل</span>
+                  <span class="filename"></span>
+                  <input id="file-hedayat" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- توافقنامه -->
+          <div class="form-footer">
+            <div class="agreement">
+              <input type="checkbox" id="agree" required />
+              <label for="agree">
+                با پیش‌ثبت‌نام در مدرسه بوربور، تأیید می‌کنم که اطلاعات وارد شده صحیح بوده و
+                <a href="#" class="terms-link">شرایط و قوانین</a> را می‌پذیرم.
+              </label>
+            </div>
+            <button type="submit" class="btn-submit" disabled>
+              <i class="fas fa-paper-plane"></i>
+              ارسال فرم پیش‌ثبت‌نام
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <p>© 2025 مدرسه بوربور | تمامی حقوق محفوظ است</p>
+        <div class="footer-links">
+          <a href="#"><i class="fas fa-phone"></i> 0912-000-0000</a>
+          <a href="#"><i class="fas fa-envelope"></i> info@bourbour.edu</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+      <div class="modal-content success">
+        <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+        <h3>ثبت‌نام موفقیت‌آمیز!</h3>
+        <p>فرم پیش‌ثبت‌نام شما با موفقیت ارسال شد.</p>
+        <p class="modal-note">کارشناسان ما در اسرع وقت با شما تماس خواهند گرفت.</p>
+        <button class="modal-btn" onclick="window.location.href='../html/welcome.html'">
+          <i class="fas fa-home"></i> بازگشت به صفحه اصلی
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="toastMessage"></span>
+    </div>
+    
+    
+    
+<!-- Tracking Modal -->
+<div class="modal" id="trackingModal">
+  <div class="modal-content tracking-modal-box">
+    <!-- دکمه بستن -->
+    <button class="tracking-close-btn" onclick="closeTrackingModal()">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- آیکون -->
+    <div class="tracking-modal-icon">
+      <i class="fas fa-search"></i>
+    </div>
+
+    <h3 class="tracking-modal-title">پیگیری پیش‌ثبت‌نام</h3>
+    <p class="tracking-modal-desc">کد پیگیری دریافت‌شده هنگام ثبت‌نام را وارد کنید</p>
+
+    <div class="tracking-input-wrap">
+      <input
+        type="text"
+        id="trackingCodeInput"
+        dir="rtl"
+        class="tracking-input"
+        placeholder="مثال: 97F3966D"
+        maxlength="8"
+        autocomplete="off"
+        oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"
+        onkeydown="if(event.key==='Enter') goToTracking()"
+      />
+      <i class="fas fa-barcode tracking-input-icon"></i>
+    </div>
+
+    <div id="trackingError" class="tracking-error" style="display:none;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="trackingErrorMsg">کد پیگیری معتبر نیست</span>
+    </div>
+
+    <button class="tracking-go-btn" onclick="goToTracking()">
+      <i class="fas fa-arrow-left"></i>
+      مشاهده وضعیت
+    </button>
+
+    <p class="tracking-note">
+      <i class="fas fa-info-circle"></i>
+      کد پیگیری ۸ کاراکتری است و هنگام ثبت‌نام به شما نمایش داده شده است
+    </p>
+  </div>
+</div>
+
+<!-- JDP POPUP -->
+<div id="jdp-custom-overlay"></div>
+<div id="jdp-custom-popup">
+  <div class="jdp-header">
+    <button class="jdp-nav-btn" id="jdpPrevBtn">‹</button>
+    <div class="jdp-month-year" id="jdpMonthYear" onclick="jdpToggleMonthView()"></div>
+    <button class="jdp-nav-btn" id="jdpNextBtn">›</button>
+  </div>
+  <div id="jdpDayView">
+    <div class="jdp-weekdays">
+      <div class="jdp-weekday">ش</div>
+      <div class="jdp-weekday">ی</div>
+      <div class="jdp-weekday">د</div>
+      <div class="jdp-weekday">س</div>
+      <div class="jdp-weekday">چ</div>
+      <div class="jdp-weekday">پ</div>
+      <div class="jdp-weekday">ج</div>
+    </div>
+    <div class="jdp-days" id="jdpDaysGrid"></div>
+  </div>
+  <div id="jdpMonthView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearPrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpMonthGrid"></div>
+  </div>
+  <div id="jdpYearView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearRangeLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpYearGrid"></div>
+  </div>
+  <div class="jdp-footer">
+    <button class="jdp-today-btn" onclick="jdpGoToday()">امروز</button>
+    <button class="jdp-clear-btn" onclick="jdpClear()">پاک کردن</button>
+  </div>
+</div>
+
+    <script defer src="../javaScript/sign.js"></script>
+    <script>
+        function openTrackingModal(e) {
+  if (e) e.preventDefault();
+  const modal = document.getElementById('trackingModal');
+  if (!modal) return;
+  document.getElementById('trackingCodeInput').value = '';
+  document.getElementById('trackingError').style.display = 'none';
+  modal.classList.add('active');
+  setTimeout(() => document.getElementById('trackingCodeInput').focus(), 200);
+}
+
+function closeTrackingModal() {
+  document.getElementById('trackingModal')?.classList.remove('active');
+}
+
+function goToTracking() {
+  const input = document.getElementById('trackingCodeInput');
+  const code  = (input?.value || '').trim().toUpperCase();
+  const errEl = document.getElementById('trackingError');
+  const msgEl = document.getElementById('trackingErrorMsg');
+
+  // اعتبارسنجی: ۸ کاراکتر، حروف انگلیسی و عدد
+  if (!code) {
+    msgEl.textContent = 'لطفاً کد پیگیری را وارد کنید';
+    errEl.style.display = 'flex';
+    input.focus();
+    return;
+  }
+  if (code.length !== 8) {
+    msgEl.textContent = 'کد پیگیری باید ۸ کاراکتر باشد';
+    errEl.style.display = 'flex';
+    input.focus();
+    return;
+  }
+  if (!/^[A-Z0-9]{8}$/.test(code)) {
+    msgEl.textContent = 'کد پیگیری فقط شامل حروف انگلیسی و اعداد است';
+    errEl.style.display = 'flex';
+    input.focus();
+    return;
+  }
+
+  // ذخیره و رفتن به pending
+  errEl.style.display = 'none';
+  sessionStorage.setItem('tracking_code',        code);
+  localStorage.setItem ('bourbour_tracking_code', code);
+  window.location.href = '../html/pending.html';
+}
+
+// بستن با کلیک بیرون مودال
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('trackingModal');
+  if (modal && e.target === modal) closeTrackingModal();
+});
+
+// بستن با Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeTrackingModal();
+});
+
+    </script>
+  </body>
+</html>

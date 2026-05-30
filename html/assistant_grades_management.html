@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — نمرات</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<style>
+@font-face{font-family:"Vazirmatn";src:url("../font/Vazirmatn-Regular.woff2") format("woff2");font-weight:400;font-display:swap;}
+@font-face{font-family:"Vazirmatn";src:url("../font/Vazirmatn-Medium.woff2") format("woff2");font-weight:500;font-display:swap;}
+@font-face{font-family:"Shabnam";src:url("../font/Shabnam-Bold.woff2") format("woff2");font-weight:700;font-display:swap;}
+
+:root{
+  --bg-main:#0f1629;--bg-card:#162040;--bg-card2:#1a2650;--bg-sidebar:#0b1120;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#2ecc71;--absent:#e74c3c;--late:#f39c12;--leave:#8e5fd4;
+  --text:#e8f0ff;--text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(74,144,217,0.35);
+  --sidebar-w:258px;--radius:18px;--radius-sm:11px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:"Vazirmatn","Shabnam",Tahoma,sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 5%,rgba(74,144,217,0.13) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(142,95,212,0.10) 0%,transparent 55%),radial-gradient(ellipse 45% 45% at 55% 45%,rgba(6,214,160,0.04) 0%,transparent 65%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(74,144,217,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* ── SIDEBAR (same as dashboard: hidden by default, opens on hamburger) ── */
+.sidebar{
+  width:var(--sidebar-w);background:var(--bg-sidebar);padding:26px 14px;
+  border-left:1px solid var(--border);position:fixed;right:0;top:0;
+  height:100vh;overflow-y:auto;z-index:400;display:flex;flex-direction:column;
+  transform:translateX(110%);
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 40px rgba(0,0,0,0.5);
+}
+.sidebar.open{transform:translateX(0);}
+.sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(74,144,217,0.2);border-radius:4px;}
+.logo{text-align:center;margin-bottom:6px;font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;}.logo span{color:var(--accent);}
+.logo-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-bottom:22px;letter-spacing:1px;text-transform:uppercase;}
+.deputy-block{background:linear-gradient(135deg,rgba(74,144,217,0.14),rgba(142,95,212,0.10));border:1px solid rgba(74,144,217,0.2);border-radius:var(--radius-sm);padding:15px 13px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.deputy-avatar{width:46px;height:46px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(74,144,217,0.35);}
+.deputy-name{font-size:13px;font-weight:700;}.deputy-role{font-size:10px;color:var(--text-muted);}
+.deputy-badge{margin-top:7px;display:inline-block;background:rgba(243,156,18,0.14);color:var(--accent4);font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid rgba(243,156,18,0.22);}
+.nav-section-label{font-size:9px;font-weight:700;color:rgba(180,200,255,0.28);letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;margin:14px 0 8px;}
+.nav-item{margin-bottom:2px;}.nav-item a{color:rgba(180,200,255,0.58);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:11px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:all .2s;position:relative;}
+.nav-item a i{font-size:14px;width:20px;text-align:center;flex-shrink:0;opacity:.75;}
+.nav-item a:hover{background:rgba(255,255,255,0.05);color:#fff;}
+.nav-item.active a{background:linear-gradient(90deg,rgba(74,144,217,0.18),rgba(74,144,217,0.05));color:#fff;font-weight:700;border:1px solid rgba(74,144,217,0.22);}
+.nav-item.active a::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:65%;background:var(--accent);border-radius:3px 0 0 3px;}
+.nav-item.active a i{opacity:1;color:var(--accent);}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px;}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center;line-height:1.7;}
+
+/* Hamburger */
+.hamburger{
+  position:fixed;top:16px;right:20px;z-index:300;
+  width:44px;height:44px;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;
+  transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,0.3);
+}
+.hamburger:hover{border-color:var(--border-hover);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text-muted);border-radius:2px;transition:all .3s;}
+.hamburger:hover span{background:var(--text);}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:199;}
+.sb-overlay.on{display:block;}
+
+/* ── MAIN ── */
+.main-content{min-height:100vh;padding:72px 24px 36px;position:relative;z-index:1;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:14px;flex-wrap:wrap;}
+.greeting h1{font-size:20px;font-weight:800;}.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.top-actions{display:flex;align-items:center;gap:9px;}
+.action-btn{position:relative;width:40px;height:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
+.action-btn:hover{color:#fff;border-color:var(--border-hover);}
+.notif-dot{position:absolute;top:8px;left:8px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.profile-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(74,144,217,0.35);}
+.export-btn{display:flex;align-items:center;gap:8px;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.25);color:var(--accent3);font-family:inherit;font-size:12px;font-weight:700;padding:10px 18px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.export-btn:hover{background:rgba(6,214,160,0.18);}
+
+/* ── NOTIFICATION PANEL ── */
+.notif-panel{
+  position:fixed;top:70px;left:24px;width:340px;
+  background:var(--bg-card);border:1px solid rgba(74,144,217,0.25);
+  border-radius:var(--radius);z-index:500;
+  box-shadow:0 16px 48px rgba(0,0,0,0.5);
+  transform:translateY(-10px) scale(0.97);
+  opacity:0;pointer-events:none;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+.notif-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all;}
+.notif-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+.notif-panel-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.notif-panel-title i{color:var(--accent);}
+.notif-close-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.notif-close-btn:hover{border-color:rgba(231,76,60,0.4);color:var(--absent);}
+.notif-list{max-height:360px;overflow-y:auto;}
+.notif-list::-webkit-scrollbar{width:3px;}.notif-list::-webkit-scrollbar-thumb{background:rgba(74,144,217,0.2);border-radius:3px;}
+.notif-item{display:flex;gap:11px;padding:13px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:rgba(255,255,255,0.03);}
+.notif-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px;}
+.ni-red{background:rgba(231,76,60,0.14);color:var(--absent);}
+.ni-blue{background:rgba(74,144,217,0.14);color:var(--accent);}
+.ni-green{background:rgba(6,214,160,0.14);color:var(--accent3);}
+.ni-yellow{background:rgba(243,156,18,0.14);color:var(--accent4);}
+.ni-purple{background:rgba(142,95,212,0.14);color:var(--accent2);}
+.notif-content{flex:1;min-width:0;}
+.notif-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+.notif-body{font-size:10.5px;color:var(--text-muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.notif-time{font-size:9.5px;color:rgba(180,200,255,0.3);margin-top:4px;}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:all .25s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:rgba(74,144,217,0.15);color:var(--accent);}
+.si-green{background:rgba(46,204,113,0.15);color:var(--present);}
+.si-red{background:rgba(231,76,60,0.15);color:var(--absent);}
+.si-orange{background:rgba(243,156,18,0.15);color:var(--accent4);}
+.stat-val{font-size:26px;font-weight:900;line-height:1;}.stat-lbl{font-size:10.5px;color:var(--text-muted);margin-top:3px;}
+.stat-trend{font-size:9.5px;font-weight:700;margin-top:5px;display:flex;align-items:center;gap:3px;}
+.trend-up{color:var(--present);}.trend-down{color:var(--absent);}.trend-flat{color:var(--text-muted);}
+
+/* ── CARD ── */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.card-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:9px;}
+.card-title i{color:var(--accent);}
+
+/* ── MAIN TABS ── */
+.main-tabs{display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+.main-tab{flex:1;padding:14px 10px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .25s;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;}
+.main-tab i{font-size:13px;}
+.main-tab.active{color:#fff;background:rgba(74,144,217,0.12);}
+.main-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.main-tab:hover:not(.active){background:rgba(255,255,255,0.04);color:var(--text);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;padding:10px 38px 10px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--border-hover);}
+.search-wrap input::placeholder{color:var(--text-muted);}
+.search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;}
+.fsel{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;outline:none;transition:border-color .2s;}
+.fsel:focus{border-color:var(--border-hover);}
+
+/* ── SCORES TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+.scores-table{width:100%;border-collapse:collapse;min-width:600px;}
+.scores-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(74,144,217,0.06);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+.scores-table th:hover{color:var(--text);}
+.scores-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.scores-table tr:last-child td{border-bottom:none;}
+.scores-table tbody tr{transition:background .15s;cursor:pointer;}
+.scores-table tbody tr:hover td{background:rgba(255,255,255,0.025);}
+.s-cell{display:flex;align-items:center;gap:11px;}
+.s-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.s-name{font-size:12.5px;font-weight:700;}
+.s-id{font-size:10px;color:var(--text-muted);}
+.score-chip{display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:8px;font-size:12.5px;font-weight:900;}
+.sc-ex{background:rgba(46,204,113,0.15);color:var(--present);}
+.sc-good{background:rgba(74,144,217,0.15);color:var(--accent);}
+.sc-avg{background:rgba(243,156,18,0.15);color:var(--accent4);}
+.sc-fail{background:rgba(231,76,60,0.15);color:var(--absent);}
+.avg-bar-wrap{display:flex;align-items:center;gap:8px;}
+.avg-bar{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;min-width:50px;}
+.avg-bar-fill{height:100%;border-radius:4px;}
+.grade-badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.gb-10{background:rgba(74,144,217,0.15);color:var(--accent);}
+.gb-11{background:rgba(6,214,160,0.13);color:var(--accent3);}
+.gb-12{background:rgba(243,156,18,0.14);color:var(--accent4);}
+.row-acts{display:flex;gap:5px;opacity:0;transition:opacity .2s;}
+.scores-table tbody tr:hover .row-acts{opacity:1;}
+.ra{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ra:hover{border-color:var(--border-hover);color:#fff;}
+.ra.ra-v:hover{border-color:rgba(74,144,217,0.4);color:var(--accent);background:rgba(74,144,217,0.1);}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text-muted);}
+.page-btns{display:flex;gap:5px;}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.pg-btn.active{background:rgba(74,144,217,0.2);border-color:var(--accent);color:#fff;font-weight:700;}
+.pg-btn:hover:not(.active){background:rgba(255,255,255,0.05);color:var(--text);}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ── DECLINE SECTION ── */
+.decline-filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.decline-alert-banner{background:rgba(231,76,60,0.07);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.decline-alert-banner i{color:var(--absent);font-size:16px;flex-shrink:0;}
+.decline-alert-banner span{font-size:12px;line-height:1.6;}
+.decline-alert-banner strong{color:var(--absent);}
+.decline-table{width:100%;border-collapse:collapse;min-width:600px;}
+.decline-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:10px 14px;background:rgba(231,76,60,0.05);border-bottom:1px solid var(--border);}
+.decline-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.decline-table tr:last-child td{border-bottom:none;}
+.decline-table tbody tr:hover td{background:rgba(255,255,255,0.02);}
+.decline-rate{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.dr-high{background:rgba(231,76,60,0.15);color:var(--absent);}
+.dr-mid{background:rgba(243,156,18,0.15);color:var(--accent4);}
+.dr-low{background:rgba(46,204,113,0.12);color:var(--present);}
+.decline-sparkline{display:flex;align-items:flex-end;gap:3px;height:28px;}
+.dsp-bar{width:7px;border-radius:2px 2px 0 0;transition:height .4s;}
+
+/* ── COMPARE SECTION ── */
+.compare-controls{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.compare-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px;}
+.compare-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;transition:all .25s;position:relative;overflow:hidden;cursor:pointer;}
+.compare-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.compare-card.cc-blue::before{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.compare-card.cc-green::before{background:linear-gradient(90deg,var(--accent3),var(--present));}
+.compare-card.cc-orange::before{background:linear-gradient(90deg,var(--accent4),#e67e22);}
+.compare-card.cc-purple::before{background:linear-gradient(90deg,var(--accent2),#c0392b);}
+.compare-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.compare-card.selected{border-color:var(--accent);background:rgba(74,144,217,0.06);}
+.cc-title{font-size:13px;font-weight:800;margin-bottom:4px;}
+.cc-sub{font-size:10.5px;color:var(--text-muted);margin-bottom:14px;}
+.cc-avg{font-size:32px;font-weight:900;line-height:1;margin-bottom:4px;}
+.cc-avg-lbl{font-size:9.5px;color:var(--text-muted);margin-bottom:12px;}
+.cc-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.cc-pill{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:10px;}
+.cc-bar-wrap{margin-top:8px;}
+.cc-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.cc-bar-label{font-size:9.5px;color:var(--text-muted);width:50px;flex-shrink:0;}
+.cc-bar-bg{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.cc-bar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.cc-bar-val{font-size:9.5px;font-weight:700;width:26px;text-align:left;flex-shrink:0;}
+
+/* ── COMPARE CHART (CSS bars) ── */
+.compare-chart{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;}
+.chart-title{font-size:12px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.chart-title i{color:var(--accent);}
+.bar-chart{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-label{font-size:11px;font-weight:600;width:80px;flex-shrink:0;text-align:right;}
+.bar-track{flex:1;height:28px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-right:10px;justify-content:flex-end;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.bar-fill span{font-size:11px;font-weight:900;color:#fff;}
+.bar-val{font-size:12px;font-weight:800;width:36px;flex-shrink:0;text-align:left;}
+
+/* ── CLASS DETAIL PANEL ── */
+.class-detail-panel{
+  margin-top:20px;
+  background:var(--bg-card2);
+  border:1px solid rgba(74,144,217,0.25);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  animation:fadeUp .3s ease both;
+}
+.cdp-header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,rgba(74,144,217,0.12),rgba(142,95,212,0.08));border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.cdp-av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+.cdp-title{font-size:15px;font-weight:900;}
+.cdp-sub{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.cdp-stats{display:flex;gap:14px;margin-right:auto;flex-wrap:wrap;}
+.cdp-stat{text-align:center;}
+.cdp-stat-val{font-size:18px;font-weight:900;line-height:1;}
+.cdp-stat-lbl{font-size:9px;color:var(--text-muted);margin-top:2px;}
+.cdp-toolbar{display:flex;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:rgba(255,255,255,0.01);}
+.cdp-search{position:relative;flex:1;min-width:160px;}
+.cdp-search input{width:100%;background:var(--bg-main);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 34px 9px 12px;border-radius:8px;outline:none;transition:border-color .2s;}
+.cdp-search input:focus{border-color:var(--border-hover);}
+.cdp-search input::placeholder{color:var(--text-muted);}
+.cdp-search-icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;pointer-events:none;}
+.cdp-body{padding:16px 20px;}
+.cdp-student-list{display:flex;flex-direction:column;gap:8px;}
+.cdp-student-row{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;}
+.cdp-student-row:hover{border-color:var(--border-hover);background:rgba(74,144,217,0.04);}
+.cdp-s-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.cdp-s-info{flex:1;min-width:0;}
+.cdp-s-name{font-size:12.5px;font-weight:700;}
+.cdp-s-national{font-size:10px;color:var(--text-muted);}
+.cdp-s-scores{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px;}
+.cdp-score-pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;}
+.cdp-avg-badge{font-size:14px;font-weight:900;min-width:46px;text-align:center;padding:5px 10px;border-radius:10px;flex-shrink:0;}
+.cdp-rank{font-size:11px;font-weight:700;color:var(--text-muted);min-width:28px;text-align:center;flex-shrink:0;}
+.cdp-rank.rank-1{color:var(--accent4);}
+.cdp-rank.rank-2{color:rgba(180,200,255,0.5);}
+.cdp-rank.rank-3{color:var(--accent);}
+
+/* ── SUBJECT BREAKDOWN ── */
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px;}
+.subject-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center;transition:all .2s;cursor:pointer;}
+.subject-card:hover{border-color:var(--border-hover);}
+.subject-card.active{border-color:rgba(74,144,217,0.4);background:rgba(74,144,217,0.06);}
+.sc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin:0 auto 10px;}
+.sc-name{font-size:11.5px;font-weight:700;margin-bottom:4px;}
+.sc-avg-val{font-size:20px;font-weight:900;line-height:1;}
+.sc-avg-lbl{font-size:9.5px;color:var(--text-muted);margin-top:2px;}
+.sc-pill-row{display:flex;justify-content:center;gap:5px;margin-top:8px;}
+.subj-toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
+.subj-search{position:relative;flex:1;min-width:160px;}
+.subj-search input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 34px 9px 12px;border-radius:8px;outline:none;transition:border-color .2s;}
+.subj-search input:focus{border-color:var(--border-hover);}
+.subj-search input::placeholder{color:var(--text-muted);}
+.subj-search-icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;pointer-events:none;}
+
+/* ── DETAIL MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:5000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px);}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:var(--bg-card);border:1px solid rgba(74,144,217,0.22);border-radius:var(--radius);width:100%;max-width:700px;box-shadow:0 24px 64px rgba(0,0,0,0.6);animation:fadeUp .3s ease both;margin:auto;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);z-index:2;border-radius:var(--radius) var(--radius) 0 0;}
+.modal-hdr-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:10px;}
+.modal-hdr-title i{color:var(--accent);}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;}
+.modal-close:hover{border-color:rgba(231,76,60,0.4);color:var(--absent);}
+.modal-body{padding:22px;}
+.modal-student-hdr{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:20px;}
+.modal-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;}
+.modal-student-name{font-size:15px;font-weight:800;}
+.modal-student-meta{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.modal-avg-big{font-size:28px;font-weight:900;margin-right:auto;}
+.modal-scores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px;}
+.modal-score-item{background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+.msi-subject{font-size:12px;font-weight:700;}
+.msi-teacher{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.msi-score{font-size:20px;font-weight:900;}
+.modal-history-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin:16px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.history-term-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;}
+.htr-term{font-size:11px;font-weight:700;min-width:70px;}
+.htr-bar{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.htr-fill{height:100%;border-radius:4px;}
+.htr-val{font-size:13px;font-weight:900;min-width:35px;text-align:left;}
+.htr-change{font-size:10px;font-weight:700;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 22px;font-size:12.5px;font-weight:600;z-index:9000;box-shadow:0 8px 30px rgba(0,0,0,0.4);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;display:flex;align-items:center;gap:10px;opacity:0;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,204,113,0.3);}.toast.success i{color:var(--present);}
+.toast.warning{border-color:rgba(243,156,18,0.3);}.toast.warning i{color:var(--late);}
+.toast.info{border-color:rgba(74,144,217,0.3);}.toast.info i{color:var(--accent);}
+
+/* ── LEGEND ── */
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text-muted);}
+.legend-dot{width:9px;height:9px;border-radius:3px;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:50px 20px;color:var(--text-muted);}
+.empty-state i{font-size:36px;display:block;margin-bottom:12px;opacity:.4;}
+.empty-state p{font-size:13px;}
+
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeUp .3s ease both;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:1100px){:root{--sidebar-w:218px;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.compare-cards-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){
+  .main-content{padding:72px 13px 26px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .main-tabs .main-tab span{display:none;}
+  .compare-cards-grid{grid-template-columns:1fr;}
+  .modal-scores-grid{grid-template-columns:1fr 1fr;}
+  .modal-student-hdr{flex-wrap:wrap;}
+  .notif-panel{left:10px;right:10px;width:auto;}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr;}
+  .modal-scores-grid{grid-template-columns:1fr;}
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()" title="منو">
+  <span></span><span></span><span></span>
+</button>
+<div class="sb-overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بور<span>بور</span></div>
+  <button onclick="closeSidebar()" style="width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;margin-bottom:4px;" title="بستن منو">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+  <div class="deputy-block">
+    <div class="deputy-avatar">ا</div>
+    <div>
+      <div class="deputy-name">احمد کریمی</div>
+      <div class="deputy-role">معاون آموزشی</div>
+      <div class="deputy-badge">هنرستان شهید بوربور</div>
+    </div>
+  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item"><a href="../html/assistant_dashboard.html"><i class="fas fa-th-large"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/assistant_attendance.html"><i class="fas fa-clipboard-check"></i> مدیریت حضور و غیاب <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/assistant_students.html"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a></div>
+  <div class="nav-item"><a href="../html/assistant_teachers_management.html"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a></div>
+  <div class="nav-item active"><a href="../html/assistant_grades_management.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">گزارش‌ها و پیام‌ها</div>
+  <div class="nav-item"><a href="../html/assistant_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a></div>
+  <div class="nav-item"><a href="../html/assistant_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۵</span></a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item"><a href="../html/assistant_profile.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-hdr">
+    <div class="notif-panel-title"><i class="fas fa-bell"></i> اطلاعیه‌ها</div>
+    <button class="notif-close-btn" onclick="toggleNotif()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="notif-list">
+    <div class="notif-item">
+      <div class="notif-icon ni-red"><i class="fas fa-exclamation"></i></div>
+      <div class="notif-content">
+        <div class="notif-title">جلسه شورای معلمان</div>
+        <div class="notif-body">جلسه فوری فردا چهارشنبه ساعت ۱۲ در سالن اجتماعات — حضور الزامی.</div>
+        <div class="notif-time">۱ ساعت پیش</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon ni-blue"><i class="fas fa-star"></i></div>
+      <div class="notif-content">
+        <div class="notif-title">مهلت ثبت نمرات</div>
+        <div class="notif-body">مهلت تحویل نمرات پایان ترم تا ۳۱ اردیبهشت است.</div>
+        <div class="notif-time">دیروز</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon ni-green"><i class="fas fa-flask"></i></div>
+      <div class="notif-content">
+        <div class="notif-title">کارگاه آموزشی</div>
+        <div class="notif-body">کارگاه تدریس نوین پنجشنبه ۲۸ اردیبهشت برگزار می‌شود.</div>
+        <div class="notif-time">۲ روز پیش</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon ni-yellow"><i class="fas fa-calendar-times"></i></div>
+      <div class="notif-content">
+        <div class="notif-title">تعطیلی هفته آینده</div>
+        <div class="notif-body">مدرسه چهارشنبه آینده تعطیل رسمی است.</div>
+        <div class="notif-time">۳ روز پیش</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon ni-purple"><i class="fas fa-file-alt"></i></div>
+      <div class="notif-content">
+        <div class="notif-title">بخشنامه ارزشیابی</div>
+        <div class="notif-body">دستورالعمل جدید ارزشیابی توصیفی ابلاغ شد.</div>
+        <div class="notif-time">۴ روز پیش</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting">
+      <h1>مدیریت <span>نمرات</span></h1>
+      <p>
+        <i class="fas fa-star" style="color:var(--accent4);font-size:11px;"></i>
+        سال تحصیلی ۱۴۰۴–۱۴۰۵ &nbsp;|&nbsp; هنرستان شهید بوربور
+        &nbsp;|&nbsp;
+        <span id="currentTermLabel" style="color:var(--accent3);font-weight:700;"></span>
+      </p>
+    </div>
+    <div class="top-actions">
+      <select class="fsel" id="termSelector" onchange="onTermChange()">
+        <option value="1">نیم‌سال اول</option>
+        <option value="2">نیم‌سال دوم</option>
+      </select>
+      <div class="action-btn" id="notifBtn" onclick="toggleNotif()" title="اطلاعیه‌ها">
+        <i class="fas fa-bell"></i>
+        <div class="notif-dot"></div>
+      </div>
+      <button class="export-btn" onclick="exportExcel()"><i class="fas fa-file-excel"></i> خروجی اکسل</button>
+      <div class="profile-btn">ا</div>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon si-blue"><i class="fas fa-users"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--accent)" id="statTotalStudents">۰</div>
+        <div class="stat-lbl">تعداد دانش‌آموزان</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-green"><i class="fas fa-chart-line"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--present)" id="statOverallAvg">۰</div>
+        <div class="stat-lbl">معدل کل مدرسه</div>
+        <div class="stat-trend trend-up" id="statAvgTrend"><i class="fas fa-arrow-up"></i> نسبت به ترم قبل</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-red"><i class="fas fa-exclamation-triangle"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--absent)" id="statDeclineCount">۰</div>
+        <div class="stat-lbl">افت تحصیلی</div>
+        <div class="stat-trend trend-down" id="statDeclineTrend"><i class="fas fa-arrow-down"></i> نیاز به پیگیری</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-orange"><i class="fas fa-trophy"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--accent4)" id="statExcellentCount">۰</div>
+        <div class="stat-lbl">ممتاز (معدل ≥ ۱۷)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN TABS -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="switchTab('all',this)"><i class="fas fa-list-alt"></i><span>نمرات همه کلاس‌ها</span></button>
+    <button class="main-tab" onclick="switchTab('decline',this)"><i class="fas fa-chart-line" style="transform:scaleY(-1);display:inline-block;"></i><span>گزارش افت تحصیلی</span></button>
+    <button class="main-tab" onclick="switchTab('compare',this)"><i class="fas fa-balance-scale"></i><span>مقایسه کلاس‌ها</span></button>
+    <button class="main-tab" onclick="switchTab('subjects',this)"><i class="fas fa-book-open"></i><span>تحلیل درسی</span></button>
+  </div>
+
+  <!-- TAB: ALL SCORES -->
+  <div class="tab-panel active" id="panel-all">
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="searchAll" placeholder="جستجو نام دانش‌آموز، کد ملی..." oninput="applyAllFilters()">
+        </div>
+        <select class="fsel" id="filterGrade" onchange="applyAllFilters()">
+          <option value="all">همه پایه‌ها</option>
+          <option value="10">دهم</option>
+          <option value="11">یازدهم</option>
+          <option value="12">دوازدهم</option>
+        </select>
+        <select class="fsel" id="filterClass" onchange="applyAllFilters()">
+          <option value="all">همه کلاس‌ها</option>
+          <option value="الف">الف</option>
+          <option value="ب">ب</option>
+          <option value="ج">ج</option>
+          <option value="د">د</option>
+        </select>
+        <select class="fsel" id="filterStatus" onchange="applyAllFilters()">
+          <option value="all">همه وضعیت‌ها</option>
+          <option value="excellent">ممتاز (≥۱۷)</option>
+          <option value="good">خوب (۱۴–۱۷)</option>
+          <option value="average">متوسط (۱۰–۱۴)</option>
+          <option value="fail">مردود (زیر ۱۰)</option>
+        </select>
+        <select class="fsel" id="sortAll" onchange="applyAllFilters()">
+          <option value="name">مرتب: نام</option>
+          <option value="avg_desc">معدل: زیاد به کم</option>
+          <option value="avg_asc">معدل: کم به زیاد</option>
+          <option value="grade">پایه</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>دانش‌آموز</th>
+              <th>پایه / کلاس</th>
+              <th onclick="setSortAll('avg_desc')">معدل <i class="fas fa-sort" style="font-size:9px;"></i></th>
+              <th>ریاضی</th><th>فیزیک</th><th>شیمی</th><th>زیست</th><th>ادبیات</th>
+              <th>اقدام</th>
+            </tr>
+          </thead>
+          <tbody id="allScoresBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="allPageInfo"></div>
+        <div class="page-btns" id="allPageBtns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: DECLINE -->
+  <div class="tab-panel" id="panel-decline">
+    <div class="card">
+      <div class="decline-alert-banner">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>دانش‌آموزانی که معدل آن‌ها نسبت به ترم قبل <strong>۱ نمره یا بیشتر کاهش</strong> داشته، در این گزارش نمایش داده می‌شوند.</span>
+      </div>
+      <div class="decline-filters">
+        <select class="fsel" id="declineGradeFilter" onchange="renderDeclineTable()">
+          <option value="all">همه پایه‌ها</option>
+          <option value="10">دهم</option><option value="11">یازدهم</option><option value="12">دوازدهم</option>
+        </select>
+        <select class="fsel" id="declineSeverity" onchange="renderDeclineTable()">
+          <option value="all">همه شدت‌ها</option>
+          <option value="high">شدید (≥ ۳ نمره)</option>
+          <option value="mid">متوسط (۱.۵ تا ۳)</option>
+          <option value="low">خفیف (۱ تا ۱.۵)</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table class="decline-table">
+          <thead><tr>
+            <th>دانش‌آموز</th><th>پایه / کلاس</th>
+            <th>معدل ترم ۱</th><th>معدل ترم ۲</th><th>تغییر</th>
+            <th>شدت افت</th><th>روند</th><th>اقدام</th>
+          </tr></thead>
+          <tbody id="declineBody"></tbody>
+        </table>
+      </div>
+      <div id="declineEmpty" class="empty-state" style="display:none;">
+        <i class="fas fa-check-circle" style="color:var(--present);opacity:1;"></i>
+        <p>هیچ افت تحصیلی در این فیلتر یافت نشد.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: COMPARE -->
+  <div class="tab-panel" id="panel-compare">
+    <div class="card">
+      <div class="compare-controls">
+        <select class="fsel" id="compareSubject" onchange="renderCompare()">
+          <option value="avg">معدل کل</option>
+          <option value="ریاضی">ریاضی</option>
+          <option value="فیزیک">فیزیک</option>
+          <option value="شیمی">شیمی</option>
+          <option value="زیست">زیست‌شناسی</option>
+          <option value="ادبیات">ادبیات</option>
+        </select>
+        <select class="fsel" id="compareGrade" onchange="renderCompare()">
+          <option value="all">همه پایه‌ها</option>
+          <option value="10">دهم</option><option value="11">یازدهم</option><option value="12">دوازدهم</option>
+        </select>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--present)"></div> ممتاز (≥۱۷)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> خوب (۱۴–۱۷)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div> متوسط (۱۰–۱۴)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--absent)"></div> مردود (زیر ۱۰)</div>
+        </div>
+      </div>
+      <div class="compare-cards-grid" id="compareCards"></div>
+      <div class="compare-chart">
+        <div class="chart-title">
+          <i class="fas fa-chart-bar"></i> مقایسه میانگین نمرات
+          <span style="color:var(--accent3);font-weight:500;font-size:11px;">— روی کارت کلاس کلیک کنید تا دانش‌آموزان نمایش داده شوند</span>
+        </div>
+        <div class="bar-chart" id="compareBarChart"></div>
+      </div>
+      <!-- Class detail panel -->
+      <div class="class-detail-panel" id="classDetailPanel" style="display:none;">
+        <div class="cdp-header" id="cdpHeader"></div>
+        <div class="cdp-toolbar">
+          <div class="cdp-search">
+            <i class="fas fa-search cdp-search-icon"></i>
+            <input type="text" id="cdpSearch" placeholder="جستجو نام دانش‌آموز..." oninput="filterClassDetail()">
+          </div>
+          <select class="fsel" id="cdpSort" onchange="filterClassDetail()" style="font-size:11.5px;padding:9px 12px;">
+            <option value="avg_desc">معدل: زیاد به کم</option>
+            <option value="avg_asc">معدل: کم به زیاد</option>
+            <option value="name">نام (الفبا)</option>
+            <option value="rank">رتبه</option>
+          </select>
+          <select class="fsel" id="cdpStatus" onchange="filterClassDetail()" style="font-size:11.5px;padding:9px 12px;">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="excellent">ممتاز (≥۱۷)</option>
+            <option value="good">خوب (۱۴–۱۷)</option>
+            <option value="average">متوسط (۱۰–۱۴)</option>
+            <option value="fail">مردود (زیر ۱۰)</option>
+          </select>
+          <button onclick="closeClassDetail()" style="display:flex;align-items:center;gap:6px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);color:var(--absent);font-family:inherit;font-size:11.5px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(231,76,60,0.16)'" onmouseout="this.style.background='rgba(231,76,60,0.08)'">
+            <i class="fas fa-times"></i> بستن
+          </button>
+        </div>
+        <div class="cdp-body">
+          <div class="cdp-student-list" id="cdpStudentList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SUBJECTS -->
+  <div class="tab-panel" id="panel-subjects">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-book-open"></i> انتخاب پایه</div>
+        <select class="fsel" id="subjectGradeFilter" onchange="renderSubjects()">
+          <option value="all">همه پایه‌ها</option>
+          <option value="10">دهم</option><option value="11">یازدهم</option><option value="12">دوازدهم</option>
+        </select>
+      </div>
+      <div class="subject-grid" id="subjectCards"></div>
+      <div id="subjectDetailWrap" style="display:none;margin-top:6px;">
+        <div style="background:linear-gradient(135deg,rgba(74,144,217,0.08),rgba(142,95,212,0.05));border:1px solid rgba(74,144,217,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:200px;">
+            <div id="subjectDetailIcon" style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;"></div>
+            <div>
+              <div class="card-title" id="subjectDetailTitle" style="margin-bottom:2px;"></div>
+              <div id="subjectDetailMeta" style="font-size:10.5px;color:var(--text-muted);"></div>
+            </div>
+          </div>
+          <button onclick="closeSubjectDetail()" style="display:flex;align-items:center;gap:6px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);color:var(--absent);font-family:inherit;font-size:11.5px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;" onmouseover="this.style.background='rgba(231,76,60,0.16)'" onmouseout="this.style.background='rgba(231,76,60,0.08)'">
+            <i class="fas fa-times"></i> بستن
+          </button>
+        </div>
+        <div class="subj-toolbar">
+          <div class="subj-search">
+            <i class="fas fa-search subj-search-icon"></i>
+            <input type="text" id="subjDetailSearch" placeholder="جستجو نام دانش‌آموز..." oninput="filterSubjectDetail()">
+          </div>
+          <select class="fsel" id="subjDetailSort" onchange="filterSubjectDetail()" style="font-size:11.5px;padding:9px 12px;">
+            <option value="score_desc">نمره: زیاد به کم</option>
+            <option value="score_asc">نمره: کم به زیاد</option>
+            <option value="name">نام</option>
+          </select>
+          <select class="fsel" id="subjDetailStatus" onchange="filterSubjectDetail()" style="font-size:11.5px;padding:9px 12px;">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="excellent">ممتاز (≥۱۷)</option>
+            <option value="good">خوب (۱۴–۱۷)</option>
+            <option value="average">متوسط (۱۰–۱۴)</option>
+            <option value="fail">مردود (زیر ۱۰)</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table class="scores-table" id="subjectDetailTable">
+            <thead><tr id="subjectDetailHead"></tr></thead>
+            <tbody id="subjectDetailBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT DETAIL MODAL -->
+<div class="modal-backdrop" id="detailModal" onclick="closeDetailModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i class="fas fa-user-graduate"></i> <span id="detailModalTitle">جزئیات نمرات</span></div>
+      <button class="modal-close" onclick="closeDetailModalBtn()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+/* ══════════════ HELPERS ══════════════ */
+const fa = n => {
+  if(n===null||n===undefined) return '—';
+  return String(typeof n==='number'?n.toFixed(n%1===0?0:2):n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+};
+const faFloat = n => String(parseFloat(n).toFixed(2)).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast'),i=t.querySelector('i');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast '+type+' show';
+  i.className=type==='success'?'fas fa-check-circle':type==='info'?'fas fa-info-circle':'fas fa-exclamation-circle';
+  setTimeout(()=>{t.className='toast '+type;},3500);
+}
+
+const AV_COLORS=[
+  ['rgba(74,144,217,0.2)','var(--accent)'],
+  ['rgba(142,95,212,0.2)','var(--accent2)'],
+  ['rgba(6,214,160,0.18)','var(--accent3)'],
+  ['rgba(243,156,18,0.18)','var(--accent4)'],
+  ['rgba(232,142,192,0.18)','#e88ec0'],
+  ['rgba(231,76,60,0.18)','var(--absent)'],
+];
+function getAv(id){return AV_COLORS[(id-1)%AV_COLORS.length];}
+function gradeName(g){return g===10?'دهم':g===11?'یازدهم':'دوازدهم';}
+function gradeBadgeClass(g){return g===10?'gb-10':g===11?'gb-11':'gb-12';}
+function scoreColor(s){
+  if(s===null||s===undefined)return 'var(--text-muted)';
+  if(s>=17)return 'var(--present)';
+  if(s>=14)return 'var(--accent)';
+  if(s>=10)return 'var(--accent4)';
+  return 'var(--absent)';
+}
+function scoreChipClass(s){
+  if(s===null||s===undefined)return '';
+  if(s>=17)return 'sc-ex';
+  if(s>=14)return 'sc-good';
+  if(s>=10)return 'sc-avg';
+  return 'sc-fail';
+}
+
+/* ══════════════ DATA ══════════════ */
+const SUBJECTS=['ریاضی','فیزیک','شیمی','زیست','ادبیات','دین','تربیت بدنی'];
+const SUBJECT_ICONS={'ریاضی':'fas fa-square-root-alt','فیزیک':'fas fa-atom','شیمی':'fas fa-flask','زیست':'fas fa-leaf','ادبیات':'fas fa-book','دین':'fas fa-moon','تربیت بدنی':'fas fa-running'};
+const SUBJECT_COLORS={'ریاضی':['rgba(74,144,217,0.18)','var(--accent)'],'فیزیک':['rgba(142,95,212,0.18)','var(--accent2)'],'شیمی':['rgba(6,214,160,0.15)','var(--accent3)'],'زیست':['rgba(243,156,18,0.15)','var(--accent4)'],'ادبیات':['rgba(232,142,192,0.15)','#e88ec0'],'دین':['rgba(231,76,60,0.13)','var(--absent)'],'تربیت بدنی':['rgba(46,204,113,0.15)','var(--present)']};
+
+const studentsData=[
+  {id:1,fname:'سارا',lname:'احمدی',national:'0012345678',grade:11,cls:'ب',t1:{ریاضی:14,فیزیک:13,شیمی:15,زیست:16,ادبیات:17,دین:18,'تربیت بدنی':19},t2:{ریاضی:12,فیزیک:11,شیمی:13,زیست:14,ادبیات:15,دین:17,'تربیت بدنی':19}},
+  {id:2,fname:'رامتین',lname:'آذری',national:'0056789012',grade:12,cls:'ب',t1:{ریاضی:17,فیزیک:16,شیمی:18,زیست:15,ادبیات:14,دین:19,'تربیت بدنی':20},t2:{ریاضی:18,فیزیک:17,شیمی:18,زیست:16,ادبیات:15,دین:19,'تربیت بدنی':20}},
+  {id:3,fname:'نیلوفر',lname:'میرزایی',national:'0089012345',grade:10,cls:'الف',t1:{ریاضی:19,فیزیک:18,شیمی:17,زیست:20,ادبیات:18,دین:20,'تربیت بدنی':20},t2:{ریاضی:19,فیزیک:18,شیمی:18,زیست:20,ادبیات:19,دین:20,'تربیت بدنی':20}},
+  {id:4,fname:'محمد',lname:'علوی',national:'0112345678',grade:10,cls:'الف',t1:{ریاضی:11,فیزیک:10,شیمی:12,زیست:13,ادبیات:14,دین:15,'تربیت بدنی':18},t2:{ریاضی:9,فیزیک:8,شیمی:10,زیست:11,ادبیات:12,دین:14,'تربیت بدنی':18}},
+  {id:5,fname:'فاطمه',lname:'کاظمی',national:'0145678901',grade:10,cls:'ج',t1:{ریاضی:15,فیزیک:14,شیمی:13,زیست:16,ادبیات:15,دین:17,'تربیت بدنی':19},t2:{ریاضی:14,فیزیک:13,شیمی:13,زیست:15,ادبیات:14,دین:17,'تربیت بدنی':19}},
+  {id:6,fname:'آرین',lname:'صفایی',national:'0178901234',grade:11,cls:'الف',t1:{ریاضی:18,فیزیک:17,شیمی:16,زیست:15,ادبیات:16,دین:18,'تربیت بدنی':20},t2:{ریاضی:18,فیزیک:17,شیمی:17,زیست:16,ادبیات:17,دین:19,'تربیت بدنی':20}},
+  {id:7,fname:'گلناز',lname:'شکوهی',national:'0201234567',grade:11,cls:'الف',t1:{ریاضی:12,فیزیک:13,شیمی:11,زیست:14,ادبیات:16,دین:17,'تربیت بدنی':18},t2:{ریاضی:9,فیزیک:10,شیمی:8,زیست:11,ادبیات:13,دین:15,'تربیت بدنی':17}},
+  {id:8,fname:'دانیار',lname:'نوروزی',national:'0234567890',grade:12,cls:'الف',t1:{ریاضی:16,فیزیک:15,شیمی:17,زیست:14,ادبیات:13,دین:16,'تربیت بدنی':19},t2:{ریاضی:16,فیزیک:15,شیمی:17,زیست:14,ادبیات:14,دین:17,'تربیت بدنی':19}},
+  {id:9,fname:'هانیه',lname:'قدیری',national:'0267890123',grade:12,cls:'ج',t1:{ریاضی:13,فیزیک:14,شیمی:12,زیست:15,ادبیات:16,دین:17,'تربیت بدنی':20},t2:{ریاضی:10,فیزیک:11,شیمی:9,زیست:12,ادبیات:14,دین:16,'تربیت بدنی':19}},
+  {id:10,fname:'سینا',lname:'موسوی',national:'0290123456',grade:10,cls:'ب',t1:{ریاضی:20,فیزیک:19,شیمی:18,زیست:20,ادبیات:17,دین:20,'تربیت بدنی':20},t2:{ریاضی:20,فیزیک:19,شیمی:19,زیست:20,ادبیات:18,دین:20,'تربیت بدنی':20}},
+  {id:11,fname:'لیلا',lname:'ابراهیمی',national:'0323456789',grade:11,cls:'ج',t1:{ریاضی:14,فیزیک:13,شیمی:15,زیست:16,ادبیات:14,دین:16,'تربیت بدنی':18},t2:{ریاضی:13,فیزیک:12,شیمی:14,زیست:15,ادبیات:13,دین:15,'تربیت بدنی':17}},
+  {id:12,fname:'کیان',lname:'رستمی',national:'0356789012',grade:12,cls:'د',t1:{ریاضی:17,فیزیک:16,شیمی:18,زیست:17,ادبیات:15,دین:18,'تربیت بدنی':19},t2:{ریاضی:17,فیزیک:16,شیمی:18,زیست:17,ادبیات:16,دین:18,'تربیت بدنی':20}},
+  {id:13,fname:'مهسا',lname:'جعفری',national:'0389012345',grade:10,cls:'د',t1:{ریاضی:8,فیزیک:9,شیمی:7,زیست:10,ادبیات:11,دین:13,'تربیت بدنی':16},t2:{ریاضی:6,فیزیک:7,شیمی:6,زیست:8,ادبیات:9,دین:12,'تربیت بدنی':15}},
+  {id:14,fname:'پارسا',lname:'حیدری',national:'0412345678',grade:11,cls:'د',t1:{ریاضی:16,فیزیک:15,شیمی:14,زیست:17,ادبیات:16,دین:17,'تربیت بدنی':19},t2:{ریاضی:16,فیزیک:15,شیمی:15,زیست:17,ادبیات:16,دین:18,'تربیت بدنی':19}},
+  {id:15,fname:'ستاره',lname:'احمدزاده',national:'0445678901',grade:12,cls:'ب',t1:{ریاضی:15,فیزیک:16,شیمی:14,زیست:13,ادبیات:17,دین:16,'تربیت بدنی':18},t2:{ریاضی:14,فیزیک:15,شیمی:13,زیست:12,ادبیات:16,دین:16,'تربیت بدنی':18}},
+];
+
+studentsData.forEach(s=>{
+  const t1vals=Object.values(s.t1).filter(v=>v!==null);
+  const t2vals=Object.values(s.t2).filter(v=>v!==null);
+  s.avg1=t1vals.length?t1vals.reduce((a,b)=>a+b,0)/t1vals.length:0;
+  s.avg2=t2vals.length?t2vals.reduce((a,b)=>a+b,0)/t2vals.length:0;
+  s.decline=s.avg1-s.avg2;
+});
+
+/* ══════════════ STATE ══════════════ */
+let currentTerm=1;
+let allFiltered=[...studentsData];
+let allPage=1;
+const PER_PAGE=8;
+let activeSubject=null;
+let selectedClassKey=null;
+let selectedClassStudents=[];
+
+/* ══════════════ SIDEBAR ══════════════ */
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  sb.classList.contains('open')?closeSidebar():openSidebar();
+}
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('on');
+  document.body.style.overflow='';
+}
+document.getElementById('overlay').addEventListener('click',()=>{
+  closeSidebar();
+  closeNotifPanel();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSidebar();closeNotifPanel();}});
+
+/* ══════════════ NOTIFICATION PANEL ══════════════ */
+function toggleNotif(){
+  const p=document.getElementById('notifPanel');
+  p.classList.toggle('open');
+}
+function closeNotifPanel(){
+  document.getElementById('notifPanel').classList.remove('open');
+}
+// Close notif if clicking outside
+document.addEventListener('click',e=>{
+  const p=document.getElementById('notifPanel');
+  const btn=document.getElementById('notifBtn');
+  if(p.classList.contains('open')&&!p.contains(e.target)&&!btn.contains(e.target)){
+    closeNotifPanel();
+  }
+});
+
+/* ══════════════ TERM ══════════════ */
+function onTermChange(){
+  currentTerm=parseInt(document.getElementById('termSelector').value);
+  document.getElementById('currentTermLabel').textContent=currentTerm===1?'نیم‌سال اول':'نیم‌سال دوم';
+  applyAllFilters();
+  renderCompare();
+  renderSubjects();
+  updateStats();
+}
+function getScores(s){return currentTerm===1?s.t1:s.t2;}
+function getAvg(s){return currentTerm===1?s.avg1:s.avg2;}
+
+/* ══════════════ STATS ══════════════ */
+function updateStats(){
+  const n=studentsData.length;
+  const overallAvg=studentsData.reduce((a,s)=>a+getAvg(s),0)/n;
+  const declineCount=studentsData.filter(s=>s.decline>1).length;
+  const excellentCount=studentsData.filter(s=>getAvg(s)>=17).length;
+  document.getElementById('statTotalStudents').textContent=fa(n);
+  document.getElementById('statOverallAvg').textContent=faFloat(overallAvg);
+  document.getElementById('statDeclineCount').textContent=fa(declineCount);
+  document.getElementById('statExcellentCount').textContent=fa(excellentCount);
+  const avgDiff=studentsData.reduce((a,s)=>a+(s.avg2-s.avg1),0)/n;
+  const trendEl=document.getElementById('statAvgTrend');
+  if(avgDiff>=0){trendEl.className='stat-trend trend-up';trendEl.innerHTML=`<i class="fas fa-arrow-up"></i> +${faFloat(Math.abs(avgDiff))} نسبت به ترم قبل`;}
+  else{trendEl.className='stat-trend trend-down';trendEl.innerHTML=`<i class="fas fa-arrow-down"></i> ${faFloat(Math.abs(avgDiff))}- نسبت به ترم قبل`;}
+}
+
+/* ══════════════ TAB SWITCHING ══════════════ */
+function switchTab(id,btn){
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(id==='compare')renderCompare();
+  if(id==='decline')renderDeclineTable();
+  if(id==='subjects')renderSubjects();
+}
+
+/* ══════════════ TAB 1: ALL SCORES ══════════════ */
+function setSortAll(v){document.getElementById('sortAll').value=v;applyAllFilters();}
+function applyAllFilters(){
+  const q=document.getElementById('searchAll').value.trim().toLowerCase();
+  const g=document.getElementById('filterGrade').value;
+  const c=document.getElementById('filterClass').value;
+  const st=document.getElementById('filterStatus').value;
+  const sortV=document.getElementById('sortAll').value;
+  allFiltered=studentsData.filter(s=>{
+    const full=(s.fname+' '+s.lname+' '+s.national).toLowerCase();
+    const avg=getAvg(s);
+    return(!q||full.includes(q))&&(g==='all'||String(s.grade)===g)&&(c==='all'||s.cls===c)&&
+      (st==='all'||(st==='excellent'&&avg>=17)||(st==='good'&&avg>=14&&avg<17)||(st==='average'&&avg>=10&&avg<14)||(st==='fail'&&avg<10));
+  });
+  allFiltered.sort((a,b)=>{
+    if(sortV==='name')return (a.fname+a.lname).localeCompare(b.fname+b.lname,'fa');
+    if(sortV==='avg_desc')return getAvg(b)-getAvg(a);
+    if(sortV==='avg_asc')return getAvg(a)-getAvg(b);
+    if(sortV==='grade')return a.grade-b.grade||a.cls.localeCompare(b.cls,'fa');
+    return 0;
+  });
+  allPage=1;renderAllTable();
+}
+
+function renderAllTable(){
+  const total=allFiltered.length;
+  const pages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(allPage>pages)allPage=pages;
+  const slice=allFiltered.slice((allPage-1)*PER_PAGE,allPage*PER_PAGE);
+  const tbody=document.getElementById('allScoresBody');
+  tbody.innerHTML='';
+  if(!slice.length){
+    tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:10px;opacity:.4;"></i>دانش‌آموزی یافت نشد</td></tr>`;
+  } else {
+    slice.forEach(s=>{
+      const [bg,col]=getAv(s.id);
+      const scores=getScores(s);
+      const avg=getAvg(s);
+      const subjectKeys=['ریاضی','فیزیک','شیمی','زیست','ادبیات'];
+      const tr=document.createElement('tr');
+      tr.onclick=()=>openDetailModal(s.id);
+      const scoresCells=subjectKeys.map(subj=>{
+        const v=scores[subj];
+        if(v===undefined||v===null)return`<td style="color:var(--text-muted);">—</td>`;
+        return`<td><span class="score-chip ${scoreChipClass(v)}">${fa(v)}</span></td>`;
+      }).join('');
+      tr.innerHTML=`
+        <td><div class="s-cell">
+          <div class="s-av" style="background:${bg};color:${col}">${s.fname[0]}</div>
+          <div><div class="s-name">${s.fname} ${s.lname}</div><div class="s-id">${s.national}</div></div>
+        </div></td>
+        <td><span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)} ${s.cls}</span></td>
+        <td><div class="avg-bar-wrap">
+          <span style="font-size:14px;font-weight:900;color:${scoreColor(avg)}">${faFloat(avg)}</span>
+          <div class="avg-bar"><div class="avg-bar-fill" style="width:${avg/20*100}%;background:${scoreColor(avg)};"></div></div>
+        </div></td>
+        ${scoresCells}
+        <td onclick="event.stopPropagation()">
+          <div class="row-acts"><button class="ra ra-v" onclick="openDetailModal(${s.id})"><i class="fas fa-eye"></i></button></div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  document.getElementById('allPageInfo').textContent=`نمایش ${fa(Math.min((allPage-1)*PER_PAGE+1,total))}–${fa(Math.min(allPage*PER_PAGE,total))} از ${fa(total)} دانش‌آموز`;
+  const btns=document.getElementById('allPageBtns');btns.innerHTML='';
+  const prev=document.createElement('button');prev.className='pg-btn';prev.innerHTML='<i class="fas fa-chevron-right"></i>';prev.disabled=allPage===1;prev.onclick=()=>{allPage--;renderAllTable();};btns.appendChild(prev);
+  const maxShow=5,start=Math.max(1,allPage-2),end=Math.min(pages,start+maxShow-1);
+  for(let p=Math.max(1,end-maxShow+1);p<=end;p++){
+    const b=document.createElement('button');b.className='pg-btn'+(p===allPage?' active':'');b.textContent=fa(p);const pp=p;b.onclick=()=>{allPage=pp;renderAllTable();};btns.appendChild(b);
+  }
+  const next=document.createElement('button');next.className='pg-btn';next.innerHTML='<i class="fas fa-chevron-left"></i>';next.disabled=allPage===pages;next.onclick=()=>{allPage++;renderAllTable();};btns.appendChild(next);
+}
+
+/* ══════════════ TAB 2: DECLINE ══════════════ */
+function renderDeclineTable(){
+  const gf=document.getElementById('declineGradeFilter').value;
+  const sev=document.getElementById('declineSeverity').value;
+  let list=studentsData.filter(s=>{
+    return(gf==='all'||String(s.grade)===gf)&&s.decline>=1&&
+      (sev==='all'||(sev==='high'&&s.decline>=3)||(sev==='mid'&&s.decline>=1.5&&s.decline<3)||(sev==='low'&&s.decline>=1&&s.decline<1.5));
+  });
+  list.sort((a,b)=>b.decline-a.decline);
+  const tbody=document.getElementById('declineBody');
+  const empty=document.getElementById('declineEmpty');
+  tbody.innerHTML='';
+  if(!list.length){empty.style.display='block';return;}
+  empty.style.display='none';
+  list.forEach(s=>{
+    const [bg,col]=getAv(s.id);
+    const declineClass=s.decline>=3?'dr-high':s.decline>=1.5?'dr-mid':'dr-low';
+    const declineLabel=s.decline>=3?'شدید':s.decline>=1.5?'متوسط':'خفیف';
+    const spark=generateSparkline(s.avg1,s.avg2);
+    const tr=document.createElement('tr');
+    tr.onclick=()=>openDetailModal(s.id);
+    tr.innerHTML=`
+      <td><div class="s-cell">
+        <div class="s-av" style="background:${bg};color:${col}">${s.fname[0]}</div>
+        <div><div class="s-name">${s.fname} ${s.lname}</div><div class="s-id">${s.national}</div></div>
+      </div></td>
+      <td><span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)} ${s.cls}</span></td>
+      <td><span style="font-size:13px;font-weight:800;color:${scoreColor(s.avg1)}">${faFloat(s.avg1)}</span></td>
+      <td><span style="font-size:13px;font-weight:800;color:${scoreColor(s.avg2)}">${faFloat(s.avg2)}</span></td>
+      <td><span style="font-size:13px;font-weight:800;color:var(--absent)">− ${faFloat(s.decline)}</span></td>
+      <td><span class="decline-rate ${declineClass}"><i class="fas fa-arrow-down"></i> ${declineLabel}</span></td>
+      <td>${spark}</td>
+      <td onclick="event.stopPropagation()"><button class="ra ra-v" onclick="openDetailModal(${s.id})"><i class="fas fa-eye"></i></button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function generateSparkline(avg1,avg2){
+  const pts=[];
+  for(let i=0;i<5;i++){const val=avg1-(avg1-avg2)*(i/4);pts.push(Math.max(0,Math.min(20,val)));}
+  const min=Math.min(...pts),max=Math.max(...pts)+0.01;
+  const bars=pts.map((v,i)=>{
+    const h=Math.max(4,Math.round((v-min)/(max-min)*24+4));
+    const col=i===4?'var(--absent)':i===0?'var(--accent)':'rgba(74,144,217,0.4)';
+    return`<div class="dsp-bar" style="height:${h}px;background:${col};"></div>`;
+  }).join('');
+  return`<div class="decline-sparkline">${bars}</div>`;
+}
+
+/* ══════════════ TAB 3: COMPARE ══════════════ */
+function renderCompare(){
+  const subj=document.getElementById('compareSubject').value;
+  const gradeF=document.getElementById('compareGrade').value;
+  const classMap={};
+  studentsData.forEach(s=>{
+    if(gradeF!=='all'&&String(s.grade)!==gradeF)return;
+    const key=`${s.grade}${s.cls}`;
+    if(!classMap[key])classMap[key]={grade:s.grade,cls:s.cls,students:[],label:`${gradeName(s.grade)} ${s.cls}`,key};
+    classMap[key].students.push(s);
+  });
+  const classes=Object.values(classMap).sort((a,b)=>a.grade-b.grade||a.cls.localeCompare(b.cls,'fa'));
+  const ccColors=['cc-blue','cc-green','cc-orange','cc-purple','cc-blue','cc-green'];
+
+  function getClassSubjAvg(cls){
+    const vals=cls.students.map(s=>{
+      if(subj==='avg')return getAvg(s);
+      const sc=getScores(s);return sc[subj]!==undefined?sc[subj]:null;
+    }).filter(v=>v!==null);
+    return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+  }
+
+  const cardsEl=document.getElementById('compareCards');
+  cardsEl.innerHTML='';
+  classes.forEach((cls,i)=>{
+    const avg=getClassSubjAvg(cls);
+    const n=cls.students.length;
+    const excellent=cls.students.filter(s=>(subj==='avg'?getAvg(s):(getScores(s)[subj]||0))>=17).length;
+    const fail=cls.students.filter(s=>(subj==='avg'?getAvg(s):(getScores(s)[subj]||0))<10).length;
+    const card=document.createElement('div');
+    card.className=`compare-card ${ccColors[i%ccColors.length]}${selectedClassKey===cls.key?' selected':''}`;
+    card.dataset.key=cls.key;
+    card.onclick=()=>openClassDetail(cls.key,classMap,subj);
+    card.innerHTML=`
+      <div style="position:absolute;top:12px;left:12px;font-size:9.5px;color:var(--text-muted);display:flex;align-items:center;gap:4px;"><i class="fas fa-mouse-pointer" style="font-size:8px;"></i>کلیک برای جزئیات</div>
+      <div class="cc-title">${cls.label}</div>
+      <div class="cc-sub">${fa(n)} دانش‌آموز</div>
+      <div class="cc-avg" style="color:${scoreColor(avg)}">${faFloat(avg)}</div>
+      <div class="cc-avg-lbl">میانگین ${subj==='avg'?'معدل کل':subj}</div>
+      <div class="cc-pills">
+        <span class="cc-pill" style="background:rgba(46,204,113,0.15);color:var(--present)"><i class="fas fa-star" style="font-size:8px;"></i> ${fa(excellent)} ممتاز</span>
+        <span class="cc-pill" style="background:rgba(231,76,60,0.13);color:var(--absent)"><i class="fas fa-times" style="font-size:8px;"></i> ${fa(fail)} مردود</span>
+      </div>
+      <div class="cc-bar-wrap">
+        <div class="cc-bar-row"><div class="cc-bar-label" style="font-size:9px;">ممتاز</div><div class="cc-bar-bg"><div class="cc-bar-fill" style="width:${excellent/n*100}%;background:var(--present);"></div></div><div class="cc-bar-val" style="color:var(--present)">${fa(Math.round(excellent/n*100))}٪</div></div>
+        <div class="cc-bar-row"><div class="cc-bar-label" style="font-size:9px;">مردود</div><div class="cc-bar-bg"><div class="cc-bar-fill" style="width:${fail/n*100}%;background:var(--absent);"></div></div><div class="cc-bar-val" style="color:var(--absent)">${fa(Math.round(fail/n*100))}٪</div></div>
+      </div>`;
+    cardsEl.appendChild(card);
+  });
+
+  const barChartEl=document.getElementById('compareBarChart');
+  barChartEl.innerHTML='';
+  const barColors=['var(--accent)','var(--accent3)','var(--accent4)','var(--accent2)','var(--present)','#e88ec0'];
+  classes.forEach((cls,i)=>{
+    const avg=getClassSubjAvg(cls);
+    const row=document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML=`
+      <div class="bar-label">${cls.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${avg/20*100}%;background:linear-gradient(90deg,${barColors[i%barColors.length]},${barColors[(i+1)%barColors.length]});"><span>${faFloat(avg)}</span></div></div>
+      <div class="bar-val" style="color:${scoreColor(avg)}">${faFloat(avg)}</div>`;
+    barChartEl.appendChild(row);
+  });
+}
+
+/* ══════════════ CLASS DETAIL PANEL ══════════════ */
+function openClassDetail(key, classMap, subj){
+  // Toggle: if same class clicked again, close
+  if(selectedClassKey===key){closeClassDetail();return;}
+  selectedClassKey=key;
+  const cls=classMap[key];
+  if(!cls)return;
+  selectedClassStudents=[...cls.students];
+
+  // Update selected style on cards
+  document.querySelectorAll('.compare-card').forEach(c=>{
+    c.classList.toggle('selected',c.dataset.key===key);
+  });
+
+  // Build header
+  const avg=selectedClassStudents.reduce((a,s)=>a+getAvg(s),0)/selectedClassStudents.length;
+  const excellent=selectedClassStudents.filter(s=>getAvg(s)>=17).length;
+  const fail=selectedClassStudents.filter(s=>getAvg(s)<10).length;
+  const hdr=document.getElementById('cdpHeader');
+  hdr.innerHTML=`
+    <div class="cdp-av" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;">${cls.label[0]}</div>
+    <div>
+      <div class="cdp-title">کلاس ${cls.label}</div>
+      <div class="cdp-sub">${fa(selectedClassStudents.length)} دانش‌آموز</div>
+    </div>
+    <div class="cdp-stats">
+      <div class="cdp-stat"><div class="cdp-stat-val" style="color:${scoreColor(avg)}">${faFloat(avg)}</div><div class="cdp-stat-lbl">معدل کلاس</div></div>
+      <div class="cdp-stat"><div class="cdp-stat-val" style="color:var(--present)">${fa(excellent)}</div><div class="cdp-stat-lbl">ممتاز</div></div>
+      <div class="cdp-stat"><div class="cdp-stat-val" style="color:var(--absent)">${fa(fail)}</div><div class="cdp-stat-lbl">مردود</div></div>
+    </div>`;
+
+  // Clear search/filters
+  document.getElementById('cdpSearch').value='';
+  document.getElementById('cdpSort').value='avg_desc';
+  document.getElementById('cdpStatus').value='all';
+
+  const panel=document.getElementById('classDetailPanel');
+  panel.style.display='block';
+  filterClassDetail();
+  setTimeout(()=>{panel.scrollIntoView({behavior:'smooth',block:'start'});},80);
+}
+
+function closeClassDetail(){
+  selectedClassKey=null;
+  document.getElementById('classDetailPanel').style.display='none';
+  document.querySelectorAll('.compare-card').forEach(c=>c.classList.remove('selected'));
+}
+
+function filterClassDetail(){
+  const q=document.getElementById('cdpSearch').value.trim().toLowerCase();
+  const sortV=document.getElementById('cdpSort').value;
+  const statusV=document.getElementById('cdpStatus').value;
+
+  let list=[...selectedClassStudents];
+
+  // Filter by search
+  if(q)list=list.filter(s=>(s.fname+' '+s.lname).toLowerCase().includes(q));
+
+  // Filter by status
+  if(statusV!=='all'){
+    list=list.filter(s=>{
+      const avg=getAvg(s);
+      return(statusV==='excellent'&&avg>=17)||(statusV==='good'&&avg>=14&&avg<17)||(statusV==='average'&&avg>=10&&avg<14)||(statusV==='fail'&&avg<10);
+    });
+  }
+
+  // Sort
+  list.sort((a,b)=>{
+    if(sortV==='avg_desc')return getAvg(b)-getAvg(a);
+    if(sortV==='avg_asc')return getAvg(a)-getAvg(b);
+    if(sortV==='name')return (a.fname+a.lname).localeCompare(b.fname+b.lname,'fa');
+    return getAvg(b)-getAvg(a); // rank = avg_desc by default
+  });
+
+  renderClassDetailStudents(list);
+}
+
+function renderClassDetailStudents(list){
+  const container=document.getElementById('cdpStudentList');
+  container.innerHTML='';
+
+  if(!list.length){
+    container.innerHTML=`<div class="empty-state"><i class="fas fa-search"></i><p>دانش‌آموزی یافت نشد</p></div>`;
+    return;
+  }
+
+  // Sorted by avg for rank calculation
+  const allSorted=[...selectedClassStudents].sort((a,b)=>getAvg(b)-getAvg(a));
+
+  list.forEach((s,i)=>{
+    const [bg,col]=getAv(s.id);
+    const avg=getAvg(s);
+    const scores=getScores(s);
+    const rank=allSorted.findIndex(x=>x.id===s.id)+1;
+    const rankClass=rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'';
+
+    // Score pills for main subjects
+    const mainSubjects=['ریاضی','فیزیک','شیمی','زیست','ادبیات'];
+    const pillsHTML=mainSubjects.map(subj=>{
+      const v=scores[subj];
+      if(v===undefined)return'';
+      const [sb,sc]=SUBJECT_COLORS[subj]||SUBJECT_COLORS['ریاضی'];
+      return`<span class="cdp-score-pill" style="background:${sb};color:${sc};">${subj.substring(0,3)}: <strong>${fa(v)}</strong></span>`;
+    }).join('');
+
+    const row=document.createElement('div');
+    row.className='cdp-student-row';
+    row.onclick=()=>openDetailModal(s.id);
+    row.innerHTML=`
+      <div class="cdp-rank ${rankClass}">${rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'#'+fa(rank)}</div>
+      <div class="cdp-s-av" style="background:${bg};color:${col}">${s.fname[0]}</div>
+      <div class="cdp-s-info">
+        <div class="cdp-s-name">${s.fname} ${s.lname}</div>
+        <div class="cdp-s-national">${s.national}</div>
+        <div class="cdp-s-scores">${pillsHTML}</div>
+      </div>
+      <div class="cdp-avg-badge score-chip ${scoreChipClass(avg)}">${faFloat(avg)}</div>`;
+    container.appendChild(row);
+  });
+}
+
+/* ══════════════ TAB 4: SUBJECTS ══════════════ */
+function renderSubjects(){
+  activeSubject=null;
+  document.getElementById('subjectDetailWrap').style.display='none';
+  const gf=document.getElementById('subjectGradeFilter').value;
+  const filtered=studentsData.filter(s=>gf==='all'||String(s.grade)===gf);
+  const container=document.getElementById('subjectCards');
+  container.innerHTML='';
+  SUBJECTS.forEach(subj=>{
+    const vals=filtered.map(s=>{const sc=getScores(s);return sc[subj]!==undefined?sc[subj]:null;}).filter(v=>v!==null);
+    if(!vals.length)return;
+    const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    const excellent=vals.filter(v=>v>=17).length;
+    const fail=vals.filter(v=>v<10).length;
+    const [bg,col]=SUBJECT_COLORS[subj]||SUBJECT_COLORS['ریاضی'];
+    const icon=SUBJECT_ICONS[subj]||'fas fa-book';
+    const card=document.createElement('div');
+    card.className='subject-card';card.dataset.subj=subj;
+    card.onclick=()=>openSubjectDetail(subj,filtered);
+    card.innerHTML=`
+      <div class="sc-icon" style="background:${bg};color:${col}"><i class="${icon}"></i></div>
+      <div class="sc-name">${subj}</div>
+      <div class="sc-avg-val" style="color:${scoreColor(avg)}">${faFloat(avg)}</div>
+      <div class="sc-avg-lbl">میانگین</div>
+      <div class="sc-pill-row">
+        <span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:9px;background:rgba(46,204,113,0.13);color:var(--present);">${fa(excellent)} ممتاز</span>
+        <span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:9px;background:rgba(231,76,60,0.12);color:var(--absent);">${fa(fail)} مردود</span>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function openSubjectDetail(subj,filtered){
+  activeSubject=subj;
+  document.querySelectorAll('.subject-card').forEach(c=>{c.classList.toggle('active',c.dataset.subj===subj);});
+  const [bg,col]=SUBJECT_COLORS[subj]||SUBJECT_COLORS['ریاضی'];
+  document.getElementById('subjectDetailTitle').innerHTML=`<i class="${SUBJECT_ICONS[subj]||'fas fa-book'}" style="color:${col};"></i> نمرات ${subj}`;
+  document.getElementById('subjectDetailHead').innerHTML=`<th>دانش‌آموز</th><th>پایه / کلاس</th><th>نمره ترم ۱</th><th>نمره ترم ۲</th><th>تغییر</th>`;
+  const tbody=document.getElementById('subjectDetailBody');
+  tbody.innerHTML='';
+  [...filtered].sort((a,b)=>(getScores(b)[subj]||0)-(getScores(a)[subj]||0)).forEach(s=>{
+    const [avbg,avcol]=getAv(s.id);
+    const sc1=s.t1[subj],sc2=s.t2[subj];
+    const diff=sc2!==undefined&&sc1!==undefined?sc2-sc1:null;
+    const diffStr=diff===null?'—':diff>0?`<span style="color:var(--present)">+${fa(diff)}</span>`:diff<0?`<span style="color:var(--absent)">${fa(diff)}</span>`:`<span style="color:var(--text-muted)">—</span>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="s-cell"><div class="s-av" style="background:${avbg};color:${avcol}">${s.fname[0]}</div><div><div class="s-name">${s.fname} ${s.lname}</div></div></div></td>
+      <td><span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)} ${s.cls}</span></td>
+      <td><span class="score-chip ${sc1!==undefined?scoreChipClass(sc1):''}">${sc1!==undefined?fa(sc1):'—'}</span></td>
+      <td><span class="score-chip ${sc2!==undefined?scoreChipClass(sc2):''}">${sc2!==undefined?fa(sc2):'—'}</span></td>
+      <td>${diffStr}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('subjectDetailWrap').style.display='block';
+  setTimeout(()=>{document.getElementById('subjectDetailWrap').scrollIntoView({behavior:'smooth',block:'start'});},50);
+}
+function closeSubjectDetail(){
+  activeSubject=null;document.getElementById('subjectDetailWrap').style.display='none';
+  document.querySelectorAll('.subject-card').forEach(c=>c.classList.remove('active'));
+}
+function filterSubjectDetail(){
+  // re-open with current subject
+  if(!activeSubject)return;
+  const gf=document.getElementById('subjectGradeFilter').value;
+  let filtered=studentsData.filter(s=>gf==='all'||String(s.grade)===gf);
+  // re-render subject detail with current filter values
+  const q=document.getElementById('subjDetailSearch').value.trim().toLowerCase();
+  const sortV=document.getElementById('subjDetailSort').value;
+  const stV=document.getElementById('subjDetailStatus').value;
+  const subj=activeSubject;
+  if(q)filtered=filtered.filter(s=>(s.fname+' '+s.lname).toLowerCase().includes(q));
+  if(stV!=='all'){
+    filtered=filtered.filter(s=>{
+      const sc=getScores(s)[subj];
+      if(sc===undefined)return false;
+      return(stV==='excellent'&&sc>=17)||(stV==='good'&&sc>=14&&sc<17)||(stV==='average'&&sc>=10&&sc<14)||(stV==='fail'&&sc<10);
+    });
+  }
+  filtered.sort((a,b)=>{
+    if(sortV==='score_desc')return(getScores(b)[subj]||0)-(getScores(a)[subj]||0);
+    if(sortV==='score_asc')return(getScores(a)[subj]||0)-(getScores(b)[subj]||0);
+    if(sortV==='name')return(a.fname+a.lname).localeCompare(b.fname+b.lname,'fa');
+    return 0;
+  });
+  const tbody=document.getElementById('subjectDetailBody');
+  tbody.innerHTML='';
+  filtered.forEach(s=>{
+    const [avbg,avcol]=getAv(s.id);
+    const sc1=s.t1[subj],sc2=s.t2[subj];
+    const diff=sc2!==undefined&&sc1!==undefined?sc2-sc1:null;
+    const diffStr=diff===null?'—':diff>0?`<span style="color:var(--present)">+${fa(diff)}</span>`:diff<0?`<span style="color:var(--absent)">${fa(diff)}</span>`:`<span style="color:var(--text-muted)">—</span>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="s-cell"><div class="s-av" style="background:${avbg};color:${avcol}">${s.fname[0]}</div><div><div class="s-name">${s.fname} ${s.lname}</div></div></div></td>
+      <td><span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)} ${s.cls}</span></td>
+      <td><span class="score-chip ${sc1!==undefined?scoreChipClass(sc1):''}">${sc1!==undefined?fa(sc1):'—'}</span></td>
+      <td><span class="score-chip ${sc2!==undefined?scoreChipClass(sc2):''}">${sc2!==undefined?fa(sc2):'—'}</span></td>
+      <td>${diffStr}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ══════════════ DETAIL MODAL ══════════════ */
+function openDetailModal(id){
+  const s=studentsData.find(x=>x.id===id);if(!s)return;
+  const [bg,col]=getAv(s.id);
+  const avg1=s.avg1,avg2=s.avg2;
+  const diff=avg2-avg1;
+  const diffStr=diff>0?`<span style="color:var(--present)">▲ +${faFloat(diff)}</span>`:diff<0?`<span style="color:var(--absent)">▼ ${faFloat(diff)}</span>`:`<span style="color:var(--text-muted)">— بدون تغییر</span>`;
+  document.getElementById('detailModalTitle').textContent=`نمرات ${s.fname} ${s.lname}`;
+  const allSubjects=Object.keys(s.t1);
+  const scoreItems=allSubjects.map(subj=>{
+    const sc1=s.t1[subj],sc2=s.t2[subj];
+    const currentSc=currentTerm===1?sc1:sc2;
+    return`<div class="modal-score-item">
+      <div><div class="msi-subject">${subj}</div><div class="msi-teacher" style="font-size:9px;color:var(--text-muted);">ترم ۱: ${sc1!==undefined?fa(sc1):'—'} &nbsp;|&nbsp; ترم ۲: ${sc2!==undefined?fa(sc2):'—'}</div></div>
+      <div class="msi-score" style="color:${scoreColor(currentSc||0)}">${currentSc!==undefined?fa(currentSc):'—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('detailModalBody').innerHTML=`
+    <div class="modal-student-hdr">
+      <div class="modal-av" style="background:${bg};color:${col}">${s.fname[0]}</div>
+      <div><div class="modal-student-name">${s.fname} ${s.lname}</div><div class="modal-student-meta">${gradeName(s.grade)} ${s.cls} &nbsp;|&nbsp; کد ملی: ${s.national}</div></div>
+      <div style="margin-right:auto;text-align:left;">
+        <div class="modal-avg-big" style="color:${scoreColor(currentTerm===1?avg1:avg2)}">${faFloat(currentTerm===1?avg1:avg2)}</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">معدل ترم ${fa(currentTerm)}</div>
+      </div>
+    </div>
+    <div class="modal-scores-grid">${scoreItems}</div>
+    <div class="modal-history-title"><i class="fas fa-history" style="color:var(--accent);margin-left:5px;"></i> مقایسه دو نیم‌سال</div>
+    <div class="history-term-row">
+      <div class="htr-term">نیم‌سال اول</div>
+      <div class="htr-bar"><div class="htr-fill" style="width:${avg1/20*100}%;background:var(--accent);"></div></div>
+      <div class="htr-val" style="color:var(--accent)">${faFloat(avg1)}</div>
+      <div class="htr-change" style="color:var(--text-muted)">—</div>
+    </div>
+    <div class="history-term-row">
+      <div class="htr-term">نیم‌سال دوم</div>
+      <div class="htr-bar"><div class="htr-fill" style="width:${avg2/20*100}%;background:${scoreColor(avg2)};"></div></div>
+      <div class="htr-val" style="color:${scoreColor(avg2)}">${faFloat(avg2)}</div>
+      <div class="htr-change">${diffStr}</div>
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDetailModal(e){if(e.target===document.getElementById('detailModal'))closeDetailModalBtn();}
+function closeDetailModalBtn(){document.getElementById('detailModal').classList.remove('open');document.body.style.overflow='';}
+
+/* ══════════════ EXCEL EXPORT ══════════════ */
+function exportExcel(){
+  showToast('در حال آماده‌سازی فایل اکسل...','info');
+  try{
+    const wb=XLSX.utils.book_new();
+
+    // Sheet 1: All scores
+    const termLabel=currentTerm===1?'نیم‌سال اول':'نیم‌سال دوم';
+    const ws1Data=[['نام','نام خانوادگی','کد ملی','پایه','کلاس','ریاضی','فیزیک','شیمی','زیست','ادبیات','دین','تربیت بدنی','معدل','وضعیت']];
+    studentsData.forEach(s=>{
+      const sc=getScores(s);
+      const avg=getAvg(s);
+      const status=avg>=17?'ممتاز':avg>=14?'خوب':avg>=10?'متوسط':'مردود';
+      ws1Data.push([s.fname,s.lname,s.national,gradeName(s.grade),s.cls,
+        sc['ریاضی']??'—',sc['فیزیک']??'—',sc['شیمی']??'—',sc['زیست']??'—',sc['ادبیات']??'—',sc['دین']??'—',sc['تربیت بدنی']??'—',
+        parseFloat(avg.toFixed(2)),status]);
+    });
+    const ws1=XLSX.utils.aoa_to_sheet(ws1Data);
+    ws1['!cols']=[{wch:10},{wch:14},{wch:14},{wch:8},{wch:6},{wch:7},{wch:7},{wch:7},{wch:7},{wch:8},{wch:7},{wch:12},{wch:8},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,ws1,`نمرات - ${termLabel}`);
+
+    // Sheet 2: Decline report
+    const ws2Data=[['نام','نام خانوادگی','پایه','کلاس','معدل ترم ۱','معدل ترم ۲','افت','شدت']];
+    studentsData.filter(s=>s.decline>=1).sort((a,b)=>b.decline-a.decline).forEach(s=>{
+      ws2Data.push([s.fname,s.lname,gradeName(s.grade),s.cls,
+        parseFloat(s.avg1.toFixed(2)),parseFloat(s.avg2.toFixed(2)),
+        parseFloat(s.decline.toFixed(2)),
+        s.decline>=3?'شدید':s.decline>=1.5?'متوسط':'خفیف']);
+    });
+    const ws2=XLSX.utils.aoa_to_sheet(ws2Data);
+    ws2['!cols']=[{wch:10},{wch:14},{wch:8},{wch:6},{wch:12},{wch:12},{wch:8},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,ws2,'افت تحصیلی');
+
+    // Sheet 3: Class compare
+    const classMap={};
+    studentsData.forEach(s=>{
+      const key=`${s.grade}${s.cls}`;
+      if(!classMap[key])classMap[key]={grade:s.grade,cls:s.cls,students:[],label:`${gradeName(s.grade)} ${s.cls}`};
+      classMap[key].students.push(s);
+    });
+    const ws3Data=[['کلاس','تعداد دانش‌آموز','میانگین معدل','ممتاز','خوب','متوسط','مردود']];
+    Object.values(classMap).sort((a,b)=>a.grade-b.grade).forEach(cls=>{
+      const avgs=cls.students.map(s=>getAvg(s));
+      const avg=avgs.reduce((a,b)=>a+b,0)/avgs.length;
+      ws3Data.push([cls.label,cls.students.length,parseFloat(avg.toFixed(2)),
+        avgs.filter(v=>v>=17).length,avgs.filter(v=>v>=14&&v<17).length,
+        avgs.filter(v=>v>=10&&v<14).length,avgs.filter(v=>v<10).length]);
+    });
+    const ws3=XLSX.utils.aoa_to_sheet(ws3Data);
+    ws3['!cols']=[{wch:10},{wch:14},{wch:14},{wch:8},{wch:8},{wch:8},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,ws3,'مقایسه کلاس‌ها');
+
+    XLSX.writeFile(wb,`نمرات_بوربور_${termLabel}_1404.xlsx`);
+    setTimeout(()=>showToast('فایل اکسل با موفقیت دانلود شد','success'),300);
+  }catch(err){
+    showToast('خطا در ایجاد فایل اکسل','warning');
+    console.error(err);
+  }
+}
+
+/* ══════════════ INIT ══════════════ */
+document.getElementById('currentTermLabel').textContent='نیم‌سال اول';
+updateStats();
+applyAllFilters();
+</script>
+</body>
+</html>

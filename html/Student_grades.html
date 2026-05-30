@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور - نمرات</title>
+    <link rel="icon" href="../image/iconB.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-main: #202b59;
+  --bg-card: #1f285a;
+  --bg-card2: #1e2957;
+  --bg-sidebar: #172047;
+  --accent: #3498db;
+  --accent2: #9b59b6;
+  --accent3: #06d6a0;
+  --accent4: #f39c12;
+  --accent5: #e74c3c;
+  --text: #ffffff;
+  --text-muted: rgba(255,255,255,0.58);
+  --border: rgba(255,255,255,0.09);
+  --present: #27ae60;
+  --absent: #e74c3c;
+  --late: #f39c12;
+  --glow: 0 0 30px rgba(52,152,219,0.15);
+  --sidebar-w: 260px;
+  --radius: 14px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(124,58,237,0.07) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  padding: 28px 16px;
+  border-left: 1px solid var(--border);
+  position: fixed;
+  right: 0; top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 200;
+  transition: transform .3s ease;
+}
+
+.logo { color: white; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 40px; }
+
+.nav-item { margin-bottom: 6px; }
+.nav-item a {
+  color: rgba(255,255,255,.72);
+  text-decoration: none;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-radius: 10px; font-size: 14px; transition: all .25s;
+}
+.nav-item a i { font-size: 15px; width: 20px; text-align: center; }
+.nav-item a:hover, .nav-item.active a { background: var(--bg-main); color: #fff; }
+.nav-item.active a { font-weight: 600; }
+.nav-badge { margin-right: auto; background: var(--accent5); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+
+/* ─── MAIN ─── */
+.main-content {
+  margin-right: var(--sidebar-w);
+  min-height: 100vh;
+  padding: 28px 24px;
+  position: relative; z-index: 1;
+}
+
+/* ─── TOP BAR ─── */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px; }
+.greeting-block h1 { font-size: 20px; font-weight: 700; }
+.greeting-block h1 span { color: var(--accent); }
+.greeting-block p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.top-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.notif-btn {
+  position: relative; width: 38px; height: 38px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s;
+}
+.notif-btn:hover { color: var(--text); background: var(--bg-card2); }
+.notif-dot { position: absolute; top: 7px; left: 7px; width: 7px; height: 7px; background: var(--accent5); border-radius: 50%; border: 2px solid var(--bg-main); }
+.profile-avatar {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+}
+
+/* ─── SECTION HEADER ─── */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.section-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+.section-title i { color: var(--accent); }
+.section-link { font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: none; white-space: nowrap; }
+
+/* ─── SUMMARY STRIP ─── */
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sum-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  position: relative; overflow: hidden;
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+}
+.sum-card::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 100%; height: 3px; border-radius: var(--radius) var(--radius) 0 0;
+}
+.sum-card.blue::before   { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.sum-card.green::before  { background: linear-gradient(90deg, var(--present), #0bc87c); }
+.sum-card.yellow::before { background: linear-gradient(90deg, var(--accent4), #fbbf24); }
+.sum-card.purple::before { background: linear-gradient(90deg, var(--accent2), #c084fc); }
+
+.sum-card:hover { transform: translateY(-4px); border-color: rgba(79,142,247,.22); box-shadow: var(--glow); }
+
+.sum-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; margin-bottom: 12px;
+}
+.blue   .sum-icon { background: rgba(79,142,247,.15); color: var(--accent); }
+.green  .sum-icon { background: rgba(6,214,160,.15);  color: var(--present); }
+.yellow .sum-icon { background: rgba(245,158,11,.15); color: var(--accent4); }
+.purple .sum-icon { background: rgba(155,89,182,.15); color: var(--accent2); }
+
+.sum-value { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.sum-label { font-size: 11px; color: var(--text-muted); }
+.sum-badge {
+  position: absolute; top: 14px; left: 14px;
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+}
+.badge-up   { background: rgba(6,214,160,.15); color: var(--present); }
+.badge-down { background: rgba(239,68,68,.15); color: var(--absent); }
+.badge-neu  { background: rgba(79,142,247,.15); color: var(--accent); }
+.badge-yel  { background: rgba(245,158,11,.15); color: var(--accent4); }
+
+/* ─── TOP ROW: subject cards + radar ─── */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ─── SUBJECT GRADES LIST ─── */
+.subjects-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.subject-row {
+  display: grid;
+  grid-template-columns: 38px 1fr 110px 70px 58px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background .2s;
+  border-radius: 8px;
+  cursor: default;
+}
+.subject-row:last-child { border-bottom: none; }
+.subject-row:hover { background: rgba(255,255,255,.03); }
+
+.subj-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+.subj-meta { min-width: 0; }
+.subj-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.subj-teacher { font-size: 10px; color: var(--text-muted); }
+
+.subj-vs {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.vs-row { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-muted); }
+.vs-bar {
+  flex: 1; height: 4px; background: rgba(255,255,255,.07);
+  border-radius: 4px; overflow: hidden; min-width: 50px;
+}
+.vs-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+.subj-score {
+  font-size: 22px; font-weight: 800;
+  text-align: center; flex-shrink: 0;
+}
+.subj-score.excellent { color: var(--present); }
+.subj-score.good      { color: var(--accent); }
+.subj-score.average   { color: var(--accent4); }
+.subj-score.poor      { color: var(--absent); }
+
+.subj-diff {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3px; flex-shrink: 0;
+}
+.diff-chip {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap;
+}
+.diff-pos { background: rgba(6,214,160,.15); color: var(--present); }
+.diff-neg { background: rgba(239,68,68,.15); color: var(--absent); }
+.diff-neu { background: rgba(255,255,255,.07); color: var(--text-muted); }
+.diff-label { font-size: 9px; color: var(--text-muted); }
+
+/* table header */
+.subj-header {
+  display: grid;
+  grid-template-columns: 38px 1fr 110px 70px 58px;
+  gap: 12px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.subj-header span { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+.subj-header .sh-center { text-align: center; }
+
+/* ─── RADAR / SPIDER ─── */
+.radar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  display: flex; flex-direction: column;
+}
+.radar-wrap { position: relative; flex: 1; min-height: 240px; margin-top: 8px; }
+
+/* ─── MIDDLE ROW ─── */
+.mid-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ─── LINE CHART (progress) ─── */
+.progress-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.filter-tabs {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.tab-btn {
+  font-family: 'Vazirmatn', sans-serif;
+  font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; transition: all .2s;
+}
+.tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+.tab-btn.active {
+  background: rgba(52,152,219,.2);
+  border-color: var(--accent); color: var(--accent);
+}
+
+.chart-wrap { position: relative; height: 200px; margin-top: 14px; }
+
+/* ─── EXAM LOG ─── */
+.exam-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.exam-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  transition: transform .2s; cursor: default;
+}
+.exam-item:last-child { border-bottom: none; }
+.exam-item:hover { transform: translateX(3px); }
+
+.exam-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+
+.exam-info { flex: 1; min-width: 0; }
+.exam-name { font-size: 12px; font-weight: 700; }
+.exam-date { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.exam-type { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 20px; margin-top: 3px; display: inline-block; }
+.type-written  { background: rgba(79,142,247,.15); color: var(--accent); }
+.type-oral     { background: rgba(155,89,182,.15); color: var(--accent2); }
+.type-project  { background: rgba(6,214,160,.15); color: var(--present); }
+.type-homework { background: rgba(245,158,11,.15); color: var(--accent4); }
+
+.exam-score {
+  font-size: 20px; font-weight: 800;
+  min-width: 38px; text-align: center; flex-shrink: 0;
+}
+
+/* ─── BOTTOM ROW ─── */
+.bot-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* ─── RANK CARD ─── */
+.rank-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.rank-podium {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 10px; margin: 12px 0 16px;
+}
+
+.podium-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 1;
+}
+.podium-name  { font-size: 10px; color: var(--text-muted); text-align: center; }
+.podium-score { font-size: 11px; font-weight: 700; }
+.podium-bar {
+  width: 100%; border-radius: 6px 6px 0 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: white;
+  transition: height 1s cubic-bezier(.4,0,.2,1);
+}
+.podium-rank { font-size: 9px; color: var(--text-muted); }
+
+.rank-info {
+  background: rgba(255,255,255,.04);
+  border-radius: 10px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.rank-number { font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1; flex-shrink: 0; }
+.rank-detail { flex: 1; min-width: 0; }
+.rank-detail p { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+.rank-detail strong { font-size: 13px; }
+
+/* ─── GPA TREND ─── */
+.gpa-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.gpa-big {
+  display: flex; align-items: baseline; gap: 6px;
+  margin: 12px 0 4px;
+}
+.gpa-num { font-size: 48px; font-weight: 800; color: var(--present); line-height: 1; }
+.gpa-slash { font-size: 22px; color: var(--text-muted); }
+.gpa-max { font-size: 18px; color: var(--text-muted); }
+
+.gpa-change {
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+  margin-bottom: 14px;
+}
+
+.gpa-mini-chart { position: relative; height: 80px; margin-top: 8px; }
+
+.gpa-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-top: 12px;
+}
+.gpa-stat {
+  background: rgba(255,255,255,.04);
+  border-radius: 8px; padding: 10px 12px;
+}
+.gpa-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+.gpa-stat-value { font-size: 16px; font-weight: 800; }
+
+/* ─── HEATMAP ─── */
+.heatmap-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: auto repeat(8, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.hm-label { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; padding-left: 6px; white-space: nowrap; }
+.hm-col-label { font-size: 9px; color: var(--text-muted); text-align: center; padding-bottom: 2px; }
+
+.hm-cell {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  transition: transform .15s;
+  cursor: default;
+  position: relative;
+}
+.hm-cell:hover { transform: scale(1.15); z-index: 5; }
+
+.hm-0  { background: rgba(255,255,255,.04); color: rgba(255,255,255,.25); }
+.hm-1  { background: rgba(245,158,11,.15);  color: var(--accent4); }
+.hm-2  { background: rgba(79,142,247,.15);  color: var(--accent); }
+.hm-3  { background: rgba(6,214,160,.2);    color: var(--present); }
+.hm-4  { background: rgba(6,214,160,.35);   color: #0bc87c; }
+
+.hm-legend {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 12px; font-size: 10px; color: var(--text-muted);
+}
+.hm-legend-cells { display: flex; gap: 3px; }
+.hm-legend-cell  { width: 12px; height: 12px; border-radius: 3px; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sum-card, .subjects-card, .radar-card,
+.progress-card, .exam-card,
+.rank-card, .gpa-card, .heatmap-card {
+  animation: fadeUp .5s ease both;
+}
+.sum-card:nth-child(1) { animation-delay: .04s; }
+.sum-card:nth-child(2) { animation-delay: .08s; }
+.sum-card:nth-child(3) { animation-delay: .12s; }
+.sum-card:nth-child(4) { animation-delay: .16s; }
+.subjects-card  { animation-delay: .20s; }
+.radar-card     { animation-delay: .24s; }
+.progress-card  { animation-delay: .28s; }
+.exam-card      { animation-delay: .32s; }
+.rank-card      { animation-delay: .36s; }
+.gpa-card       { animation-delay: .40s; }
+.heatmap-card   { animation-delay: .44s; }
+
+/* ─── HAMBURGER ─── */
+.menu-toggle {
+  display: none; position: fixed; top: 14px; right: 14px;
+  z-index: 300; background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text); width: 42px; height: 42px;
+  border-radius: 10px; cursor: pointer;
+  align-items: center; justify-content: center; font-size: 18px;
+}
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 199; }
+.sidebar-overlay.active { display: block; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1280px) {
+  :root { --sidebar-w: 240px; }
+  .top-row { grid-template-columns: 1fr 300px; }
+}
+
+@media (max-width: 1100px) {
+  .top-row { grid-template-columns: 1fr; }
+  .radar-card { min-height: 320px; }
+  .bot-row { grid-template-columns: 1fr 1fr; }
+  .heatmap-card { grid-column: 1 / -1; }
+}
+
+@media (max-width: 1024px) {
+  :root { --sidebar-w: 220px; }
+  .main-content { padding: 22px 18px; }
+  .summary-strip { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .mid-row { grid-template-columns: 1fr; }
+  .subj-header, .subject-row { grid-template-columns: 38px 1fr 90px 60px 50px; }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle { display: flex; }
+  .sidebar { transform: translateX(110%); box-shadow: -5px 0 20px rgba(0,0,0,.4); }
+  .sidebar.active { transform: translateX(0); }
+  .main-content { margin-right: 0; padding: 70px 16px 20px; }
+  .summary-strip { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .top-row, .mid-row { gap: 12px; }
+  .bot-row { grid-template-columns: 1fr; }
+  .subj-header { display: none; }
+  .subject-row { grid-template-columns: 38px 1fr auto auto; }
+  .subj-vs { display: none; }
+}
+
+@media (max-width: 480px) {
+  .main-content { padding: 66px 12px 16px; }
+  .sum-card { padding: 14px 12px; }
+  .sum-value { font-size: 22px; }
+  .sum-icon  { width: 36px; height: 36px; font-size: 14px; margin-bottom: 10px; }
+  .subject-row { grid-template-columns: 34px 1fr auto; gap: 8px; }
+  .subj-diff { display: none; }
+  .gpa-num { font-size: 38px; }
+  .bot-row { gap: 10px; }
+  .heatmap-grid { grid-template-columns: auto repeat(6, 1fr); gap: 4px; }
+}
+
+@media (max-width: 360px) {
+  .summary-strip { gap: 7px; }
+  .sum-value { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بوربور</div>
+  <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item active"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1>نمرات — <span>علی مختاری</span></h1>
+      <p>سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-avatar">ع</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY STRIP -->
+  <div class="summary-strip">
+    <div class="sum-card blue">
+      <div class="sum-badge badge-up">↑ ۰.۴</div>
+      <div class="sum-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div class="sum-value">۱۷.۸</div>
+      <div class="sum-label">معدل کل</div>
+    </div>
+    <div class="sum-card green">
+      <div class="sum-badge badge-up">بهترین</div>
+      <div class="sum-icon"><i class="fas fa-trophy"></i></div>
+      <div class="sum-value">۱۹</div>
+      <div class="sum-label">بالاترین نمره</div>
+    </div>
+    <div class="sum-card yellow">
+      <div class="sum-badge badge-neu">رتبه</div>
+      <div class="sum-icon"><i class="fas fa-medal"></i></div>
+      <div class="sum-value">۳</div>
+      <div class="sum-label">رتبه در کلاس</div>
+    </div>
+    <div class="sum-card purple">
+      <div class="sum-badge badge-yel">میانگین</div>
+      <div class="sum-icon"><i class="fas fa-users"></i></div>
+      <div class="sum-value">۱۵.۲</div>
+      <div class="sum-label">میانگین کلاس</div>
+    </div>
+  </div>
+
+  <!-- TOP ROW: subject list + radar -->
+  <div class="top-row">
+
+    <div class="subjects-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-list-ul"></i> نمرات هر درس</div>
+        <a class="section-link" href="#">صادر کردن PDF</a>
+      </div>
+
+      <div class="subj-header">
+        <span></span>
+        <span>درس / استاد</span>
+        <span>مقایسه با کلاس</span>
+        <span class="sh-center">نمره</span>
+        <span class="sh-center">اختلاف</span>
+      </div>
+
+      <div id="subjectRows"></div>
+    </div>
+
+    <div class="radar-card">
+      <div class="section-header" style="margin-bottom:6px">
+        <div class="section-title"><i class="fas fa-spider"></i> نمای کلی دروس</div>
+      </div>
+      <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- MID ROW: progress chart + exam log -->
+  <div class="mid-row">
+
+    <div class="progress-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chart-line"></i> روند پیشرفت نمرات</div>
+        <div class="filter-tabs">
+          <button class="tab-btn active" data-ds="all" onclick="switchChart(this)">همه</button>
+          <button class="tab-btn" data-ds="math" onclick="switchChart(this)">ریاضی</button>
+          <button class="tab-btn" data-ds="phys" onclick="switchChart(this)">فیزیک</button>
+          <button class="tab-btn" data-ds="chem" onclick="switchChart(this)">شیمی</button>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="progressChart"></canvas></div>
+    </div>
+
+    <div class="exam-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-file-alt"></i> آخرین آزمون‌ها</div>
+        <a class="section-link" href="#">همه</a>
+      </div>
+      <div id="examList"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bot-row">
+
+    <div class="rank-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-ranking-star"></i> رتبه‌بندی کلاس</div>
+      </div>
+      <div class="rank-podium" id="rankPodium"></div>
+      <div class="rank-info">
+        <div class="rank-number">۳</div>
+        <div class="rank-detail">
+          <p>رتبه شما در کلاس ۲۸ نفری</p>
+          <strong>علی مختاری — معدل ۱۷.۸</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="gpa-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-star-half-alt"></i> معدل کل</div>
+      </div>
+      <div class="gpa-big">
+        <div class="gpa-num">۱۷.۸</div>
+        <div class="gpa-slash">/</div>
+        <div class="gpa-max">۲۰</div>
+      </div>
+      <div class="gpa-change" style="color:var(--present)">
+        <i class="fas fa-arrow-trend-up"></i> نسبت به ترم قبل: ۰.۴ بالاتر
+      </div>
+      <div class="gpa-mini-chart"><canvas id="gpaSparkline"></canvas></div>
+      <div class="gpa-stats">
+        <div class="gpa-stat">
+          <div class="gpa-stat-label">بهترین ترم</div>
+          <div class="gpa-stat-value" style="color:var(--present)">۱۸.۲</div>
+        </div>
+        <div class="gpa-stat">
+          <div class="gpa-stat-label">پایین‌ترین ترم</div>
+          <div class="gpa-stat-value" style="color:var(--accent4)">۱۶.۴</div>
+        </div>
+        <div class="gpa-stat">
+          <div class="gpa-stat-label">میانگین سه ترم</div>
+          <div class="gpa-stat-value" style="color:var(--accent)">۱۷.۳</div>
+        </div>
+        <div class="gpa-stat">
+          <div class="gpa-stat-label">معدل هدف</div>
+          <div class="gpa-stat-value" style="color:var(--accent2)">۱۸.۵</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="heatmap-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-th"></i> نقشه حرارتی نمرات</div>
+        <span style="font-size:10px;color:var(--text-muted)">آزمون‌ها × دروس</span>
+      </div>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+      <div class="hm-legend">
+        <span>کمتر</span>
+        <div class="hm-legend-cells">
+          <div class="hm-legend-cell hm-0"></div>
+          <div class="hm-legend-cell hm-1"></div>
+          <div class="hm-legend-cell hm-2"></div>
+          <div class="hm-legend-cell hm-3"></div>
+          <div class="hm-legend-cell hm-4"></div>
+        </div>
+        <span>بیشتر</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── HELPERS ── */
+function toF(n) {
+  return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+function scoreClass(s) {
+  if(s >= 18) return 'excellent';
+  if(s >= 16) return 'good';
+  if(s >= 13) return 'average';
+  return 'poor';
+}
+function scoreColor(s) {
+  if(s >= 18) return 'var(--present)';
+  if(s >= 16) return 'var(--accent)';
+  if(s >= 13) return 'var(--accent4)';
+  return 'var(--absent)';
+}
+
+/* ── DATA ── */
+const subjects = [
+  { name:'ریاضی',     teacher:'آقای احمدی',  icon:'fa-calculator', color:'#4f8ef7', bg:'rgba(79,142,247,.15)',  score:19,   avg:14.2 },
+  { name:'فیزیک',    teacher:'خانم رضایی',   icon:'fa-atom',       color:'#ef4444', bg:'rgba(239,68,68,.15)',   score:16.5, avg:13.8 },
+  { name:'شیمی',     teacher:'آقای صادقی',   icon:'fa-flask',      color:'#06d6a0', bg:'rgba(6,214,160,.15)',   score:18,   avg:15.1 },
+  { name:'ادبیات',   teacher:'آقای موسوی',   icon:'fa-book',       color:'#f59e0b', bg:'rgba(245,158,11,.15)',  score:14,   avg:14.5 },
+  { name:'زبان',     teacher:'خانم کریمی',   icon:'fa-language',   color:'#7c3aed', bg:'rgba(124,58,237,.15)', score:17.5, avg:13.2 },
+  { name:'دین',      teacher:'آقای جوادی',   icon:'fa-star',       color:'#ec4899', bg:'rgba(236,72,153,.15)', score:18.5, avg:16.0 },
+  { name:'ورزش',     teacher:'آقای نوری',    icon:'fa-running',    color:'#14b8a6', bg:'rgba(20,184,166,.15)', score:20,   avg:18.3 },
+];
+
+const exams = [
+  { subject:'ریاضی',   date:'۱۴۰۴/۰۲/۱۵', type:'written',  typeLabel:'کتبی',    score:19,   icon:'fa-calculator', color:'#4f8ef7', bg:'rgba(79,142,247,.15)'  },
+  { subject:'فیزیک',  date:'۱۴۰۴/۰۲/۱۲', type:'oral',     typeLabel:'شفاهی',   score:16.5, icon:'fa-atom',       color:'#ef4444', bg:'rgba(239,68,68,.15)'   },
+  { subject:'شیمی',   date:'۱۴۰۴/۰۲/۱۰', type:'project',  typeLabel:'پروژه',   score:18,   icon:'fa-flask',      color:'#06d6a0', bg:'rgba(6,214,160,.15)'   },
+  { subject:'ادبیات', date:'۱۴۰۴/۰۲/۰۸', type:'written',  typeLabel:'کتبی',    score:14,   icon:'fa-book',       color:'#f59e0b', bg:'rgba(245,158,11,.15)'  },
+  { subject:'زبان',   date:'۱۴۰۴/۰۲/۰۵', type:'homework', typeLabel:'تکلیف',   score:17.5, icon:'fa-language',   color:'#7c3aed', bg:'rgba(124,58,237,.15)' },
+  { subject:'دین',    date:'۱۴۰۴/۰۱/۲۸', type:'oral',     typeLabel:'شفاهی',   score:18.5, icon:'fa-star',       color:'#ec4899', bg:'rgba(236,72,153,.15)' },
+];
+
+/* ── SUBJECT ROWS ── */
+const subjectRows = document.getElementById('subjectRows');
+subjects.forEach(s => {
+  const diff  = +(s.score - s.avg).toFixed(1);
+  const diffCls = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-neu';
+  const diffSign = diff > 0 ? '+' : '';
+
+  const el = document.createElement('div');
+  el.className = 'subject-row';
+  el.innerHTML = `
+    <div class="subj-icon" style="background:${s.bg};color:${s.color}"><i class="fas ${s.icon}"></i></div>
+    <div class="subj-meta">
+      <div class="subj-name">${s.name}</div>
+      <div class="subj-teacher">${s.teacher}</div>
+    </div>
+    <div class="subj-vs">
+      <div class="vs-row">
+        <span style="color:${scoreColor(s.score)};font-weight:700;font-size:9px">شما</span>
+        <div class="vs-bar"><div class="vs-fill" style="background:${scoreColor(s.score)};width:0%" data-w="${s.score/20*100}"></div></div>
+        <span style="font-size:9px">${toF(s.score)}</span>
+      </div>
+      <div class="vs-row">
+        <span style="font-size:9px">کلاس</span>
+        <div class="vs-bar"><div class="vs-fill" style="background:rgba(255,255,255,.3);width:0%" data-w="${s.avg/20*100}"></div></div>
+        <span style="font-size:9px">${toF(s.avg)}</span>
+      </div>
+    </div>
+    <div class="subj-score ${scoreClass(s.score)}">${toF(s.score)}</div>
+    <div class="subj-diff">
+      <div class="diff-chip ${diffCls}">${diffSign}${toF(diff)}</div>
+      <div class="diff-label">vs کلاس</div>
+    </div>`;
+  subjectRows.appendChild(el);
+});
+
+setTimeout(() => {
+  document.querySelectorAll('.vs-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
+}, 300);
+
+/* ── EXAM LIST ── */
+const examList = document.getElementById('examList');
+exams.forEach(e => {
+  const el = document.createElement('div');
+  el.className = 'exam-item';
+  el.innerHTML = `
+    <div class="exam-icon" style="background:${e.bg};color:${e.color}"><i class="fas ${e.icon}"></i></div>
+    <div class="exam-info">
+      <div class="exam-name">${e.subject}</div>
+      <div class="exam-date">${e.date}</div>
+      <span class="exam-type type-${e.type}">${e.typeLabel}</span>
+    </div>
+    <div class="exam-score ${scoreClass(e.score)}">${toF(e.score)}</div>`;
+  examList.appendChild(el);
+});
+
+/* ── RADAR ── */
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: subjects.map(s => s.name),
+    datasets: [
+      {
+        label: 'علی',
+        data: subjects.map(s => s.score),
+        borderColor: 'rgba(79,142,247,0.9)',
+        backgroundColor: 'rgba(79,142,247,0.12)',
+        borderWidth: 2, pointRadius: 4,
+        pointBackgroundColor: 'rgba(79,142,247,1)',
+      },
+      {
+        label: 'میانگین کلاس',
+        data: subjects.map(s => s.avg),
+        borderColor: 'rgba(255,255,255,0.25)',
+        backgroundColor: 'rgba(255,255,255,0.04)',
+        borderWidth: 1.5, pointRadius: 3,
+        pointBackgroundColor: 'rgba(255,255,255,0.4)',
+        borderDash: [4,3],
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 8, max: 20, ticks: { stepSize: 4, display: false },
+        grid: { color: 'rgba(255,255,255,0.07)' },
+        angleLines: { color: 'rgba(255,255,255,0.07)' },
+        pointLabels: { color: 'rgba(232,237,248,0.75)', font: { family: 'Vazirmatn', size: 11 } }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'rgba(232,237,248,0.65)', font: { family: 'Vazirmatn', size: 11 }, boxWidth: 10 } },
+      tooltip: { backgroundColor: 'rgba(15,22,40,.95)', titleFont: { family: 'Vazirmatn' }, bodyFont: { family: 'Vazirmatn' } }
+    },
+    animation: { duration: 1100, easing: 'easeInOutQuart' }
+  }
+});
+
+/* ── PROGRESS CHART ── */
+const months = ['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'];
+const ds = {
+  math: { label:'ریاضی', data:[15,16,15.5,17,16,18,18.5,19], color:'rgba(79,142,247,' },
+  phys: { label:'فیزیک', data:[13,14,13,15,15.5,16,16,16.5], color:'rgba(6,214,160,' },
+  chem: { label:'شیمی',  data:[14,15,16,16,17,17.5,18,18], color:'rgba(124,58,237,' },
+};
+
+let progressChart = new Chart(document.getElementById('progressChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: Object.values(ds).map(d => ({
+      label: d.label, data: d.data,
+      borderColor: d.color + '0.9)',
+      backgroundColor: d.color + '0.07)',
+      fill: true, tension: 0.4, pointRadius: 3.5,
+      pointBackgroundColor: d.color + '1)', borderWidth: 2,
+    }))
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: 'rgba(232,237,248,.65)', font: { family: 'Vazirmatn', size: 11 }, boxWidth: 10, padding: 12 } },
+      tooltip: { backgroundColor: 'rgba(15,22,40,.95)', titleFont: { family: 'Vazirmatn' }, bodyFont: { family: 'Vazirmatn' } }
+    },
+    scales: {
+      x: { ticks: { color: 'rgba(232,237,248,.45)', font: { family: 'Vazirmatn', size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
+      y: { min: 10, max: 20, ticks: { color: 'rgba(232,237,248,.45)', font: { family: 'Vazirmatn', size: 10 }, stepSize: 2 }, grid: { color: 'rgba(255,255,255,.05)' } }
+    },
+    animation: { duration: 1000, easing: 'easeInOutQuart' }
+  }
+});
+
+function switchChart(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const key = btn.dataset.ds;
+
+  if(key === 'all') {
+    progressChart.data.datasets = Object.values(ds).map(d => ({
+      label: d.label, data: d.data,
+      borderColor: d.color+'0.9)', backgroundColor: d.color+'0.07)',
+      fill: true, tension: 0.4, pointRadius: 3.5,
+      pointBackgroundColor: d.color+'1)', borderWidth: 2,
+    }));
+  } else {
+    const d = ds[key];
+    progressChart.data.datasets = [{
+      label: d.label, data: d.data,
+      borderColor: d.color+'0.9)', backgroundColor: d.color+'0.15)',
+      fill: true, tension: 0.4, pointRadius: 4,
+      pointBackgroundColor: d.color+'1)', borderWidth: 2.5,
+    }];
+  }
+  progressChart.update();
+}
+
+/* ── RANK PODIUM ── */
+const top3 = [
+  { name:'سارا رضایی', score:18.9, height:100, color:'rgba(245,158,11,.7)', rank:'#۱' },
+  { name:'محمد حسینی', score:18.4, height:80, color:'rgba(148,163,184,.5)', rank:'#۲' },
+  { name:'علی مختاری', score:17.8, height:65, color:'rgba(79,142,247,.7)',  rank:'#۳' },
+];
+const podium = document.getElementById('rankPodium');
+// reorder for podium: 2nd, 1st, 3rd
+[top3[1], top3[0], top3[2]].forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'podium-item';
+  el.innerHTML = `
+    <div class="podium-name">${p.name}</div>
+    <div class="podium-score" style="color:${p.color}">${toF(p.score)}</div>
+    <div class="podium-bar" style="background:${p.color};height:${p.height}px">${p.rank}</div>`;
+  podium.appendChild(el);
+});
+
+/* ── GPA SPARKLINE ── */
+new Chart(document.getElementById('gpaSparkline'), {
+  type: 'line',
+  data: {
+    labels: ['پایه نهم','پایه دهم ترم۱','پایه دهم ترم۲','پایه یازدهم ترم۱','پایه یازدهم ترم۲'],
+    datasets: [{
+      data: [16.4, 16.9, 17.4, 17.8, null],
+      borderColor: 'rgba(6,214,160,0.8)',
+      backgroundColor: 'rgba(6,214,160,0.1)',
+      fill: true, tension: 0.4, pointRadius: 3,
+      pointBackgroundColor: 'rgba(6,214,160,1)', borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15,22,40,.95)', bodyFont: { family: 'Vazirmatn' }, titleFont: { family: 'Vazirmatn' } } },
+    scales: {
+      x: { display: false },
+      y: { display: false, min: 15, max: 20 }
+    },
+    animation: { duration: 1000 }
+  }
+});
+
+/* ── HEATMAP ── */
+const hmSubjects = ['ریاضی','فیزیک','شیمی','ادبیات','زبان','دین'];
+const hmExams = ['آزمون۱','آزمون۲','آزمون۳','آزمون۴','آزمون۵','آزمون۶','آزمون۷','آزمون۸'];
+const hmData = [
+  [3,4,3,4,4,3,4,4], // ریاضی
+  [2,3,2,3,3,2,3,3], // فیزیک
+  [3,3,4,3,4,3,4,4], // شیمی
+  [2,2,1,2,2,1,2,2], // ادبیات
+  [3,3,3,4,3,3,3,4], // زبان
+  [4,4,3,4,3,4,4,3], // دین
+];
+
+function scoreToHmClass(v) {
+  if(v === 0) return 'hm-0';
+  if(v === 1) return 'hm-1';
+  if(v === 2) return 'hm-2';
+  if(v === 3) return 'hm-3';
+  return 'hm-4';
+}
+
+const grid = document.getElementById('heatmapGrid');
+// header row
+const emptyHeader = document.createElement('div');
+grid.appendChild(emptyHeader);
+hmExams.forEach(e => {
+  const el = document.createElement('div');
+  el.className = 'hm-col-label';
+  el.textContent = e;
+  grid.appendChild(el);
+});
+
+hmSubjects.forEach((sub, ri) => {
+  const label = document.createElement('div');
+  label.className = 'hm-label';
+  label.textContent = sub;
+  grid.appendChild(label);
+
+  hmData[ri].forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = `hm-cell ${scoreToHmClass(v)}`;
+    // score range labels
+    const scoreMap = {0:'—',1:'کم',2:'متوسط',3:'خوب',4:'عالی'};
+    cell.title = scoreMap[v];
+    grid.appendChild(cell);
+  });
+});
+
+/* ── HAMBURGER ── */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+});
+</script>
+</body>
+</html>

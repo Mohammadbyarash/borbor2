@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - اضافه کردن کاربر</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+    <link rel="stylesheet" href="../style/add-user.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">بوربور</div>
+            <nav>
+                <div class="menu-item">
+                    <a href="dashbord.html">
+                        <i class="fas fa-chart-line"></i>
+                        داشبورد
+                    </a>
+                </div>
+                <div class="menu-item active">
+                    <a href="../html/users.html">
+                        <i class="fas fa-users"></i>
+                        مدیریت کاربران
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/Class-lessons.html">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        مدیریت کلاس ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/student.html">
+                        <i class="fas fa-user-graduate"></i>
+                        مدیریت دانش‌آموزان
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/Pre-registration.html">
+                        <i class="fas fa-clipboard-list"></i>
+                        پیش ثبت نام ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/reports.html">
+                        <i class="fas fa-file-alt"></i>
+                        گزارش ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/notife.html">
+                        <i class="fas fa-bell"></i>
+                        اطلاعیه ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        تنظیمات
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        خروج
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">
+                    <i class="fas fa-user-plus"></i>
+                    اضافه کردن کاربر جدید
+                </h1>
+                <div class="admin-info">مدیر: آقای بیارش</div>
+            </div>
+
+            <!-- Add User Form Section -->
+            <div class="add-user-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    فرم ثبت کاربر
+                </h2>
+                <form id="addUserForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-user"></i>
+                                نام:
+                            </label>
+                            <input type="text" class="form-input" name="firstName" placeholder="نام را وارد کنید..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-user"></i>
+                                نام خانوادگی:
+                            </label>
+                            <input type="text" class="form-input" name="lastName" placeholder="نام خانوادگی را وارد کنید..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-id-card"></i>
+                                کد ملی:
+                            </label>
+                            <input type="text" class="form-input" name="nationalId" placeholder="کد ملی 10 رقمی را وارد کنید..." maxlength="10" pattern="[0-9]{10}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-phone"></i>
+                                شماره موبایل:
+                            </label>
+                            <input type="tel" class="form-input" name="phone" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" maxlength="11" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-calendar"></i>
+                                تاریخ تولد:
+                            </label>
+                            <div class="date-input-wrapper">
+                                <input type="text" class="form-input" id="birthDateInput" name="birthDate" placeholder="مثال: 1380/05/15" required readonly>
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="required">*</span>
+                                <i class="fas fa-user-tag"></i>
+                                نقش:
+                            </label>
+                            <select class="form-select" name="role" required>
+                                <option value="">انتخاب کنید...</option>
+                                <option value="مدیر">مدیر</option>
+                                <option value="معلم">معلم</option>
+                                <option value="معاون">معاون</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                ایمیل:
+                            </label>
+                            <input type="email" class="form-input" name="email" placeholder="example@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                آدرس:
+                            </label>
+                            <input type="text" class="form-input" name="address" placeholder="آدرس محل سکونت...">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-camera"></i>
+                                عکس پروفایل:
+                            </label>
+                            <label for="photoUpload" class="photo-upload" id="photoUploadLabel">
+                                <div class="photo-upload-icon" id="uploadIcon">
+                                    <i class="fas fa-camera fa-3x"></i>
+                                </div>
+                                <div class="photo-upload-text">
+                                    برای بارگذاری عکس کلیک کنید<br>
+                                    <small>فرمت‌های مجاز: JPG, PNG (حداکثر 2MB)</small>
+                                </div>
+                                <input type="file" id="photoUpload" name="photo" accept="image/*">
+                            </label>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-comment-alt"></i>
+                                توضیحات:
+                            </label>
+                            <textarea class="form-input" name="description" rows="4" placeholder="توضیحات اضافی در صورت نیاز..." style="resize: vertical;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-check"></i>
+                            ثبت کاربر
+                        </button>
+                        <button type="button" class="btn btn-cancel" onclick="resetForm()">
+                            <i class="fas fa-times"></i>
+                            پاک کردن فرم
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="modal-title">کاربر با موفقیت اضافه شد!</h2>
+            <p class="modal-text" id="userInfoText"></p>
+            <button class="modal-btn" onclick="closeSuccessModal()">
+                <i class="fas fa-check"></i>
+                متوجه شدم
+            </button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+    <script src="../javaScript/add-user.js"></script>
+</body>
+</html>

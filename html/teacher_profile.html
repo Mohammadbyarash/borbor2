@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — تنظیمات</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-main: #1a2346;
+  --bg-card: #1f2b52;
+  --bg-card2: #1c2849;
+  --bg-sidebar: #141d3d;
+  --accent: #4a90d9;
+  --accent2: #8e5fd4;
+  --accent3: #06d6a0;
+  --accent4: #f39c12;
+  --accent5: #e74c3c;
+  --present: #2ecc71;
+  --absent: #e74c3c;
+  --late: #f39c12;
+  --text: #eaf0fb;
+  --text-muted: rgba(220,230,255,0.52);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(74,144,217,0.3);
+  --sidebar-w: 252px;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --err: #e74c3c;
+  --ok: #2ecc71;
+  --warn: #f39c12;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 8%, rgba(74,144,217,0.11) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 92%, rgba(142,95,212,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(6,214,160,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  padding: 24px 14px 24px;
+  border-left: 1px solid var(--border);
+  position: fixed; right: 0; top: 0;
+  height: 100vh; overflow-y: auto;
+  z-index: 200;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+}
+.logo { color: white; font-size: 27px; font-weight: 800; text-align: center; margin-bottom: 22px; letter-spacing: -0.5px; }
+.logo span { color: var(--accent); }
+.teacher-block { background: linear-gradient(135deg, rgba(74,144,217,0.13), rgba(142,95,212,0.1)); border: 1px solid rgba(74,144,217,0.18); border-radius: var(--radius-sm); padding: 14px 12px; margin-bottom: 22px; display: flex; align-items: center; gap: 11px; }
+.teacher-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; flex-shrink: 0; }
+.teacher-name { font-size: 13px; font-weight: 700; }
+.teacher-role { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+.teacher-badge { margin-top: 6px; display: inline-block; background: rgba(6,214,160,0.12); color: var(--accent3); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(6,214,160,0.2); }
+.nav-divider { height: 1px; background: var(--border); margin: 10px 4px 14px; }
+.nav-item { margin-bottom: 3px; }
+.nav-item a { color: rgba(220,230,255,0.65); text-decoration: none; padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-radius: var(--radius-sm); font-size: 13px; transition: all .2s; position: relative; }
+.nav-item a i { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-item a:hover { background: rgba(255,255,255,0.05); color: white; }
+.nav-item.active a { background: rgba(74,144,217,0.15); color: white; font-weight: 600; border: 1px solid rgba(74,144,217,0.2); }
+.nav-item.active a::before { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 60%; background: var(--accent); border-radius: 3px 0 0 3px; }
+.nav-badge { margin-right: auto; background: var(--accent5); color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+.sidebar-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text-muted); text-align: center; }
+
+/* ══ MAIN ══ */
+.main-content { margin-right: var(--sidebar-w); min-height: 100vh; padding: 26px 22px 40px; position: relative; z-index: 1; }
+
+/* ══ TOP BAR ══ */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; gap: 12px; }
+.page-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.page-title i { color: var(--accent); }
+.page-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.action-btn { position: relative; width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s; }
+.action-btn:hover { color: white; border-color: var(--border-hover); }
+.notif-dot { position: absolute; top: 7px; left: 7px; width: 7px; height: 7px; background: var(--accent5); border-radius: 50%; border: 2px solid var(--bg-main); }
+.profile-btn { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; cursor: pointer; }
+
+/* ══ SETTINGS TABS ══ */
+.settings-nav {
+  display: flex; gap: 6px; margin-bottom: 24px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 6px; overflow-x: auto;
+}
+.settings-nav::-webkit-scrollbar { height: 0; }
+.snav-btn {
+  flex: 1; min-width: 110px; padding: 10px 14px;
+  border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; font-family: 'Vazirmatn', sans-serif;
+  font-size: 13px; font-weight: 600; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap;
+}
+.snav-btn:hover { background: rgba(255,255,255,.05); color: var(--text); }
+.snav-btn.active { background: rgba(74,144,217,.18); color: #fff; border: 1px solid rgba(74,144,217,.25); }
+
+/* ══ TAB PANELS ══ */
+.tab-panel { display: none; animation: fadeUp .35s ease both; }
+.tab-panel.active { display: block; }
+
+/* ══ SETTINGS GRID ══ */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px; align-items: start;
+}
+
+/* ══ AVATAR CARD ══ */
+.avatar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  position: sticky; top: 20px;
+}
+.avatar-wrap {
+  position: relative; margin-bottom: 20px;
+  width: 110px; height: 110px;
+}
+.avatar-img {
+  width: 110px; height: 110px; border-radius: 50%;
+  object-fit: cover; display: none;
+  border: 3px solid rgba(74,144,217,0.4);
+  box-shadow: 0 0 0 4px rgba(74,144,217,0.1);
+}
+.avatar-placeholder {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; font-weight: 800;
+  border: 3px solid rgba(74,144,217,0.4);
+  box-shadow: 0 0 0 4px rgba(74,144,217,0.1), 0 8px 24px rgba(74,144,217,0.2);
+  transition: all .3s;
+}
+.avatar-edit-btn {
+  position: absolute; bottom: 4px; left: 4px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: white; font-size: 11px;
+  transition: all .2s; box-shadow: 0 2px 8px rgba(74,144,217,0.4);
+}
+.avatar-edit-btn:hover { background: #3674c7; transform: scale(1.1); }
+#avatarInput { display: none; }
+.avatar-name { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 5px; }
+.avatar-role { font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 6px; }
+.avatar-badge { background: rgba(6,214,160,0.12); color: var(--accent3); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(6,214,160,0.2); text-align: center; margin-bottom: 18px; }
+.avatar-info-row { width: 100%; display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--bg-card2); border-radius: var(--radius-sm); margin-bottom: 7px; font-size: 12px; }
+.avatar-info-row i { color: var(--accent); font-size: 12px; width: 16px; text-align: center; }
+.avatar-upload-hint { font-size: 10.5px; color: var(--text-muted); text-align: center; line-height: 1.6; margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px dashed rgba(255,255,255,0.1); }
+.avatar-upload-hint strong { color: var(--accent); }
+.avatar-err {
+  font-size: 11px; color: var(--absent); background: rgba(231,76,60,0.1);
+  border: 1px solid rgba(231,76,60,0.25); border-radius: 8px;
+  padding: 7px 10px; margin-top: 8px; width: 100%; text-align: center;
+  display: none;
+}
+.avatar-err.show { display: block; }
+
+/* ══ FORM CARD ══ */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.form-section {
+  padding: 22px 22px 0;
+}
+.form-section-title {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.form-section-title i { color: var(--accent); font-size: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 12px; font-weight: 700; color: rgba(220,230,255,0.8);
+  display: flex; align-items: center; gap: 6px;
+}
+.form-label .req { color: var(--absent); font-size: 14px; line-height: 1; }
+.inp-wrap { position: relative; display: flex; align-items: center; }
+.inp-wrap i.inp-icon {
+  position: absolute; right: 12px; color: var(--text-muted);
+  font-size: 13px; pointer-events: none; transition: color .2s;
+}
+.inp-wrap .inp-status {
+  position: absolute; left: 12px; font-size: 13px; display: none;
+}
+.inp-wrap input, .inp-wrap select {
+  width: 100%; padding: 11px 38px 11px 38px;
+  background: var(--bg-card2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: 'Vazirmatn', sans-serif; font-size: 13px;
+  outline: none; transition: all .22s; direction: rtl;
+}
+.inp-wrap input::placeholder { color: var(--text-muted); }
+.inp-wrap input:focus { border-color: var(--accent); background: rgba(74,144,217,0.05); box-shadow: 0 0 0 3px rgba(74,144,217,0.1); }
+.inp-wrap input.valid { border-color: var(--ok); }
+.inp-wrap input.valid ~ .inp-status { display: block; color: var(--ok); }
+.inp-wrap input.valid ~ i.inp-icon { color: var(--ok); }
+.inp-wrap input.invalid { border-color: var(--err); }
+.inp-wrap input.invalid ~ .inp-status { display: block; color: var(--err); }
+.inp-wrap input.invalid ~ i.inp-icon { color: var(--err); }
+.inp-wrap select { padding: 11px 38px 11px 12px; cursor: pointer; }
+.inp-wrap select:focus { border-color: var(--accent); }
+.field-msg {
+  font-size: 11px; min-height: 16px;
+  display: flex; align-items: center; gap: 4px;
+  transition: all .2s;
+}
+.field-msg.err { color: var(--err); }
+.field-msg.ok  { color: var(--ok); }
+.field-msg.hint { color: var(--text-muted); }
+
+/* ══ PASSWORD STRENGTH ══ */
+.strength-wrap { margin-top: 6px; }
+.strength-bars { display: flex; gap: 4px; margin-bottom: 4px; }
+.sb2 { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background .3s; }
+.sb2.w  { background: var(--err); }
+.sb2.m  { background: var(--warn); }
+.sb2.s  { background: var(--ok); }
+.sb2.vs { background: #00e676; }
+.strength-label { font-size: 10.5px; color: var(--text-muted); transition: color .3s; }
+
+/* ══ PASSWORD TOGGLE ══ */
+.pw-toggle {
+  position: absolute; left: 12px; cursor: pointer;
+  color: var(--text-muted); font-size: 13px;
+  transition: color .2s; z-index: 1;
+}
+.pw-toggle:hover { color: var(--accent); }
+
+/* ══ FORM FOOTER ══ */
+.form-footer {
+  padding: 18px 22px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  background: rgba(0,0,0,0.07);
+  margin-top: 22px;
+}
+.form-footer-left { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+.form-footer-left i { color: var(--accent3); }
+.save-btn {
+  padding: 11px 28px;
+  background: linear-gradient(135deg, var(--accent), #3674c7);
+  border: none; border-radius: var(--radius-sm);
+  color: #fff; font-family: 'Vazirmatn', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all .25s; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 14px rgba(74,144,217,0.3);
+}
+.save-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,144,217,0.4); }
+.save-btn:disabled { opacity: .4; cursor: default; transform: none; }
+.save-btn.done { background: linear-gradient(135deg, var(--present), #27ae60); box-shadow: 0 4px 14px rgba(46,204,113,0.3); }
+.cancel-btn {
+  padding: 11px 20px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: transparent;
+  color: var(--text-muted); font-family: 'Vazirmatn', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.cancel-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+/* ══ PASSWORD PANEL ══ */
+.pw-rules { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; padding: 12px 14px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.pw-rule { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--text-muted); transition: color .2s; }
+.pw-rule.pass { color: var(--ok); }
+.pw-rule i { font-size: 10px; width: 14px; text-align: center; }
+.pw-rule.pass i::before { content: '\f00c'; }
+
+/* ══ TOAST ══ */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--bg-card); border: 1px solid rgba(46,204,113,0.3); border-radius: var(--radius-sm); padding: 12px 22px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--present); box-shadow: 0 8px 24px rgba(0,0,0,.35); z-index: 1000; transition: transform .35s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.err-toast { border-color: rgba(231,76,60,0.3); color: var(--absent); }
+
+/* ══ HAMBURGER ══ */
+.menu-toggle { display: none; position: fixed; top: 14px; right: 14px; z-index: 300; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: var(--radius-sm); cursor: pointer; align-items: center; justify-content: center; font-size: 18px; }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 199; }
+.sidebar-overlay.on { display: block; }
+
+/* ══ DIVIDER ══ */
+.section-divider { height: 1px; background: var(--border); margin: 6px 0 20px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+.shake { animation: shake .4s ease; }
+
+@media (max-width: 1060px) {
+  :root { --sidebar-w: 210px; }
+  .settings-grid { grid-template-columns: 280px 1fr; }
+}
+@media (max-width: 900px) {
+  .settings-grid { grid-template-columns: 1fr; }
+  .avatar-card { position: static; }
+}
+@media (max-width: 768px) {
+  .menu-toggle { display: flex; }
+  .sidebar { transform: translateX(110%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-right: 0; padding: 66px 12px 28px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .form-footer { flex-direction: column; align-items: stretch; }
+  .save-btn, .cancel-btn { width: 100%; justify-content: center; }
+  .settings-nav { gap: 4px; }
+  .snav-btn { font-size: 12px; padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="overlay"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بور<span>بور</span></div>
+  <div class="teacher-block">
+    <div class="teacher-avatar" id="sidebarAvatar">م</div>
+    <div>
+      <div class="teacher-name">مریم رضایی</div>
+      <div class="teacher-role">معلم فیزیک</div>
+      <div class="teacher-badge">پایه یازدهم</div>
+    </div>
+  </div>
+  <div class="nav-item"><a href="../html/teacher_dashboard .html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/teacher_attendance.html"><i class="fas fa-clipboard-check"></i> ثبت حضور و غیاب</a></div>
+  
+  <div class="nav-item"><a href="../html/teacher_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/teacher_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item"><a href="../html/teacher_notices.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۴</span></a></div>
+  <div class="nav-item"><a href="../html/teacher_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a></div>
+  <div class="nav-item active"><a href="../html/teacher_profile.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0 — سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main-content">
+
+  <div class="top-bar">
+    <div>
+      <div class="page-title"><i class="fas fa-cog"></i> تنظیمات</div>
+      <div class="page-sub">مدیریت اطلاعات شخصی و امنیت حساب</div>
+    </div>
+    <div class="top-actions">
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn" id="topAvatar">م</div>
+    </div>
+  </div>
+
+  <!-- Settings Nav -->
+  <div class="settings-nav">
+    <button class="snav-btn active" onclick="switchTab('profile', this)"><i class="fas fa-user"></i>اطلاعات شخصی</button>
+    <button class="snav-btn" onclick="switchTab('password', this)"><i class="fas fa-lock"></i>تغییر رمز عبور</button>
+  </div>
+
+  <!-- ══ TAB: PROFILE ══ -->
+  <div class="tab-panel active" id="tab-profile">
+    <div class="settings-grid">
+
+      <!-- Avatar Card -->
+      <div class="avatar-card">
+        <div class="avatar-wrap">
+          <div class="avatar-placeholder" id="avatarPlaceholder">م</div>
+          <img class="avatar-img" id="avatarImg" src="" alt="عکس پروفایل">
+          <div class="avatar-edit-btn" onclick="document.getElementById('avatarInput').click()">
+            <i class="fas fa-camera"></i>
+          </div>
+          <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml">
+        </div>
+        <div class="avatar-name" id="previewName">مریم رضایی</div>
+        <div class="avatar-role" id="previewRole">معلم فیزیک</div>
+        <div class="avatar-badge" id="previewBadge">پایه یازدهم</div>
+        <div class="avatar-info-row"><i class="fas fa-id-card"></i><span id="previewNationalId">کد ملی: —</span></div>
+        <div class="avatar-info-row"><i class="fas fa-phone"></i><span id="previewPhone">تلفن: —</span></div>
+        <div class="avatar-info-row"><i class="fas fa-envelope"></i><span id="previewEmail">ایمیل: —</span></div>
+        <div class="avatar-upload-hint">
+          فرمت‌های مجاز: <strong>JPG, PNG, GIF, WEBP, SVG</strong><br>
+          حداکثر حجم فایل: <strong>۱ مگابایت</strong>
+        </div>
+        <div class="avatar-err" id="avatarErr"></div>
+      </div>
+
+      <!-- Profile Form -->
+      <div class="form-card">
+        <div class="form-section">
+          <div class="form-section-title"><i class="fas fa-user"></i> اطلاعات پایه</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-user" style="color:var(--accent);font-size:11px"></i> نام <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-user inp-icon"></i>
+                <input type="text" id="firstName" placeholder="نام" value="مریم" oninput="validateName('firstName')" onblur="validateName('firstName',true)">
+                <i class="fas fa-check inp-status" id="firstName-status"></i>
+              </div>
+              <div class="field-msg hint" id="firstName-msg">حداقل ۲ حرف فارسی یا انگلیسی</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-user" style="color:var(--accent);font-size:11px"></i> نام خانوادگی <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-user inp-icon"></i>
+                <input type="text" id="lastName" placeholder="نام خانوادگی" value="رضایی" oninput="validateName('lastName')" onblur="validateName('lastName',true)">
+                <i class="fas fa-check inp-status" id="lastName-status"></i>
+              </div>
+              <div class="field-msg hint" id="lastName-msg">حداقل ۲ حرف فارسی یا انگلیسی</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-id-card" style="color:var(--accent);font-size:11px"></i> کد ملی <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-id-card inp-icon"></i>
+                <input type="text" id="nationalId" placeholder="مثال: ۰۰۱۲۳۴۵۶۷۸" value="0012345678" maxlength="10" oninput="validateNationalId()" onblur="validateNationalId(true)">
+                <i class="fas fa-check inp-status" id="nationalId-status"></i>
+              </div>
+              <div class="field-msg hint" id="nationalId-msg">۱۰ رقم، الگوریتم کد ملی بررسی می‌شود</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-phone" style="color:var(--accent);font-size:11px"></i> شماره موبایل <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-phone inp-icon"></i>
+                <input type="text" id="phone" placeholder="مثال: ۰۹۱۲۱۲۳۴۵۶۷" value="09121234567" maxlength="11" oninput="validatePhone()" onblur="validatePhone(true)">
+                <i class="fas fa-check inp-status" id="phone-status"></i>
+              </div>
+              <div class="field-msg hint" id="phone-msg">شروع با ۰۹، ۱۱ رقم</div>
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-envelope" style="color:var(--accent);font-size:11px"></i> ایمیل</label>
+              <div class="inp-wrap">
+                <i class="fas fa-envelope inp-icon"></i>
+                <input type="email" id="email" placeholder="example@school.ir" value="m.rezaei@school.ir" oninput="validateEmail()" onblur="validateEmail(true)" style="padding-left:12px">
+                <i class="fas fa-check inp-status" id="email-status"></i>
+              </div>
+              <div class="field-msg hint" id="email-msg">اختیاری — آدرس ایمیل معتبر</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <div class="form-footer-left"><i class="fas fa-info-circle"></i> فیلدهای ستاره‌دار اجباری هستند</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="cancel-btn" onclick="resetProfileForm()">انصراف</button>
+            <button class="save-btn" id="profileSaveBtn" onclick="saveProfile()">
+              <i class="fas fa-save"></i> ذخیره تغییرات
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: PASSWORD ══ -->
+  <div class="tab-panel" id="tab-password">
+    <div class="settings-grid">
+
+      <!-- Info Card -->
+      <div class="avatar-card">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),#c85fe8);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px;box-shadow:0 0 0 4px rgba(142,95,212,0.15),0 8px 24px rgba(142,95,212,0.2)">
+          <i class="fas fa-shield-alt" style="color:white"></i>
+        </div>
+        <div class="avatar-name">امنیت حساب</div>
+        <div class="avatar-role" style="margin-bottom:18px">تغییر رمز عبور</div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+          <div class="avatar-info-row" style="flex-direction:column;align-items:flex-start;gap:5px">
+            <span style="font-size:11px;color:var(--text-muted);font-weight:700">نکات امنیتی:</span>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-muted);line-height:1.8;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border)">
+            <div style="margin-bottom:6px;display:flex;align-items:flex-start;gap:6px"><i class="fas fa-check-circle" style="color:var(--accent3);margin-top:3px;font-size:10px;flex-shrink:0"></i> از حروف بزرگ و کوچک استفاده کنید</div>
+            <div style="margin-bottom:6px;display:flex;align-items:flex-start;gap:6px"><i class="fas fa-check-circle" style="color:var(--accent3);margin-top:3px;font-size:10px;flex-shrink:0"></i> اعداد را در رمز خود بگنجانید</div>
+            <div style="margin-bottom:6px;display:flex;align-items:flex-start;gap:6px"><i class="fas fa-check-circle" style="color:var(--accent3);margin-top:3px;font-size:10px;flex-shrink:0"></i> از کاراکترهای خاص مثل @، #، $ استفاده کنید</div>
+            <div style="display:flex;align-items:flex-start;gap:6px"><i class="fas fa-check-circle" style="color:var(--accent3);margin-top:3px;font-size:10px;flex-shrink:0"></i> رمز قبلی را مجدداً استفاده نکنید</div>
+          </div>
+          <div style="background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius-sm);padding:10px 12px;font-size:11px;color:rgba(231,76,60,0.85);line-height:1.7">
+            <i class="fas fa-exclamation-triangle" style="margin-left:5px"></i>
+            هرگز رمز عبور خود را در اختیار دیگران قرار ندهید
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Form -->
+      <div class="form-card">
+        <div class="form-section">
+          <div class="form-section-title"><i class="fas fa-lock"></i> تغییر رمز عبور</div>
+
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-key" style="color:var(--accent);font-size:11px"></i> رمز عبور فعلی <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-key inp-icon"></i>
+                <input type="password" id="currentPw" placeholder="رمز عبور فعلی را وارد کنید" oninput="validateCurrentPw()" onblur="validateCurrentPw(true)">
+                <span class="pw-toggle" onclick="togglePw('currentPw',this)"><i class="fas fa-eye"></i></span>
+              </div>
+              <div class="field-msg hint" id="currentPw-msg">برای تأیید هویت لازم است</div>
+            </div>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-lock" style="color:var(--accent);font-size:11px"></i> رمز عبور جدید <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-lock inp-icon"></i>
+                <input type="password" id="newPw" placeholder="رمز عبور جدید (حداقل ۸ کاراکتر)" oninput="validateNewPw();validateConfirmPw()" onblur="validateNewPw(true)">
+                <span class="pw-toggle" onclick="togglePw('newPw',this)"><i class="fas fa-eye"></i></span>
+              </div>
+              <div class="strength-wrap" id="strengthWrap" style="display:none">
+                <div class="strength-bars">
+                  <div class="sb2" id="sb0"></div>
+                  <div class="sb2" id="sb1"></div>
+                  <div class="sb2" id="sb2"></div>
+                  <div class="sb2" id="sb3"></div>
+                </div>
+                <div class="strength-label" id="strengthLabel">—</div>
+              </div>
+              <div class="field-msg hint" id="newPw-msg"></div>
+            </div>
+          </div>
+
+          <!-- Password Rules -->
+          <div class="pw-rules" id="pwRules" style="display:none">
+            <div class="pw-rule" id="rule-len"><i class="fas fa-times" style="color:var(--err)"></i> حداقل ۸ کاراکتر</div>
+            <div class="pw-rule" id="rule-upper"><i class="fas fa-times" style="color:var(--err)"></i> حداقل یک حرف بزرگ (A–Z)</div>
+            <div class="pw-rule" id="rule-lower"><i class="fas fa-times" style="color:var(--err)"></i> حداقل یک حرف کوچک (a–z)</div>
+            <div class="pw-rule" id="rule-num"><i class="fas fa-times" style="color:var(--err)"></i> حداقل یک عدد</div>
+            <div class="pw-rule" id="rule-special"><i class="fas fa-times" style="color:var(--err)"></i> حداقل یک کاراکتر خاص (!@#$%^&*)</div>
+          </div>
+
+          <div class="form-row full" style="margin-top:14px">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-lock" style="color:var(--accent);font-size:11px"></i> تکرار رمز جدید <span class="req">*</span></label>
+              <div class="inp-wrap">
+                <i class="fas fa-lock inp-icon"></i>
+                <input type="password" id="confirmPw" placeholder="رمز عبور جدید را مجدداً وارد کنید" oninput="validateConfirmPw()" onblur="validateConfirmPw(true)">
+                <span class="pw-toggle" onclick="togglePw('confirmPw',this)"><i class="fas fa-eye"></i></span>
+                <i class="fas fa-check inp-status" id="confirmPw-status"></i>
+              </div>
+              <div class="field-msg hint" id="confirmPw-msg">باید با رمز جدید یکسان باشد</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <div class="form-footer-left"><i class="fas fa-info-circle"></i> رمز فعلی: <strong style="color:var(--accent);margin-right:4px">Admin123!</strong></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="cancel-btn" onclick="resetPwForm()">انصراف</button>
+            <button class="save-btn" id="pwSaveBtn" onclick="savePassword()" disabled>
+              <i class="fas fa-key"></i> تغییر رمز عبور
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+/* ════ HELPERS ════ */
+const $ = id => document.getElementById(id);
+const f = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+function showToast(msg, isErr=false) {
+  const t = $('toast');
+  t.className = 'toast' + (isErr ? ' err-toast' : '');
+  t.innerHTML = `<i class="fas fa-${isErr?'exclamation-circle':'check-circle'}"></i><span>${msg}</span>`;
+  t.classList.add('show');
+  clearTimeout(t._tt);
+  t._tt = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setFieldState(fieldId, state, msg) {
+  const inp = $(fieldId);
+  const msgEl = $(fieldId + '-msg');
+  if (!inp) return;
+  inp.classList.remove('valid','invalid');
+  if (state === 'ok') inp.classList.add('valid');
+  if (state === 'err') inp.classList.add('invalid');
+  if (msgEl) {
+    msgEl.className = 'field-msg ' + (state === 'ok' ? 'ok' : state === 'err' ? 'err' : 'hint');
+    if (msg !== undefined) msgEl.textContent = msg;
+  }
+}
+
+/* ════ TABS ════ */
+function switchTab(id, btn) {
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  $('tab-' + id).classList.add('active');
+}
+
+/* ════ AVATAR UPLOAD ════ */
+const ALLOWED_TYPES = ['image/jpeg','image/png','image/gif','image/webp','image/svg+xml'];
+const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+
+$('avatarInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  const errEl = $('avatarErr');
+  errEl.classList.remove('show');
+  if (!file) return;
+
+  // Check type
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    errEl.textContent = '⚠ فرمت فایل مجاز نیست. فقط JPG، PNG، GIF، WEBP و SVG قابل قبول است.';
+    errEl.classList.add('show');
+    this.value = '';
+    return;
+  }
+
+  // Check size
+  if (file.size > MAX_SIZE) {
+    const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+    errEl.textContent = `⚠ حجم فایل (${sizeMB} MB) بیشتر از ۱ مگابایت است.`;
+    errEl.classList.add('show');
+    this.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const src = ev.target.result;
+    $('avatarImg').src = src;
+    $('avatarImg').style.display = 'block';
+    $('avatarPlaceholder').style.display = 'none';
+    // Update sidebar avatar with image
+    const sa = $('sidebarAvatar');
+    sa.style.backgroundImage = `url(${src})`;
+    sa.style.backgroundSize = 'cover';
+    sa.style.backgroundPosition = 'center';
+    sa.textContent = '';
+    $('topAvatar').style.backgroundImage = `url(${src})`;
+    $('topAvatar').style.backgroundSize = 'cover';
+    $('topAvatar').textContent = '';
+    showToast('عکس پروفایل با موفقیت آپلود شد');
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ════ PREVIEW UPDATER ════ */
+function updatePreview() {
+  const fn = $('firstName').value.trim();
+  const ln = $('lastName').value.trim();
+  const fullName = [fn, ln].filter(Boolean).join(' ') || 'مریم رضایی';
+  $('previewName').textContent = fullName;
+  const initial = fn ? fn[0] : 'م';
+  if ($('avatarImg').style.display === 'none') {
+    $('avatarPlaceholder').textContent = initial;
+    $('sidebarAvatar').textContent = initial;
+    $('topAvatar').textContent = initial;
+  }
+
+  const nat = $('nationalId').value.trim();
+  $('previewNationalId').textContent = `کد ملی: ${nat ? f(nat) : '—'}`;
+  const ph = $('phone').value.trim();
+  $('previewPhone').textContent = `تلفن: ${ph ? f(ph) : '—'}`;
+  const em = $('email').value.trim();
+  $('previewEmail').textContent = `ایمیل: ${em || '—'}`;
+}
+
+['firstName','lastName','nationalId','phone','email'].forEach(id => {
+  const el = $(id);
+  if (el) el.addEventListener('input', updatePreview);
+  if (el) el.addEventListener('change', updatePreview);
+});
+
+/* ════ VALIDATIONS: PROFILE ════ */
+function validateName(id, blur=false) {
+  const val = $(id).value.trim();
+  if (!val) {
+    setFieldState(id, blur ? 'err' : '', 'این فیلد اجباری است');
+  } else if (val.length < 2) {
+    setFieldState(id, 'err', 'حداقل ۲ کاراکتر وارد کنید');
+  } else if (!/^[\u0600-\u06FF\s\u200c\u200d a-zA-Z]+$/.test(val)) {
+    setFieldState(id, 'err', 'فقط حروف فارسی یا انگلیسی مجاز است');
+  } else {
+    setFieldState(id, 'ok', `✓ ${val}`);
+  }
+  updatePreview();
+}
+
+function validateNationalId(blur=false) {
+  let val = $('nationalId').value.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g,'');
+  if (!val) {
+    setFieldState('nationalId', blur ? 'err' : '', 'کد ملی اجباری است');
+    return false;
+  }
+  if (val.length !== 10) {
+    setFieldState('nationalId', 'err', `${f(val.length)} رقم وارد شده — باید ۱۰ رقم باشد`);
+    return false;
+  }
+  // All same digits check
+  if (/^(\d)\1{9}$/.test(val)) {
+    setFieldState('nationalId', 'err', 'کد ملی معتبر نیست (ارقام تکراری)');
+    return false;
+  }
+  // Luhn-like national ID validation
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(val[i]) * (10 - i);
+  const rem = sum % 11;
+  const check = parseInt(val[9]);
+  const valid = (rem < 2 && check === rem) || (rem >= 2 && check === 11 - rem);
+  if (!valid) {
+    setFieldState('nationalId', 'err', 'کد ملی از نظر الگوریتم معتبر نیست');
+    return false;
+  }
+  setFieldState('nationalId', 'ok', `✓ کد ملی معتبر`);
+  updatePreview();
+  return true;
+}
+
+function validatePhone(blur=false) {
+  let val = $('phone').value.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g,'');
+  if (!val) {
+    setFieldState('phone', blur ? 'err' : '', 'شماره موبایل اجباری است');
+    return false;
+  }
+  if (!/^09[0-9]{9}$/.test(val)) {
+    if (val.length < 11) {
+      setFieldState('phone', 'err', `${f(val.length)} رقم وارد شده — باید ۱۱ رقم باشد`);
+    } else if (!val.startsWith('09')) {
+      setFieldState('phone', 'err', 'شماره باید با ۰۹ شروع شود');
+    } else {
+      setFieldState('phone', 'err', 'شماره موبایل معتبر نیست');
+    }
+    return false;
+  }
+  const operators = ['0910','0911','0912','0913','0914','0915','0916','0917','0918','0919',
+                     '0920','0921','0922','0930','0933','0935','0936','0937','0938','0939',
+                     '0941','0990','0991','0992','0993','0994'];
+  const prefix4 = val.substring(0,4);
+  const opName = operators.includes(prefix4) ? '' : '';
+  setFieldState('phone', 'ok', `✓ شماره معتبر`);
+  updatePreview();
+  return true;
+}
+
+function validateEmail(blur=false) {
+  const val = $('email').value.trim();
+  if (!val) {
+    setFieldState('email', '', 'اختیاری — آدرس ایمیل معتبر');
+    return true;
+  }
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!emailRx.test(val)) {
+    setFieldState('email', blur ? 'err' : 'err', 'فرمت ایمیل معتبر نیست (مثال: name@school.ir)');
+    return false;
+  }
+  setFieldState('email', 'ok', `✓ ایمیل معتبر`);
+  updatePreview();
+  return true;
+}
+
+/* ════ PROFILE SAVE ════ */
+function saveProfile() {
+  validateName('firstName', true);
+  validateName('lastName', true);
+  const ni = validateNationalId(true);
+  const ph = validatePhone(true);
+  const em = validateEmail(true);
+
+  const fnOk = $('firstName').classList.contains('valid');
+  const lnOk = $('lastName').classList.contains('valid');
+
+  if (!fnOk || !lnOk || !ni || !ph || !em) {
+    showToast('لطفاً خطاهای فرم را برطرف کنید', true);
+    document.querySelector('.form-card').classList.add('shake');
+    setTimeout(() => document.querySelector('.form-card').classList.remove('shake'), 500);
+    return;
+  }
+
+  const btn = $('profileSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ذخیره...';
+  setTimeout(() => {
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="fas fa-check"></i> ذخیره شد';
+    showToast('اطلاعات شخصی با موفقیت ذخیره شد');
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.classList.remove('done');
+      btn.innerHTML = '<i class="fas fa-save"></i> ذخیره تغییرات';
+    }, 3000);
+  }, 1000);
+}
+
+function resetProfileForm() {
+  $('firstName').value = 'مریم';
+  $('lastName').value = 'رضایی';
+  $('nationalId').value = '0012345678';
+  $('phone').value = '09121234567';
+  $('email').value = 'm.rezaei@school.ir';
+  ['firstName','lastName','nationalId','phone','email'].forEach(id => {
+    const el = $(id);
+    el.classList.remove('valid','invalid');
+    const msg = $(id+'-msg');
+    if(msg) msg.className = 'field-msg hint';
+  });
+  updatePreview();
+  showToast('تغییرات لغو شد');
+}
+
+/* ════ PASSWORD VALIDATION ════ */
+const CURRENT_PW = 'Admin123!';
+
+function togglePw(id, btn) {
+  const inp = $(id);
+  const icon = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    inp.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+
+function validateCurrentPw(blur=false) {
+  const val = $('currentPw').value;
+  if (!val) {
+    setFieldState('currentPw', blur ? 'err' : '', 'رمز عبور فعلی را وارد کنید');
+    return false;
+  }
+  if (val !== CURRENT_PW) {
+    setFieldState('currentPw', 'err', 'رمز عبور فعلی اشتباه است');
+    return false;
+  }
+  setFieldState('currentPw', 'ok', '✓ رمز عبور فعلی تأیید شد');
+  checkPwFormReady();
+  return true;
+}
+
+function getPasswordStrength(pw) {
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[a-z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)) score++;
+  if (score <= 2) return {level:1, label:'ضعیف', cls:'w'};
+  if (score <= 3) return {level:2, label:'متوسط', cls:'m'};
+  if (score <= 4) return {level:3, label:'قوی', cls:'s'};
+  return {level:4, label:'بسیار قوی', cls:'vs'};
+}
+
+function validateNewPw(blur=false) {
+  const val = $('newPw').value;
+  const rulesEl = $('pwRules');
+  const strengthEl = $('strengthWrap');
+
+  if (!val) {
+    strengthEl.style.display = 'none';
+    rulesEl.style.display = 'none';
+    setFieldState('newPw', blur ? 'err' : '', '');
+    checkPwFormReady();
+    return false;
+  }
+
+  strengthEl.style.display = 'block';
+  rulesEl.style.display = 'flex';
+
+  // Rules
+  const rules = {
+    len: val.length >= 8,
+    upper: /[A-Z]/.test(val),
+    lower: /[a-z]/.test(val),
+    num: /[0-9]/.test(val),
+    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val)
+  };
+
+  Object.entries(rules).forEach(([key, pass]) => {
+    const el = $('rule-' + key);
+    if (!el) return;
+    el.classList.toggle('pass', pass);
+    const icon = el.querySelector('i');
+    icon.style.color = pass ? 'var(--ok)' : 'var(--err)';
+  });
+
+  // Strength bars
+  const str = getPasswordStrength(val);
+  ['sb0','sb1','sb2','sb3'].forEach((id, i) => {
+    const el = $(id);
+    el.className = 'sb2' + (i < str.level ? ' ' + str.cls : '');
+  });
+  const lbl = $('strengthLabel');
+  const colors = {w:'var(--err)',m:'var(--warn)',s:'var(--ok)',vs:'#00e676'};
+  lbl.style.color = colors[str.cls];
+  lbl.textContent = `قدرت رمز: ${str.label}`;
+
+  const allPassed = Object.values(rules).every(Boolean);
+  if (val === CURRENT_PW) {
+    setFieldState('newPw', 'err', 'رمز جدید نباید با رمز قبلی یکسان باشد');
+    return false;
+  }
+  if (!allPassed) {
+    setFieldState('newPw', blur ? 'err' : '', '');
+    return false;
+  }
+  setFieldState('newPw', 'ok', '✓ رمز عبور قوی');
+  checkPwFormReady();
+  return true;
+}
+
+function validateConfirmPw(blur=false) {
+  const newVal = $('newPw').value;
+  const confVal = $('confirmPw').value;
+  if (!confVal) {
+    setFieldState('confirmPw', blur ? 'err' : '', 'تکرار رمز اجباری است');
+    checkPwFormReady();
+    return false;
+  }
+  if (confVal !== newVal) {
+    setFieldState('confirmPw', 'err', 'رمز عبور با تکرار آن مطابقت ندارد');
+    checkPwFormReady();
+    return false;
+  }
+  setFieldState('confirmPw', 'ok', '✓ رمزها یکسانند');
+  checkPwFormReady();
+  return true;
+}
+
+function checkPwFormReady() {
+  const c1 = $('currentPw').classList.contains('valid');
+  const c2 = $('newPw').classList.contains('valid');
+  const c3 = $('confirmPw').classList.contains('valid');
+  $('pwSaveBtn').disabled = !(c1 && c2 && c3);
+}
+
+function savePassword() {
+  const ok1 = validateCurrentPw(true);
+  const ok2 = validateNewPw(true);
+  const ok3 = validateConfirmPw(true);
+  if (!ok1 || !ok2 || !ok3) {
+    showToast('لطفاً تمام فیلدها را به درستی پر کنید', true);
+    return;
+  }
+  const btn = $('pwSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال تغییر...';
+  setTimeout(() => {
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="fas fa-check"></i> رمز تغییر کرد';
+    showToast('رمز عبور با موفقیت تغییر کرد');
+    setTimeout(() => resetPwForm(), 3000);
+  }, 1200);
+}
+
+function resetPwForm() {
+  ['currentPw','newPw','confirmPw'].forEach(id => {
+    $(id).value = '';
+    $(id).type = 'password';
+    $(id).classList.remove('valid','invalid');
+    const msg = $(id+'-msg');
+    if(msg){msg.className='field-msg hint';msg.textContent=id==='currentPw'?'برای تأیید هویت لازم است':id==='newPw'?'':' باید با رمز جدید یکسان باشد';}
+    const tog = $(id)?.parentElement?.querySelector('.pw-toggle i');
+    if(tog) tog.className = 'fas fa-eye';
+  });
+  $('strengthWrap').style.display = 'none';
+  $('pwRules').style.display = 'none';
+  const btn = $('pwSaveBtn');
+  btn.disabled = true;
+  btn.classList.remove('done');
+  btn.innerHTML = '<i class="fas fa-key"></i> تغییر رمز عبور';
+}
+
+/* ════ SIDEBAR ════ */
+const sb = document.getElementById('sidebar');
+const ov = document.getElementById('overlay');
+document.getElementById('menuToggle').addEventListener('click', () => { sb.classList.toggle('open'); ov.classList.toggle('on'); });
+ov.addEventListener('click', () => { sb.classList.remove('open'); ov.classList.remove('on'); });
+
+/* ════ INIT ════ */
+updatePreview();
+validateName('firstName');
+validateName('lastName');
+validateNationalId();
+validatePhone();
+validateEmail();
+</script>
+</body>
+</html>

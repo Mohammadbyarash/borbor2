@@ -1,0 +1,700 @@
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+    font-weight: 500;
+}
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Shabnam";
+    src: url("../font/Shabnam-Bold.woff2") format("woff2");
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Shabnam";
+    src: url("../font/Shabnam-Medium.woff2") format("woff2");
+    font-weight: 500;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Vazirmatn", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #202B59;
+    height: 100vh;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Hamburger Menu Button */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #172047;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: #202b59;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: #172047;
+    backdrop-filter: blur(10px);
+    padding: 30px 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
+
+.logo {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    font-family: "Shabnam", sans-serif;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.menu-item {
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.menu-item a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+.menu-item a i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-item a:hover {
+    background: #202B59;
+    color: white;
+}
+
+.menu-item.active a {
+    background: #202B59;
+    color: white;
+    font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-right: 280px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-title {
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    font-family: "Shabnam", sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-info {
+    color: white;
+    font-size: 18px;
+    font-family: "Vazirmatn", sans-serif;
+}
+
+/* Add User Form Section */
+.add-user-section {
+    background: #1F285A;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    font-family: "Shabnam", sans-serif;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    color: white;
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-family: "Vazirmatn", sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.required {
+    color: #e74c3c;
+    margin-left: 5px;
+}
+
+.form-input,
+.form-select {
+    background: #171E44;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: "Vazirmatn", sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: #3498DB;
+    background: #1E2957;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.date-input-wrapper {
+    position: relative;
+}
+
+.date-input-wrapper .form-input {
+    padding-left: 45px;
+    cursor: pointer;
+}
+
+.date-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background: #171E44;
+    color: white;
+}
+
+.photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background: #171E44;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photo-upload:hover {
+    border-color: #3498DB;
+    background: #1E2957;
+}
+
+.photo-upload-icon {
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 15px;
+}
+
+.photo-upload-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-family: "Vazirmatn", sans-serif;
+    text-align: center;
+}
+
+.photo-upload-text small {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.photo-upload input[type="file"] {
+    display: none;
+}
+
+.photo-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid #3498DB;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.btn {
+    padding: 15px 50px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: "Vazirmatn", sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-submit {
+    background: #27AE60;
+    color: white;
+}
+
+.btn-submit:hover {
+    background: #2ECC71;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.btn-cancel {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+/* Success Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #283369;
+    border-radius: 15px;
+    padding: 40px;
+    width: 450px;
+    max-width: 90%;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.success-icon {
+    color: #27AE60;
+}
+
+.modal-title {
+    color: white;
+    font-size: 24px;
+    font-family: "Shabnam", sans-serif;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.modal-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-family: "Vazirmatn", sans-serif;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.modal-btn {
+    padding: 12px 40px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: "Vazirmatn", sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #3498DB;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-btn:hover {
+    background: #2980B9;
+    transform: translateY(-2px);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #171E44;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3498DB;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2980B9;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        margin-right: 220px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .sidebar {
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 999;
+        transform: translateX(100%);
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-right: 0;
+        width: 100%;
+        padding: 80px 20px 20px;
+    }
+
+    .add-user-section {
+        padding: 25px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .admin-info {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .main-content {
+        padding: 70px 15px 15px;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .add-user-section {
+        padding: 20px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    .form-grid {
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .modal-content {
+        padding: 30px 20px;
+    }
+}
+
+/* Persian Datepicker Custom Styles */
+.pwt-datepicker-view-container {
+    font-family: "Vazirmatn", sans-serif !important;
+    background: #1F285A !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+.pwt-datepicker-view-container * {
+    font-family: "Vazirmatn", sans-serif !important;
+}
+
+.pwt-datepicker-view-container .table-days tbody tr td,
+.pwt-datepicker-view-container .table-days thead tr th {
+    color: white !important;
+}
+
+.pwt-datepicker-view-container .table-days tbody tr td.disabled {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.pwt-datepicker-view-container .table-days tbody tr td:hover {
+    background: #3498DB !important;
+    color: white !important;
+}
+
+.pwt-datepicker-view-container .table-days tbody tr td.selected {
+    background: #27AE60 !important;
+    color: white !important;
+}
+
+.pwt-datepicker-view-container .table-days tbody tr td.today {
+    background: #2980B9 !important;
+    color: white !important;
+}
+
+.pwt-datepicker-navigator {
+    background: #171E44 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.pwt-datepicker-navigator .pwt-btn {
+    color: white !important;
+}
+
+.pwt-datepicker-navigator .pwt-btn:hover {
+    background: #3498DB !important;
+}
+
+.pwt-datepicker-navigator .pwt-btn-switch {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.pwt-datepicker-view-container .table-days thead tr th {
+    background: #171E44 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.pwt-datepicker-toolbox {
+    background: #171E44 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.pwt-datepicker-toolbox .pwt-btn-submit,
+.pwt-datepicker-toolbox .pwt-btn-today {
+    background: #27AE60 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 8px 15px !important;
+    font-weight: 600 !important;
+}
+
+.pwt-datepicker-toolbox .pwt-btn-submit:hover,
+.pwt-datepicker-toolbox .pwt-btn-today:hover {
+    background: #2ECC71 !important;
+}
+
+.pwt-datepicker-toolbox .pwt-btn-cancel {
+    background: #95a5a6 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 8px 15px !important;
+    font-weight: 600 !important;
+}
+
+.pwt-datepicker-toolbox .pwt-btn-cancel:hover {
+    background: #7f8c8d !important;
+}
+
+.table-days tbody tr td.other-month {
+    color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.pwt-datepicker-time-container {
+    background: #171E44 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.pwt-datepicker-time-container input {
+    background: #1F285A !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+}
+
+.pwt-datepicker-view-container .table-month tbody tr td,
+.pwt-datepicker-view-container .table-year tbody tr td {
+    color: white !important;
+}
+
+.pwt-datepicker-view-container .table-month tbody tr td:hover,
+.pwt-datepicker-view-container .table-year tbody tr td:hover {
+    background: #3498DB !important;
+}
+
+.pwt-datepicker-view-container .table-month tbody tr td.selected,
+.pwt-datepicker-view-container .table-year tbody tr td.selected {
+    background: #27AE60 !important;
+}

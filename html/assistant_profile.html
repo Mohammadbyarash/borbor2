@@ -1,0 +1,3043 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — تنظیمات</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+        --ok: #2ecc71;
+        --err: #e74c3c;
+        --warn: #f39c12;
+        --sidebar-transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 45% 45% at 55% 45%,
+            rgba(6, 214, 160, 0.04) 0%,
+            transparent 65%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ══ SIDEBAR (always hidden by default, opens via hamburger) ══ */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: var(--sidebar-transition);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+
+      .sb-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+      }
+      .logo {
+        font-size: 26px;
+        font-weight: 900;
+        color: #fff;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .sb-close {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .sb-close:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+      }
+
+      .logo-sub {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: center;
+      }
+
+      .deputy-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .deputy-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        flex-shrink: 0;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .deputy-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: none;
+      }
+      .deputy-name {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .deputy-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .deputy-badge {
+        margin-top: 6px;
+        display: inline-block;
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(243, 156, 18, 0.22);
+      }
+
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .nav-item {
+        margin-bottom: 2px;
+      }
+      .nav-item a {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .nav-item a i {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .nav-item a:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .nav-item.active a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .nav-item.active a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .nav-item.active a i {
+        opacity: 1;
+        color: var(--accent);
+      }
+      .nav-badge {
+        margin-right: auto;
+        background: var(--accent5);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* ══ OVERLAY ══ */
+      .sb-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.68);
+        z-index: 399;
+        backdrop-filter: blur(3px);
+        transition: opacity 0.3s;
+      }
+      .sb-overlay.on {
+        display: block;
+      }
+
+      /* ══ HAMBURGER ══ */
+      .hamburger {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .hamburger:hover {
+        border-color: var(--border-hover);
+      }
+      .hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text-muted);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger:hover span {
+        background: var(--text);
+      }
+
+      /* ══ MAIN CONTENT ══ */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 40px;
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* ══ TOP BAR ══ */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 14px;
+      }
+      .greeting h1 {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .greeting h1 span {
+        color: var(--accent);
+      }
+      .greeting p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .action-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 15px;
+        transition: all 0.2s;
+      }
+      .action-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .notif-dot {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 7px;
+        height: 7px;
+        background: var(--accent5);
+        border-radius: 50%;
+        border: 2px solid var(--bg-main);
+      }
+
+      /* ══ NOTIFICATION DROPDOWN ══ */
+      .notif-wrap {
+        position: relative;
+      }
+      .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        width: 340px;
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius);
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(255, 255, 255, 0.04);
+        z-index: 500;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s ease;
+        overflow: hidden;
+      }
+      .notif-dropdown.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
+      /* arrow */
+      .notif-dropdown::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 11px;
+        height: 11px;
+        background: var(--bg-card);
+        border-top: 1px solid rgba(74, 144, 217, 0.2);
+        border-right: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .nd-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .nd-title {
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nd-title i {
+        color: var(--accent);
+      }
+      .nd-badge-count {
+        background: var(--accent5);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .nd-mark-all {
+        font-size: 10.5px;
+        color: var(--accent);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+        transition: opacity 0.2s;
+        padding: 0;
+      }
+      .nd-mark-all:hover {
+        opacity: 0.7;
+      }
+      .nd-list {
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .nd-list::-webkit-scrollbar {
+        width: 3px;
+      }
+      .nd-list::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 3px;
+      }
+      .nd-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.15s;
+        position: relative;
+      }
+      .nd-item:last-child {
+        border-bottom: none;
+      }
+      .nd-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .nd-item.unread {
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .nd-item.unread::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        background: var(--accent);
+        border-radius: 0 3px 3px 0;
+      }
+      .nd-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .nd-icon.red {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+      }
+      .nd-icon.blue {
+        background: rgba(74, 144, 217, 0.15);
+        color: var(--accent);
+      }
+      .nd-icon.green {
+        background: rgba(46, 204, 113, 0.15);
+        color: var(--present);
+      }
+      .nd-icon.orange {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .nd-icon.purple {
+        background: rgba(142, 95, 212, 0.15);
+        color: var(--accent2);
+      }
+      .nd-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .nd-item-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+        line-height: 1.4;
+      }
+      .nd-item-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .nd-item-time {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nd-item-time i {
+        font-size: 9px;
+      }
+      .nd-unread-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .nd-footer {
+        padding: 11px 16px;
+        border-top: 1px solid var(--border);
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .nd-footer a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+      .nd-footer a:hover {
+        opacity: 0.75;
+      }
+      .nd-empty {
+        padding: 28px 16px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .nd-empty i {
+        font-size: 28px;
+        display: block;
+        margin-bottom: 8px;
+        opacity: 0.4;
+      }
+
+      /* ══ PERSIAN DATE PICKER ══ */
+
+      /* ══ SETTINGS TABS ══ */
+      .settings-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 7px;
+      }
+      .stab {
+        flex: 1;
+        padding: 11px 16px;
+        border: none;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .stab i {
+        font-size: 13px;
+      }
+      .stab:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+      .stab.active {
+        background: rgba(74, 144, 217, 0.18);
+        color: #fff;
+        border: 1px solid rgba(74, 144, 217, 0.25);
+      }
+      .stab.active i {
+        color: var(--accent);
+      }
+
+      /* ══ TAB PANELS ══ */
+      .tab-panel {
+        display: none;
+        animation: fadeUp 0.3s ease both;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* ══ SETTINGS LAYOUT ══ */
+      .settings-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      /* ══ AVATAR CARD ══ */
+      .avatar-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: sticky;
+        top: 20px;
+      }
+      .avatar-ring {
+        position: relative;
+        margin-bottom: 18px;
+      }
+      .avatar-circle {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        font-weight: 900;
+        border: 3px solid rgba(74, 144, 217, 0.4);
+        box-shadow:
+          0 0 0 5px rgba(74, 144, 217, 0.1),
+          0 8px 28px rgba(74, 144, 217, 0.25);
+        overflow: hidden;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+      }
+      .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: none;
+        position: absolute;
+        inset: 0;
+      }
+      .avatar-circle .av-hover {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+        font-size: 20px;
+        color: #fff;
+      }
+      .avatar-circle:hover .av-hover {
+        opacity: 1;
+      }
+      .avatar-cam {
+        position: absolute;
+        bottom: 4px;
+        left: 4px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: 2px solid var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #fff;
+        font-size: 11px;
+        box-shadow: 0 2px 8px rgba(74, 144, 217, 0.4);
+        transition: all 0.2s;
+        pointer-events: none;
+      }
+      .avatar-circle:hover .avatar-cam {
+        transform: scale(1.1);
+      }
+      #avatarInput {
+        display: none;
+      }
+      .av-name {
+        font-size: 16px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .av-role {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .av-badge {
+        background: rgba(6, 214, 160, 0.12);
+        color: var(--accent3);
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 11px;
+        border-radius: 20px;
+        border: 1px solid rgba(6, 214, 160, 0.2);
+        margin-bottom: 18px;
+      }
+      .av-info-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 12px;
+        background: var(--bg-card2);
+        border-radius: var(--radius-sm);
+        margin-bottom: 7px;
+        font-size: 12px;
+      }
+      .av-info-row i {
+        color: var(--accent);
+        font-size: 12px;
+        width: 14px;
+        text-align: center;
+      }
+      .av-upload-hint {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+        width: 100%;
+      }
+      .av-upload-hint strong {
+        color: var(--accent);
+      }
+      .av-err {
+        display: none;
+        width: 100%;
+        margin-top: 9px;
+        padding: 8px 11px;
+        background: rgba(231, 76, 60, 0.09);
+        border: 1px solid rgba(231, 76, 60, 0.25);
+        border-radius: 8px;
+        font-size: 11px;
+        color: var(--absent);
+        line-height: 1.6;
+        text-align: center;
+      }
+      .av-err.show {
+        display: block;
+      }
+
+      /* ══ FORM CARD ══ */
+      .form-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .form-section {
+        padding: 24px 24px 0;
+      }
+      .form-sec-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .form-sec-title i {
+        color: var(--accent);
+        font-size: 12px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .form-row.full {
+        grid-template-columns: 1fr;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(220, 230, 255, 0.82);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .form-label .req {
+        color: var(--absent);
+        font-size: 14px;
+        line-height: 1;
+      }
+      .inp-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .inp-icon {
+        position: absolute;
+        right: 12px;
+        color: var(--text-muted);
+        font-size: 13px;
+        pointer-events: none;
+        transition: color 0.2s;
+      }
+      .inp-status {
+        position: absolute;
+        left: 12px;
+        font-size: 13px;
+        display: none;
+      }
+      .inp-wrap input,
+      .inp-wrap select {
+        width: 100%;
+        padding: 11px 38px 11px 38px;
+        background: var(--bg-card2);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        transition: all 0.22s;
+        direction: rtl;
+      }
+      .inp-wrap input::placeholder {
+        color: var(--text-muted);
+      }
+      .inp-wrap input:focus {
+        border-color: var(--accent);
+        background: rgba(74, 144, 217, 0.05);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+      }
+      .inp-wrap input.valid {
+        border-color: var(--ok);
+      }
+      .inp-wrap input.valid ~ .inp-status {
+        display: block;
+        color: var(--ok);
+      }
+      .inp-wrap input.valid ~ .inp-icon {
+        color: var(--ok);
+      }
+      .inp-wrap input.invalid {
+        border-color: var(--err);
+      }
+      .inp-wrap input.invalid ~ .inp-status {
+        display: block;
+        color: var(--err);
+      }
+      .inp-wrap input.invalid ~ .inp-icon {
+        color: var(--err);
+      }
+      .inp-wrap select {
+        padding: 11px 38px 11px 12px;
+        cursor: pointer;
+      }
+      .inp-wrap select:focus {
+        border-color: var(--accent);
+      }
+      .field-msg {
+        font-size: 11px;
+        min-height: 15px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+      .field-msg.err {
+        color: var(--err);
+      }
+      .field-msg.ok {
+        color: var(--ok);
+      }
+      .field-msg.hint {
+        color: var(--text-muted);
+      }
+
+      /* ══ FORM DIVIDER ══ */
+      .form-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 20px 0;
+      }
+
+      /* ══ PASSWORD ELEMENTS ══ */
+      .pw-toggle {
+        position: absolute;
+        left: 12px;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 13px;
+        transition: color 0.2s;
+        z-index: 1;
+      }
+      .pw-toggle:hover {
+        color: var(--accent);
+      }
+      .strength-wrap {
+        margin-top: 8px;
+      }
+      .strength-bars {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 5px;
+      }
+      .sbar {
+        flex: 1;
+        height: 3px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        transition: background 0.3s;
+      }
+      .sbar.w {
+        background: var(--err);
+      }
+      .sbar.m {
+        background: var(--warn);
+      }
+      .sbar.s {
+        background: var(--ok);
+      }
+      .sbar.vs {
+        background: #00e676;
+      }
+      .strength-label {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        transition: color 0.3s;
+      }
+      .pw-rules {
+        display: none;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 8px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+      }
+      .pw-rules.show {
+        display: flex;
+      }
+      .pw-rule {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        transition: color 0.2s;
+      }
+      .pw-rule.pass {
+        color: var(--ok);
+      }
+      .pw-rule i {
+        font-size: 10px;
+        width: 14px;
+        text-align: center;
+      }
+
+      /* ══ SECURITY INFO CARD ══ */
+      .security-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: sticky;
+        top: 20px;
+      }
+      .security-icon {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(142, 95, 212, 0.2),
+          rgba(200, 95, 232, 0.15)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        margin-bottom: 18px;
+        box-shadow:
+          0 0 0 5px rgba(142, 95, 212, 0.1),
+          0 8px 28px rgba(142, 95, 212, 0.2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+      }
+      .sec-title {
+        font-size: 15px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .sec-sub {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      .sec-tips {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .sec-tip {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+      .sec-tip i {
+        color: var(--accent3);
+        font-size: 10px;
+        margin-top: 3px;
+        flex-shrink: 0;
+      }
+      .sec-warn {
+        width: 100%;
+        margin-top: 10px;
+        background: rgba(231, 76, 60, 0.07);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        font-size: 11px;
+        color: rgba(231, 76, 60, 0.85);
+        line-height: 1.7;
+      }
+      .cur-pw-hint {
+        width: 100%;
+        margin-top: 10px;
+        background: rgba(74, 144, 217, 0.07);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        font-size: 11px;
+        color: rgba(74, 144, 217, 0.9);
+        line-height: 1.7;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      /* ══ FORM FOOTER ══ */
+      .form-footer {
+        padding: 18px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: rgba(0, 0, 0, 0.07);
+        margin-top: 24px;
+      }
+      .form-footer-note {
+        font-size: 11px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .form-footer-note i {
+        color: var(--accent3);
+      }
+      .footer-btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn-cancel {
+        padding: 10px 20px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-cancel:hover {
+        color: var(--text);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .btn-save {
+        padding: 10px 26px;
+        background: linear-gradient(135deg, var(--accent), #3674c7);
+        border: none;
+        border-radius: var(--radius-sm);
+        color: #fff;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+      }
+      .btn-save:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 144, 217, 0.4);
+      }
+      .btn-save:disabled {
+        opacity: 0.4;
+        cursor: default;
+        transform: none;
+      }
+      .btn-save.done {
+        background: linear-gradient(135deg, var(--present), #27ae60);
+        box-shadow: 0 4px 14px rgba(46, 204, 113, 0.3);
+      }
+
+      /* ══ TOAST ══ */
+      .toast {
+        position: fixed;
+        bottom: 26px;
+        left: 50%;
+        transform: translateX(-50%) translateY(90px);
+        background: var(--bg-card);
+        border: 1px solid rgba(46, 204, 113, 0.3);
+        border-radius: var(--radius-sm);
+        padding: 13px 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12.5px;
+        font-weight: 600;
+        z-index: 9000;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.35s;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-color: rgba(46, 204, 113, 0.3);
+      }
+      .toast.success i {
+        color: var(--present);
+      }
+      .toast.error {
+        border-color: rgba(231, 76, 60, 0.3);
+      }
+      .toast.error i {
+        color: var(--absent);
+      }
+      .toast.info {
+        border-color: rgba(74, 144, 217, 0.3);
+      }
+      .toast.info i {
+        color: var(--accent);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-5px);
+        }
+        40%,
+        80% {
+          transform: translateX(5px);
+        }
+      }
+      .shake {
+        animation: shake 0.4s ease;
+      }
+
+      @media (max-width: 860px) {
+        .settings-layout {
+          grid-template-columns: 1fr;
+        }
+        .avatar-card,
+        .security-card {
+          position: static;
+        }
+        .main-content {
+          padding: 72px 16px 40px;
+        }
+      }
+      @media (max-width: 480px) {
+        .settings-tabs {
+          gap: 4px;
+          padding: 5px;
+        }
+        .stab {
+          font-size: 11.5px;
+          padding: 9px 10px;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-footer {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .footer-btns {
+          flex-direction: column;
+        }
+        .btn-save,
+        .btn-cancel {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sb-overlay" id="overlay"></div>
+
+    <!-- ══ SIDEBAR ══ -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-top">
+        <div>
+          <div class="logo">بور<span>بور</span></div>
+        </div>
+        <button class="sb-close" onclick="closeSidebar()" title="بستن منو">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
+      <div class="deputy-block">
+        <div class="deputy-avatar" id="sidebarAv">
+          <img id="sidebarAvImg" src="" alt="" />
+          <span id="sidebarAvInitial">ا</span>
+        </div>
+        <div>
+          <div class="deputy-name" id="sidebarName">احمد کریمی</div>
+          <div class="deputy-role">معاون آموزشی</div>
+          <div class="deputy-badge">معاون مدرسه</div>
+        </div>
+      </div>
+
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-th-large"></i> داشبورد</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-clipboard-check"></i> ثبت حضور و غیاب</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-star"></i> نمرات</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">گزارش‌ها</div>
+      <div class="nav-item">
+        <a href="#"
+          ><i class="fas fa-bell"></i> اطلاعیه‌ها
+          <span class="nav-badge">۴</span></a
+        >
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item active">
+        <a href="#"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <!-- ══ HAMBURGER ══ -->
+    <button
+      class="hamburger"
+      id="hamburger"
+      onclick="toggleSidebar()"
+      title="منو"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- ══ MAIN ══ -->
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="greeting">
+          <h1><span>تنظیمات</span> حساب</h1>
+          <p>
+            <i
+              class="fas fa-cog"
+              style="color: var(--accent3); font-size: 11px"
+            ></i>
+            مدیریت اطلاعات شخصی و امنیت حساب
+          </p>
+        </div>
+        <div class="top-actions">
+          <div class="notif-wrap">
+            <div
+              class="action-btn"
+              id="notifBtn"
+              onclick="toggleNotif(event)"
+              title="اطلاعیه‌ها"
+            >
+              <i class="fas fa-bell"></i>
+              <div class="notif-dot" id="notifDot"></div>
+            </div>
+            <div class="notif-dropdown" id="notifDropdown">
+              <div class="nd-head">
+                <div class="nd-title">
+                  <i class="fas fa-bell"></i> اطلاعیه‌ها
+                  <span class="nd-badge-count" id="ndCount">۴</span>
+                </div>
+                <button class="nd-mark-all" onclick="markAllRead()">
+                  <i
+                    class="fas fa-check-double"
+                    style="margin-left: 4px; font-size: 10px"
+                  ></i
+                  >همه خوانده شد
+                </button>
+              </div>
+              <div class="nd-list" id="ndList"></div>
+              <div class="nd-footer">
+                <a href="teacher_notices.html">
+                  <i class="fas fa-list"></i> مشاهده تمام اطلاعیه‌ها
+                  <i
+                    class="fas fa-chevron-left"
+                    style="font-size: 10px; margin-right: auto"
+                  ></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="settings-tabs">
+        <button class="stab active" onclick="switchTab('profile', this)">
+          <i class="fas fa-user"></i> اطلاعات شخصی
+        </button>
+        <button class="stab" onclick="switchTab('password', this)">
+          <i class="fas fa-lock"></i> تغییر رمز عبور
+        </button>
+      </div>
+
+      <!-- ══ TAB: PROFILE ══ -->
+      <div class="tab-panel active" id="tab-profile">
+        <div class="settings-layout">
+          <!-- Avatar Card -->
+          <div class="avatar-card">
+            <div class="avatar-ring">
+              <div
+                class="avatar-circle"
+                id="avatarCircle"
+                onclick="document.getElementById('avatarInput').click()"
+              >
+                <img id="avatarImg" src="" alt="عکس پروفایل" />
+                <span id="avatarInitial">م</span>
+                <div class="av-hover"><i class="fas fa-camera"></i></div>
+                <div class="avatar-cam"><i class="fas fa-camera"></i></div>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="avatarInput"
+              accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+            />
+            <div class="av-name" id="avName">احمد کریمی</div>
+            <div class="av-role">معاون آموزشی</div>
+            <div class="av-badge">معاون مدرسه</div>
+            <div class="av-info-row">
+              <i class="fas fa-id-card"></i
+              ><span id="avNational">کد ملی: ۰۰۱۲۳۴۵۶۷۸</span>
+            </div>
+            <div class="av-info-row">
+              <i class="fas fa-birthday-cake"></i
+              ><span id="avBirthdate">تاریخ تولد: —</span>
+            </div>
+            <div class="av-upload-hint">
+              فرمت‌های مجاز: <strong>JPG, PNG, GIF, WEBP, SVG</strong><br />
+              حداکثر حجم: <strong>۱ مگابایت</strong>
+            </div>
+            <div class="av-err" id="avErr"></div>
+          </div>
+
+          <!-- Form Card -->
+          <div class="form-card" id="profileFormCard">
+            <div class="form-section">
+              <div class="form-sec-title">
+                <i class="fas fa-user"></i> اطلاعات پایه
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-user"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    نام <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-user inp-icon" id="firstName-icon"></i>
+                    <input
+                      type="text"
+                      id="firstName"
+                      placeholder="نام"
+                      value="احمد"
+                      oninput="validateName('firstName')"
+                      onblur="validateName('firstName', true)"
+                    />
+                    <i
+                      class="fas fa-check inp-status"
+                      id="firstName-status"
+                    ></i>
+                  </div>
+                  <div class="field-msg hint" id="firstName-msg">
+                    حداقل ۲ کاراکتر فارسی یا انگلیسی
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-user"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    نام خانوادگی <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-user inp-icon" id="lastName-icon"></i>
+                    <input
+                      type="text"
+                      id="lastName"
+                      placeholder="نام خانوادگی"
+                      value="کریمی"
+                      oninput="validateName('lastName')"
+                      onblur="validateName('lastName', true)"
+                    />
+                    <i class="fas fa-check inp-status" id="lastName-status"></i>
+                  </div>
+                  <div class="field-msg hint" id="lastName-msg">
+                    حداقل ۲ کاراکتر فارسی یا انگلیسی
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-id-card"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    کد ملی <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-id-card inp-icon" id="nationalId-icon"></i>
+                    <input
+                      type="text"
+                      id="nationalId"
+                      placeholder="مثال: ۰۰۱۲۳۴۵۶۷۸"
+                      value="0012345678"
+                      maxlength="10"
+                      oninput="validateNationalId()"
+                      onblur="validateNationalId(true)"
+                    />
+                    <i
+                      class="fas fa-check inp-status"
+                      id="nationalId-status"
+                    ></i>
+                  </div>
+                  <div class="field-msg hint" id="nationalId-msg">
+                    ۱۰ رقم — الگوریتم کد ملی بررسی می‌شود
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-birthday-cake"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    تاریخ تولد <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap dp-wrap">
+                    <i class="fas fa-calendar inp-icon" id="birthdate-icon"></i>
+                    <input
+                      type="text"
+                      id="birthdate"
+                      placeholder="مثال: ۱۳۶۵/۰۶/۱۵"
+                      value=""
+                      readonly
+                      style="cursor: pointer"
+                      onclick="JDP_S.open(this)"
+                    />
+                    <span
+                      class="dp-trigger"
+                      onclick="JDP_S.open(document.getElementById('birthdate'))"
+                      title="انتخاب تاریخ"
+                    >
+                      <i class="fas fa-calendar-alt"></i>
+                    </span>
+                    <i
+                      class="fas fa-check inp-status"
+                      id="birthdate-status"
+                    ></i>
+                    <!-- DATE PICKER POPUP -->
+                  </div>
+                  <div class="field-msg hint" id="birthdate-msg">
+                    روی فیلد کلیک کنید تا تقویم باز شود
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <div class="form-footer-note">
+                <i class="fas fa-info-circle"></i> فیلدهای ستاره‌دار اجباری
+                هستند
+              </div>
+              <div class="footer-btns">
+                <button class="btn-cancel" onclick="resetProfileForm()">
+                  انصراف
+                </button>
+                <button
+                  class="btn-save"
+                  id="profileSaveBtn"
+                  onclick="saveProfile()"
+                >
+                  <i class="fas fa-save"></i> ذخیره تغییرات
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TAB: PASSWORD ══ -->
+      <div class="tab-panel" id="tab-password">
+        <div class="settings-layout">
+          <!-- Security Card -->
+          <div class="security-card">
+            <div class="security-icon">
+              <i class="fas fa-shield-alt" style="color: var(--accent2)"></i>
+            </div>
+            <div class="sec-title">امنیت حساب</div>
+            <div class="sec-sub">تغییر رمز عبور</div>
+
+            <div class="sec-tips">
+              <div class="sec-tip">
+                <i class="fas fa-check-circle"></i> از حروف بزرگ و کوچک استفاده
+                کنید
+              </div>
+              <div class="sec-tip">
+                <i class="fas fa-check-circle"></i> اعداد را در رمز خود بگنجانید
+              </div>
+              <div class="sec-tip">
+                <i class="fas fa-check-circle"></i> از کاراکترهای خاص مانند
+                @،#،$ استفاده کنید
+              </div>
+              <div class="sec-tip">
+                <i class="fas fa-check-circle"></i> رمز قبلی را مجدداً استفاده
+                نکنید
+              </div>
+            </div>
+
+            <div class="sec-warn">
+              <i
+                class="fas fa-exclamation-triangle"
+                style="margin-left: 5px"
+              ></i>
+              هرگز رمز عبور خود را در اختیار دیگران قرار ندهید
+            </div>
+
+            <div class="cur-pw-hint">
+              <i class="fas fa-info-circle"></i>
+              رمز فعلی آزمایشی:
+              <strong style="margin-right: 4px; color: #fff">Admin123!</strong>
+            </div>
+          </div>
+
+          <!-- Password Form Card -->
+          <div class="form-card" id="pwFormCard">
+            <div class="form-section">
+              <div class="form-sec-title">
+                <i class="fas fa-lock"></i> تغییر رمز عبور
+              </div>
+
+              <!-- Current password -->
+              <div class="form-row full">
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-key"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    رمز عبور فعلی <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-key inp-icon" id="curPw-icon"></i>
+                    <input
+                      type="password"
+                      id="curPw"
+                      placeholder="رمز عبور فعلی را وارد کنید"
+                      oninput="validateCurPw()"
+                      onblur="validateCurPw(true)"
+                    />
+                    <span class="pw-toggle" onclick="togglePw('curPw', this)"
+                      ><i class="fas fa-eye"></i
+                    ></span>
+                  </div>
+                  <div class="field-msg hint" id="curPw-msg">
+                    برای تأیید هویت لازم است
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-divider"></div>
+
+              <!-- New password -->
+              <div class="form-row full">
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-lock"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    رمز عبور جدید <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-lock inp-icon" id="newPw-icon"></i>
+                    <input
+                      type="password"
+                      id="newPw"
+                      placeholder="حداقل ۸ کاراکتر"
+                      oninput="
+                        validateNewPw();
+                        validateConfirmPw();
+                      "
+                      onblur="validateNewPw(true)"
+                    />
+                    <span class="pw-toggle" onclick="togglePw('newPw', this)"
+                      ><i class="fas fa-eye"></i
+                    ></span>
+                  </div>
+                  <div
+                    class="strength-wrap"
+                    id="strengthWrap"
+                    style="display: none"
+                  >
+                    <div class="strength-bars">
+                      <div class="sbar" id="sb0"></div>
+                      <div class="sbar" id="sb1"></div>
+                      <div class="sbar" id="sb2"></div>
+                      <div class="sbar" id="sb3"></div>
+                    </div>
+                    <div class="strength-label" id="strengthLabel">—</div>
+                  </div>
+                  <div class="field-msg hint" id="newPw-msg"></div>
+                  <!-- Rules -->
+                  <div class="pw-rules" id="pwRules">
+                    <div class="pw-rule" id="rule-len">
+                      <i class="fas fa-times" style="color: var(--err)"></i>
+                      حداقل ۸ کاراکتر
+                    </div>
+                    <div class="pw-rule" id="rule-upper">
+                      <i class="fas fa-times" style="color: var(--err)"></i>
+                      حداقل یک حرف بزرگ (A–Z)
+                    </div>
+                    <div class="pw-rule" id="rule-lower">
+                      <i class="fas fa-times" style="color: var(--err)"></i>
+                      حداقل یک حرف کوچک (a–z)
+                    </div>
+                    <div class="pw-rule" id="rule-num">
+                      <i class="fas fa-times" style="color: var(--err)"></i>
+                      حداقل یک عدد
+                    </div>
+                    <div class="pw-rule" id="rule-special">
+                      <i class="fas fa-times" style="color: var(--err)"></i>
+                      حداقل یک کاراکتر خاص (!@#$%^&*)
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Confirm password -->
+              <div class="form-row full" style="margin-top: 14px">
+                <div class="form-group">
+                  <label class="form-label"
+                    ><i
+                      class="fas fa-lock"
+                      style="color: var(--accent); font-size: 11px"
+                    ></i>
+                    تکرار رمز جدید <span class="req">*</span></label
+                  >
+                  <div class="inp-wrap">
+                    <i class="fas fa-lock inp-icon" id="confirmPw-icon"></i>
+                    <input
+                      type="password"
+                      id="confirmPw"
+                      placeholder="رمز عبور جدید را مجدداً وارد کنید"
+                      oninput="validateConfirmPw()"
+                      onblur="validateConfirmPw(true)"
+                    />
+                    <span
+                      class="pw-toggle"
+                      onclick="togglePw('confirmPw', this)"
+                      ><i class="fas fa-eye"></i
+                    ></span>
+                    <i
+                      class="fas fa-check inp-status"
+                      id="confirmPw-status"
+                    ></i>
+                  </div>
+                  <div class="field-msg hint" id="confirmPw-msg">
+                    باید با رمز جدید یکسان باشد
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <div class="form-footer-note">
+                <i class="fas fa-info-circle"></i> تمام فیلدها اجباری هستند
+              </div>
+              <div class="footer-btns">
+                <button class="btn-cancel" onclick="resetPwForm()">
+                  انصراف
+                </button>
+                <button
+                  class="btn-save"
+                  id="pwSaveBtn"
+                  onclick="savePw()"
+                  disabled
+                >
+                  <i class="fas fa-key"></i> تغییر رمز عبور
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /main-content -->
+
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i><span id="toastMsg"></span>
+    </div>
+
+    <script>
+      /* ══════════════ HELPERS ══════════════ */
+      const $ = (id) => document.getElementById(id);
+      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+
+      function showToast(msg, type = "success") {
+        const t = $("toast"),
+          i = t.querySelector("i");
+        $("toastMsg").textContent = msg;
+        t.className = "toast " + type + " show";
+        i.className =
+          type === "success"
+            ? "fas fa-check-circle"
+            : type === "error"
+              ? "fas fa-times-circle"
+              : "fas fa-info-circle";
+        clearTimeout(t._tid);
+        t._tid = setTimeout(() => {
+          t.className = "toast " + type;
+        }, 3200);
+      }
+
+      function setField(id, state, msg) {
+        const inp = $(id);
+        if (!inp) return;
+        inp.classList.remove("valid", "invalid");
+        if (state === "ok") inp.classList.add("valid");
+        if (state === "err") inp.classList.add("invalid");
+        const msgEl = $(id + "-msg");
+        if (msgEl && msg !== undefined) {
+          msgEl.className =
+            "field-msg " +
+            (state === "ok" ? "ok" : state === "err" ? "err" : "hint");
+          msgEl.textContent = msg;
+        }
+      }
+
+      /* ══════════════ SIDEBAR ══════════════ */
+      function toggleSidebar() {
+        const sb = $("sidebar"),
+          ov = $("overlay");
+        const isOpen = sb.classList.contains("open");
+        isOpen ? closeSidebar() : openSidebar();
+      }
+      function openSidebar() {
+        $("sidebar").classList.add("open");
+        $("overlay").classList.add("on");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        $("sidebar").classList.remove("open");
+        $("overlay").classList.remove("on");
+        document.body.style.overflow = "";
+      }
+      $("overlay").addEventListener("click", closeSidebar);
+
+      /* close on ESC */
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      /* ══════════════ TABS ══════════════ */
+      function switchTab(id, btn) {
+        document
+          .querySelectorAll(".stab")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        $("tab-" + id).classList.add("active");
+      }
+
+      /* ══════════════ AVATAR UPLOAD ══════════════ */
+      const ALLOWED = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/svg+xml",
+      ];
+      const MAX_SIZE = 1 * 1024 * 1024;
+
+      $("avatarInput").addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        const errEl = $("avErr");
+        errEl.classList.remove("show");
+        if (!file) return;
+
+        if (!ALLOWED.includes(file.type)) {
+          errEl.textContent =
+            "⚠ فرمت فایل مجاز نیست. فقط JPG، PNG، GIF، WEBP و SVG قابل قبول است.";
+          errEl.classList.add("show");
+          this.value = "";
+          return;
+        }
+        if (file.size > MAX_SIZE) {
+          errEl.textContent = `⚠ حجم فایل (${(file.size / 1024 / 1024).toFixed(2)} MB) بیشتر از ۱ مگابایت است.`;
+          errEl.classList.add("show");
+          this.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const src = ev.target.result;
+          /* main avatar */
+          const img = $("avatarImg");
+          img.src = src;
+          img.style.display = "block";
+          $("avatarInitial").style.display = "none";
+          /* sidebar avatar */
+          const sbImg = $("sidebarAvImg");
+          sbImg.src = src;
+          sbImg.style.display = "block";
+          $("sidebarAvInitial").style.display = "none";
+          showToast("عکس پروفایل با موفقیت آپلود شد");
+        };
+        reader.readAsDataURL(file);
+      });
+
+      /* ══════════════ PROFILE PREVIEW ══════════════ */
+      function updatePreview() {
+        const fn = $("firstName").value.trim();
+        const ln = $("lastName").value.trim();
+        const full = [fn, ln].filter(Boolean).join(" ") || "کاربر";
+        $("avName").textContent = full;
+        $("sidebarName").textContent = full;
+
+        /* update initials if no image */
+        if ($("avatarImg").style.display !== "block") {
+          const init = fn ? fn[0] : "م";
+          $("avatarInitial").textContent = init;
+          $("sidebarAvInitial").textContent = init;
+        }
+
+        const nat = $("nationalId").value.trim();
+        $("avNational").textContent = "کد ملی: " + (nat ? fa(nat) : "—");
+
+        const bd = $("birthdate").value.trim();
+        $("avBirthdate").textContent = "تاریخ تولد: " + (bd || "—");
+      }
+
+      ["firstName", "lastName", "nationalId", "birthdate"].forEach((id) => {
+        const el = $(id);
+        if (el) el.addEventListener("input", updatePreview);
+      });
+
+      /* ══════════════ VALIDATIONS: PROFILE ══════════════ */
+      function validateName(id, blur = false) {
+        const val = $(id).value.trim();
+        if (!val) {
+          setField(id, blur ? "err" : "", "این فیلد اجباری است");
+        } else if (val.length < 2) {
+          setField(id, "err", "حداقل ۲ کاراکتر وارد کنید");
+        } else if (!/^[\u0600-\u06FF\s\u200c a-zA-Z]+$/.test(val)) {
+          setField(id, "err", "فقط حروف فارسی یا انگلیسی مجاز است");
+        } else {
+          setField(id, "ok", "✓ " + val);
+        }
+        updatePreview();
+      }
+
+      function validateNationalId(blur = false) {
+        let raw = $("nationalId")
+          .value.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+          .replace(/\D/g, "");
+        if (!raw) {
+          setField("nationalId", blur ? "err" : "", "کد ملی اجباری است");
+          return false;
+        }
+        if (raw.length !== 10) {
+          setField(
+            "nationalId",
+            "err",
+            fa(raw.length) + " رقم وارد شده — باید ۱۰ رقم باشد",
+          );
+          return false;
+        }
+        if (/^(.)\1{9}$/.test(raw)) {
+          setField("nationalId", "err", "کد ملی معتبر نیست (ارقام تکراری)");
+          return false;
+        }
+        let sum = 0;
+        for (let i = 0; i < 9; i++) sum += parseInt(raw[i]) * (10 - i);
+        const rem = sum % 11,
+          chk = parseInt(raw[9]);
+        const valid =
+          (rem < 2 && chk === rem) || (rem >= 2 && chk === 11 - rem);
+        if (!valid) {
+          setField("nationalId", "err", "کد ملی از نظر الگوریتم معتبر نیست");
+          return false;
+        }
+        setField("nationalId", "ok", "✓ کد ملی معتبر");
+        updatePreview();
+        return true;
+      }
+
+      function validateBirthdate(blur = false) {
+        let val = $("birthdate").value.trim();
+        /* convert persian digits */
+        val = val.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+        if (!val) {
+          setField("birthdate", blur ? "err" : "", "تاریخ تولد اجباری است");
+          return false;
+        }
+        /* format: YYYY/MM/DD or YYYY-MM-DD */
+        const m = val.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+        if (!m) {
+          setField("birthdate", "err", "فرمت نادرست — مثال: ۱۳۶۵/۰۶/۱۵");
+          return false;
+        }
+        const [, y, mo, d] = m.map(Number);
+        if (y < 1300 || y > 1410) {
+          setField("birthdate", "err", "سال باید بین ۱۳۰۰ و ۱۴۱۰ باشد");
+          return false;
+        }
+        if (mo < 1 || mo > 12) {
+          setField("birthdate", "err", "ماه باید بین ۱ تا ۱۲ باشد");
+          return false;
+        }
+        const maxDay = mo <= 6 ? 31 : mo <= 11 ? 30 : 29;
+        if (d < 1 || d > maxDay) {
+          setField(
+            "birthdate",
+            "err",
+            `روز برای ماه ${fa(mo)} باید بین ۱ تا ${fa(maxDay)} باشد`,
+          );
+          return false;
+        }
+        setField(
+          "birthdate",
+          "ok",
+          "✓ " +
+            fa(y) +
+            "/" +
+            fa(String(mo).padStart(2, "0")) +
+            "/" +
+            fa(String(d).padStart(2, "0")),
+        );
+        updatePreview();
+        return true;
+      }
+
+      function saveProfile() {
+        validateName("firstName", true);
+        validateName("lastName", true);
+        const ni = validateNationalId(true);
+        const bd = validateBirthdate(true);
+
+        const fnOk = $("firstName").classList.contains("valid");
+        const lnOk = $("lastName").classList.contains("valid");
+
+        if (!fnOk || !lnOk || !ni || !bd) {
+          showToast("لطفاً خطاهای فرم را برطرف کنید", "error");
+          const card = $("profileFormCard");
+          card.classList.add("shake");
+          setTimeout(() => card.classList.remove("shake"), 500);
+          return;
+        }
+
+        const btn = $("profileSaveBtn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> در حال ذخیره...';
+        setTimeout(() => {
+          btn.classList.add("done");
+          btn.innerHTML = '<i class="fas fa-check"></i> ذخیره شد';
+          showToast("اطلاعات شخصی با موفقیت ذخیره شد");
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.classList.remove("done");
+            btn.innerHTML = '<i class="fas fa-save"></i> ذخیره تغییرات';
+          }, 3000);
+        }, 900);
+      }
+
+      function resetProfileForm() {
+        $("firstName").value = "احمد";
+        $("lastName").value = "کریمی";
+        $("nationalId").value = "0012345678";
+        $("birthdate").value = "";
+        ["firstName", "lastName", "nationalId", "birthdate"].forEach((id) => {
+          $(id).classList.remove("valid", "invalid");
+          const m = $(id + "-msg");
+          if (m) {
+            m.className = "field-msg hint";
+            m.textContent = "";
+          }
+        });
+        updatePreview();
+        showToast("تغییرات لغو شد", "info");
+      }
+
+      /* ══════════════ PASSWORD VALIDATIONS ══════════════ */
+      const CURRENT_PW = "Admin123!";
+
+      function togglePw(id, btn) {
+        const inp = $(id),
+          ic = btn.querySelector("i");
+        inp.type = inp.type === "password" ? "text" : "password";
+        ic.className =
+          inp.type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
+      }
+
+      function validateCurPw(blur = false) {
+        const val = $("curPw").value;
+        if (!val) {
+          setField("curPw", blur ? "err" : "", "رمز عبور فعلی را وارد کنید");
+          checkPwReady();
+          return false;
+        }
+        if (val !== CURRENT_PW) {
+          setField("curPw", "err", "رمز عبور فعلی اشتباه است");
+          checkPwReady();
+          return false;
+        }
+        setField("curPw", "ok", "✓ رمز عبور فعلی تأیید شد");
+        checkPwReady();
+        return true;
+      }
+
+      function pwStrength(pw) {
+        let s = 0;
+        if (pw.length >= 8) s++;
+        if (pw.length >= 12) s++;
+        if (/[A-Z]/.test(pw)) s++;
+        if (/[a-z]/.test(pw)) s++;
+        if (/[0-9]/.test(pw)) s++;
+        if (/[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>/?]/.test(pw)) s++;
+        if (s <= 2) return { level: 1, label: "ضعیف", cls: "w" };
+        if (s <= 3) return { level: 2, label: "متوسط", cls: "m" };
+        if (s <= 4) return { level: 3, label: "قوی", cls: "s" };
+        return { level: 4, label: "بسیار قوی", cls: "vs" };
+      }
+
+      function validateNewPw(blur = false) {
+        const val = $("newPw").value;
+        const sw = $("strengthWrap"),
+          rules = $("pwRules");
+
+        if (!val) {
+          sw.style.display = "none";
+          rules.classList.remove("show");
+          setField("newPw", blur ? "err" : "", "");
+          checkPwReady();
+          return false;
+        }
+
+        sw.style.display = "block";
+        rules.classList.add("show");
+
+        const r = {
+          len: val.length >= 8,
+          upper: /[A-Z]/.test(val),
+          lower: /[a-z]/.test(val),
+          num: /[0-9]/.test(val),
+          special: /[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>/?]/.test(val),
+        };
+
+        Object.entries(r).forEach(([k, ok]) => {
+          const el = $("rule-" + k);
+          if (!el) return;
+          el.classList.toggle("pass", ok);
+          const ic = el.querySelector("i");
+          ic.className = ok ? "fas fa-check" : "fas fa-times";
+          ic.style.color = ok ? "var(--ok)" : "var(--err)";
+        });
+
+        const str = pwStrength(val);
+        ["sb0", "sb1", "sb2", "sb3"].forEach((id, i) => {
+          $(id).className = "sbar" + (i < str.level ? " " + str.cls : "");
+        });
+        const lbl = $("strengthLabel");
+        lbl.style.color = {
+          w: "var(--err)",
+          m: "var(--warn)",
+          s: "var(--ok)",
+          vs: "#00e676",
+        }[str.cls];
+        lbl.textContent = "قدرت رمز: " + str.label;
+
+        if (val === CURRENT_PW) {
+          setField("newPw", "err", "رمز جدید نباید با رمز قبلی یکسان باشد");
+          checkPwReady();
+          return false;
+        }
+        if (!Object.values(r).every(Boolean)) {
+          setField("newPw", blur ? "err" : "", "");
+          checkPwReady();
+          return false;
+        }
+
+        setField("newPw", "ok", "✓ رمز عبور قوی");
+        checkPwReady();
+        return true;
+      }
+
+      function validateConfirmPw(blur = false) {
+        const nv = $("newPw").value,
+          cv = $("confirmPw").value;
+        if (!cv) {
+          setField("confirmPw", blur ? "err" : "", "تکرار رمز اجباری است");
+          checkPwReady();
+          return false;
+        }
+        if (cv !== nv) {
+          setField("confirmPw", "err", "رمز عبور با تکرار آن مطابقت ندارد");
+          checkPwReady();
+          return false;
+        }
+        setField("confirmPw", "ok", "✓ رمزها یکسانند");
+        checkPwReady();
+        return true;
+      }
+
+      function checkPwReady() {
+        const ok =
+          $("curPw").classList.contains("valid") &&
+          $("newPw").classList.contains("valid") &&
+          $("confirmPw").classList.contains("valid");
+        $("pwSaveBtn").disabled = !ok;
+      }
+
+      function savePw() {
+        if (
+          !validateCurPw(true) ||
+          !validateNewPw(true) ||
+          !validateConfirmPw(true)
+        ) {
+          showToast("لطفاً تمام فیلدها را به درستی پر کنید", "error");
+          return;
+        }
+        const btn = $("pwSaveBtn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> در حال تغییر...';
+        setTimeout(() => {
+          btn.classList.add("done");
+          btn.innerHTML = '<i class="fas fa-check"></i> رمز تغییر کرد';
+          showToast("رمز عبور با موفقیت تغییر کرد");
+          setTimeout(() => resetPwForm(), 3000);
+        }, 1100);
+      }
+
+      function resetPwForm() {
+        ["curPw", "newPw", "confirmPw"].forEach((id) => {
+          $(id).value = "";
+          $(id).type = "password";
+          $(id).classList.remove("valid", "invalid");
+          const m = $(id + "-msg");
+          if (m) {
+            m.className = "field-msg hint";
+            m.textContent =
+              id === "curPw"
+                ? "برای تأیید هویت لازم است"
+                : id === "confirmPw"
+                  ? "باید با رمز جدید یکسان باشد"
+                  : "";
+          }
+          const tog = $(id)?.parentElement?.querySelector(".pw-toggle i");
+          if (tog) tog.className = "fas fa-eye";
+        });
+        $("strengthWrap").style.display = "none";
+        $("pwRules").classList.remove("show");
+        const btn = $("pwSaveBtn");
+        btn.disabled = true;
+        btn.classList.remove("done");
+        btn.innerHTML = '<i class="fas fa-key"></i> تغییر رمز عبور';
+        showToast("تغییرات لغو شد", "info");
+      }
+
+      /* ══════════════ NOTIFICATIONS ══════════════ */
+      const NOTIFS = [
+        {
+          id: 1,
+          icon: "fas fa-user-times",
+          iconCls: "red",
+          title: "غیبت مکرر دانش‌آموز",
+          desc: "رامتین آذری ۷ روز غیبت ثبت شده — نیاز به پیگیری",
+          time: "۵ دقیقه پیش",
+          unread: true,
+        },
+        {
+          id: 2,
+          icon: "fas fa-graduation-cap",
+          iconCls: "orange",
+          title: "افت تحصیلی",
+          desc: "معدل ۳ دانش‌آموز کمتر از ۱۰ شده است",
+          time: "۲ ساعت پیش",
+          unread: true,
+        },
+        {
+          id: 3,
+          icon: "fas fa-calendar-check",
+          iconCls: "blue",
+          title: "برنامه هفتگی به‌روز شد",
+          desc: "برنامه درسی ترم دوم بارگذاری شد",
+          time: "دیروز",
+          unread: true,
+        },
+        {
+          id: 4,
+          icon: "fas fa-star",
+          iconCls: "purple",
+          title: "یادآوری ثبت نمرات",
+          desc: "مهلت ثبت نمرات میان‌ترم سه روز دیگر است",
+          time: "۲ روز پیش",
+          unread: true,
+        },
+        {
+          id: 5,
+          icon: "fas fa-check-circle",
+          iconCls: "green",
+          title: "گزارش ماهانه آماده شد",
+          desc: "گزارش فروردین ۱۴۰۴ قابل مشاهده است",
+          time: "۳ روز پیش",
+          unread: false,
+        },
+      ];
+
+      let notifData = NOTIFS.map((n) => ({ ...n }));
+
+      function renderNotifs() {
+        const list = $("ndList");
+        const unreadItems = notifData.filter((n) => n.unread);
+        const count = unreadItems.length;
+        $("ndCount").textContent = fa(count);
+        $("ndCount").style.display = count ? "inline-block" : "none";
+        $("notifDot").style.display = count ? "block" : "none";
+
+        if (!notifData.length) {
+          list.innerHTML = `<div class="nd-empty"><i class="fas fa-bell-slash"></i>اطلاعیه‌ای وجود ندارد</div>`;
+          return;
+        }
+        list.innerHTML = notifData
+          .map(
+            (n) => `
+    <div class="nd-item${n.unread ? " unread" : ""}" onclick="readNotif(${n.id})">
+      <div class="nd-icon ${n.iconCls}"><i class="${n.icon}"></i></div>
+      <div class="nd-body">
+        <div class="nd-item-title">${n.title}</div>
+        <div class="nd-item-desc">${n.desc}</div>
+        <div class="nd-item-time"><i class="fas fa-clock"></i>${n.time}</div>
+      </div>
+      ${n.unread ? '<div class="nd-unread-dot"></div>' : ""}
+    </div>`,
+          )
+          .join("");
+      }
+
+      function toggleNotif(e) {
+        e.stopPropagation();
+        const dd = $("notifDropdown");
+        dd.classList.toggle("open");
+      }
+
+      function readNotif(id) {
+        const n = notifData.find((x) => x.id === id);
+        if (n && n.unread) {
+          n.unread = false;
+          renderNotifs();
+        }
+      }
+
+      function markAllRead() {
+        notifData.forEach((n) => {
+          n.unread = false;
+        });
+        renderNotifs();
+        showToast("همه اطلاعیه‌ها خوانده شد", "info");
+      }
+
+      document.addEventListener("click", (e) => {
+        const dd = $("notifDropdown");
+        if (
+          dd &&
+          dd.classList.contains("open") &&
+          !$("notifBtn").contains(e.target) &&
+          !dd.contains(e.target)
+        ) {
+          dd.classList.remove("open");
+        }
+        if (
+          $("dpPopup") &&
+          $("dpPopup").classList.contains("open") &&
+          !$("dpPopup").contains(e.target) &&
+          e.target !== $("birthdate")
+        ) {
+          dpClose();
+        }
+      });
+
+      /* ══════════════ PERSIAN DATE PICKER ══════════════ */
+      /* ══════════════ PERSIAN DATE PICKER (JDP_S) ══════════════ */
+      var JDP_S = (function () {
+        var MONTHS = [
+          "فروردین",
+          "اردیبهشت",
+          "خرداد",
+          "تیر",
+          "مرداد",
+          "شهریور",
+          "مهر",
+          "آبان",
+          "آذر",
+          "دی",
+          "بهمن",
+          "اسفند",
+        ];
+        var DAYS = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+
+        function toJalali(gy, gm, gd) {
+          var msPerDay = 86400000;
+          var diff = Math.round(
+            (new Date(+gy, +gm - 1, +gd).getTime() -
+              new Date(1970, 0, 1).getTime()) /
+              msPerDay,
+          );
+          var jy = 1348,
+            jm = 10,
+            jd = 11;
+          jd += diff;
+          while (jd > _jDays(jy, jm)) {
+            jd -= _jDays(jy, jm);
+            jm++;
+            if (jm > 12) {
+              jm = 1;
+              jy++;
+            }
+          }
+          while (jd < 1) {
+            jm--;
+            if (jm < 1) {
+              jm = 12;
+              jy--;
+            }
+            jd += _jDays(jy, jm);
+          }
+          return [jy, jm, jd];
+        }
+
+        function toGregorian(jy, jm, jd) {
+          var ry = 1348,
+            rm = 10,
+            rd = 11,
+            diff = 0;
+          while (
+            ry < jy ||
+            (ry === jy && rm < jm) ||
+            (ry === jy && rm === jm && rd < jd)
+          ) {
+            rd++;
+            if (rd > _jDays(ry, rm)) {
+              rd = 1;
+              rm++;
+              if (rm > 12) {
+                rm = 1;
+                ry++;
+              }
+            }
+            diff++;
+          }
+          while (
+            ry > jy ||
+            (ry === jy && rm > jm) ||
+            (ry === jy && rm === jm && rd > jd)
+          ) {
+            rd--;
+            if (rd < 1) {
+              rm--;
+              if (rm < 1) {
+                rm = 12;
+                ry--;
+              }
+              rd = _jDays(ry, rm);
+            }
+            diff--;
+          }
+          var g = new Date(1970, 0, 1 + diff);
+          return [g.getFullYear(), g.getMonth() + 1, g.getDate()];
+        }
+
+        function _jDays(jy, jm) {
+          return jm <= 6 ? 31 : jm <= 11 ? 30 : 29;
+        }
+
+        function _firstCol(jy, jm) {
+          var g = toGregorian(jy, jm, 1);
+          return (new Date(g[0], g[1] - 1, g[2]).getDay() + 1) % 7;
+        }
+
+        function _today() {
+          var n = new Date();
+          return toJalali(n.getFullYear(), n.getMonth() + 1, n.getDate());
+        }
+        function _fa(n) {
+          return String(n).replace(/\d/g, function (d) {
+            return "۰۱۲۳۴۵۶۷۸۹"[d];
+          });
+        }
+
+        var vY,
+          vM,
+          selY = null,
+          selM = null,
+          selD = null;
+        var mode = "day",
+          yrStart,
+          activeInput = null;
+        var PID = "jdp2-popup",
+          OID = "jdp2-overlay";
+
+        function _boot() {
+          if (document.getElementById(PID)) return;
+          var ov = document.createElement("div");
+          ov.id = OID;
+          ov.style.cssText =
+            "display:none;position:fixed;inset:0;z-index:99990;";
+          ov.onclick = _close;
+          document.body.appendChild(ov);
+
+          var p = document.createElement("div");
+          p.id = PID;
+          p.style.cssText = [
+            "display:none;position:fixed;z-index:99991;",
+            "width:310px;",
+            "background:linear-gradient(145deg,#0f1c3f,#162850);",
+            "border:1px solid rgba(100,160,255,0.25);",
+            "border-radius:16px;",
+            "box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04);",
+            "direction:rtl;font-family:Vazirmatn,Tahoma,sans-serif;",
+            "overflow:hidden;user-select:none;",
+          ].join("");
+          p.innerHTML = _tpl();
+          document.body.appendChild(p);
+
+          document.getElementById("jdp2-prev").onclick = function () {
+            _nav(-1);
+          };
+          document.getElementById("jdp2-next").onclick = function () {
+            _nav(+1);
+          };
+          document.getElementById("jdp2-hdr").onclick = _toggleMode;
+          document.getElementById("jdp2-today").onclick = _goToday;
+          document.getElementById("jdp2-clear").onclick = _goClear;
+        }
+
+        function _tpl() {
+          return [
+            '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.07);">',
+            '<button id="jdp2-prev" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">&#8249;</button>',
+            '<span id="jdp2-hdr" style="color:#e0eeff;font-size:15px;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:8px;"></span>',
+            '<button id="jdp2-next" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">&#8250;</button>',
+            "</div>",
+            '<div id="jdp2-body" style="padding:12px 14px;min-height:180px;"></div>',
+            '<div style="display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid rgba(255,255,255,0.07);">',
+            '<button id="jdp2-today" style="flex:1;background:rgba(80,150,255,0.15);border:1px solid rgba(80,150,255,0.35);color:#7eb8ff;border-radius:8px;padding:8px;cursor:pointer;font-family:Vazirmatn,Tahoma,sans-serif;font-size:12px;">امروز</button>',
+            '<button id="jdp2-clear" style="flex:1;background:rgba(220,60,60,0.12);border:1px solid rgba(220,60,60,0.3);color:#f08080;border-radius:8px;padding:8px;cursor:pointer;font-family:Vazirmatn,Tahoma,sans-serif;font-size:12px;">پاک کردن</button>',
+            "</div>",
+          ].join("");
+        }
+
+        function _renderDays() {
+          var t = _today(),
+            fc = _firstCol(vY, vM),
+            dm = _jDays(vY, vM),
+            html = [];
+          html.push(
+            '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;">',
+          );
+          DAYS.forEach(function (d) {
+            html.push(
+              '<div style="text-align:center;font-size:11px;color:rgba(180,200,255,0.5);padding:3px 0;">' +
+                d +
+                "</div>",
+            );
+          });
+          html.push(
+            '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">',
+          );
+          for (var i = 0; i < fc; i++) html.push("<div></div>");
+          for (var d = 1; d <= dm; d++) {
+            var isToday = vY === t[0] && vM === t[1] && d === t[2];
+            var isSel = selY === vY && selM === vM && selD === d;
+            var bg = isSel
+              ? "linear-gradient(135deg,#3d8bff,#1a5fd4)"
+              : isToday
+                ? "rgba(80,150,255,0.12)"
+                : "rgba(255,255,255,0.03)";
+            var border = isSel
+              ? "none"
+              : isToday
+                ? "1px solid rgba(80,150,255,0.5)"
+                : "1px solid transparent";
+            var color = isSel ? "#fff" : isToday ? "#7eb8ff" : "#c8d8f0";
+            html.push(
+              '<div onclick="JDP_S._pick(' +
+                d +
+                ')" style="text-align:center;padding:7px 2px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:' +
+                bg +
+                ";border:" +
+                border +
+                ";color:" +
+                color +
+                ';">' +
+                _fa(d) +
+                "</div>",
+            );
+          }
+          html.push("</div>");
+          document.getElementById("jdp2-body").innerHTML = html.join("");
+        }
+
+        function _renderMonths() {
+          var html = [
+            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">',
+          ];
+          MONTHS.forEach(function (name, i) {
+            var active = i + 1 === vM;
+            html.push(
+              '<div onclick="JDP_S._pickM(' +
+                (i + 1) +
+                ')" style="text-align:center;padding:10px 4px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;' +
+                (active
+                  ? "background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;"
+                  : "background:rgba(255,255,255,0.05);color:#a0c0f0;border:1px solid rgba(255,255,255,0.07);") +
+                '">' +
+                name +
+                "</div>",
+            );
+          });
+          html.push("</div>");
+          document.getElementById("jdp2-body").innerHTML = html.join("");
+        }
+
+        function _renderYears() {
+          var html = [
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><button onclick="JDP_S._yNav(-12)" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;">&#8249;</button><span style="color:rgba(180,200,255,0.6);font-size:12px;">' +
+              _fa(yrStart) +
+              " - " +
+              _fa(yrStart + 11) +
+              '</span><button onclick="JDP_S._yNav(+12)" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;">&#8250;</button></div>',
+            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">',
+          ];
+          for (var y = yrStart; y < yrStart + 12; y++) {
+            var active = y === vY;
+            html.push(
+              '<div onclick="JDP_S._pickY(' +
+                y +
+                ')" style="text-align:center;padding:10px 4px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;' +
+                (active
+                  ? "background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;"
+                  : "background:rgba(255,255,255,0.05);color:#a0c0f0;border:1px solid rgba(255,255,255,0.07);") +
+                '">' +
+                _fa(y) +
+                "</div>",
+            );
+          }
+          html.push("</div>");
+          document.getElementById("jdp2-body").innerHTML = html.join("");
+        }
+
+        function _render() {
+          var hdr = document.getElementById("jdp2-hdr");
+          if (!hdr) return;
+          if (mode === "day") {
+            hdr.textContent = MONTHS[vM - 1] + "  " + _fa(vY);
+            _renderDays();
+          } else if (mode === "month") {
+            hdr.textContent = _fa(vY);
+            _renderMonths();
+          } else {
+            hdr.textContent = _fa(yrStart) + " - " + _fa(yrStart + 11);
+            _renderYears();
+          }
+        }
+
+        function _nav(dir) {
+          if (mode === "day") {
+            vM += dir;
+            if (vM > 12) {
+              vM = 1;
+              vY++;
+            }
+            if (vM < 1) {
+              vM = 12;
+              vY--;
+            }
+          } else if (mode === "month") {
+            vY += dir;
+          } else {
+            yrStart += dir * 12;
+          }
+          _render();
+        }
+
+        function _toggleMode() {
+          if (mode === "day") mode = "month";
+          else if (mode === "month") {
+            mode = "year";
+            yrStart = Math.floor(vY / 12) * 12;
+          } else mode = "day";
+          _render();
+        }
+
+        function _position(input) {
+          var p = document.getElementById(PID);
+          var r = input.getBoundingClientRect();
+          var pw = 310,
+            ph = 380,
+            vw = window.innerWidth,
+            vh = window.innerHeight;
+          var top = r.bottom + 8,
+            left = r.right - pw;
+          if (left < 8) left = 8;
+          if (left + pw > vw - 8) left = vw - pw - 8;
+          if (top + ph > vh - 8) top = r.top - ph - 8;
+          if (top < 8) top = 8;
+          p.style.top = top + "px";
+          p.style.left = left + "px";
+        }
+
+        function _open(input) {
+          _boot();
+          activeInput = input;
+          var val = input.value.trim();
+          // تبدیل ارقام فارسی به انگلیسی برای parse
+          val = val.replace(/[۰-۹]/g, function (d) {
+            "۰۱۲۳۴۵۶۷۸۹".indexOf(d);
+            return "۰۱۲۳۴۵۶۷۸۹".indexOf(d);
+          });
+          val = val.replace(/[۰-۹]/g, function (c) {
+            return String("۰۱۲۳۴۵۶۷۸۹".indexOf(c));
+          });
+          if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(val)) {
+            var parts = val.split("/").map(Number);
+            selY = vY = parts[0];
+            selM = vM = parts[1];
+            selD = parts[2];
+          } else {
+            selY = selM = selD = null;
+            var t = _today();
+            vY = t[0];
+            vM = t[1];
+          }
+          mode = "day";
+          _render();
+          _position(input);
+          document.getElementById(OID).style.display = "block";
+          document.getElementById(PID).style.display = "block";
+        }
+
+        function _close() {
+          var p = document.getElementById(PID),
+            o = document.getElementById(OID);
+          if (p) p.style.display = "none";
+          if (o) o.style.display = "none";
+          activeInput = null;
+        }
+
+        function _commit(jy, jm, jd) {
+          selY = jy;
+          selM = jm;
+          selD = jd;
+          if (activeInput) {
+            // ذخیره با ارقام فارسی (مثل بقیه فیلدهای صفحه)
+            var y = _fa(jy);
+            var m = _fa(String(jm).padStart(2, "0"));
+            var d = _fa(String(jd).padStart(2, "0"));
+            activeInput.value = y + "/" + m + "/" + d;
+            activeInput.dispatchEvent(new Event("input", { bubbles: true }));
+            activeInput.dispatchEvent(new Event("change", { bubbles: true }));
+            // اجرای validateBirthdate صفحه settings
+            if (typeof validateBirthdate === "function")
+              validateBirthdate(true);
+          }
+          _render();
+          setTimeout(_close, 150);
+        }
+
+        function _goToday() {
+          var t = _today();
+          vY = t[0];
+          vM = t[1];
+          mode = "day";
+          _render();
+          _commit(t[0], t[1], t[2]);
+        }
+        function _goClear() {
+          selY = selM = selD = null;
+          if (activeInput) {
+            activeInput.value = "";
+            activeInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+          _close();
+        }
+
+        return {
+          open: _open,
+          close: _close,
+          _pick: function (d) {
+            _commit(vY, vM, d);
+          },
+          _pickM: function (m) {
+            vM = m;
+            mode = "day";
+            _render();
+          },
+          _pickY: function (y) {
+            vY = y;
+            mode = "month";
+            _render();
+          },
+          _yNav: function (n) {
+            yrStart += n;
+            _render();
+          },
+        };
+      })();
+
+      function dpToggleYM() {
+        dpState.ymMode = !dpState.ymMode;
+        if (dpState.ymMode) {
+          $("dpMainView").style.display = "none";
+          $("dpYMView").style.display = "block";
+          dpRenderYM();
+        } else {
+          $("dpYMView").style.display = "none";
+          $("dpMainView").style.display = "block";
+          dpRender();
+        }
+      }
+
+      function dpRenderYM() {
+        const grid = $("dpYMGrid");
+        grid.innerHTML = "";
+        const startY = dpState.year - 10,
+          endY = dpState.year + 10;
+        for (let y = startY; y <= endY; y++) {
+          const div = document.createElement("div");
+          div.className = "dp-ym-item" + (y === dpState.year ? " active" : "");
+          div.textContent = fa(y);
+          div.onclick = () => {
+            dpState.year = y;
+            dpToggleYM();
+          };
+          grid.appendChild(div);
+        }
+      }
+
+      function dpRender() {
+        const { year, month } = dpState;
+        $("dpMonthYear").innerHTML =
+          `${JMONTHS[month]} ${fa(year)} <i class="fas fa-chevron-down" style="font-size:9px;opacity:.6;"></i>`;
+        const daysEl = $("dpDays");
+        daysEl.innerHTML = "";
+        const daysInMonth = month < 6 ? 31 : month < 11 ? 30 : 29;
+        const firstDow = jFirstDow(year, month);
+        for (let i = 0; i < firstDow; i++) {
+          const e = document.createElement("div");
+          e.className = "dp-day dp-empty";
+          daysEl.appendChild(e);
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+          const el = document.createElement("div");
+          let cls = "dp-day";
+          if (year === TJY && month === TJM && d === TJD) cls += " dp-today";
+          if (
+            dpState.selYear === year &&
+            dpState.selMonth === month &&
+            dpState.selDay === d
+          )
+            cls += " dp-selected";
+          el.className = cls;
+          el.textContent = fa(d);
+          const dd = d;
+          el.onclick = () => {
+            dpState.selYear = year;
+            dpState.selMonth = month;
+            dpState.selDay = dd;
+            dpRender();
+          };
+          daysEl.appendChild(el);
+        }
+      }
+
+      function jFirstDow(jy, jm) {
+        const [gy, gm, gd] = jToG(jy, jm, 1);
+        const dow = new Date(gy, gm - 1, gd).getDay(); // 0=Sun
+        return (dow + 1) % 7; // Sat=0
+      }
+
+      function dpChangeMonth(dir) {
+        dpState.month += dir;
+        if (dpState.month > 11) {
+          dpState.month = 0;
+          dpState.year++;
+        }
+        if (dpState.month < 0) {
+          dpState.month = 11;
+          dpState.year--;
+        }
+        dpRender();
+      }
+
+      function dpConfirm() {
+        if (!dpState.selYear) {
+          showToast("لطفاً یک تاریخ انتخاب کنید", "error");
+          return;
+        }
+        const y = fa(dpState.selYear);
+        const m = fa(String(dpState.selMonth + 1).padStart(2, "0"));
+        const d = fa(String(dpState.selDay).padStart(2, "0"));
+        $("birthdate").value = `${y}/${m}/${d}`;
+        validateBirthdate(true);
+        dpClose();
+      }
+
+      /* ══════════════ INIT ══════════════ */
+      (function init() {
+        validateName("firstName");
+        validateName("lastName");
+        validateNationalId();
+        updatePreview();
+        renderNotifs();
+      })();
+    </script>
+  </body>
+</html>

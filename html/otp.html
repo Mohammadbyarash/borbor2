@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تایید کد - مدرسه بوربور</title>
+    
+    <!-- Scrollbar CSS -->
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <link rel="stylesheet" href="../style/otp.css">
+        <link rel="icon" href="../image/iconB.png" />
+
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    
+
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particle" style="width: 80px; height: 80px; left: 10%; animation-duration: 15s; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 60px; height: 60px; left: 80%; animation-duration: 12s; animation-delay: 2s;"></div>
+    <div class="particle" style="width: 40px; height: 40px; left: 50%; animation-duration: 18s; animation-delay: 4s;"></div>
+    <div class="particle" style="width: 50px; height: 50px; left: 30%; animation-duration: 20s; animation-delay: 1s;"></div>
+    <div class="particle" style="width: 70px; height: 70px; left: 70%; animation-duration: 16s; animation-delay: 3s;"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-wrapper">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="title">تایید شماره موبایل</h1>
+            <p class="subtitle">
+                کد تایید ۵ رقمی به شماره
+                <span class="phone-number" id="displayPhone">09123456789</span>
+                ارسال شد
+            </p>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="alert alert-error" id="alertError">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="alertErrorText"></span>
+        </div>
+
+        <div class="alert alert-success" id="alertSuccess">
+            <i class="fas fa-check-circle"></i>
+            <span id="alertSuccessText"></span>
+        </div>
+
+        <div class="alert alert-info" id="alertInfo">
+            <i class="fas fa-info-circle"></i>
+            <span id="alertInfoText"></span>
+        </div>
+
+        <!-- OTP Form -->
+        <form id="otpForm">
+            <div class="otp-section">
+                <div class="otp-label">لطفاً کد ۵ رقمی را وارد کنید</div>
+                <div class="otp-inputs">
+                    <input type="text" class="otp-input" id="digit1" maxlength="1" inputmode="numeric" autofocus>
+                    <input type="text" class="otp-input" id="digit2" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" id="digit3" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" id="digit4" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" id="digit5" maxlength="1" inputmode="numeric">
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="timer-section">
+                <div class="timer">
+                    <i class="fas fa-clock"></i>
+                    <span class="timer-text">زمان باقی‌مانده:</span>
+                    <span class="timer-count" id="timerDisplay">02:00</span>
+                </div>
+            </div>
+
+            <!-- Resend -->
+            <div class="resend-section">
+                <p class="resend-text">کد را دریافت نکردید؟</p>
+                <button type="button" class="resend-btn" id="resendBtn" disabled>
+                    ارسال مجدد کد
+                </button>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <div class="spinner"></div>
+                <span class="btn-text">
+                    <i class="fas fa-check-circle"></i>
+                    تایید و ادامه
+                </span>
+            </button>
+        </form>
+
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="login.html">
+                <i class="fas fa-arrow-right"></i>
+                بازگشت به صفحه ورود
+            </a>
+        </div>
+    </div>
+
+<script src="../javaScript/otp.js"></script>
+</body>
+</html>

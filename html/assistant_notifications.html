@@ -1,0 +1,4046 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <title>بوربور — اطلاعیه‌ها</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --late: #f39c12;
+        --leave: #8e5fd4;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+        --c-urgent: #e74c3c;
+        --c-urgent-bg: rgba(231, 76, 60, 0.09);
+        --c-exam: #8e5fd4;
+        --c-exam-bg: rgba(142, 95, 212, 0.09);
+        --c-event: #f39c12;
+        --c-event-bg: rgba(243, 156, 18, 0.09);
+        --c-general: #4a90d9;
+        --c-general-bg: rgba(74, 144, 217, 0.09);
+        --c-financial: #06d6a0;
+        --c-financial-bg: rgba(6, 214, 160, 0.09);
+        --c-holiday: #e88ec0;
+        --c-holiday-bg: rgba(232, 142, 192, 0.09);
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 6px;
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -1px;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .deputy-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .deputy-avatar {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .deputy-name {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .deputy-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .deputy-badge {
+        margin-top: 7px;
+        display: inline-block;
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(243, 156, 18, 0.22);
+      }
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .nav-item {
+        margin-bottom: 2px;
+      }
+      .nav-item a {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .nav-item a i {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .nav-item a:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .nav-item.active a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .nav-item.active a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .nav-item.active a i {
+        opacity: 1;
+        color: var(--accent);
+      }
+      .nav-badge {
+        margin-right: auto;
+        background: var(--accent5);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+        min-width: 20px;
+        text-align: center;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+      .sb-close-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        transition: all 0.2s;
+        margin-bottom: 8px;
+        align-self: flex-end;
+      }
+      .sb-close-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .hamburger {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 500;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .hamburger:hover {
+        border-color: var(--border-hover);
+      }
+      .hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text-muted);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger:hover span {
+        background: var(--text);
+      }
+      .sb-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 199;
+      }
+      .sb-overlay.on {
+        display: block;
+      }
+
+      /* MAIN */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 36px;
+        position: relative;
+        z-index: 1;
+      }
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .greeting h1 {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+      .greeting h1 span {
+        color: var(--accent);
+      }
+      .greeting p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .profile-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
+      }
+      .new-notif-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+        white-space: nowrap;
+      }
+      .new-notif-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(74, 144, 217, 0.4);
+      }
+      .export-btn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(6, 214, 160, 0.12);
+        border: 1px solid rgba(6, 214, 160, 0.25);
+        color: var(--accent3);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 10px 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.25s;
+        white-space: nowrap;
+      }
+      .export-btn:hover {
+        background: rgba(6, 214, 160, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* STAT CARDS */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .stat-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+      }
+      .stat-card.sc-active {
+        border-color: rgba(74, 144, 217, 0.35);
+        background: rgba(74, 144, 217, 0.05);
+      }
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .stat-val {
+        font-size: 22px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .stat-lbl {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      /* LAYOUT */
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 18px;
+        align-items: start;
+      }
+
+      /* CARD */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .card-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .card-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .card-title i {
+        color: var(--accent);
+      }
+
+      /* TOOLBAR */
+      .toolbar {
+        display: flex;
+        gap: 9px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        align-items: center;
+        flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.01);
+      }
+      .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 180px;
+      }
+      .search-wrap input {
+        width: 100%;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 9px 34px 9px 12px;
+        border-radius: var(--radius-sm);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-wrap input:focus {
+        border-color: var(--border-hover);
+      }
+      .search-wrap input::placeholder {
+        color: var(--text-muted);
+      }
+      .s-icon {
+        position: absolute;
+        right: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 12px;
+        pointer-events: none;
+      }
+      .fsel {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 11.5px;
+        padding: 9px 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+        white-space: nowrap;
+      }
+      .fsel:focus {
+        border-color: var(--border-hover);
+      }
+      .view-toggle {
+        display: flex;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .vt-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      .vt-btn.active {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+      }
+      .vt-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+
+      /* NOTIF LIST */
+      .notif-list {
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .notif-item {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 15px 16px;
+        cursor: pointer;
+        transition: all 0.22s;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+      }
+      .notif-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 4px;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      }
+      .notif-item.unread {
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .notif-item.unread .notif-item-title {
+        font-weight: 800;
+      }
+      .notif-item:hover {
+        border-color: var(--border-hover);
+        transform: translateX(-2px);
+      }
+      .notif-item.active-item {
+        border-color: rgba(74, 144, 217, 0.35);
+        background: rgba(74, 144, 217, 0.06);
+      }
+      .notif-item.t-urgent::before {
+        background: var(--c-urgent);
+      }
+      .notif-item.t-exam::before {
+        background: var(--c-exam);
+      }
+      .notif-item.t-event::before {
+        background: var(--c-event);
+      }
+      .notif-item.t-general::before {
+        background: var(--c-general);
+      }
+      .notif-item.t-financial::before {
+        background: var(--c-financial);
+      }
+      .notif-item.t-holiday::before {
+        background: var(--c-holiday);
+      }
+      .notif-icon-wrap {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .notif-main {
+        flex: 1;
+        min-width: 0;
+      }
+      .notif-item-title {
+        font-size: 12.5px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .notif-item-preview {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .notif-item-footer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .notif-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 10px;
+      }
+      .notif-time {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-right: auto;
+        white-space: nowrap;
+      }
+      .unread-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .pinned-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        font-weight: 700;
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        padding: 2px 7px;
+        border-radius: 8px;
+        border: 1px solid rgba(243, 156, 18, 0.2);
+      }
+
+      /* GRID VIEW */
+      .notif-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+        padding: 16px;
+      }
+      .notif-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.25s;
+        position: relative;
+      }
+      .notif-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+      }
+      .notif-card.t-urgent::after {
+        background: var(--c-urgent);
+      }
+      .notif-card.t-exam::after {
+        background: var(--c-exam);
+      }
+      .notif-card.t-event::after {
+        background: var(--c-event);
+      }
+      .notif-card.t-general::after {
+        background: var(--c-general);
+      }
+      .notif-card.t-financial::after {
+        background: var(--c-financial);
+      }
+      .notif-card.t-holiday::after {
+        background: var(--c-holiday);
+      }
+      .notif-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+      }
+      .notif-card.unread {
+        background: rgba(74, 144, 217, 0.03);
+      }
+      .nc-body {
+        padding: 16px;
+      }
+      .nc-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .nc-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .nc-badges {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+      .nc-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin-bottom: 6px;
+      }
+      .nc-title.unread-t {
+        font-weight: 800;
+      }
+      .nc-preview {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.55;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+      .nc-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .nc-time {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
+      /* PAGINATION */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .page-info {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .page-btns {
+        display: flex;
+        gap: 5px;
+      }
+      .pg-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pg-btn.active {
+        background: rgba(74, 144, 217, 0.2);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 700;
+      }
+      .pg-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+      .pg-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      /* RIGHT COLUMN — کلید اصلی: align-self:start تا grid کشش ندهد */
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-self: start; /* ← مانع کشیده شدن تا آخر grid */
+      }
+
+      /* DETAIL PANEL — sticky + محدود به ارتفاع viewport */
+      .detail-panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        position: sticky;
+        top: 80px;
+        /* ارتفاع = صفحه منهای فاصله بالا و پایین */
+        max-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+      }
+
+      /* dp-cover: ثابت در بالا */
+      .dp-cover {
+        height: 80px;
+        flex-shrink: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .dp-cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      .dp-icon-big {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+
+      /* dp-scrollable: اسکرول داخلی — مهم‌ترین بخش */
+      .dp-scrollable {
+        overflow-y: auto;
+        flex: 1 1 0; /* flex-basis:0 تا از محتوا تجاوز نکند */
+        min-height: 0; /* بدون این، flex item از حد viewport بیرون می‌رود */
+      }
+      .dp-scrollable::-webkit-scrollbar {
+        width: 4px;
+      }
+      .dp-scrollable::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+
+      .dp-body {
+        padding: 18px;
+      }
+      .dp-type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      .dp-title {
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+      .dp-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .dp-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        color: var(--text-muted);
+      }
+      .dp-meta-item i {
+        font-size: 10px;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+      .dp-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 14px 0;
+      }
+      .dp-content {
+        font-size: 12.5px;
+        line-height: 1.9;
+        color: rgba(232, 240, 255, 0.85);
+      }
+      .dp-attachments {
+        margin-top: 14px;
+      }
+      .dp-attach-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .dp-attach-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 11px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .dp-attach-item:hover {
+        border-color: var(--border-hover);
+      }
+      .dp-attach-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .dp-attach-name {
+        font-size: 11.5px;
+        font-weight: 600;
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dp-attach-size {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .dp-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .dp-act-btn {
+        flex: 1;
+        padding: 10px 8px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .dp-act-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .dp-act-btn.dp-pin:hover {
+        border-color: rgba(243, 156, 18, 0.4);
+        color: var(--accent4);
+        background: rgba(243, 156, 18, 0.08);
+      }
+      .dp-act-btn.dp-delete:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+        background: rgba(231, 76, 60, 0.08);
+      }
+      .dp-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: var(--text-muted);
+      }
+      .dp-empty i {
+        font-size: 34px;
+        display: block;
+        margin-bottom: 12px;
+        opacity: 0.25;
+      }
+      .dp-empty p {
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .audience-pills {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .aud-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 10px;
+        background: rgba(74, 144, 217, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.15);
+      }
+
+      /* MINI CALENDAR */
+      .mini-calendar {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .mc-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .mc-title {
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .mc-nav {
+        display: flex;
+        gap: 4px;
+      }
+      .mc-nav-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .mc-nav-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .mc-body {
+        padding: 12px 14px;
+      }
+      .mc-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        margin-bottom: 6px;
+      }
+      .mc-wday {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 4px 0;
+      }
+      .mc-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+      }
+      .mc-day {
+        width: 100%;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
+      }
+      .mc-day:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .mc-day.other-month {
+        color: rgba(180, 200, 255, 0.2);
+        pointer-events: none;
+      }
+      .mc-day.today {
+        background: rgba(74, 144, 217, 0.25);
+        color: var(--accent);
+        font-weight: 800;
+      }
+      .mc-day.has-event {
+        cursor: pointer;
+      }
+      .mc-day.has-event::after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--accent4);
+      }
+      .mc-day.has-event.urgent-day::after {
+        background: var(--c-urgent);
+      }
+      .mc-day.selected {
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent2)
+        ) !important;
+        color: #fff !important;
+        font-weight: 800;
+      }
+
+      /* DAY POPOVER */
+      .day-popover {
+        position: fixed;
+        z-index: 1000;
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.3);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        min-width: 240px;
+        max-width: 300px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        animation: fadeUp 0.2s ease both;
+        display: none;
+      }
+      .day-popover.show {
+        display: block;
+      }
+      .dp-pop-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dp-pop-title i {
+        color: var(--accent);
+      }
+      .dp-pop-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .dp-pop-item:last-child {
+        margin-bottom: 0;
+      }
+      .dp-pop-item:hover {
+        border-color: var(--border-hover);
+      }
+      .dp-pop-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .dp-pop-text {
+        font-size: 11.5px;
+        font-weight: 600;
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dp-pop-time {
+        font-size: 9.5px;
+        color: var(--text-muted);
+      }
+
+      /* UPCOMING */
+      .upcoming-list {
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .upcoming-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .upcoming-item:hover {
+        border-color: var(--border-hover);
+      }
+      .ui-date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background: rgba(74, 144, 217, 0.1);
+        border-radius: 8px;
+        flex-shrink: 0;
+        border: 1px solid rgba(74, 144, 217, 0.15);
+      }
+      .ui-day {
+        font-size: 13px;
+        font-weight: 900;
+        line-height: 1;
+        color: var(--accent);
+      }
+      .ui-month {
+        font-size: 8.5px;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+      .ui-title {
+        font-size: 11.5px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+      .ui-sub {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .ui-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: auto;
+      }
+
+      /* QUICK STATS */
+      .quick-stats {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+      }
+      .qs-title {
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .qs-title i {
+        color: var(--accent2);
+      }
+      .qs-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .qs-bar-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .qs-bar-label {
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 70px;
+        flex-shrink: 0;
+      }
+      .qs-bar-track {
+        flex: 1;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .qs-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .qs-bar-val {
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 22px;
+        text-align: left;
+      }
+
+      /* COMPOSE MODAL */
+      .modal-back {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        z-index: 5000;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 20px;
+        overflow-y: auto;
+        backdrop-filter: blur(5px);
+      }
+      .modal-back.open {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.22);
+        border-radius: var(--radius);
+        width: 100%;
+        max-width: 720px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+        animation: fadeUp 0.3s ease both;
+        margin: auto;
+      }
+      .modal-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg-card);
+        z-index: 2;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .modal-hdr-title {
+        font-size: 14px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-hdr-title i {
+        color: var(--accent);
+      }
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .modal-close:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+      }
+      .modal-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-section {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .fs-hdr {
+        padding: 11px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .fs-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .fg label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .fg input,
+      .fg select,
+      .fg textarea {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+        resize: vertical;
+      }
+      .fg input:focus,
+      .fg select:focus,
+      .fg textarea:focus {
+        border-color: var(--border-hover);
+      }
+      .fg input::placeholder,
+      .fg textarea::placeholder {
+        color: rgba(180, 200, 255, 0.2);
+      }
+      .fg textarea {
+        min-height: 100px;
+      }
+      .audience-check-grid {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .aud-check {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .aud-check input {
+        display: none;
+      }
+      .aud-check-box {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .aud-check input:checked + .aud-check-box {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .aud-check input:checked + .aud-check-box::after {
+        content: "✓";
+        font-size: 11px;
+        color: #fff;
+        font-weight: 900;
+      }
+      .type-select-row {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+      .type-opt {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .type-opt.selected {
+        border-color: currentColor;
+      }
+      .priority-row {
+        display: flex;
+        gap: 6px;
+      }
+      .prio-opt {
+        flex: 1;
+        padding: 8px 6px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .prio-opt.p-high.selected {
+        background: rgba(231, 76, 60, 0.12);
+        border-color: rgba(231, 76, 60, 0.35);
+        color: var(--absent);
+      }
+      .prio-opt.p-mid.selected {
+        background: rgba(243, 156, 18, 0.12);
+        border-color: rgba(243, 156, 18, 0.35);
+        color: var(--accent4);
+      }
+      .prio-opt.p-low.selected {
+        background: rgba(74, 144, 217, 0.12);
+        border-color: rgba(74, 144, 217, 0.35);
+        color: var(--accent);
+      }
+      .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+      }
+      .upload-zone:hover {
+        border-color: rgba(74, 144, 217, 0.35);
+        background: rgba(74, 144, 217, 0.03);
+      }
+      .upload-zone i {
+        font-size: 22px;
+        color: var(--text-muted);
+        margin-bottom: 7px;
+        display: block;
+      }
+      .upload-zone p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+      .upload-zone span {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .modal-ftr {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-cancel:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .btn-save {
+        background: rgba(74, 144, 217, 0.12);
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        color: var(--accent);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 10px 22px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-save:hover {
+        background: rgba(74, 144, 217, 0.2);
+      }
+      .btn-send {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 10px 26px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+      }
+      .btn-send:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 20px rgba(74, 144, 217, 0.4);
+      }
+
+      /* CONFIRM DELETE */
+      .confirm-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 6000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      }
+      .confirm-modal.open {
+        display: flex;
+      }
+      .confirm-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(231, 76, 60, 0.3);
+        border-radius: var(--radius);
+        padding: 28px;
+        width: 380px;
+        max-width: 90vw;
+        text-align: center;
+        animation: fadeUp 0.25s ease both;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+      .confirm-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(231, 76, 60, 0.13);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: var(--absent);
+        margin: 0 auto 16px;
+      }
+      .confirm-title {
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .confirm-msg {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-bottom: 22px;
+      }
+      .confirm-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .confirm-del {
+        background: rgba(231, 76, 60, 0.13);
+        border: 1px solid rgba(231, 76, 60, 0.35);
+        color: var(--absent);
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .confirm-del:hover {
+        background: rgba(231, 76, 60, 0.25);
+      }
+      .confirm-no {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .confirm-no:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      /* EXPORT MODAL */
+      .export-modal-back {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        z-index: 5500;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+      }
+      .export-modal-back.open {
+        display: flex;
+      }
+      .export-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(6, 214, 160, 0.25);
+        border-radius: var(--radius);
+        width: 440px;
+        max-width: 92vw;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+        animation: fadeUp 0.3s ease both;
+        overflow: hidden;
+      }
+      .export-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      .export-hdr-title {
+        font-size: 14px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--accent3);
+      }
+      .export-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .export-opt {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .export-opt:hover {
+        border-color: rgba(6, 214, 160, 0.35);
+        background: rgba(6, 214, 160, 0.05);
+      }
+      .export-opt-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .export-opt-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .export-opt-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .export-ftr {
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .export-scope {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .export-scope span {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 20px;
+        font-size: 12.5px;
+        font-weight: 600;
+        z-index: 9000;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.35s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      .toast.success i {
+        color: var(--present);
+      }
+      .toast.error i {
+        color: var(--absent);
+      }
+      .toast.info i {
+        color: var(--accent);
+      }
+      .toast.warning i {
+        color: var(--accent4);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ═══ JDP — تقویم شمسی پاپ‌آپ ═══ */
+      #jdp-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 8000;
+        display: none;
+      }
+      #jdp-overlay.open {
+        display: block;
+      }
+      #jdp-box {
+        position: fixed;
+        z-index: 8001;
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.35);
+        border-radius: var(--radius);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+        width: 280px;
+        overflow: hidden;
+        animation: fadeUp 0.2s ease both;
+      }
+      .jdp-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(74, 144, 217, 0.08);
+      }
+      .jdp-month-lbl {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .jdp-nav {
+        display: flex;
+        gap: 4px;
+      }
+      .jdp-nav-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .jdp-nav-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .jdp-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 8px 10px 4px;
+      }
+      .jdp-wd {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 3px 0;
+      }
+      .jdp-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        padding: 0 10px 12px;
+      }
+      .jdp-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+        color: var(--text);
+        border: none;
+        background: transparent;
+        font-family: inherit;
+      }
+      .jdp-day:hover {
+        background: rgba(74, 144, 217, 0.18);
+      }
+      .jdp-day.other {
+        color: rgba(180, 200, 255, 0.2);
+        pointer-events: none;
+      }
+      .jdp-day.today {
+        background: rgba(74, 144, 217, 0.2);
+        color: var(--accent);
+        font-weight: 800;
+      }
+      .jdp-day.selected {
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent2)
+        ) !important;
+        color: #fff !important;
+        font-weight: 800;
+      }
+      .jdp-clear {
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-top: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .jdp-clear:hover {
+        background: rgba(231, 76, 60, 0.08);
+        color: var(--absent);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 1200px) {
+        :root {
+          --sidebar-w: 218px;
+        }
+        .stats-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 1024px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .detail-panel {
+          position: static;
+          max-height: none;
+        }
+        .right-col {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 68px 13px 26px;
+        }
+        .stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .stats-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="hamburger" id="hamburger" title="منو">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="sb-overlay" id="overlay"></div>
+    <div class="day-popover" id="dayPopover"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <button class="sb-close-btn" id="sbCloseBtn" title="بستن منو">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="deputy-block">
+        <div class="deputy-avatar">ا</div>
+        <div>
+          <div class="deputy-name">احمد کریمی</div>
+          <div class="deputy-role">معاون آموزشی</div>
+          <div class="deputy-badge">هنرستان شهید بوربور</div>
+        </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="nav-item">
+        <a href="../html/assistant_dashboard.html"
+          ><i class="fas fa-th-large"></i> داشبورد</a
+        >
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_attendance.html"
+          ><i class="fas fa-clipboard-check"></i> مدیریت حضور و غیاب
+          <span class="nav-badge">۳</span></a
+        >
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_grades_management.html"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_students.html"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_grades_management.html"><i class="fas fa-star"></i> نمرات</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">گزارش‌ها و پیام‌ها</div>
+      <div class="nav-item">
+        <a href="../html/assistant_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+      </div>
+      <div class="nav-item active">
+        <a href="../html/assistant_notifications.html"
+          ><i class="fas fa-bell"></i> اطلاعیه‌ها
+          <span class="nav-badge" id="sidebarUnreadBadge">۰</span></a
+        >
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item">
+        <a href="../html/assistant_profile.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="greeting">
+          <h1>مدیریت <span>اطلاعیه‌ها</span></h1>
+          <p>
+            <i
+              class="fas fa-bell"
+              style="color: var(--accent4); font-size: 11px"
+            ></i>
+            سال تحصیلی ۱۴۰۴–۱۴۰۵ &nbsp;|&nbsp; هنرستان شهید بوربور
+          </p>
+        </div>
+        <div class="top-actions">
+          <button class="export-btn" onclick="openExportModal()">
+            <i class="fas fa-file-word"></i> خروجی Word
+          </button>
+          <button class="new-notif-btn" onclick="openComposeModal()">
+            <i class="fas fa-plus"></i> اطلاعیه جدید
+          </button>
+          <div class="profile-btn">ا</div>
+        </div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stats-row">
+        <div class="stat-card" id="sc-all" onclick="filterByType('all', this)">
+          <div
+            class="stat-icon"
+            style="background: rgba(74, 144, 217, 0.14); color: var(--accent)"
+          >
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--accent)" id="sc-val-all">
+              ۰
+            </div>
+            <div class="stat-lbl">همه اطلاعیه‌ها</div>
+          </div>
+        </div>
+        <div
+          class="stat-card"
+          id="sc-urgent"
+          onclick="filterByType('urgent', this)"
+        >
+          <div
+            class="stat-icon"
+            style="background: var(--c-urgent-bg); color: var(--c-urgent)"
+          >
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div>
+            <div
+              class="stat-val"
+              style="color: var(--c-urgent)"
+              id="sc-val-urgent"
+            >
+              ۰
+            </div>
+            <div class="stat-lbl">فوری</div>
+          </div>
+        </div>
+        <div
+          class="stat-card"
+          id="sc-exam"
+          onclick="filterByType('exam', this)"
+        >
+          <div
+            class="stat-icon"
+            style="background: var(--c-exam-bg); color: var(--c-exam)"
+          >
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--c-exam)" id="sc-val-exam">
+              ۰
+            </div>
+            <div class="stat-lbl">امتحانات</div>
+          </div>
+        </div>
+        <div
+          class="stat-card"
+          id="sc-event"
+          onclick="filterByType('event', this)"
+        >
+          <div
+            class="stat-icon"
+            style="background: var(--c-event-bg); color: var(--c-event)"
+          >
+            <i class="fas fa-calendar-star"></i>
+          </div>
+          <div>
+            <div
+              class="stat-val"
+              style="color: var(--c-event)"
+              id="sc-val-event"
+            >
+              ۰
+            </div>
+            <div class="stat-lbl">رویداد</div>
+          </div>
+        </div>
+        <div class="stat-card" id="sc-unread" onclick="filterUnread(this)">
+          <div
+            class="stat-icon"
+            style="background: rgba(232, 142, 192, 0.14); color: #e88ec0"
+          >
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: #e88ec0" id="sc-val-unread">
+              ۰
+            </div>
+            <div class="stat-lbl">خوانده نشده</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYOUT -->
+      <div class="layout">
+        <!-- LEFT: لیست اطلاعیه‌ها -->
+        <div>
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title">
+                <i class="fas fa-bell"></i
+                ><span id="listTitle">همه اطلاعیه‌ها</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <button
+                  onclick="markAllRead()"
+                  style="
+                    background: transparent;
+                    border: 1px solid var(--border);
+                    color: var(--text-muted);
+                    font-family: inherit;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 7px 13px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                  onmouseover="
+                    this.style.borderColor = 'var(--border-hover)';
+                    this.style.color = '#fff';
+                  "
+                  onmouseout="
+                    this.style.borderColor = 'var(--border)';
+                    this.style.color = 'var(--text-muted)';
+                  "
+                >
+                  <i class="fas fa-check-double"></i> همه خوانده
+                </button>
+              </div>
+            </div>
+            <div class="toolbar">
+              <div class="search-wrap">
+                <i class="fas fa-search s-icon"></i
+                ><input
+                  type="text"
+                  id="searchInput"
+                  placeholder="جستجو در اطلاعیه‌ها..."
+                  oninput="applyFilters()"
+                />
+              </div>
+              <select class="fsel" id="typeFilter" onchange="applyFilters()">
+                <option value="all">همه انواع</option>
+                <option value="urgent">فوری</option>
+                <option value="exam">امتحانات</option>
+                <option value="event">رویداد</option>
+                <option value="general">عمومی</option>
+                <option value="financial">مالی</option>
+                <option value="holiday">تعطیلی</option>
+              </select>
+              <select
+                class="fsel"
+                id="audienceFilter"
+                onchange="applyFilters()"
+              >
+                <option value="all">همه مخاطبان</option>
+                <option value="students">دانش‌آموزان</option>
+                <option value="teachers">معلمین</option>
+                <option value="parents">والدین</option>
+                <option value="all_staff">کارکنان</option>
+              </select>
+              <select class="fsel" id="readFilter" onchange="applyFilters()">
+                <option value="all">همه</option>
+                <option value="unread">خوانده نشده</option>
+                <option value="read">خوانده شده</option>
+              </select>
+              <div class="view-toggle">
+                <button
+                  class="vt-btn active"
+                  id="btnList"
+                  onclick="setView('list')"
+                  title="لیست"
+                >
+                  <i class="fas fa-list"></i>
+                </button>
+                <button
+                  class="vt-btn"
+                  id="btnGrid"
+                  onclick="setView('grid')"
+                  title="کارت"
+                >
+                  <i class="fas fa-th-large"></i>
+                </button>
+              </div>
+            </div>
+            <div id="pinnedSection" style="padding: 10px 16px 0; display: none">
+              <div
+                style="
+                  font-size: 9.5px;
+                  font-weight: 700;
+                  color: var(--accent4);
+                  letter-spacing: 1.2px;
+                  text-transform: uppercase;
+                  margin-bottom: 8px;
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+              >
+                <i class="fas fa-thumbtack"></i> سنجاق شده
+              </div>
+              <div
+                id="pinnedList"
+                style="display: flex; flex-direction: column; gap: 6px"
+              ></div>
+              <div
+                style="height: 1px; background: var(--border); margin: 12px 0 0"
+              ></div>
+            </div>
+            <div id="listView">
+              <div class="notif-list" id="notifList"></div>
+            </div>
+            <div id="gridView" style="display: none">
+              <div class="notif-grid" id="notifGrid"></div>
+            </div>
+            <div class="pagination">
+              <div class="page-info" id="pageInfo"></div>
+              <div class="page-btns" id="pageBtns"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COL -->
+        <div class="right-col">
+          <!-- DETAIL PANEL -->
+          <div class="detail-panel" id="detailPanel">
+            <div class="dp-empty" id="dpEmpty">
+              <i class="fas fa-bell-slash"></i>
+              <p>روی یک اطلاعیه کلیک کنید<br />تا جزئیات نمایش داده شود</p>
+            </div>
+            <div id="dpScrollable" class="dp-scrollable" style="display: none">
+              <div id="dpCover"></div>
+              <div id="dpContent"></div>
+            </div>
+          </div>
+
+          <!-- MINI CALENDAR -->
+          <div class="mini-calendar">
+            <div class="mc-hdr">
+              <div class="mc-title" id="mcTitle"></div>
+              <div class="mc-nav">
+                <button class="mc-nav-btn" onclick="changeMonth(-1)">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="mc-nav-btn" onclick="changeMonth(1)">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+              </div>
+            </div>
+            <div class="mc-body">
+              <div class="mc-weekdays">
+                <div class="mc-wday">ش</div>
+                <div class="mc-wday">ی</div>
+                <div class="mc-wday">د</div>
+                <div class="mc-wday">س</div>
+                <div class="mc-wday">چ</div>
+                <div class="mc-wday">پ</div>
+                <div class="mc-wday">ج</div>
+              </div>
+              <div class="mc-days" id="mcDays"></div>
+            </div>
+          </div>
+
+          <!-- UPCOMING -->
+          <div class="card">
+            <div class="card-hdr" style="padding: 14px 16px">
+              <div class="card-title" style="font-size: 12px">
+                <i class="fas fa-calendar-check"></i> رویدادهای پیش رو
+              </div>
+            </div>
+            <div class="upcoming-list" id="upcomingList"></div>
+          </div>
+
+          <!-- QUICK STATS -->
+          <div class="quick-stats">
+            <div class="qs-title">
+              <i class="fas fa-chart-pie"></i> توزیع نوع اطلاعیه
+            </div>
+            <div class="qs-bars" id="qsBars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPOSE MODAL -->
+    <div
+      class="modal-back"
+      id="composeModal"
+      onclick="closeModalOutside(event)"
+    >
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <div class="modal-hdr-title">
+            <i class="fas fa-edit"></i
+            ><span id="composeTitleText">اطلاعیه جدید</span>
+          </div>
+          <button class="modal-close" onclick="closeComposeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-section">
+            <div class="fs-hdr" style="color: var(--accent)">
+              <i class="fas fa-tag"></i> نوع و اولویت
+            </div>
+            <div class="fs-body">
+              <div class="fg">
+                <label>نوع اطلاعیه</label>
+                <div class="type-select-row" id="typeSelectRow">
+                  <button
+                    class="type-opt selected"
+                    data-type="general"
+                    onclick="selectType(this)"
+                    style="color: var(--c-general)"
+                  >
+                    <i class="fas fa-info-circle"></i> عمومی
+                  </button>
+                  <button
+                    class="type-opt"
+                    data-type="urgent"
+                    onclick="selectType(this)"
+                    style="color: var(--c-urgent)"
+                  >
+                    <i class="fas fa-exclamation-circle"></i> فوری
+                  </button>
+                  <button
+                    class="type-opt"
+                    data-type="exam"
+                    onclick="selectType(this)"
+                    style="color: var(--c-exam)"
+                  >
+                    <i class="fas fa-pencil-alt"></i> امتحانات
+                  </button>
+                  <button
+                    class="type-opt"
+                    data-type="event"
+                    onclick="selectType(this)"
+                    style="color: var(--c-event)"
+                  >
+                    <i class="fas fa-calendar-star"></i> رویداد
+                  </button>
+                  <button
+                    class="type-opt"
+                    data-type="financial"
+                    onclick="selectType(this)"
+                    style="color: var(--c-financial)"
+                  >
+                    <i class="fas fa-money-bill-wave"></i> مالی
+                  </button>
+                  <button
+                    class="type-opt"
+                    data-type="holiday"
+                    onclick="selectType(this)"
+                    style="color: var(--c-holiday)"
+                  >
+                    <i class="fas fa-umbrella-beach"></i> تعطیلی
+                  </button>
+                </div>
+              </div>
+              <div class="fg">
+                <label>اولویت</label>
+                <div class="priority-row">
+                  <button
+                    class="prio-opt p-high"
+                    data-prio="high"
+                    onclick="selectPrio(this)"
+                  >
+                    🔴 بالا
+                  </button>
+                  <button
+                    class="prio-opt p-mid selected"
+                    data-prio="mid"
+                    onclick="selectPrio(this)"
+                  >
+                    🟡 متوسط
+                  </button>
+                  <button
+                    class="prio-opt p-low"
+                    data-prio="low"
+                    onclick="selectPrio(this)"
+                  >
+                    🔵 پایین
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="fs-hdr" style="color: var(--accent3)">
+              <i class="fas fa-align-right"></i> محتوای اطلاعیه
+            </div>
+            <div class="fs-body">
+              <div class="fg">
+                <label>عنوان اطلاعیه *</label
+                ><input
+                  type="text"
+                  id="cf_title"
+                  placeholder="عنوان را بنویسید..."
+                />
+              </div>
+              <div class="fg">
+                <label>متن کامل اطلاعیه *</label
+                ><textarea
+                  id="cf_body"
+                  placeholder="متن اطلاعیه را بنویسید..."
+                ></textarea>
+              </div>
+              <div class="form-grid">
+                <div class="fg">
+                  <label>تاریخ انتشار</label>
+                  <div style="position: relative">
+                    <i
+                      class="fas fa-calendar"
+                      style="
+                        position: absolute;
+                        right: 11px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: var(--text-muted);
+                        font-size: 12px;
+                        pointer-events: none;
+                        z-index: 1;
+                      "
+                    ></i>
+                    <input
+                      type="text"
+                      id="cf_date"
+                      placeholder="۱۴۰۴/۰۲/۲۷"
+                      style="padding-right: 34px; cursor: pointer"
+                      readonly
+                      onclick="openJDP(this)"
+                    />
+                  </div>
+                </div>
+                <div class="fg">
+                  <label>تاریخ انقضا (اختیاری)</label>
+                  <div style="position: relative">
+                    <i
+                      class="fas fa-calendar-times"
+                      style="
+                        position: absolute;
+                        right: 11px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: var(--text-muted);
+                        font-size: 12px;
+                        pointer-events: none;
+                        z-index: 1;
+                      "
+                    ></i>
+                    <input
+                      type="text"
+                      id="cf_expire"
+                      placeholder="اختیاری"
+                      style="padding-right: 34px; cursor: pointer"
+                      readonly
+                      onclick="openJDP(this)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="fs-hdr" style="color: var(--accent2)">
+              <i class="fas fa-users"></i> مخاطبان
+            </div>
+            <div class="fs-body">
+              <div class="fg">
+                <label>ارسال به</label>
+                <div class="audience-check-grid">
+                  <label class="aud-check"
+                    ><input
+                      type="checkbox"
+                      name="aud"
+                      value="students"
+                      checked
+                    />
+                    <div class="aud-check-box"></div>
+                    دانش‌آموزان</label
+                  >
+                  <label class="aud-check"
+                    ><input type="checkbox" name="aud" value="parents" />
+                    <div class="aud-check-box"></div>
+                    والدین</label
+                  >
+                  <label class="aud-check"
+                    ><input type="checkbox" name="aud" value="teachers" />
+                    <div class="aud-check-box"></div>
+                    معلمین</label
+                  >
+                  <label class="aud-check"
+                    ><input type="checkbox" name="aud" value="all_staff" />
+                    <div class="aud-check-box"></div>
+                    کارکنان</label
+                  >
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="fg">
+                  <label>فیلتر پایه</label
+                  ><select id="cf_grade">
+                    <option value="all">همه پایه‌ها</option>
+                    <option value="10">دهم</option>
+                    <option value="11">یازدهم</option>
+                    <option value="12">دوازدهم</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>فیلتر کلاس</label
+                  ><select id="cf_class">
+                    <option value="all">همه کلاس‌ها</option>
+                    <option value="الف">الف</option>
+                    <option value="ب">ب</option>
+                    <option value="ج">ج</option>
+                    <option value="د">د</option>
+                  </select>
+                </div>
+              </div>
+              <div class="fg">
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                  "
+                >
+                  <label class="aud-check" style="margin: 0"
+                    ><input type="checkbox" id="cf_pin" />
+                    <div class="aud-check-box"></div
+                  ></label>
+                  سنجاق کردن اطلاعیه
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="fs-hdr" style="color: var(--accent4)">
+              <i class="fas fa-paperclip"></i> پیوست‌ها (اختیاری)
+            </div>
+            <div class="fs-body">
+              <div
+                class="upload-zone"
+                onclick="showToast('آپلود فایل در نسخه بعدی', 'info')"
+              >
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p><span>کلیک کنید</span> یا فایل را اینجا بکشید</p>
+                <p style="font-size: 10px; margin-top: 4px">
+                  PDF، Word، تصویر — حداکثر ۱۰ مگابایت
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-ftr">
+          <button class="btn-cancel" onclick="closeComposeModal()">
+            انصراف
+          </button>
+          <button class="btn-save" onclick="saveDraft()">
+            <i class="fas fa-save" style="margin-left: 5px"></i> ذخیره پیش‌نویس
+          </button>
+          <button class="btn-send" onclick="publishNotif()">
+            <i class="fas fa-paper-plane" style="margin-left: 6px"></i> انتشار
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM DELETE -->
+    <div class="confirm-modal" id="confirmModal">
+      <div class="confirm-box">
+        <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+        <div class="confirm-title">حذف اطلاعیه</div>
+        <div class="confirm-msg" id="confirmMsg"></div>
+        <div class="confirm-btns">
+          <button class="confirm-no" onclick="closeConfirm()">انصراف</button>
+          <button class="confirm-del" onclick="doDelete()">
+            <i class="fas fa-trash-alt" style="margin-left: 5px"></i> حذف شود
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT MODAL -->
+    <div
+      class="export-modal-back"
+      id="exportModal"
+      onclick="closeExportOutside(event)"
+    >
+      <div class="export-box" onclick="event.stopPropagation()">
+        <div class="export-hdr">
+          <div class="export-hdr-title">
+            <i class="fas fa-file-word"></i> خروجی Word
+          </div>
+          <button class="modal-close" onclick="closeExportModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="export-body">
+          <div class="export-opt" onclick="doExport('all')">
+            <div class="export-opt-icon">
+              <i class="fas fa-layer-group"></i>
+            </div>
+            <div>
+              <div class="export-opt-title">همه اطلاعیه‌ها</div>
+              <div class="export-opt-desc">
+                خروجی Word از کل <span id="exportAllCount">۰</span> اطلاعیه
+              </div>
+            </div>
+          </div>
+          <div class="export-opt" onclick="doExport('filtered')">
+            <div class="export-opt-icon"><i class="fas fa-filter"></i></div>
+            <div>
+              <div class="export-opt-title">اطلاعیه‌های فیلترشده</div>
+              <div class="export-opt-desc">
+                خروجی Word از <span id="exportFilteredCount">۰</span> اطلاعیه
+                فعلی
+              </div>
+            </div>
+          </div>
+          <div
+            class="export-opt"
+            onclick="doExport('active')"
+            id="exportActiveOpt"
+            style="display: none"
+          >
+            <div class="export-opt-icon"><i class="fas fa-file-alt"></i></div>
+            <div>
+              <div class="export-opt-title">اطلاعیه باز</div>
+              <div class="export-opt-desc" id="exportActiveDesc">
+                اطلاعیه انتخاب‌شده
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="export-ftr">
+          <span class="export-scope">فرمت: <span>Word (.docx)</span></span
+          ><button class="btn-cancel" onclick="closeExportModal()">
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i><span id="toastMsg"></span>
+    </div>
+
+    <script>
+      /* ════ HELPERS ════ */
+      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      function showToast(msg, type = "success") {
+        const t = document.getElementById("toast"),
+          ic = t.querySelector("i");
+        document.getElementById("toastMsg").textContent = msg;
+        t.className = "toast " + type + " show";
+        ic.className =
+          type === "success"
+            ? "fas fa-check-circle"
+            : type === "error"
+              ? "fas fa-times-circle"
+              : type === "warning"
+                ? "fas fa-exclamation-circle"
+                : "fas fa-info-circle";
+        clearTimeout(t._to);
+        t._to = setTimeout(() => {
+          t.className = "toast " + type;
+        }, 3200);
+      }
+
+      /* ════ DATA ════ */
+      const TYPE_META = {
+        urgent: {
+          label: "فوری",
+          icon: "fas fa-exclamation-circle",
+          color: "var(--c-urgent)",
+          bg: "var(--c-urgent-bg)",
+        },
+        exam: {
+          label: "امتحانات",
+          icon: "fas fa-pencil-alt",
+          color: "var(--c-exam)",
+          bg: "var(--c-exam-bg)",
+        },
+        event: {
+          label: "رویداد",
+          icon: "fas fa-calendar-star",
+          color: "var(--c-event)",
+          bg: "var(--c-event-bg)",
+        },
+        general: {
+          label: "عمومی",
+          icon: "fas fa-info-circle",
+          color: "var(--c-general)",
+          bg: "var(--c-general-bg)",
+        },
+        financial: {
+          label: "مالی",
+          icon: "fas fa-money-bill-wave",
+          color: "var(--c-financial)",
+          bg: "var(--c-financial-bg)",
+        },
+        holiday: {
+          label: "تعطیلی",
+          icon: "fas fa-umbrella-beach",
+          color: "var(--c-holiday)",
+          bg: "var(--c-holiday-bg)",
+        },
+      };
+      const AUD_META = {
+        students: { label: "دانش‌آموزان", icon: "fas fa-user-graduate" },
+        parents: { label: "والدین", icon: "fas fa-users" },
+        teachers: { label: "معلمین", icon: "fas fa-chalkboard-teacher" },
+        all_staff: { label: "کارکنان", icon: "fas fa-building" },
+      };
+
+      let notifData = [
+        {
+          id: 1,
+          type: "urgent",
+          title: "تعطیلی فردا به دلیل مراسم رسمی",
+          body: "به اطلاع کلیه دانش‌آموزان، اولیاء و کارکنان محترم می‌رساند که مدرسه فردا سه‌شنبه ۲۸ اردیبهشت ۱۴۰۴ به مناسبت مراسم رسمی کشوری تعطیل خواهد بود. برنامه کلاس‌ها از چهارشنبه طبق تایم‌تیبل عادی ادامه خواهد داشت.",
+          date: "۱۴۰۴/۰۲/۲۶",
+          time: "۱۰:۳۰",
+          priority: "high",
+          audience: ["students", "parents", "teachers", "all_staff"],
+          pinned: true,
+          read: false,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 2,
+          type: "exam",
+          title: "جدول امتحانات نیم‌سال دوم ۱۴۰۴",
+          body: "جدول کامل امتحانات پایان نیم‌سال دوم برای تمامی پایه‌ها از تاریخ ۱۵ خرداد آغاز می‌شود. دانش‌آموزان موظفند ۳۰ دقیقه قبل از شروع امتحان حاضر باشند. همراه داشتن کارت ورود به جلسه الزامی است.",
+          date: "۱۴۰۴/۰۲/۲۴",
+          time: "۰۸:۰۰",
+          priority: "high",
+          audience: ["students", "parents"],
+          pinned: true,
+          read: false,
+          attachments: [
+            {
+              name: "جدول امتحانات ۱۴۰۴.pdf",
+              size: "۲.۴ مگ",
+              icon: "fas fa-file-pdf",
+              color: "#e74c3c",
+            },
+            {
+              name: "دستورالعمل امتحانات.docx",
+              size: "۱.۱ مگ",
+              icon: "fas fa-file-word",
+              color: "#4a90d9",
+            },
+          ],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 3,
+          type: "event",
+          title: "جشن پایان سال تحصیلی ۱۴۰۴",
+          body: "با سرور و شادی از کلیه دانش‌آموزان، اولیاء گرامی و معلمین محترم دعوت می‌شود در جشن پایان سال تحصیلی که در تاریخ ۲۵ خرداد از ساعت ۱۷:۰۰ در سالن اجتماعات برگزار می‌شود شرکت فرمایند.",
+          date: "۱۴۰۴/۰۲/۲۲",
+          time: "۱۴:۰۰",
+          priority: "mid",
+          audience: ["students", "parents", "teachers"],
+          pinned: false,
+          read: false,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 4,
+          type: "financial",
+          title: "پرداخت شهریه ماه خرداد",
+          body: "یادآوری می‌شود مهلت پرداخت شهریه ماه خرداد تا پایان اردیبهشت است. اولیائی که تاکنون پرداخت نکرده‌اند می‌توانند به دفتر مالی مدرسه مراجعه یا از طریق سامانه بوربور پرداخت آنلاین انجام دهند.",
+          date: "۱۴۰۴/۰۲/۲۰",
+          time: "۱۱:۰۰",
+          priority: "mid",
+          audience: ["parents"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 5,
+          type: "general",
+          title: "تغییر ساعت حضور و غیاب ترم دوم",
+          body: "از تاریخ اول خرداد ساعت شروع کلاس‌های پایه دهم از ۷:۳۰ به ۸:۰۰ تغییر می‌یابد. ساعت پایان برنامه درسی بدون تغییر باقی خواهد ماند.",
+          date: "۱۴۰۴/۰۲/۱۸",
+          time: "۰۹:۱۵",
+          priority: "low",
+          audience: ["students", "parents", "teachers"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "10",
+          cls: "all",
+        },
+        {
+          id: 6,
+          type: "exam",
+          title: "آمادگی برای امتحان ریاضی پایه یازدهم",
+          body: "دانش‌آموزان عزیز پایه یازدهم توجه داشته باشند که امتحان ریاضی ۲ در تاریخ ۵ خرداد برگزار می‌شود. مباحث مورد امتحان شامل فصل ۳ تا ۶ کتاب درسی است.",
+          date: "۱۴۰۴/۰۲/۱۵",
+          time: "۱۲:۳۰",
+          priority: "high",
+          audience: ["students"],
+          pinned: false,
+          read: false,
+          attachments: [],
+          grade: "11",
+          cls: "all",
+        },
+        {
+          id: 7,
+          type: "holiday",
+          title: "تعطیلی روز معلم — ۱۲ اردیبهشت",
+          body: "به مناسبت گرامیداشت روز معلم، روز پنجشنبه ۱۲ اردیبهشت مدرسه تعطیل است.",
+          date: "۱۴۰۴/۰۲/۱۰",
+          time: "۰۷:۰۰",
+          priority: "low",
+          audience: ["students", "parents", "teachers", "all_staff"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 8,
+          type: "general",
+          title: "برگزاری کلاس جبرانی زیست‌شناسی",
+          body: "کلاس جبرانی زیست‌شناسی برای دانش‌آموزان پایه یازدهم کلاس ج در روز چهارشنبه ۲۹ اردیبهشت از ساعت ۱۴ تا ۱۶ در کلاس ۳۰۳ برگزار می‌شود.",
+          date: "۱۴۰۴/۰۲/۰۸",
+          time: "۱۵:۴۵",
+          priority: "mid",
+          audience: ["students"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "11",
+          cls: "ج",
+        },
+        {
+          id: 9,
+          type: "event",
+          title: "مسابقه ریاضی استانی — انتخاب نمایندگان",
+          body: "مدرسه در مسابقات ریاضی استانی شرکت خواهد کرد. دانش‌آموزانی که مایل به شرکت هستند می‌توانند تا ۵ خرداد نام خود را ثبت کنند.",
+          date: "۱۴۰۴/۰۲/۰۵",
+          time: "۱۰:۰۰",
+          priority: "mid",
+          audience: ["students", "teachers"],
+          pinned: false,
+          read: false,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 10,
+          type: "financial",
+          title: "اعلام بورسیه‌های تحصیلی سال ۱۴۰۴",
+          body: "دانش‌آموزانی که معدل کل سال گذشته آن‌ها ۱۸ یا بالاتر است می‌توانند برای دریافت بورسیه تحصیلی درخواست دهند. مهلت ارسال مدارک تا ۳۱ اردیبهشت است.",
+          date: "۱۴۰۴/۰۲/۰۲",
+          time: "۰۸:۳۰",
+          priority: "mid",
+          audience: ["students", "parents"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 11,
+          type: "urgent",
+          title: "قطعی آب مدرسه فردا صبح",
+          body: "به اطلاع می‌رساند فردا صبح از ساعت ۶ تا ۱۰ آب مدرسه به دلیل تعمیرات شبکه لوله‌کشی قطع خواهد بود.",
+          date: "۱۴۰۴/۰۱/۲۸",
+          time: "۱۶:۰۰",
+          priority: "high",
+          audience: ["students", "teachers", "all_staff"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+        {
+          id: 12,
+          type: "general",
+          title: "معرفی سامانه آنلاین بوربور به والدین",
+          body: "از تمامی والدین گرامی دعوت می‌شود در جلسه معرفی سامانه آنلاین بوربور شرکت فرمایند. جلسه ۳۰ اردیبهشت ساعت ۱۸.",
+          date: "۱۴۰۴/۰۱/۲۵",
+          time: "۰۹:۰۰",
+          priority: "low",
+          audience: ["parents"],
+          pinned: false,
+          read: true,
+          attachments: [],
+          grade: "all",
+          cls: "all",
+        },
+      ];
+
+      /* ════ STATE ════ */
+      let filtered = [...notifData],
+        curPage = 1;
+      const PER_PAGE = 7;
+      let curView = "list",
+        activeId = null,
+        deleteId = null,
+        editingId = null,
+        calMonth = 2,
+        calYear = 1404;
+      let selectedType = "general",
+        selectedPrio = "mid";
+
+      /* ════ STAT CARDS ════ */
+      function updateStatCards() {
+        document.getElementById("sc-val-all").textContent = fa(
+          notifData.length,
+        );
+        document.getElementById("sc-val-urgent").textContent = fa(
+          notifData.filter((n) => n.type === "urgent").length,
+        );
+        document.getElementById("sc-val-exam").textContent = fa(
+          notifData.filter((n) => n.type === "exam").length,
+        );
+        document.getElementById("sc-val-event").textContent = fa(
+          notifData.filter((n) => n.type === "event").length,
+        );
+        document.getElementById("sc-val-unread").textContent = fa(
+          notifData.filter((n) => !n.read).length,
+        );
+        document.getElementById("sidebarUnreadBadge").textContent = fa(
+          notifData.filter((n) => !n.read).length,
+        );
+      }
+      function filterByType(type, el) {
+        document.getElementById("typeFilter").value = type;
+        document.getElementById("readFilter").value = "all";
+        document
+          .querySelectorAll(".stat-card")
+          .forEach((c) => c.classList.remove("sc-active"));
+        el.classList.add("sc-active");
+        applyFilters();
+      }
+      function filterUnread(el) {
+        document.getElementById("readFilter").value = "unread";
+        document.getElementById("typeFilter").value = "all";
+        document
+          .querySelectorAll(".stat-card")
+          .forEach((c) => c.classList.remove("sc-active"));
+        el.classList.add("sc-active");
+        applyFilters();
+      }
+
+      /* ════ FILTER ════ */
+      function applyFilters() {
+        const q = document
+          .getElementById("searchInput")
+          .value.trim()
+          .toLowerCase();
+        const type = document.getElementById("typeFilter").value;
+        const aud = document.getElementById("audienceFilter").value;
+        const rd = document.getElementById("readFilter").value;
+        filtered = notifData.filter((n) => {
+          const matchQ =
+            !q ||
+            n.title.toLowerCase().includes(q) ||
+            n.body.toLowerCase().includes(q);
+          const matchT = type === "all" || n.type === type;
+          const matchA = aud === "all" || n.audience.includes(aud);
+          const matchR =
+            rd === "all" ||
+            (rd === "unread" && !n.read) ||
+            (rd === "read" && n.read);
+          return matchQ && matchT && matchA && matchR;
+        });
+        filtered.sort((a, b) => {
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          return b.id - a.id;
+        });
+        curPage = 1;
+        renderList();
+        updateListTitle();
+      }
+      function updateListTitle() {
+        const type = document.getElementById("typeFilter").value;
+        const rd = document.getElementById("readFilter").value;
+        let title = "همه اطلاعیه‌ها";
+        if (type !== "all") title = TYPE_META[type]?.label || title;
+        if (rd === "unread") title = "خوانده نشده";
+        document.getElementById("listTitle").textContent = title;
+      }
+
+      /* ════ RENDER ════ */
+      function renderList() {
+        const pinned = filtered.filter((n) => n.pinned);
+        const nonPinned = filtered.filter((n) => !n.pinned);
+        const pages = Math.max(1, Math.ceil(nonPinned.length / PER_PAGE));
+        if (curPage > pages) curPage = pages;
+        const slice = nonPinned.slice(
+          (curPage - 1) * PER_PAGE,
+          curPage * PER_PAGE,
+        );
+        const pinnedSection = document.getElementById("pinnedSection");
+        const pinnedList = document.getElementById("pinnedList");
+        if (pinned.length) {
+          pinnedSection.style.display = "block";
+          pinnedList.innerHTML = "";
+          pinned.forEach((n) => pinnedList.appendChild(buildListItem(n)));
+        } else pinnedSection.style.display = "none";
+        if (curView === "list") {
+          const listEl = document.getElementById("notifList");
+          listEl.innerHTML = "";
+          if (!slice.length)
+            listEl.innerHTML =
+              '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-bell-slash" style="font-size:30px;display:block;margin-bottom:10px;opacity:.3;"></i><p style="font-size:12.5px;">اطلاعیه‌ای یافت نشد</p></div>';
+          else slice.forEach((n) => listEl.appendChild(buildListItem(n)));
+        } else {
+          const gridEl = document.getElementById("notifGrid");
+          gridEl.innerHTML = "";
+          if (!slice.length)
+            gridEl.innerHTML =
+              '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-bell-slash" style="font-size:30px;display:block;margin-bottom:10px;opacity:.3;"></i><p>اطلاعیه‌ای یافت نشد</p></div>';
+          else slice.forEach((n) => gridEl.appendChild(buildGridCard(n)));
+        }
+        renderPagination(nonPinned.length, pages);
+      }
+
+      function buildListItem(n) {
+        const tm = TYPE_META[n.type] || TYPE_META.general;
+        const el = document.createElement("div");
+        el.className = `notif-item t-${n.type}${n.read ? "" : " unread"}${activeId === n.id ? " active-item" : ""}`;
+        el.onclick = () => openDetail(n.id);
+        const audHtml = n.audience
+          .slice(0, 2)
+          .map((a) => {
+            const am = AUD_META[a] || { label: a, icon: "fas fa-user" };
+            return `<span class="notif-tag" style="background:${tm.bg};color:${tm.color};"><i class="${am.icon}" style="font-size:8px;"></i> ${am.label}</span>`;
+          })
+          .join("");
+        el.innerHTML = `${n.read ? "" : '<div class="unread-dot" style="background:' + tm.color + ';"></div>'}<div class="notif-icon-wrap" style="background:${tm.bg};color:${tm.color};flex-shrink:0;"><i class="${tm.icon}"></i></div><div class="notif-main"><div class="notif-item-title">${n.pinned ? '<span class="pinned-badge" style="margin-left:6px;"><i class="fas fa-thumbtack" style="font-size:8px;"></i> سنجاق</span>' : ""}${n.title}</div><div class="notif-item-preview">${n.body}</div><div class="notif-item-footer"><span class="notif-tag" style="background:${tm.bg};color:${tm.color};"><i class="${tm.icon}" style="font-size:9px;"></i> ${tm.label}</span>${audHtml}<span class="notif-time"><i class="fas fa-clock" style="font-size:9px;"></i> ${n.date} — ${n.time}</span></div></div>`;
+        return el;
+      }
+
+      function buildGridCard(n) {
+        const tm = TYPE_META[n.type] || TYPE_META.general;
+        const el = document.createElement("div");
+        el.className = `notif-card t-${n.type}${n.read ? "" : " unread"}`;
+        el.onclick = () => openDetail(n.id);
+        el.innerHTML = `<div class="nc-body"><div class="nc-top"><div class="nc-icon" style="background:${tm.bg};color:${tm.color};"><i class="${tm.icon}"></i></div><div class="nc-badges">${n.pinned ? '<span class="pinned-badge"><i class="fas fa-thumbtack" style="font-size:8px;"></i></span>' : ""}${!n.read ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tm.color};"></span>` : ""}</div></div><div class="nc-title${n.read ? "" : " unread-t"}">${n.title}</div><div class="nc-preview">${n.body}</div><div class="nc-footer"><span class="nc-time"><i class="fas fa-calendar-alt" style="font-size:9px;margin-left:3px;"></i>${n.date}</span><span class="notif-tag" style="background:${tm.bg};color:${tm.color};font-size:9px;padding:2px 7px;"><i class="${tm.icon}" style="font-size:8px;"></i> ${tm.label}</span></div></div>`;
+        return el;
+      }
+
+      function renderPagination(total, pages) {
+        const start = (curPage - 1) * PER_PAGE + 1,
+          end = Math.min(curPage * PER_PAGE, total);
+        document.getElementById("pageInfo").textContent = total
+          ? `نمایش ${fa(start)}–${fa(end)} از ${fa(total)} اطلاعیه`
+          : "";
+        const btns = document.getElementById("pageBtns");
+        btns.innerHTML = "";
+        if (pages <= 1) return;
+        const prev = document.createElement("button");
+        prev.className = "pg-btn";
+        prev.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        prev.disabled = curPage === 1;
+        prev.onclick = () => {
+          curPage--;
+          renderList();
+        };
+        btns.appendChild(prev);
+        for (let p = 1; p <= pages; p++) {
+          const b = document.createElement("button");
+          b.className = "pg-btn" + (p === curPage ? " active" : "");
+          b.textContent = fa(p);
+          const pp = p;
+          b.onclick = () => {
+            curPage = pp;
+            renderList();
+          };
+          btns.appendChild(b);
+        }
+        const next = document.createElement("button");
+        next.className = "pg-btn";
+        next.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        next.disabled = curPage === pages;
+        next.onclick = () => {
+          curPage++;
+          renderList();
+        };
+        btns.appendChild(next);
+      }
+
+      /* ════ DETAIL PANEL ════ */
+      function openDetail(id) {
+        const n = notifData.find((x) => x.id === id);
+        if (!n) return;
+        activeId = id;
+        if (!n.read) {
+          n.read = true;
+          updateStatCards();
+        }
+        renderList();
+        const tm = TYPE_META[n.type] || TYPE_META.general;
+        const attachHtml = n.attachments.length
+          ? `<div class="dp-attachments"><div class="dp-attach-title"><i class="fas fa-paperclip" style="color:var(--accent);margin-left:5px;"></i> پیوست‌ها</div>${n.attachments.map((a) => `<div class="dp-attach-item" onclick="showToast('دانلود ${a.name}','info')"><div class="dp-attach-icon" style="background:${a.color}22;color:${a.color};"><i class="${a.icon}"></i></div><div class="dp-attach-name">${a.name}</div><div class="dp-attach-size">${a.size}</div><i class="fas fa-download" style="color:var(--text-muted);font-size:11px;"></i></div>`).join("")}</div>`
+          : "";
+        const audPills = n.audience
+          .map((a) => {
+            const am = AUD_META[a] || { label: a, icon: "fas fa-user" };
+            return `<span class="aud-pill"><i class="${am.icon}"></i> ${am.label}</span>`;
+          })
+          .join("");
+        const gradeInfo =
+          n.grade !== "all"
+            ? ` — پایه ${n.grade === "10" ? "دهم" : n.grade === "11" ? "یازدهم" : "دوازدهم"}`
+            : "";
+        const clsInfo = n.cls !== "all" ? ` کلاس ${n.cls}` : "";
+        document.getElementById("dpEmpty").style.display = "none";
+        document.getElementById("dpCover").innerHTML =
+          `<div class="dp-cover" style="background:linear-gradient(135deg,${tm.bg},rgba(0,0,0,0));"><div class="dp-icon-big" style="background:${tm.bg};color:${tm.color};"><i class="${tm.icon}" style="font-size:24px;"></i></div></div>`;
+        document.getElementById("dpContent").innerHTML =
+          `<div class="dp-body"><span class="dp-type-badge" style="background:${tm.bg};color:${tm.color};"><i class="${tm.icon}" style="font-size:9px;"></i> ${tm.label}</span>${n.pinned ? '<span class="pinned-badge" style="margin-right:6px;"><i class="fas fa-thumbtack" style="font-size:8px;"></i> سنجاق شده</span>' : ""}<div class="dp-title">${n.title}</div><div class="dp-meta-row"><div class="dp-meta-item"><i class="fas fa-calendar-alt"></i> ${n.date}</div><div class="dp-meta-item"><i class="fas fa-clock"></i> ${n.time}</div>${gradeInfo || clsInfo ? `<div class="dp-meta-item"><i class="fas fa-school"></i>${gradeInfo}${clsInfo}</div>` : ""}</div><div class="audience-pills">${audPills}</div><div class="dp-divider"></div><div class="dp-content">${n.body.replace(/\n/g, "<br>")}</div>${attachHtml}<div class="dp-actions"><button class="dp-act-btn dp-pin" onclick="togglePin(${n.id})"><i class="fas fa-thumbtack"></i> ${n.pinned ? "حذف سنجاق" : "سنجاق"}</button><button class="dp-act-btn" onclick="openEditModal(${n.id})" style="flex:1.5;"><i class="fas fa-edit"></i> ویرایش</button><button class="dp-act-btn dp-delete" onclick="openConfirm(${n.id})"><i class="fas fa-trash"></i> حذف</button></div></div>`;
+        const scrollEl = document.getElementById("dpScrollable");
+        scrollEl.style.display = "block";
+        scrollEl.scrollTop = 0;
+      }
+
+      function togglePin(id) {
+        const n = notifData.find((x) => x.id === id);
+        if (!n) return;
+        n.pinned = !n.pinned;
+        showToast(
+          n.pinned ? "اطلاعیه سنجاق شد" : "سنجاق برداشته شد",
+          n.pinned ? "success" : "info",
+        );
+        applyFilters();
+        openDetail(id);
+      }
+      function markAllRead() {
+        notifData.forEach((n) => (n.read = true));
+        updateStatCards();
+        renderList();
+        showToast("همه اطلاعیه‌ها خوانده شد", "success");
+      }
+      function setView(v) {
+        curView = v;
+        document.getElementById("listView").style.display =
+          v === "list" ? "block" : "none";
+        document.getElementById("gridView").style.display =
+          v === "grid" ? "block" : "none";
+        document
+          .getElementById("btnList")
+          .classList.toggle("active", v === "list");
+        document
+          .getElementById("btnGrid")
+          .classList.toggle("active", v === "grid");
+        renderList();
+      }
+
+      /* ════ CALENDAR ════ */
+      const JALALI_MONTHS = [
+        "فروردین",
+        "اردیبهشت",
+        "خرداد",
+        "تیر",
+        "مرداد",
+        "شهریور",
+        "مهر",
+        "آبان",
+        "آذر",
+        "دی",
+        "بهمن",
+        "اسفند",
+      ];
+      const MONTH_DAYS = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+
+      function getEventDates() {
+        const dates = {};
+        notifData.forEach((n) => {
+          const parts = n.date.split("/");
+          if (parts.length === 3) {
+            const toEn = (s) =>
+              s.replace(/[۰-۹]/g, (d) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(d)]);
+            const y = parseInt(toEn(parts[0])),
+              m = parseInt(toEn(parts[1])),
+              d = parseInt(toEn(parts[2]));
+            const key = `${y}-${m}-${d}`;
+            if (!dates[key]) dates[key] = [];
+            dates[key].push(n);
+          }
+        });
+        return dates;
+      }
+
+      function renderCalendar() {
+        document.getElementById("mcTitle").textContent =
+          `${JALALI_MONTHS[calMonth - 1]} ${fa(calYear)}`;
+        const daysEl = document.getElementById("mcDays");
+        daysEl.innerHTML = "";
+        const eventDates = getEventDates();
+        const daysInMonth = MONTH_DAYS[calMonth - 1];
+        const totalDays = (calYear - 1404) * 365 + (calMonth - 1) * 30;
+        const startOffset = (4 + totalDays) % 7;
+        for (let i = 0; i < startOffset; i++) {
+          const c = document.createElement("div");
+          c.className = "mc-day other-month";
+          c.textContent = fa(
+            MONTH_DAYS[calMonth === 1 ? 11 : calMonth - 2] -
+              (startOffset - 1 - i),
+          );
+          daysEl.appendChild(c);
+        }
+        const today = calMonth === 2 && calYear === 1404 ? 27 : 0;
+        for (let d = 1; d <= daysInMonth; d++) {
+          const cell = document.createElement("div");
+          cell.className = "mc-day";
+          if (d === today) cell.classList.add("today");
+          const key = `${calYear}-${calMonth}-${d}`;
+          const dayNotifs = eventDates[key] || [];
+          if (dayNotifs.length) {
+            cell.classList.add("has-event");
+            if (dayNotifs.some((n) => n.type === "urgent"))
+              cell.classList.add("urgent-day");
+            cell.title = `${dayNotifs.length} اطلاعیه`;
+            cell.addEventListener("click", function (e) {
+              showDayPopover(e, dayNotifs, d);
+            });
+          }
+          cell.textContent = fa(d);
+          daysEl.appendChild(cell);
+        }
+      }
+
+      /* ════ DAY POPOVER ════ */
+      let popoverOpenDay = null;
+      function showDayPopover(e, notifs, day) {
+        e.stopPropagation();
+        const pop = document.getElementById("dayPopover");
+        if (popoverOpenDay === day && pop.classList.contains("show")) {
+          closeDayPopover();
+          return;
+        }
+        popoverOpenDay = day;
+        pop.innerHTML =
+          `<div class="dp-pop-title"><i class="fas fa-calendar-day"></i> اطلاعیه‌های ${fa(day)} ${JALALI_MONTHS[calMonth - 1]}</div>` +
+          notifs
+            .map((n) => {
+              const tm = TYPE_META[n.type] || TYPE_META.general;
+              /* ← closeDayPopover اول، سپس openDetail */
+              return `<div class="dp-pop-item" onclick="closeDayPopover();openDetail(${n.id})"><div class="dp-pop-dot" style="background:${tm.color};"></div><div class="dp-pop-text">${n.title}</div><div class="dp-pop-time">${n.time}</div></div>`;
+            })
+            .join("");
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pw = 300,
+          ph = 60 + notifs.length * 52;
+        let left = rect.left - pw - 8,
+          top = rect.top;
+        if (left < 8) left = rect.right + 8;
+        if (top + ph > window.innerHeight - 10)
+          top = window.innerHeight - ph - 10;
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+        pop.classList.add("show");
+      }
+      function closeDayPopover() {
+        document.getElementById("dayPopover").classList.remove("show");
+        popoverOpenDay = null;
+      }
+      document.addEventListener("click", function (e) {
+        if (!document.getElementById("dayPopover").contains(e.target))
+          closeDayPopover();
+      });
+      function changeMonth(dir) {
+        calMonth += dir;
+        if (calMonth > 12) {
+          calMonth = 1;
+          calYear++;
+        }
+        if (calMonth < 1) {
+          calMonth = 12;
+          calYear--;
+        }
+        renderCalendar();
+        closeDayPopover();
+      }
+
+      /* ════ UPCOMING ════ */
+      function renderUpcoming() {
+        const upcoming = notifData
+          .filter((n) => n.type === "event" || n.type === "exam")
+          .slice(0, 5);
+        const el = document.getElementById("upcomingList");
+        el.innerHTML = "";
+        if (!upcoming.length) {
+          el.innerHTML =
+            '<div style="text-align:center;padding:20px;font-size:11.5px;color:var(--text-muted);">رویداد پیش رویی وجود ندارد</div>';
+          return;
+        }
+        upcoming.forEach((n) => {
+          const tm = TYPE_META[n.type] || TYPE_META.general;
+          const parts = n.date.split("/");
+          const dayNum = parts[2] || "--";
+          const toEn = (s) =>
+            s.replace(/[۰-۹]/g, (d) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(d)]);
+          const monthNum = parseInt(toEn(parts[1] || "1"));
+          const monthName = JALALI_MONTHS[monthNum - 1] || "";
+          const item = document.createElement("div");
+          item.className = "upcoming-item";
+          item.onclick = () => openDetail(n.id);
+          item.innerHTML = `<div class="ui-date"><div class="ui-day">${dayNum}</div><div class="ui-month">${monthName}</div></div><div style="flex:1;min-width:0;"><div class="ui-title">${n.title}</div><div class="ui-sub">${tm.label} — ${n.time}</div></div><div class="ui-dot" style="background:${tm.color};"></div>`;
+          el.appendChild(item);
+        });
+      }
+
+      /* ════ QUICK STATS ════ */
+      function renderQuickStats() {
+        const total = notifData.length || 1;
+        const types = [
+          { key: "urgent", label: "فوری", color: "var(--c-urgent)" },
+          { key: "exam", label: "امتحانات", color: "var(--c-exam)" },
+          { key: "event", label: "رویداد", color: "var(--c-event)" },
+          { key: "general", label: "عمومی", color: "var(--c-general)" },
+          { key: "financial", label: "مالی", color: "var(--c-financial)" },
+          { key: "holiday", label: "تعطیلی", color: "var(--c-holiday)" },
+        ];
+        const el = document.getElementById("qsBars");
+        el.innerHTML = "";
+        types.forEach((t) => {
+          const cnt = notifData.filter((n) => n.type === t.key).length;
+          const pct = Math.round((cnt / total) * 100);
+          const row = document.createElement("div");
+          row.className = "qs-bar-row";
+          row.innerHTML = `<div class="qs-bar-label" style="color:${t.color};">${t.label}</div><div class="qs-bar-track"><div class="qs-bar-fill" style="width:0%;background:${t.color};" data-pct="${pct}"></div></div><div class="qs-bar-val" style="color:${t.color};">${fa(cnt)}</div>`;
+          el.appendChild(row);
+        });
+        setTimeout(
+          () =>
+            el.querySelectorAll(".qs-bar-fill").forEach((bar) => {
+              bar.style.width = bar.dataset.pct + "%";
+            }),
+          100,
+        );
+      }
+
+      /* ════ COMPOSE MODAL ════ */
+      function openComposeModal(id = null) {
+        editingId = id;
+        document.getElementById("composeTitleText").textContent = id
+          ? "ویرایش اطلاعیه"
+          : "اطلاعیه جدید";
+        ["cf_title", "cf_body", "cf_date", "cf_expire"].forEach((i) => {
+          const el = document.getElementById(i);
+          if (el) el.value = "";
+        });
+        document
+          .querySelectorAll('[name="aud"]')
+          .forEach((cb) => (cb.checked = false));
+        document.querySelector('[name="aud"][value="students"]').checked = true;
+        document.getElementById("cf_grade").value = "all";
+        document.getElementById("cf_class").value = "all";
+        document.getElementById("cf_pin").checked = false;
+        selectTypeReset("general");
+        selectPrioReset("mid");
+        if (id) {
+          const n = notifData.find((x) => x.id === id);
+          if (!n) return;
+          document.getElementById("cf_title").value = n.title;
+          document.getElementById("cf_body").value = n.body;
+          document.getElementById("cf_date").value = n.date;
+          document.getElementById("cf_grade").value = n.grade;
+          document.getElementById("cf_class").value = n.cls;
+          document.getElementById("cf_pin").checked = n.pinned;
+          document
+            .querySelectorAll('[name="aud"]')
+            .forEach((cb) => (cb.checked = n.audience.includes(cb.value)));
+          selectTypeReset(n.type);
+          selectPrioReset(n.priority);
+        } else {
+          document.getElementById("cf_date").value = "۱۴۰۴/۰۲/۲۷";
+        }
+        document.getElementById("composeModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function openEditModal(id) {
+        openComposeModal(id);
+      }
+      function closeComposeModal() {
+        document.getElementById("composeModal").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function closeModalOutside(e) {
+        if (e.target === document.getElementById("composeModal"))
+          closeComposeModal();
+      }
+      function selectType(btn) {
+        document
+          .querySelectorAll(".type-opt")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedType = btn.dataset.type;
+      }
+      function selectTypeReset(type) {
+        document
+          .querySelectorAll(".type-opt")
+          .forEach((b) =>
+            b.classList.toggle("selected", b.dataset.type === type),
+          );
+        selectedType = type;
+      }
+      function selectPrio(btn) {
+        document
+          .querySelectorAll(".prio-opt")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedPrio = btn.dataset.prio;
+      }
+      function selectPrioReset(prio) {
+        document
+          .querySelectorAll(".prio-opt")
+          .forEach((b) =>
+            b.classList.toggle("selected", b.dataset.prio === prio),
+          );
+        selectedPrio = prio;
+      }
+
+      function getFormData() {
+        const title = document.getElementById("cf_title").value.trim();
+        const body = document.getElementById("cf_body").value.trim();
+        const date =
+          document.getElementById("cf_date").value.trim() || "۱۴۰۴/۰۲/۲۷";
+        const grade = document.getElementById("cf_grade").value;
+        const cls = document.getElementById("cf_class").value;
+        const pinned = document.getElementById("cf_pin").checked;
+        const audience = [
+          ...document.querySelectorAll('[name="aud"]:checked'),
+        ].map((c) => c.value);
+        if (!audience.length) audience.push("students");
+        return {
+          title,
+          body,
+          date,
+          grade,
+          cls,
+          pinned,
+          audience,
+          type: selectedType,
+          priority: selectedPrio,
+        };
+      }
+      function saveDraft() {
+        const d = getFormData();
+        if (!d.title) {
+          showToast("عنوان اطلاعیه الزامی است", "warning");
+          return;
+        }
+        showToast("پیش‌نویس ذخیره شد", "info");
+        closeComposeModal();
+      }
+      function publishNotif() {
+        const d = getFormData();
+        if (!d.title) {
+          showToast("عنوان اطلاعیه الزامی است", "warning");
+          return;
+        }
+        if (!d.body) {
+          showToast("متن اطلاعیه الزامی است", "warning");
+          return;
+        }
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+        if (editingId) {
+          const idx = notifData.findIndex((x) => x.id === editingId);
+          if (idx >= 0)
+            notifData[idx] = { ...notifData[idx], ...d, time: timeStr };
+          showToast("اطلاعیه با موفقیت ویرایش شد", "success");
+          const prevId = editingId;
+          closeComposeModal();
+          updateStatCards();
+          applyFilters();
+          renderUpcoming();
+          renderQuickStats();
+          renderCalendar();
+          openDetail(prevId);
+        } else {
+          const newId = Math.max(...notifData.map((n) => n.id)) + 1;
+          notifData.unshift({
+            id: newId,
+            ...d,
+            time: timeStr,
+            read: false,
+            attachments: [],
+          });
+          showToast("اطلاعیه منتشر شد", "success");
+          closeComposeModal();
+          updateStatCards();
+          applyFilters();
+          renderUpcoming();
+          renderQuickStats();
+          renderCalendar();
+          openDetail(newId);
+        }
+      }
+
+      /* ════ DELETE ════ */
+      function openConfirm(id) {
+        deleteId = id;
+        const n = notifData.find((x) => x.id === id);
+        document.getElementById("confirmMsg").textContent =
+          `آیا از حذف اطلاعیه «${n?.title}» مطمئن هستید؟`;
+        document.getElementById("confirmModal").classList.add("open");
+      }
+      function closeConfirm() {
+        document.getElementById("confirmModal").classList.remove("open");
+        deleteId = null;
+      }
+      function doDelete() {
+        if (!deleteId) return;
+        notifData = notifData.filter((x) => x.id !== deleteId);
+        if (activeId === deleteId) {
+          activeId = null;
+          document.getElementById("dpEmpty").style.display = "block";
+          document.getElementById("dpScrollable").style.display = "none";
+        }
+        closeConfirm();
+        updateStatCards();
+        applyFilters();
+        renderUpcoming();
+        renderQuickStats();
+        renderCalendar();
+        showToast("اطلاعیه حذف شد", "error");
+      }
+
+      /* ════ EXPORT WORD ════ */
+      function openExportModal() {
+        document.getElementById("exportAllCount").textContent = fa(
+          notifData.length,
+        );
+        document.getElementById("exportFilteredCount").textContent = fa(
+          filtered.length,
+        );
+        const activeOpt = document.getElementById("exportActiveOpt");
+        if (activeId) {
+          const n = notifData.find((x) => x.id === activeId);
+          activeOpt.style.display = "flex";
+          document.getElementById("exportActiveDesc").textContent = n
+            ? n.title
+            : "اطلاعیه انتخاب‌شده";
+        } else activeOpt.style.display = "none";
+        document.getElementById("exportModal").classList.add("open");
+      }
+      function closeExportModal() {
+        document.getElementById("exportModal").classList.remove("open");
+      }
+      function closeExportOutside(e) {
+        if (e.target === document.getElementById("exportModal"))
+          closeExportModal();
+      }
+      function doExport(scope) {
+        let list;
+        if (scope === "all") list = [...notifData];
+        else if (scope === "filtered") list = [...filtered];
+        else if (scope === "active") {
+          const n = notifData.find((x) => x.id === activeId);
+          list = n ? [n] : [];
+        }
+        if (!list || !list.length) {
+          showToast("موردی برای خروجی وجود ندارد", "warning");
+          return;
+        }
+        closeExportModal();
+        showToast("در حال ساخت فایل Word...", "info");
+        setTimeout(() => generateWordDoc(list), 300);
+      }
+      function generateWordDoc(list) {
+        const TYPE_FA = {
+          urgent: "فوری",
+          exam: "امتحانات",
+          event: "رویداد",
+          general: "عمومی",
+          financial: "مالی",
+          holiday: "تعطیلی",
+        };
+        const AUD_FA = {
+          students: "دانش‌آموزان",
+          parents: "والدین",
+          teachers: "معلمین",
+          all_staff: "کارکنان",
+        };
+        const PRIO_FA = { high: "بالا", mid: "متوسط", low: "پایین" };
+        let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Vazirmatn,Tahoma,Arial;direction:rtl;font-size:11pt;color:#1a1a2e;margin:2cm;}h1{font-size:18pt;color:#1a3a6e;border-bottom:2px solid #4a90d9;padding-bottom:8pt;margin-bottom:16pt;}h2{font-size:13pt;color:#162040;margin-top:20pt;margin-bottom:6pt;}.meta{font-size:9pt;color:#666;margin-bottom:8pt;border-right:3px solid #4a90d9;padding-right:8pt;}.body-text{font-size:11pt;line-height:1.8;margin-bottom:12pt;}.divider{border:none;border-top:1px solid #ddd;margin:16pt 0;}.badge{font-size:9pt;padding:2pt 6pt;background:#eef4ff;border:1px solid #c0d4f0;border-radius:4pt;margin-left:4pt;}.header-info{font-size:10pt;color:#888;margin-bottom:24pt;}</style></head><body><h1>گزارش اطلاعیه‌های هنرستان شهید بوربور</h1><div class="header-info">تاریخ تهیه: ${new Date().toLocaleDateString("fa-IR")} &nbsp;|&nbsp; تعداد اطلاعیه: ${list.length}</div>`;
+        list.forEach((n, i) => {
+          const audText = n.audience.map((a) => AUD_FA[a] || a).join("، ");
+          html += `<h2>${i + 1}. ${n.title}</h2><div class="meta"><span class="badge">نوع: ${TYPE_FA[n.type] || n.type}</span><span class="badge">اولویت: ${PRIO_FA[n.priority] || n.priority}</span><span class="badge">تاریخ: ${n.date}</span><span class="badge">مخاطبان: ${audText}</span>${n.pinned ? '<span class="badge">📌 سنجاق شده</span>' : ""}</div><div class="body-text">${n.body}</div><hr class="divider">`;
+        });
+        html += "</body></html>";
+        const blob = new Blob(["\ufeff" + html], {
+          type: "application/msword;charset=utf-8",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `اطلاعیه‌های_بوربور_${new Date().toLocaleDateString("fa-IR").replace(/\//g, "-")}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(
+          `فایل Word با ${fa(list.length)} اطلاعیه دانلود شد`,
+          "success",
+        );
+      }
+
+      /* ════ SIDEBAR ════ */
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("overlay").classList.add("on");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("on");
+        document.body.style.overflow = "";
+      }
+      document
+        .getElementById("hamburger")
+        .addEventListener("click", openSidebar);
+      document
+        .getElementById("sbCloseBtn")
+        .addEventListener("click", closeSidebar);
+      document
+        .getElementById("overlay")
+        .addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeSidebar();
+          closeDayPopover();
+          closeJDP();
+        }
+      });
+
+      /* ════ INIT ════ */
+      updateStatCards();
+      applyFilters();
+      renderCalendar();
+      renderUpcoming();
+      renderQuickStats();
+      setTimeout(() => {
+        if (notifData.length) openDetail(notifData[0].id);
+      }, 150);
+
+      /* ════ JALALI DATE PICKER ════ */
+      (function () {
+        const MONTHS = [
+          "فروردین",
+          "اردیبهشت",
+          "خرداد",
+          "تیر",
+          "مرداد",
+          "شهریور",
+          "مهر",
+          "آبان",
+          "آذر",
+          "دی",
+          "بهمن",
+          "اسفند",
+        ];
+        const MDAYS = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        const toFa = (s) => String(s).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+        const toEn = (s) =>
+          s.replace(/[۰-۹]/g, (d) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(d)]);
+        const pad2 = (n) => String(n).padStart(2, "0");
+        let jY = 1404,
+          jM = 2,
+          activeInput = null;
+
+        /* inject DOM */
+        const ov = document.createElement("div");
+        ov.id = "jdp-overlay";
+        ov.onclick = () => closeJDP();
+        document.body.appendChild(ov);
+        const bx = document.createElement("div");
+        bx.id = "jdp-box";
+        bx.onclick = (e) => e.stopPropagation();
+        document.body.appendChild(bx);
+
+        window.openJDP = function (inp) {
+          activeInput = inp;
+          const val = toEn(inp.value || "");
+          const parts = val.split("/");
+          if (parts.length === 3 && +parts[1] >= 1 && +parts[1] <= 12) {
+            jY = +parts[0];
+            jM = +parts[1];
+          } else {
+            jY = 1404;
+            jM = 2;
+          }
+          renderJDP();
+          /* موقعیت زیر input، با بررسی لبه صفحه */
+          const rect = inp.getBoundingClientRect();
+          let top = rect.bottom + window.scrollY + 6;
+          let left = rect.right - 280;
+          if (left < 8) left = 8;
+          if (left + 280 > window.innerWidth - 8)
+            left = window.innerWidth - 288;
+          bx.style.top = top + "px";
+          bx.style.left = left + "px";
+          ov.classList.add("open");
+          bx.style.display = "block";
+        };
+
+        window.closeJDP = function () {
+          ov.classList.remove("open");
+          bx.style.display = "none";
+          activeInput = null;
+        };
+
+        /* pickDate: مقدار بده و ببند */
+        window.pickDate_jdp = function (d) {
+          if (!activeInput) return;
+          activeInput.value = toFa(`${jY}/${pad2(jM)}/${pad2(d)}`);
+          closeJDP();
+        };
+
+        window.jdpNav = function (dir) {
+          jM += dir;
+          if (jM > 12) {
+            jM = 1;
+            jY++;
+          }
+          if (jM < 1) {
+            jM = 12;
+            jY--;
+          }
+          renderJDP();
+        };
+        window.jdpClear = function () {
+          if (activeInput) activeInput.value = "";
+          closeJDP();
+        };
+
+        function getSelectedDay() {
+          if (!activeInput || !activeInput.value) return 0;
+          const parts = toEn(activeInput.value).split("/");
+          if (parts.length === 3 && +parts[0] === jY && +parts[1] === jM)
+            return +parts[2];
+          return 0;
+        }
+
+        function renderJDP() {
+          const todayD = jM === 2 && jY === 1404 ? 27 : 0;
+          const selD = getSelectedDay();
+          const offset = (4 + (jY - 1404) * 365 + (jM - 1) * 30) % 7;
+          const total = MDAYS[jM - 1];
+          const prevTotal = MDAYS[jM === 1 ? 11 : jM - 2];
+          let daysHtml = "";
+          for (let i = 0; i < offset; i++)
+            daysHtml += `<button class="jdp-day other" tabindex="-1">${toFa(prevTotal - (offset - 1 - i))}</button>`;
+          for (let d = 1; d <= total; d++) {
+            let cls = "jdp-day";
+            if (d === todayD) cls += " today";
+            if (d === selD) cls += " selected";
+            daysHtml += `<button class="${cls}" onclick="event.stopPropagation();pickDate_jdp(${d})">${toFa(d)}</button>`;
+          }
+          bx.innerHTML = `
+          <div class="jdp-hdr">
+            <div class="jdp-nav">
+              <button class="jdp-nav-btn" onclick="event.stopPropagation();jdpNav(-1)"><i class="fas fa-chevron-right"></i></button>
+              <button class="jdp-nav-btn" onclick="event.stopPropagation();jdpNav(1)"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            <div class="jdp-month-lbl">${MONTHS[jM - 1]} ${toFa(jY)}</div>
+          </div>
+          <div class="jdp-weekdays">${["ش", "ی", "د", "س", "چ", "پ", "ج"].map((w) => `<div class="jdp-wd">${w}</div>`).join("")}</div>
+          <div class="jdp-days">${daysHtml}</div>
+          <button class="jdp-clear" onclick="event.stopPropagation();jdpClear()">پاک کردن</button>`;
+        }
+
+        /* پیش‌فرض: box مخفی */
+        bx.style.display = "none";
+      })();
+    </script>
+  </body>
+</html>

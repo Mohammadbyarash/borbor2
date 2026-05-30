@@ -1,0 +1,111 @@
+/* ==================== MENU STYLES ==================== */
+
+/* کلاس برای آیتم‌های دارای زیرمنو */
+.menu-item.has-submenu {
+    position: relative;
+}
+
+/* لینک اصلی منو */
+.menu-item.has-submenu .menu-link {
+    position: relative;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+/* هاور روی لینک اصلی */
+.menu-item.has-submenu .menu-link:hover {
+    background: #202B59;
+    color: white;
+}
+
+/* استایل active فقط برای منوی اصلی - نه زیرمنوها */
+.menu-item.has-submenu.active > .menu-link {
+    background: #202B59;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* آیکون منوی اصلی */
+.menu-item.has-submenu .menu-link i:first-child {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+/* فلش کنار منو */
+.submenu-arrow {
+    margin-right: auto;
+    font-size: 14px !important;
+    transition: transform 0.3s ease;
+}
+
+/* چرخش فلش وقتی منو باز می‌شه */
+.menu-item.has-submenu.open .submenu-arrow {
+    transform: rotate(180deg);
+}
+
+/* استایل کانتینر زیرمنو */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+/* وقتی منو باز می‌شه */
+.menu-item.has-submenu.open .submenu {
+    max-height: 500px; /* افزایش ارتفاع برای زیرمنوهای بلند */
+}
+
+/* استایل آیتم‌های داخل زیرمنو */
+.submenu-item {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    padding: 12px 20px 12px 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+/* آیکون‌های زیرمنو */
+.submenu-item i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+/* هاور روی آیتم‌های زیرمنو */
+.submenu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding-right: 25px;
+}
+
+/* استایل برای زیرمنوی انتخاب شده */
+.submenu-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 500;
+}
+
+/* جلوگیری از اعمال active منوی اصلی به زیرمنوها */
+.menu-item.has-submenu.active .submenu-item:not(.active) {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+}

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربر - گزارشات</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="../style/reports.css">
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <script src="../js/chart.umd.min.js"></script>
+    <script src="../js/xlsx.full.min.js"></script>
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+    <script src="../javaScript/reports.js"></script>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link">
+            <i class="fas fa-users"></i>
+            مدیریت کاربران
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item">
+              <i class="fas fa-user-tie"></i>
+              مدیریت معاونان
+            </a>
+            <a href="../html/Teacher_management.html" class="submenu-item">
+              <i class="fas fa-chalkboard-teacher"></i>
+              مدیریت معلمین
+            </a>
+            <a href="../html/student.html" class="submenu-item">
+              <i class="fas fa-user-graduate"></i>
+              مدیریت دانش‌آموزان
+            </a>
+            <a href="../html/Parents.html" class="submenu-item">
+              <i class="fas fa-users"></i>
+              مدیریت اولیا
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link">
+            <i class="fas fa-chalkboard-teacher"></i>
+            مدیریت کلاس ها
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item">
+              <i class="fas fa-list"></i>
+              مدیریت دروس
+            </a>
+            <a href="../html/Class-schedule.html" class="submenu-item">
+              <i class="fas fa-calendar-alt"></i>
+              برنامه و لیست کلاسی
+            </a>
+            <a href="../html/Attendance.html" class="submenu-item">
+              <i class="fas fa-clipboard-check"></i>
+              حضور و غیاب
+            </a>
+            <a href="../html/grades.html" class="submenu-item">
+              <i class="fas fa-star"></i>
+              نمرات
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <div class="menu-item active">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../api/logout.php">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+        <main class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">گزارشات</h1>
+                <div class="admin-info">مدیر: آقای بیارش</div>
+            </div>
+
+            <div class="filter-section">
+                <h2 class="filter-title">
+                    <i class="fas fa-filter"></i>
+                    فیلترهای گزارش
+                </h2>
+                <div class="filter-options">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            بازه زمانی
+                        </label>
+                        <select class="filter-select" id="timeRange">
+                            <option value="today">امروز</option>
+                            <option value="week">این هفته</option>
+                            <option value="month">این ماه</option>
+                            <option value="term" selected>این ترم</option>
+                            <option value="year">سال تحصیلی</option>
+                            <option value="custom">بازه دلخواه</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-chart-bar"></i>
+                            نوع گزارش
+                        </label>
+                        <select class="filter-select" id="reportType">
+                            <option value="all" selected>همه گزارش‌ها</option>
+                            <option value="educational">تحصیلی</option>
+                            <option value="financial">مالی</option>
+                            <option value="attendance">حضور و غیاب</option>
+                            <option value="performance">عملکرد</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            پایه تحصیلی
+                        </label>
+                        <select class="filter-select" id="gradeFilter">
+                            <option value="all" selected>همه پایه‌ها</option>
+                            <option value="10">دهم</option>
+                            <option value="11">یازدهم</option>
+                            <option value="12">دوازدهم</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-school"></i>
+                            کلاس
+                        </label>
+                        <select class="filter-select" id="classFilter">
+                            <option value="all" selected>همه کلاس‌ها</option>
+                            <option value="10-1">دهم-1</option>
+                            <option value="10-2">دهم-2</option>
+                            <option value="11-1">یازدهم-1</option>
+                            <option value="11-2">یازدهم-2</option>
+                            <option value="12-1">دوازدهم-1</option>
+                            <option value="12-2">دوازدهم-2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn primary" onclick="applyFilters()">
+                        <i class="fas fa-check"></i>
+                        اعمال فیلتر
+                    </button>
+                    <button class="filter-btn" onclick="resetFilters()">
+                        <i class="fas fa-redo"></i>
+                        بازنشانی
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">کل دانش‌آموزان</div>
+                    <div class="stat-value" id="totalStudents">342</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        12 نفر نسبت به ماه قبل
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">کل معلمان</div>
+                    <div class="stat-value" id="totalTeachers">28</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        3 نفر نسبت به ماه قبل
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-school"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">تعداد کلاس‌ها</div>
+                    <div class="stat-value" id="totalClasses">18</div>
+                    <div class="stat-change">
+                        <i class="fas fa-minus"></i>
+                        بدون تغییر
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">پیش ثبت نام جدید</div>
+                    <div class="stat-value" id="newRegistrations">45</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        8 نفر نسبت به هفته قبل
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">نرخ حضور امروز</div>
+                    <div class="stat-value" id="attendanceRate">94%</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        2% نسبت به دیروز
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon red">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">غیبت امروز</div>
+                    <div class="stat-value" id="absences">21</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        5 نفر نسبت به دیروز
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i>
+                            روند ثبت نام در 6 ماه اخیر
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn" onclick="exportChart('enrollment')">
+                                <i class="fas fa-download"></i>
+                                خروجی
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="enrollmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-pie"></i>
+                            توزیع دانش‌آموزان به تفکیک پایه
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn" onclick="exportChart('distribution')">
+                                <i class="fas fa-download"></i>
+                                خروجی
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-bar"></i>
+                            نرخ حضور و غیاب هفتگی
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn" onclick="exportChart('attendance')">
+                                <i class="fas fa-download"></i>
+                                خروجی
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-area"></i>
+                            معدل کلاس‌ها
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn" onclick="exportChart('grades')">
+                                <i class="fas fa-download"></i>
+                                خروجی
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gradesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tables-grid">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-trophy"></i>
+                            برترین دانش‌آموزان
+                        </h3>
+                        <button class="chart-btn" onclick="viewMore('students')">
+                            <i class="fas fa-eye"></i>
+                            مشاهده همه
+                        </button>
+                    </div>
+                    <table class="report-table" id="topStudentsTable">
+                        <thead>
+                            <tr>
+                                <th>رتبه</th>
+                                <th>نام و نام خانوادگی</th>
+                                <th>پایه</th>
+                                <th>معدل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="rank-badge rank-1">1</div></td>
+                                <td>علی احمدی</td>
+                                <td>دوازدهم</td>
+                                <td>19.85</td>
+                            </tr>
+                            <tr>
+                                <td><div class="rank-badge rank-2">2</div></td>
+                                <td>محمد رضایی</td>
+                                <td>یازدهم</td>
+                                <td>19.72</td>
+                            </tr>
+                            <tr>
+                                <td><div class="rank-badge rank-3">3</div></td>
+                                <td>حسین کریمی</td>
+                                <td>دوازدهم</td>
+                                <td>19.65</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>رضا محمدی</td>
+                                <td>دهم</td>
+                                <td>19.50</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>امیر حسینی</td>
+                                <td>یازدهم</td>
+                                <td>19.45</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-list"></i>
+                            وضعیت کلاس‌ها
+                        </h3>
+                        <button class="chart-btn" onclick="viewMore('classes')">
+                            <i class="fas fa-eye"></i>
+                            مشاهده همه
+                        </button>
+                    </div>
+                    <table class="report-table" id="classesTable">
+                        <thead>
+                            <tr>
+                                <th>کلاس</th>
+                                <th>تعداد دانش‌آموز</th>
+                                <th>معدل کلاس</th>
+                                <th>وضعیت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>دهم-1</td>
+                                <td>25</td>
+                                <td>18.50</td>
+                                <td><span class="status-active">فعال</span></td>
+                            </tr>
+                            <tr>
+                                <td>دهم-2</td>
+                                <td>28</td>
+                                <td>18.25</td>
+                                <td><span class="status-active">فعال</span></td>
+                            </tr>
+                            <tr>
+                                <td>یازدهم-1</td>
+                                <td>30</td>
+                                <td>17.90</td>
+                                <td><span class="status-active">فعال</span></td>
+                            </tr>
+                            <tr>
+                                <td>یازدهم-2</td>
+                                <td>27</td>
+                                <td>18.10</td>
+                                <td><span class="status-active">فعال</span></td>
+                            </tr>
+                            <tr>
+                                <td>دوازدهم-1</td>
+                                <td>26</td>
+                                <td>18.75</td>
+                                <td><span class="status-active">فعال</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="activity-log">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-history"></i>
+                        آخرین فعالیت‌ها
+                    </h3>
+                    <button class="chart-btn" onclick="viewMore('activities')">
+                        <i class="fas fa-eye"></i>
+                        مشاهده همه
+                    </button>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon add">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">دانش‌آموز جدید اضافه شد: محمد رضایی</div>
+                        <div class="activity-time">2 ساعت پیش</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon edit">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">معدل کلاس دهم-1 بروزرسانی شد</div>
+                        <div class="activity-time">5 ساعت پیش</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon add">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">پیش ثبت نام جدید: امیر احمدی</div>
+                        <div class="activity-time">1 روز پیش</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon delete">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">دانش‌آموز حذف شد: علی کریمی</div>
+                        <div class="activity-time">2 روز پیش</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon edit">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">اطلاعات معلم ویرایش شد: حسن حسینی</div>
+                        <div class="activity-time">3 روز پیش</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-section">
+                <h2 class="export-title">
+                    <i class="fas fa-file-export"></i>
+                    خروجی گزارش
+                </h2>
+                <div class="export-buttons">
+                    <button class="export-btn pdf" onclick="exportReport('pdf')">
+                        <i class="fas fa-file-pdf"></i>
+                        خروجی PDF
+                    </button>
+                    <button class="export-btn excel" onclick="exportReport('excel')">
+                        <i class="fas fa-file-excel"></i>
+                        خروجی Excel
+                    </button>
+                    <button class="export-btn print" onclick="printReport()">
+                        <i class="fas fa-print"></i>
+                        چاپ گزارش
+                    </button>
+                    <button class="export-btn" onclick="shareReport()">
+                        <i class="fas fa-share-alt"></i>
+                        اشتراک‌گذاری
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">
+                <i class="fas fa-spinner fa-spin"></i>
+                در حال آماده‌سازی گزارش...
+            </h3>
+            <p class="modal-text">لطفاً صبر کنید، گزارش شما در حال تهیه است.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn-cancel" onclick="closeExportModal()">
+                    <i class="fas fa-times"></i>
+                    لغو
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../javaScript/menu.js"></script>
+    <script>
+        function waitForChart(callback, maxAttempts = 100) {
+            if (window.Chart) {
+                callback();
+            } else if (maxAttempts > 0) {
+                setTimeout(() => waitForChart(callback, maxAttempts - 1), 50);
+            } else {
+                console.warn('Chart.js بارگذاری نشد');
+            }
+        }
+
+        function initCharts() {
+            const enrollmentCtx = document.getElementById('enrollmentChart')?.getContext('2d');
+            if (enrollmentCtx) {
+                new Chart(enrollmentCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+                        datasets: [{
+                            label: 'ثبت نام',
+                            data: [320, 328, 335, 340, 342, 345],
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
+                        },
+                        scales: {
+                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            }
+
+            const distributionCtx = document.getElementById('distributionChart')?.getContext('2d');
+            if (distributionCtx) {
+                new Chart(distributionCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['دهم', 'یازدهم', 'دوازدهم'],
+                        datasets: [{
+                            data: [120, 115, 107],
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
+                        }
+                    }
+                });
+            }
+
+            const attendanceCtx = document.getElementById('attendanceChart')?.getContext('2d');
+            if (attendanceCtx) {
+                new Chart(attendanceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه'],
+                        datasets: [{
+                            label: 'حضور (%)',
+                            data: [92, 95, 88, 94, 90],
+                            backgroundColor: '#2196F3'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
+                        },
+                        scales: {
+                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            }
+
+            const gradesCtx = document.getElementById('gradesChart')?.getContext('2d');
+            if (gradesCtx) {
+                new Chart(gradesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['دهم-1', 'دهم-2', 'یازدهم-1', 'یازدهم-2', 'دوازدهم-1'],
+                        datasets: [{
+                            label: 'معدل',
+                            data: [18.5, 18.25, 17.9, 18.1, 18.75],
+                            backgroundColor: '#9C27B0'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
+                        },
+                        scales: {
+                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        waitForChart(initCharts);
+    </script>
+</body>
+</html>

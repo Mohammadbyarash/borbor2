@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - ارشیو</title>
+    <link rel="stylesheet" href="../style/archive.css">
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <link rel="icon" href="../image/iconB.png">
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <!-- داشبورد -->
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+        <!-- مدیریت کاربران (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link">
+            <i class="fas fa-users"></i>
+            مدیریت کاربران
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item">
+              <i class="fas fa-user-tie"></i>
+              مدیریت معاونان
+            </a>
+            <a href="../html/Teacher_management.html" class="submenu-item">
+              <i class="fas fa-chalkboard-teacher"></i>
+              مدیریت معلمین
+            </a>
+            <a href="../html/student.html" class="submenu-item">
+              <i class="fas fa-user-graduate"></i>
+              مدیریت دانش‌آموزان
+            </a>
+            <a href="../html/Parents.html" class="submenu-item">
+              <i class="fas fa-users"></i>
+              مدیریت اولیا
+            </a>
+          </div>
+        </div>
+
+        <!-- مدیریت کلاس‌ها (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link">
+            <i class="fas fa-chalkboard-teacher"></i>
+            مدیریت کلاس ها
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item">
+              <i class="fas fa-list"></i>
+                          مدیریت دروس
+
+            </a>
+            <a href="../html/Class-schedule.html" class="submenu-item">
+              <i class="fas fa-calendar-alt"></i>
+              برنامه و لیست کلاسی
+            </a>
+            <a href="../html/Attendance.html" class="submenu-item">
+              <i class="fas fa-clipboard-check"></i>
+              حضور و غیاب
+            </a>
+            <a href="../html/grades.html" class="submenu-item">
+              <i class="fas fa-star"></i>
+              نمرات
+            </a>
+          </div>
+        </div>
+
+        <!-- پیش ثبت نام ها -->
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <!-- گزارش ها -->
+        <div class="menu-item">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <!-- اطلاعیه ها -->
+        <div class="menu-item">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item active">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+
+         <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+
+        
+
+        <!-- تنظیمات -->
+        <div class="menu-item">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <!-- خروج -->
+        <div class="menu-item">
+          <a href="#">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+        <div class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">ارشیو</h1>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button class="excel-export-btn" onclick="openExcelModal()">
+                        <i class="fas fa-file-excel"></i>
+                        <span>خروجی Excel</span>
+                    </button>
+                    <div class="admin-info">مدیر : آقای بیارش</div>
+                </div>
+            </div>
+
+            <!-- Archive Stats -->
+            <div class="archive-stats">
+                <div class="stat-card">
+                    <div class="stat-icon teachers">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">معلمان ارشیو شده</div>
+                        <div class="stat-value" id="teachersCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon assistants">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">معاونان ارشیو شده</div>
+                        <div class="stat-value" id="assistantsCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon students">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">دانش‌آموزان ارشیو شده</div>
+                        <div class="stat-value" id="studentsCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon classes">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">کلاس‌های ارشیو شده</div>
+                        <div class="stat-value" id="classesCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">مجموع آیتم‌ها</div>
+                        <div class="stat-value" id="totalCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label class="filter-label">نوع آیتم:</label>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="all">همه</option>
+                        <option value="teacher">معلمان</option>
+                        <option value="assistant">معاونان</option>
+                        <option value="student">دانش‌آموزان</option>
+                        <option value="class">کلاس‌ها</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">سال تحصیلی:</label>
+                    <select class="filter-select" id="yearFilter">
+                        <option value="all">همه سال‌ها</option>
+                        <option value="1403-1404">1403-1404</option>
+                        <option value="1402-1403">1402-1403</option>
+                        <option value="1401-1402">1401-1402</option>
+                        <option value="1400-1401">1400-1401</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <input type="text" class="search-input" id="searchInput" placeholder="جستجو در ارشیو...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+
+            <!-- Archive Grid -->
+            <div class="archive-grid" id="archiveGrid">
+                <!-- Archive items will be rendered here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-archive"></i>
+                <h3>ارشیو خالی است</h3>
+                <p>هیچ آیتمی در ارشیو یافت نشد</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <span class="page-info" id="pageInfo">صفحه 1 از 1</span>
+                <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="delete-modal-content">
+            <div class="delete-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="modal-title">حذف دائمی</h2>
+            <p class="delete-modal-text" id="deleteText">
+                آیا مطمئن هستید که می‌خواهید این آیتم را به صورت دائمی حذف کنید؟
+            </p>
+            <div class="delete-warning">
+                <i class="fas fa-info-circle"></i>
+                <span>این عملیات قابل بازگشت نیست و تمام اطلاعات مرتبط به صورت دائمی حذف خواهند شد.</span>
+            </div>
+            <div class="delete-modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">
+                    <i class="fas fa-trash-alt"></i>
+                    حذف دائمی
+                </button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Confirmation Modal -->
+    <div class="modal" id="restoreModal">
+        <div class="restore-modal-content">
+            <div class="restore-icon">
+                <i class="fas fa-undo-alt"></i>
+            </div>
+            <h2 class="modal-title">بازگردانی آیتم</h2>
+            <p class="restore-modal-text" id="restoreText">
+                آیا مطمئن هستید که می‌خواهید این آیتم را بازگردانی کنید؟
+            </p>
+            <div class="restore-modal-buttons">
+                <button class="modal-btn modal-btn-restore" onclick="confirmRestore()">
+                    <i class="fas fa-undo-alt"></i>
+                    بازگردانی
+                </button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeRestoreModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="successToast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">موفقیت‌آمیز</div>
+            <div class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد</div>
+        </div>
+        <button class="toast-close" onclick="closeToast()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Archived Class Students Modal -->
+    <div class="modal" id="archivedStudentsModal">
+        <div class="archived-students-modal-content">
+            <button class="close-btn" onclick="closeArchivedStudentsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title" id="archivedStudentsModalTitle">لیست دانش‌آموزان کلاس</h2>
+
+            <div class="search" style="margin-bottom: 20px">
+                <input
+                    class="inp-search"
+                    type="text"
+                    id="archivedStudentSearchInput"
+                    placeholder="جستجوی دانش‌آموز (نام، کد، کد ملی، شماره تماس)..."
+                    onkeyup="searchArchivedStudents()"
+                />
+            </div>
+
+            <div class="students-container">
+                <div class="students-grid" id="archivedStudentsContainer">
+                    <!-- Student cards will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archived Student Details Modal -->
+    <div class="modal" id="archivedStudentDetailsModal">
+        <div class="student-details-modal-content">
+            <button class="close-btn" onclick="closeArchivedStudentDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="student-header">
+                <div class="student-avatar-container">
+                    <img class="student-avatar" id="archivedStudentAvatarImg" style="display: none" />
+                    <div class="student-avatar-placeholder" id="archivedStudentAvatarPlaceholder">A</div>
+                </div>
+                <div class="student-basic-info">
+                    <div class="student-name" id="archivedStudentName">نام دانش‌آموز</div>
+                    <div class="student-code" id="archivedStudentCodeDisplay">کد: ------</div>
+                    <div class="archived-badge" style="display: inline-flex; margin-top: 10px;">
+                        <i class="fas fa-archive"></i>
+                        ارشیو شده
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-user"></i>
+                    اطلاعات فردی
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">نام:</div>
+                        <div class="detail-value" id="archivedFirstName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">نام خانوادگی:</div>
+                        <div class="detail-value" id="archivedLastName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">کد ملی:</div>
+                        <div class="detail-value" id="archivedNationalId">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">تاریخ تولد:</div>
+                        <div class="detail-value" id="archivedBirthdate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شماره همراه:</div>
+                        <div class="detail-value" id="archivedMobile">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شماره تلفن ثابت:</div>
+                        <div class="detail-value" id="archivedHomePhone">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-male"></i>
+                    اطلاعات پدر
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">نام پدر:</div>
+                        <div class="detail-value" id="archivedFatherName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">کد ملی پدر:</div>
+                        <div class="detail-value" id="archivedFatherNationalId">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">تاریخ تولد پدر:</div>
+                        <div class="detail-value" id="archivedFatherBirthdate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شماره همراه پدر:</div>
+                        <div class="detail-value" id="archivedFatherMobile">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شغل پدر:</div>
+                        <div class="detail-value" id="archivedFatherJob">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">تحصیلات پدر:</div>
+                        <div class="detail-value" id="archivedFatherEducation">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-female"></i>
+                    اطلاعات مادر
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">نام مادر:</div>
+                        <div class="detail-value" id="archivedMotherName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">کد ملی مادر:</div>
+                        <div class="detail-value" id="archivedMotherNationalId">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">تاریخ تولد مادر:</div>
+                        <div class="detail-value" id="archivedMotherBirthdate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شماره همراه مادر:</div>
+                        <div class="detail-value" id="archivedMotherMobile">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">شغل مادر:</div>
+                        <div class="detail-value" id="archivedMotherJob">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">تحصیلات مادر:</div>
+                        <div class="detail-value" id="archivedMotherEducation">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    اطلاعات سکونت
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item" style="grid-column: 1 / -1">
+                        <div class="detail-label">آدرس:</div>
+                        <div class="detail-value" id="archivedAddress">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">کد پستی:</div>
+                        <div class="detail-value" id="archivedPostalCode">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-archive"></i>
+                    اطلاعات ارشیو
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">تاریخ ارشیو:</div>
+                        <div class="detail-value" id="archivedDate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">سال تحصیلی:</div>
+                        <div class="detail-value" id="archivedAcademicYear">-</div>
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1">
+                        <div class="detail-label">دلیل ارشیو:</div>
+                        <div class="detail-value" id="archivedReason">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archived Item Details Modal (Teacher/Student) -->
+    <div class="modal" id="archivedItemDetailsModal">
+        <div class="student-details-modal-content">
+            <button class="close-btn" onclick="closeArchivedItemDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="student-header">
+                <div class="student-avatar-container">
+                    <img class="student-avatar" id="itemAvatarImg" style="display: none" />
+                    <div class="student-avatar-placeholder" id="itemAvatarPlaceholder">A</div>
+                </div>
+                <div class="student-basic-info">
+                    <div class="student-name" id="itemName">نام</div>
+                    <div class="student-code" id="itemType">نوع</div>
+                    <div class="archived-badge" style="display: inline-flex; margin-top: 10px;">
+                        <i class="fas fa-archive"></i>
+                        ارشیو شده
+                    </div>
+                </div>
+            </div>
+
+            <div id="teacherDetailsSection" style="display: none;">
+                <div class="details-section">
+                    <h3 class="details-section-title">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        اطلاعات معلم
+                    </h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">کد معلم:</div>
+                            <div class="detail-value" id="teacherCode">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">کد ملی:</div>
+                            <div class="detail-value" id="teacherNationalId">-</div>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1">
+                            <div class="detail-label">دروس تدریسی:</div>
+                            <div class="detail-value" id="teacherSubjects">-</div>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1">
+                            <div class="detail-label">پایه‌های تدریس:</div>
+                            <div class="detail-value" id="teacherGrades">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3 class="details-section-title">
+                        <i class="fas fa-phone"></i>
+                        اطلاعات تماس
+                    </h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">شماره موبایل:</div>
+                            <div class="detail-value" id="teacherMobile">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">ایمیل:</div>
+                            <div class="detail-value" id="teacherEmail">-</div>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1">
+                            <div class="detail-label">آدرس:</div>
+                            <div class="detail-value" id="teacherAddress">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="assistantDetailsSection" style="display: none;">
+                <div class="details-section">
+                    <h3 class="details-section-title">
+                        <i class="fas fa-user-cog"></i>
+                        اطلاعات معاون
+                    </h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">کد معاون:</div>
+                            <div class="detail-value" id="assistantCode">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">کد ملی:</div>
+                            <div class="detail-value" id="assistantNationalId">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">سمت:</div>
+                            <div class="detail-value" id="assistantPosition">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">دپارتمان:</div>
+                            <div class="detail-value" id="assistantDepartment">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3 class="details-section-title">
+                        <i class="fas fa-phone"></i>
+                        اطلاعات تماس
+                    </h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">شماره موبایل:</div>
+                            <div class="detail-value" id="assistantMobile">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">ایمیل:</div>
+                            <div class="detail-value" id="assistantEmail">-</div>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1">
+                            <div class="detail-label">آدرس:</div>
+                            <div class="detail-value" id="assistantAddress">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studentDetailsSection" style="display: none;">
+                <div class="details-section">
+                    <h3 class="details-section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        اطلاعات دانش‌آموز
+                    </h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">کد دانش‌آموز:</div>
+                            <div class="detail-value" id="studentCodeDetail">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">پایه تحصیلی:</div>
+                            <div class="detail-value" id="studentGrade">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">رشته:</div>
+                            <div class="detail-value" id="studentField">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">کد ملی:</div>
+                            <div class="detail-value" id="studentNationalIdDetail">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="details-section-title">
+                    <i class="fas fa-archive"></i>
+                    اطلاعات ارشیو
+                </h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">تاریخ ارشیو:</div>
+                        <div class="detail-value" id="itemArchivedDate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">سال تحصیلی:</div>
+                        <div class="detail-value" id="itemAcademicYear">-</div>
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1">
+                        <div class="detail-label">دلیل ارشیو:</div>
+                        <div class="detail-value" id="itemReason">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Export Modal -->
+    <div class="modal" id="excelExportModal">
+        <div class="excel-modal-content">
+            <button class="close-btn" onclick="closeExcelModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">خروجی Excel ارشیو</h2>
+
+            <div class="excel-section">
+                <h3 class="excel-section-title">
+                    <i class="fas fa-file-excel"></i>
+                    انتخاب نوع خروجی
+                </h3>
+                <div class="excel-options">
+                    <button class="excel-option-btn" onclick="exportArchiveExcel('teachers')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>معلمان ارشیو شده</span>
+                        </div>
+                        <span class="excel-badge" id="teachersCount">0 معلم</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportArchiveExcel('assistants')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-user-cog"></i>
+                            <span>معاونان ارشیو شده</span>
+                        </div>
+                        <span class="excel-badge" id="assistantsExportCount">0 معاون</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportArchiveExcel('students')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>دانش‌آموزان ارشیو شده</span>
+                        </div>
+                        <span class="excel-badge" id="studentsArchiveCount">0 دانش‌آموز</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportArchiveExcel('classes')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-chalkboard"></i>
+                            <span>کلاس‌های ارشیو شده</span>
+                        </div>
+                        <span class="excel-badge" id="classesCount">0 کلاس</span>
+                    </button>
+                    <button class="excel-option-btn excel-all-btn" onclick="exportArchiveExcel('all')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-database"></i>
+                            <span>همه موارد ارشیو</span>
+                        </div>
+                        <span class="excel-badge" id="allCount">0 مورد</span>
+                    </button>
+                </div>
+            </div>
+
+            <button class="excel-cancel-btn" onclick="closeExcelModal()">
+                <i class="fas fa-times"></i>
+                انصراف
+            </button>
+        </div>
+    </div>
+
+    <script src="../javaScript/archive.js"></script>
+    <script src="../javaScript/menu.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>

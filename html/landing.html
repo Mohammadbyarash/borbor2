@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هنرستان بوربور | آینده از اینجا شروع می‌شود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/landing.css">
+
+
+
+</head>
+<body>
+
+
+
+<!-- بک‌گراند انیمیشنی -->
+<div id="animated-bg">
+  <canvas id="bgCanvas"></canvas>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <nav>
+    <div class="logo-mark">
+      
+      <div class="logo-text">بور<span>بور</span></div>
+    </div>
+    <ul class="nav-center">
+      <li><a href="#workshops">کارگاه‌ها</a></li>
+      <li><a href="#branches">رشته‌ها</a></li>
+      <li><a href="#founder">درباره موسس</a></li>
+      <li><a href="#gallery">محیط مدرسه</a></li>
+      <li><a href="#career">آینده شغلی</a></li>
+    </ul>
+    <div class="nav-end">
+      <a href="login.html" class="btn-nav-ghost">ورود</a>
+      <a href="../html/sign-up.html" class="btn-nav-fill">پیش ثبت نام کنید</a>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-year"><span>هنرستان فنی حرفه‌ای</span></div>
+    <h1 class="hero-title">
+      مهارت<br>
+      <span class="word-teal">واقعی</span>
+      <span class="word-outline">فردا</span>
+    </h1>
+    <p class="hero-desc">رشته‌های کامپیوتر (شبکه و نرم‌افزار) و الکترونیک — جایی که نه فقط درس می‌خوانی، بلکه دست به کار می‌شوی و متخصص می‌شوی.</p>
+    <div class="hero-cta-group">
+      <a href="sign.html" class="btn-hero-primary">شروع کن ←</a>
+      <a href="#branches" class="btn-hero-outline">رشته‌ها رو ببین</a>
+    </div>
+    <div class="hero-stats-vert">
+      <div class="hs-item"><span class="hs-num">12+</span><span class="hs-label">سال سابقه</span></div>
+      <div class="hs-item"><span class="hs-num">1200+</span><span class="hs-label">فارغ‌التحصیل</span></div>
+      <div class="hs-item"><span class="hs-num">94%</span><span class="hs-label">جذب بازار کار</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-bg"></div>
+    <svg class="circuit-anim" viewBox="0 0 600 600" fill="none">
+      <path d="M100 300 H200 V100 H500" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="8 6"/>
+      <path d="M300 500 V350 H450 V150" stroke="#c8a96e" stroke-width="1.5" stroke-dasharray="8 6"/>
+      <path d="M50 450 H150 V250 H350 V50" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4 8" opacity=".5"/>
+      <circle cx="200" cy="300" r="5" fill="#00d4ff"/>
+      <circle cx="300" cy="500" r="5" fill="#c8a96e"/>
+      <circle cx="450" cy="150" r="5" fill="#00d4ff"/>
+    </svg>
+    <div class="hero-card-stack">
+      <div class="hc hc-1">
+        <div class="hc-tag t-teal">NETWORK</div>
+        <div class="hc-title">کارگاه شبکه سیسکو</div>
+        <div class="hc-meta">CCNA · راه‌اندازی Firewall · Switching</div>
+        <div class="hc-dots"><div class="hc-dot active"></div><div class="hc-dot active"></div><div class="hc-dot"></div></div>
+      </div>
+      <div class="hc hc-2">
+        <div class="hc-tag t-rust">ELECTRONICS</div>
+        <div class="hc-title">طراحی مدار PCB</div>
+        <div class="hc-meta">Arduino · Raspberry Pi · IoT</div>
+        <div class="hc-dots"><div class="hc-dot active"></div><div class="hc-dot"></div><div class="hc-dot"></div></div>
+      </div>
+      <div class="hc hc-3">
+        <div class="hc-tag t-gold">PROGRESS</div>
+        <div class="hc-title">پیشرفت تو در ۳ ماه</div>
+        <div class="hc-meta">از صفر تا اولین پروژه واقعی</div>
+        <div class="hc-dots"><div class="hc-dot active"></div><div class="hc-dot active"></div><div class="hc-dot active"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <div class="marquee-item"><span>⚡</span> الکترونیک صنعتی</div>
+    <div class="marquee-item"><span>🌐</span> شبکه سیسکو</div>
+    <div class="marquee-item"><span>💻</span> برنامه‌نویسی</div>
+    <div class="marquee-item"><span>🔌</span> میکروکنترلر</div>
+    <div class="marquee-item"><span>🛡</span> امنیت شبکه</div>
+    <div class="marquee-item"><span>📡</span> اینترنت اشیا</div>
+    <div class="marquee-item"><span>🗄</span> پایگاه داده</div>
+    <div class="marquee-item"><span>⚙️</span> سخت‌افزار</div>
+    <div class="marquee-item"><span>☁️</span> Cloud Computing</div>
+    <div class="marquee-item"><span>🔧</span> PCB Design</div>
+    <div class="marquee-item"><span>⚡</span> الکترونیک صنعتی</div>
+    <div class="marquee-item"><span>🌐</span> شبکه سیسکو</div>
+    <div class="marquee-item"><span>💻</span> برنامه‌نویسی</div>
+    <div class="marquee-item"><span>🔌</span> میکروکنترلر</div>
+    <div class="marquee-item"><span>🛡</span> امنیت شبکه</div>
+    <div class="marquee-item"><span>📡</span> اینترنت اشیا</div>
+    <div class="marquee-item"><span>🗄</span> پایگاه داده</div>
+    <div class="marquee-item"><span>⚙️</span> سخت‌افزار</div>
+    <div class="marquee-item"><span>☁️</span> Cloud Computing</div>
+    <div class="marquee-item"><span>🔧</span> PCB Design</div>
+  </div>
+</div>
+
+<!-- WORKSHOPS -->
+<section class="workshops" id="workshops">
+  <div class="sec-max">
+    <div class="sec-eyebrow reveal">کارگاه‌های تخصصی</div>
+    <h2 class="sec-title reveal reveal-delay-1">۶ کارگاه، <em>۶ دنیای متفاوت</em></h2>
+    <p class="sec-sub reveal reveal-delay-2">سه کارگاه الکترونیک و سه کارگاه شبکه — هر کدام مجهز به ابزار و تجهیزات روز صنعت</p>
+    <div class="ws-grid">
+      <div class="ws-card ws-c-rust reveal">
+        <div class="ws-card-top">
+          <span class="ws-number">KA-01</span>
+          <!-- عکس کارگاه الکترونیک پایه — src خودتون رو بذارید -->
+          <img src="" alt="کارگاه الکترونیک پایه" onerror="this.style.display='none'">
+          <div class="ws-ill">⚡</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">الکترونیک · کارگاه اول</div>
+          <div class="ws-name">الکترونیک پایه و مدار</div>
+          <p class="ws-desc">اینجا با دست خودت مدارهای واقعی می‌سازی. از مقاومت و خازن تا تقویت‌کننده و فیلتر — همه چیز روی برد آزمایشگاهی.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">مدار DC/AC</span><span class="ws-skill">ترانزیستور</span><span class="ws-skill">Op-Amp</span><span class="ws-skill">اسیلوسکوپ</span>
+          </div>
+        </div>
+      </div>
+      <div class="ws-card ws-c-gold reveal reveal-delay-1">
+        <div class="ws-card-top">
+          <span class="ws-number">KA-02</span>
+          <img src="" alt="کارگاه میکروکنترلر" onerror="this.style.display='none'">
+          <div class="ws-ill">🔌</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">الکترونیک · کارگاه دوم</div>
+          <div class="ws-name">میکروکنترلر و IoT</div>
+          <p class="ws-desc">Arduino، Raspberry Pi و برنامه‌نویسی میکرو. پروژه‌های IoT واقعی می‌سازی که به اینترنت وصل می‌شن.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">Arduino</span><span class="ws-skill">Raspberry Pi</span><span class="ws-skill">ESP32</span><span class="ws-skill">MQTT</span>
+          </div>
+        </div>
+      </div>
+      <div class="ws-card ws-c-green reveal reveal-delay-2">
+        <div class="ws-card-top">
+          <span class="ws-number">KA-03</span>
+          <img src="" alt="کارگاه PCB" onerror="this.style.display='none'">
+          <div class="ws-ill">🖥️</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">الکترونیک · کارگاه سوم</div>
+          <div class="ws-name">طراحی PCB صنعتی</div>
+          <p class="ws-desc">با نرم‌افزار Altium و KiCad برد مدار چاپی طراحی می‌کنی. از شماتیک تا تولید فیزیکی PCB.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">Altium</span><span class="ws-skill">KiCad</span><span class="ws-skill">SMD Soldering</span><span class="ws-skill">DRC Check</span>
+          </div>
+        </div>
+      </div>
+      <div class="ws-card ws-c-teal reveal">
+        <div class="ws-card-top">
+          <span class="ws-number">SH-01</span>
+          <img src="" alt="کارگاه شبکه سیسکو" onerror="this.style.display='none'">
+          <div class="ws-ill">🌐</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">شبکه · کارگاه اول</div>
+          <div class="ws-name">شبکه‌سازی سیسکو</div>
+          <p class="ws-desc">با تجهیزات واقعی Cisco کار می‌کنی. Routing، Switching، VLAN و پیکربندی روترها.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">Cisco IOS</span><span class="ws-skill">OSPF / EIGRP</span><span class="ws-skill">VLAN</span><span class="ws-skill">Packet Tracer</span>
+          </div>
+        </div>
+      </div>
+      <div class="ws-card ws-c-navy reveal reveal-delay-1">
+        <div class="ws-card-top">
+          <span class="ws-number">SH-02</span>
+          <img src="" alt="کارگاه امنیت و لینوکس" onerror="this.style.display='none'">
+          <div class="ws-ill">🛡️</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">شبکه · کارگاه دوم</div>
+          <div class="ws-name">امنیت و لینوکس</div>
+          <p class="ws-desc">Linux سرور راه‌اندازی می‌کنی، Firewall پیکربندی می‌کنی و اصول امنیت شبکه آزمایش می‌کنی.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">Linux Admin</span><span class="ws-skill">Firewall</span><span class="ws-skill">VPN</span><span class="ws-skill">Wireshark</span>
+          </div>
+        </div>
+      </div>
+      <div class="ws-card ws-c-purple reveal reveal-delay-2">
+        <div class="ws-card-top">
+          <span class="ws-number">SH-03</span>
+          <img src="" alt="کارگاه برنامه‌نویسی" onerror="this.style.display='none'">
+          <div class="ws-ill">☁️</div>
+        </div>
+        <div class="ws-card-body">
+          <div class="ws-type">شبکه · کارگاه سوم</div>
+          <div class="ws-name">برنامه‌نویسی و پایگاه داده</div>
+          <p class="ws-desc">Python، JavaScript و SQL یاد می‌گیری. وب‌اپلیکیشن می‌سازی و پروژه واقعی تحویل می‌دی.</p>
+          <div class="ws-skills-list">
+            <span class="ws-skill">Python</span><span class="ws-skill">JavaScript</span><span class="ws-skill">MySQL</span><span class="ws-skill">Git</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANCHES -->
+<section class="branches-deep" id="branches">
+  <div class="bd-grid">
+    <div class="bd-head">
+      <div>
+        <div class="sec-eyebrow" style="color:var(--teal-glow)">رشته‌های تحصیلی</div>
+        <h2 class="sec-title">دو رشته،<br><em style="-webkit-text-stroke-color:rgba(255,255,255,.2)">یک آینده</em></h2>
+      </div>
+      <p style="color:rgba(255,255,255,.35);font-size:.95rem;max-width:300px;line-height:1.7;text-align:left">با بهترین اساتید و تجهیزات روز دنیا یاد می‌گیری</p>
+    </div>
+    <div class="bd-card reveal">
+      <div class="bd-card-num">۱</div>
+      <div class="bd-icon-wrap bd-icon-teal">💻</div>
+      <h3>کامپیوتر</h3>
+      <div class="bd-subtitle">شبکه و نرم‌افزار</div>
+      <p>رشته‌ای که در هر صنعتی جایگاه داری. از طراحی سرور تا نوشتن اپ موبایل.</p>
+      <ul class="learn-list">
+        <li>راه‌اندازی و مدیریت شبکه‌های سازمانی با تجهیزات Cisco و HP</li>
+        <li>برنامه‌نویسی وب (Python, JavaScript) و پایگاه داده SQL</li>
+        <li>امنیت شبکه، Firewall، VPN و جلوگیری از نفوذ</li>
+        <li>مجازی‌سازی با VMware و راه‌اندازی سرور لینوکس</li>
+        <li>آمادگی برای آزمون‌های CCNA و CompTIA</li>
+      </ul>
+      <div class="bd-skills">
+        <span class="bd-skill">Python</span><span class="bd-skill">JavaScript</span><span class="bd-skill">Cisco CCNA</span><span class="bd-skill">Linux</span><span class="bd-skill">SQL</span><span class="bd-skill">Cloud</span><span class="bd-skill">Git</span>
+      </div>
+    </div>
+    <div class="bd-card reveal reveal-delay-2">
+      <div class="bd-card-num">۲</div>
+      <div class="bd-icon-wrap bd-icon-rust">⚡</div>
+      <h3>الکترونیک</h3>
+      <div class="bd-subtitle" style="color:var(--rust-light)">صنعتی و دیجیتال</div>
+      <p>جایی که فیزیک و دیجیتال با هم می‌نشینند. تو مدار می‌سازی و فناوری‌های آینده می‌آفرینی.</p>
+      <ul class="learn-list">
+        <li>طراحی و ساخت مدارهای آنالوگ و دیجیتال از صفر</li>
+        <li>برنامه‌ریزی میکروکنترلر (Arduino، ARM) برای پروژه‌های صنعتی</li>
+        <li>ساخت سیستم‌های IoT متصل به اینترنت با پروتکل MQTT</li>
+        <li>طراحی PCB حرفه‌ای با نرم‌افزارهای صنعتی Altium</li>
+        <li>الکترونیک صنعتی، PLC و اتوماسیون کارخانه</li>
+      </ul>
+      <div class="bd-skills">
+        <span class="bd-skill">Arduino</span><span class="bd-skill">Raspberry Pi</span><span class="bd-skill">IoT</span><span class="bd-skill">PCB Design</span><span class="bd-skill">PLC</span><span class="bd-skill">Altium</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder" id="founder">
+  <div class="founder-inner">
+    <div class="founder-photo-wrap reveal">
+      <div class="founder-photo-bg"></div>
+      <div class="founder-photo-frame">
+        <!-- عکس موسس — src خودتون رو بذارید -->
+        <img src="" alt="موسس هنرستان بوربور" onerror="this.style.display='none'">
+        <div class="founder-photo-placeholder">
+          
+          <span>عکس موسس اینجا</span>
+        </div>
+      </div>
+      <div class="founder-badge">
+        <div class="fb-num">12</div>
+        <div class="fb-lbl">سال تدریس</div>
+      </div>
+    </div>
+    <div class="founder-content">
+      <div class="sec-eyebrow reveal">موسس هنرستان</div>
+      <h2 class="reveal reveal-delay-1">استاد<br>بوربور</h2>
+      <span class="founder-name-accent reveal reveal-delay-2">کارشناس ارشد مهندسی کامپیوتر</span>
+      <p class="founder-bio reveal reveal-delay-2">با بیش از ۱۲ سال تجربه در تدریس و ۸ سال تجربه در صنعت IT، هنرستان بوربور را با یک هدف ساده تاسیس کرد: اینکه دانش‌آموزان ایرانی بتوانند مهارت‌هایی یاد بگیرند که واقعاً در بازار کار به آن‌ها نیاز است.</p>
+      <div class="founder-quote reveal reveal-delay-3">باور دارم هر دانش‌آموزی که انگیزه دارد، می‌تواند در این حوزه موفق شود.</div>
+      <div class="founder-meta reveal reveal-delay-4">
+        <div class="fm-item"><span class="fm-val">12+</span><span class="fm-key">سال سابقه</span></div>
+        <div class="fm-item"><span class="fm-val">1200+</span><span class="fm-key">دانش‌آموز</span></div>
+        <div class="fm-item"><span class="fm-val">30+</span><span class="fm-key"> همکار</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header">
+    <div>
+      <div class="sec-eyebrow reveal">محیط هنرستان</div>
+      <h2 class="sec-title reveal reveal-delay-1">داخل مدرسه<br><em>ما رو ببین</em></h2>
+    </div>
+    <p class="reveal" style="color:rgba(255,255,255,0.35);font-size:.95rem;max-width:260px;line-height:1.7;text-align:left">فضایی که در آن یاد می‌گیری مهم است</p>
+  </div>
+  <div class="gallery-slides-wrap">
+    <div class="gallery-viewport">
+      <div class="gallery-track" id="galleryTrack">
+        <div class="gallery-slide">
+          <!-- عکس کارگاه کامپیوتر -->
+          <img src="" alt="کارگاه کامپیوتر اصلی" onerror="this.style.display='none'">
+          <div class="gs-ph gs-ph-1"><span class="gs-ph-icon">🖥️</span><span class="gs-ph-label">کارگاه کامپیوتر اصلی</span></div>
+          <div class="gallery-label">کارگاه کامپیوتر</div>
+        </div>
+        <div class="gallery-slide">
+          <!-- عکس آزمایشگاه شبکه -->
+          <img src="" alt="آزمایشگاه شبکه" onerror="this.style.display='none'">
+          <div class="gs-ph gs-ph-2"><span class="gs-ph-icon">🌐</span><span class="gs-ph-label">آزمایشگاه شبکه</span></div>
+          <div class="gallery-label">آزمایشگاه شبکه</div>
+        </div>
+        <div class="gallery-slide">
+          <!-- عکس کارگاه الکترونیک -->
+          <img src="" alt="کارگاه الکترونیک" onerror="this.style.display='none'">
+          <div class="gs-ph gs-ph-3"><span class="gs-ph-icon">⚡</span><span class="gs-ph-label">کارگاه الکترونیک</span></div>
+          <div class="gallery-label">کارگاه الکترونیک</div>
+        </div>
+        <div class="gallery-slide">
+          <!-- عکس کلاس‌های نظری -->
+          <img src="" alt="کلاس‌های نظری" onerror="this.style.display='none'">
+          <div class="gs-ph gs-ph-4"><span class="gs-ph-icon">📚</span><span class="gs-ph-label">کلاس‌های نظری</span></div>
+          <div class="gallery-label">کلاس‌های درس</div>
+        </div>
+        <div class="gallery-slide">
+          <!-- عکس اتاق پروژه -->
+          <img src="" alt="اتاق پروژه" onerror="this.style.display='none'">
+          <div class="gs-ph gs-ph-5"><span class="gs-ph-icon">🚀</span><span class="gs-ph-label">اتاق پروژه‌های نهایی</span></div>
+          <div class="gallery-label">اتاق پروژه</div>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-nav">
+      <button class="gn-btn" id="prevBtn">→</button>
+      <button class="gn-btn" id="nextBtn">←</button>
+    </div>
+    <div class="gallery-dots" id="galleryDots">
+      <div class="gd active"></div>
+      <div class="gd"></div>
+      <div class="gd"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CAREER -->
+<section class="career" id="career">
+  <div class="career-inner">
+    <div class="sec-eyebrow" style="color:var(--teal-glow)">مسیر شغلی</div>
+    <h2 class="sec-title">بعد از بوربور<br><em style="-webkit-text-stroke-color:rgba(255,255,255,.2)">کجا می‌روی؟</em></h2>
+    <div class="career-grid">
+      <div class="career-item reveal" data-num="۱"><span class="ci-icon">💼</span><div class="ci-title">ورود مستقیم به بازار کار</div><p class="ci-text">با مهارت‌های قابل استخدام و مدرک فنی‌حرفه‌ای مستقیم وارد شرکت‌های IT می‌شی</p></div>
+      <div class="career-item reveal reveal-delay-1" data-num="۲"><span class="ci-icon">🎓</span><div class="ci-title">ادامه تحصیل دانشگاه</div><p class="ci-text">شانس بیشتری در کنکور فنی داری و با پایه قوی وارد مهندسی می‌شی</p></div>
+      <div class="career-item reveal reveal-delay-2" data-num="۳"><span class="ci-icon">🚀</span><div class="ci-title">کارآفرینی</div><p class="ci-text">راه‌اندازی استارتاپ، فریلنسری بین‌المللی یا تاسیس شرکت تخصصی</p></div>
+      <div class="career-item reveal reveal-delay-3" data-num="۴"><span class="ci-icon">📜</span><div class="ci-title">گواهینامه بین‌المللی</div><p class="ci-text">آمادگی برای Cisco CCNA، CompTIA، AWS و دیگر مدارک معتبر جهانی</p></div>
+      <div class="career-item reveal reveal-delay-4" data-num="۵"><span class="ci-icon">🌍</span><div class="ci-title">کار از راه دور</div><p class="ci-text">مهارت‌هایی که از هر جای ایران و جهان می‌تونی باهاشون کار کنی</p></div>
+      <div class="career-item reveal reveal-delay-5" data-num="۶"><span class="ci-icon">🏭</span><div class="ci-title">صنعت الکترونیک</div><p class="ci-text">ورود به کارخانه‌های تولید برد، اتوماسیون صنعتی و تعمیر دستگاه</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="feat-inner">
+    <div class="sec-eyebrow reveal">چرا بوربور؟</div>
+    <h2 class="sec-title reveal reveal-delay-1">آنچه ما را<br><em>متفاوت می‌کند</em></h2>
+    <div class="feat-bento">
+      <div class="fb fb-wide fb-a-teal reveal"><div class="fb-accent"></div><span class="fb-icon">🏭</span><h4>۶ کارگاه تخصصی مجهز</h4><p>از تجهیزات Cisco واقعی تا دستگاه‌های اسیلوسکوپ و سولدر حرفه‌ای — محیطی که در هیچ مدرسه دیگری پیدا نمی‌کنی.</p></div>
+      <div class="fb fb-a-rust reveal reveal-delay-1"><div class="fb-accent"></div><span class="fb-icon">👨‍🏫</span><h4>اساتید صنعتی</h4><p>۱۸ مدرس با تجربه واقعی در شرکت‌های فعال IT</p></div>
+      <div class="fb reveal reveal-delay-2"><div class="fb-accent"></div><span class="fb-icon">📜</span><h4>مدرک فنی‌حرفه‌ای</h4><p>آمادگی کامل برای آزمون‌های رسمی سازمان فنی‌حرفه‌ای</p></div>
+      <div class="fb reveal reveal-delay-1"><div class="fb-accent"></div><span class="fb-icon">🤝</span><h4>کارآموزی تضمینی</h4><p>۳۰+ شرکت همکار برای کارآموزی دانش‌آموزان</p></div>
+      <div class="fb fb-wide fb-a-gold reveal reveal-delay-2"><div class="fb-accent"></div><span class="fb-icon">🚀</span><h4>یادگیری پروژه‌محور</h4><p>هر ترم با یک پروژه واقعی تموم می‌شه. تا پایان دوره یه پورتفولیو داری که به هر شرکتی نشون می‌دی.</p></div>
+      <div class="fb reveal reveal-delay-3"><div class="fb-accent"></div><span class="fb-icon">🎯</span><h4>مشاوره شغلی</h4><p>از ابتدا مشاور اختصاصی مسیر کاری داری</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi">
+  <div class="testi-inner">
+    <div class="sec-eyebrow reveal">نظرات دانش‌آموزان</div>
+    <h2 class="sec-title reveal reveal-delay-1">آن‌ها تجربه‌شان<br><em>را می‌گویند</em></h2>
+    <div class="testi-grid">
+      <div class="tc reveal">
+        <div class="tc-head"><div class="tc-ava tc-ava-1">👨‍💻</div><div><div class="tc-name">علی رضایی</div><div class="tc-role">فارغ‌التحصیل کامپیوتر — الان در شرکت IT</div></div></div>
+        <p class="tc-text">بعد از فارغ‌التحصیلی از بوربور، توی یه شرکت شبکه مشغول کار شدم. کارگاه شبکه سیسکو فوق‌العاده بود.</p>
+        <div class="tc-stars"><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span></div>
+      </div>
+      <div class="tc reveal reveal-delay-1">
+        <div class="tc-head"><div class="tc-ava tc-ava-2">👩‍💻</div><div><div class="tc-name">محمد امین پورشعبانیان</div><div class="tc-role">دانشجوی مهندسی — قبولی دانشگاه دولتی</div></div></div>
+        <p class="tc-text">با مدرک هنرستان بوربور با مزیت وارد کنکور فنی شدم و دانشگاه دولتی قبول شدم.</p>
+        <div class="tc-stars"><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span></div>
+      </div>
+      <div class="tc reveal reveal-delay-2">
+        <div class="tc-head"><div class="tc-ava tc-ava-3">⚡</div><div><div class="tc-name">محمد کریمی</div><div class="tc-role">فارغ‌التحصیل الکترونیک — کارآفرین</div></div></div>
+        <p class="tc-text">با پروژه IoT که اینجا روش کار کردیم، استارتاپ خودمو راه انداختم. بوربور نه فقط یاد داد، جرات داد شروع کنم.</p>
+        <div class="tc-stars"><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span><span class="tc-star">★</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section class="register" id="register">
+  <div class="reg-inner">
+    <div class="sec-eyebrow reveal" style="color:var(--gold)">ثبت‌نام ۱۴۰۴-۱۴۰۵</div>
+    <h2 class="reveal reveal-delay-1">همین الان<br><em>جات رو رزرو کن</em></h2>
+    <p class="reveal reveal-delay-2">ظرفیت محدود است. برای پیش ثبت‌نام  و دریافت مشاوره انتخاب رشته وارد سامانه شو.</p>
+    <div class="reg-btns reveal reveal-delay-3">
+      <a href="sign-up.html" class="btn-reg">پیش ثبت نام کنید ←</a>
+      <a href="login.html" class="btn-reg-ghost">ورود به سیستم</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="fg-brand">
+      <span class="logo-text">بور<span>بور</span></span>
+      <p>هنرستان فنی تخصصی رشته‌های کامپیوتر و الکترونیک — جایی که مهارت‌های واقعی یاد می‌گیری.</p>
+      <div class="fg-social">
+        <a href="#" class="fgs">📱</a>
+        <a href="#" class="fgs">📷</a>
+        <a href="#" class="fgs">💼</a>
+        <a href="#" class="fgs">✉️</a>
+      </div>
+    </div>
+    <div class="fg-col">
+      <h4>هنرستان</h4>
+      <ul>
+        <li><a href="#workshops">کارگاه‌ها</a></li>
+        <li><a href="#branches">رشته‌ها</a></li>
+        <li><a href="#founder">موسس</a></li>
+        <li><a href="#gallery">محیط مدرسه</a></li>
+      </ul>
+    </div>
+    <div class="fg-col">
+      <h4>دسترسی سریع</h4>
+      <ul>
+        <li><a href="login.html">ورود به سیستم</a></li>
+        <li><a href="sign.html">ثبت‌نام</a></li>
+        <li><a href="#career">آینده شغلی</a></li>
+        <li><a href="#features">امکانات</a></li>
+      </ul>
+    </div>
+    <div class="fg-col">
+      <h4>تماس</h4>
+      <ul>
+        <li><a href="tel:02122446678">۰۲۱-۲۲۴۴۶۶۷۸</a></li>
+        <li><a href="mailto:info@borbor.ir">info@borbor.ir</a></li>
+        <li><a href="#">آدرس هنرستان</a></li>
+        <li><a href="#">پشتیبانی</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <span>© ۱۴۰۴ هنرستان بوربور — تمامی حقوق محفوظ است</span>
+    <span>ساخته شده با ❤️ در ایران</span>
+  </div>
+</footer>
+
+<script>
+
+
+/* ── Header scroll ── */
+const hdr=document.getElementById('header');
+window.addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>60));
+
+/* ── Reveal ── */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── Smooth scroll ── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+
+/* ── Gallery slider (اصلاح شده) ── */
+const track=document.getElementById('galleryTrack');
+const allSlides=track.querySelectorAll('.gallery-slide');
+const dots=document.querySelectorAll('.gd');
+let curSlide=0;
+const slidesPerView=window.innerWidth<768?1:3;
+const totalGroups=Math.ceil(allSlides.length/slidesPerView);
+
+function getSlideWidth(){
+  // عرض یک اسلاید + gap
+  if(allSlides.length===0) return 0;
+  const vp=track.parentElement;
+  const vpW=vp.offsetWidth;
+  const gap=12;
+  if(window.innerWidth<768) return vpW+gap;
+  return (vpW/3)+gap;
+}
+
+function goTo(idx){
+  curSlide=((idx%totalGroups)+totalGroups)%totalGroups;
+  const sw=getSlideWidth();
+  track.style.transform=`translateX(${curSlide*sw*slidesPerView}px)`;
+  dots.forEach((d,i)=>d.classList.toggle('active',i===curSlide));
+}
+
+document.getElementById('prevBtn').addEventListener('click',()=>goTo(curSlide-1));
+document.getElementById('nextBtn').addEventListener('click',()=>goTo(curSlide+1));
+dots.forEach((d,i)=>d.addEventListener('click',()=>goTo(i)));
+setInterval(()=>goTo(curSlide+1),4000);
+window.addEventListener('resize',()=>goTo(0));
+
+/* ── Counter animation ── */
+function animCount(el){
+  const target=parseFloat(el.dataset.target||el.textContent)||0;
+  const suffix=el.textContent.replace(/[\d.]/g,'');
+  const dur=1800,fps=60,step=target/(dur/1000*fps);
+  let n=0;
+  const t=setInterval(()=>{
+    n=Math.min(n+step,target);
+    el.textContent=Math.floor(n)+(n>=target?suffix:'');
+    if(n>=target)clearInterval(t);
+  },1000/fps);
+}
+const cio=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){animCount(e.target);cio.unobserve(e.target)}});
+},{threshold:.5});
+document.querySelectorAll('.hs-num,.fm-val').forEach(el=>{
+  el.dataset.target=parseFloat(el.textContent)||0;
+  cio.observe(el);
+});
+
+/* ── Animated Background (Canvas) ── */
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+const particles=Array.from({length:50},()=>({
+  x:Math.random()*canvas.width,
+  y:Math.random()*canvas.height,
+  vy:-(0.2+Math.random()*0.6),
+  vx:(Math.random()-.5)*0.3,
+  r:Math.random()*1.8+0.4,
+  alpha:0.3+Math.random()*0.5
+}));
+
+// Circuit nodes
+const nodes=[
+  {x:0.15,y:0.2},{x:0.35,y:0.2},{x:0.35,y:0.45},{x:0.55,y:0.45},
+  {x:0.55,y:0.7},{x:0.75,y:0.7},{x:0.75,y:0.3},{x:0.9,y:0.3},
+  {x:0.2,y:0.6},{x:0.45,y:0.6},{x:0.65,y:0.15},{x:0.85,y:0.55},
+];
+const edges=[
+  [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[0,8],[8,9],[9,3],[10,6],[5,11]
+];
+let dashOffset=0;
+let scanY=0;
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  
+  // BG
+  ctx.fillStyle='#030610';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Glow blobs
+  const g1=ctx.createRadialGradient(canvas.width*.2,canvas.height*.5,0,canvas.width*.2,canvas.height*.5,canvas.width*.35);
+  g1.addColorStop(0,'rgba(10,58,90,0.35)');g1.addColorStop(1,'transparent');
+  ctx.fillStyle=g1;ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  const g2=ctx.createRadialGradient(canvas.width*.8,canvas.height*.3,0,canvas.width*.8,canvas.height*.3,canvas.width*.25);
+  g2.addColorStop(0,'rgba(13,33,96,0.25)');g2.addColorStop(1,'transparent');
+  ctx.fillStyle=g2;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Grid
+  ctx.strokeStyle='rgba(26,96,128,0.14)';
+  ctx.lineWidth=.5;
+  const gs=68;
+  for(let x=0;x<canvas.width;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()}
+  for(let y=0;y<canvas.height;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()}
+
+  // Circuit paths
+  dashOffset-=0.4;
+  ctx.setLineDash([8,6]);
+  ctx.lineDashOffset=dashOffset;
+  edges.forEach(([a,b],i)=>{
+    const nx=canvas.width;const ny=canvas.height;
+    ctx.beginPath();
+    ctx.moveTo(nodes[a].x*nx,nodes[a].y*ny);
+    ctx.lineTo(nodes[b].x*nx,nodes[b].y*ny);
+    ctx.strokeStyle=i%2===0?'rgba(0,200,224,0.25)':'rgba(0,100,160,0.18)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Node dots
+  nodes.forEach((n,i)=>{
+    const pulse=Math.sin(Date.now()/800+i)*0.4+0.6;
+    ctx.beginPath();
+    ctx.arc(n.x*canvas.width,n.y*canvas.height,2.5,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,212,255,${0.5*pulse})`;
+    ctx.fill();
+    // glow ring
+    ctx.beginPath();
+    ctx.arc(n.x*canvas.width,n.y*canvas.height,5+pulse*3,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,212,255,${0.12*pulse})`;
+    ctx.lineWidth=1;
+    ctx.stroke();
+  });
+
+  // Scan line
+  scanY=(scanY+1.5)%canvas.height;
+  const sg=ctx.createLinearGradient(0,0,canvas.width,0);
+  sg.addColorStop(0,'rgba(0,212,255,0)');
+  sg.addColorStop(0.4,'rgba(0,212,255,0)');
+  sg.addColorStop(0.5,'rgba(0,229,200,0.45)');
+  sg.addColorStop(0.6,'rgba(0,212,255,0)');
+  sg.addColorStop(1,'rgba(0,212,255,0)');
+  ctx.fillStyle=sg;
+  ctx.fillRect(0,scanY,canvas.width,1.5);
+
+  // Particles
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.y<-5){p.y=canvas.height+5;p.x=Math.random()*canvas.width}
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,212,255,${p.alpha})`;
+    ctx.fill();
+  });
+
+  // Vignette
+  const vg=ctx.createRadialGradient(canvas.width/2,canvas.height/2,canvas.height*.15,canvas.width/2,canvas.height/2,canvas.height*.85);
+  vg.addColorStop(0,'transparent');
+  vg.addColorStop(1,'rgba(3,6,16,0.65)');
+  ctx.fillStyle=vg;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

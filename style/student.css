@@ -1,0 +1,2402 @@
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Vazirmatn", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #202b59;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Hamburger Menu Button */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: #172047;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background: #202b59;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: #172047;
+  padding: 30px 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.logo {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.menu-item {
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.menu-item a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.menu-item a i {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-item a:hover {
+  background: #202b59;
+  color: white;
+}
+
+.menu-item.active a {
+  background: #202b59;
+  color: white;
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-right: 280px;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #202b59;
+  z-index: 10;
+  padding-bottom: 15px;
+}
+
+.page-title {
+  color: white;
+  font-size: 28px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+}
+
+.admin-info {
+  color: white;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Action Buttons */
+.action-buttons-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.action-btn-main {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-excel {
+  background: #171e44;
+  color: white;
+}
+
+.btn-excel:hover {
+  background: #202c6d;
+}
+
+.btn-add-class {
+  background: #171e44;
+  color: white;
+}
+
+.btn-add-class:hover {
+  background: #202c6d;
+}
+
+/* Classes Grid */
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  padding-bottom: 30px;
+}
+
+.class-card {
+  background: #1f285a;
+  border-radius: 15px;
+  padding: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  border-color: #3498db;
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+}
+
+.class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.class-number {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+}
+
+.class-grade {
+  color: #3498db;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.class-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.info-value {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.class-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-students {
+  background: #3d6bbe;
+  color: white;
+}
+
+.btn-students:hover {
+  background: #2a4e92;
+}
+
+.btn-edit {
+  background: #139781;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #166e60;
+}
+
+.btn-archive {
+  background: #f39c12;
+  color: white;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-archive:hover {
+  background: #e67e22;
+}
+
+.btn-archive-student {
+  background: #f39c12;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.btn-archive-student:hover {
+  background: #e67e22;
+}
+
+/* Delete Class Button */
+.delete-class-btn {
+  position: absolute;
+  top: 1px;
+  left: 5px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  z-index: 10;
+}
+
+.delete-class-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.delete-class-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal.active {
+  display: flex;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  z-index: 10;
+}
+
+.close-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.close-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Students List Modal - RESPONSIVE CARDS */
+.students-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 30px;
+  width: 95%;
+  max-width: 1200px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Students Container */
+.students-container {
+  margin-bottom: 20px;
+}
+
+.add-student-btn {
+  background: #3d6bbe;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-student-btn:hover {
+  background: #2a4e92;
+}
+
+.inp-search {
+  width: 100%;
+  outline: none;
+  border: none;
+  padding: 16px 20px;
+  color: white;
+  background-color: #171e44;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.inp-search:focus {
+  background-color: #1e2957;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.inp-search::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+}
+
+/* Student Cards Grid */
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.student-card {
+  background: #1f285a;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.student-card:hover {
+  transform: translateY(-3px);
+  border-color: #3498db;
+  box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+}
+
+.student-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.student-photo-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: "Shabnam", sans-serif;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.student-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-card-name {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-card-code {
+  color: #3498db;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.student-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.student-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.student-detail-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.student-detail-value {
+  color: white;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  text-align: left;
+}
+
+.student-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-view-student {
+  background: #9b59b6;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-view-student:hover {
+  background: #8e44ad;
+}
+
+.btn-view-report {
+  background: #e67e22;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-view-report:hover {
+  background: #d35400;
+}
+
+/* Student Details Modal */
+.student-details-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 95%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.student-avatar-container {
+  position: relative;
+}
+
+.student-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.student-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.change-photo-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #3498db;
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.change-photo-btn:hover {
+  background: #2980b9;
+  transform: scale(1.1);
+}
+
+.student-basic-info {
+  flex: 1;
+}
+
+.student-name {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 8px;
+}
+
+.student-code {
+  color: #3498db;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.details-section {
+  margin-bottom: 25px;
+}
+
+.details-section-title {
+  color: #3498db;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.detail-item {
+  background: #1e2957;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.detail-value {
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.detail-value-editable {
+  background: #172047;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.jdp-input {
+    direction: ltr;
+    text-align: right;
+    unicode-bidi: plaintext;
+}
+
+.detail-value-editable:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.btn-save-student {
+  width: 100%;
+  background: #139781;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-save-student:hover {
+  background: #166e60;
+}
+
+/* Edit Class Modal */
+.edit-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 95%;
+  max-width: 600px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.form-input,
+.form-select {
+  background: #1e2957;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.save-btn {
+  width: 100%;
+  padding: 15px;
+  background: #139781;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.save-btn:hover {
+  background: #166e60;
+}
+
+/* Add Student Form Modal */
+.add-student-form-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 95%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.photo-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.photo-preview-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.photo-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.photo-preview-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  color: white;
+  font-weight: 700;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.upload-photo-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-photo-btn:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.photo-input {
+  display: none;
+}
+
+/* ==================== REPORT CARD MODAL - استایل حرفه‌ای جدید ==================== */
+
+/* مودال کارنامه */
+.report-modal-content {
+  background: #ffffff;
+  border-radius: 0;
+  padding: 0;
+  width: 95%;
+  max-width: 1400px;
+  border: none;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* دکمه بستن کارنامه */
+#reportModal .close-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  z-index: 10;
+}
+
+#reportModal .close-btn:hover {
+  background: #c82333;
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* هدر کارنامه */
+.report-header {
+  text-align: center;
+  padding: 30px 20px 25px;
+  background: #ffffff;
+  border-bottom: none;
+}
+
+.report-school-name {
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.report-school-name::before {
+  content: "🏫";
+  font-size: 28px;
+}
+
+.report-title {
+  color: #3498db;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+/* اطلاعات دانش‌آموز */
+.report-student-info {
+  background: #f8f9fa;
+  padding: 20px 30px;
+  border-radius: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.report-info-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-info-label {
+  color: #6c757d;
+  font-size: 15px;
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 500;
+}
+
+.report-info-value {
+  color: #212529;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+/* جدول نمرات */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  background: white;
+}
+
+/* هدر جدول */
+.report-table thead tr {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.report-table thead th {
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  padding: 15px 10px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1.4;
+}
+
+/* ستون نام درس */
+.report-table .subject-col {
+  text-align: right !important;
+  padding-right: 20px !important;
+}
+
+/* سطرهای جدول */
+.report-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.report-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.report-table tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.report-table tbody tr:hover {
+  background: #e3f2fd;
+  transform: scale(1.005);
+}
+
+.report-table tbody td {
+  color: #212529;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Vazirmatn", sans-serif;
+  padding: 12px 10px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+}
+
+/* نمرات با رنگ */
+.grade-excellent {
+  color: #28a745 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.grade-good {
+  color: #17a2b8 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.grade-average {
+  color: #ffc107 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.grade-poor {
+  color: #dc3545 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+/* فوتر کارنامه */
+.report-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  background: #f8f9fa;
+  border-top: 2px solid #dee2e6;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* بخش معدل‌ها */
+.report-averages {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.report-average {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.report-average-label {
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.report-average-value {
+  color: #3498db;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+}
+
+/* دکمه‌های دانلود کارنامه */
+.report-download-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-download-report {
+  background: #e67e22;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download-report:hover {
+  background: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
+}
+
+.btn-download-report.excel-btn {
+  background: #27ae60;
+}
+
+.btn-download-report.excel-btn:hover {
+  background: #229954;
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* نسخه چاپی */
+@media print {
+  #reportModal .close-btn,
+  .report-download-buttons {
+    display: none !important;
+  }
+
+  .report-modal-content {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  .report-table {
+    page-break-inside: avoid;
+  }
+}
+
+/* Excel Modal */
+.excel-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 30px;
+  width: 650px;
+  max-width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.excel-section {
+  margin-bottom: 25px;
+}
+
+.excel-section-title {
+  color: #27ae60;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(39, 174, 96, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.excel-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.excel-option-btn {
+  background: #1e2957;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.excel-option-btn:hover {
+  background: #202c6d;
+}
+
+.excel-option-btn .badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.excel-option-btn .icon {
+  font-size: 18px;
+}
+
+.excel-option-btn-cancel {
+  background: #95a5a6;
+  border-color: #95a5a6;
+  margin-top: 10px;
+}
+
+.excel-option-btn-cancel:hover {
+  background: #7f8c8d;
+  border-color: #7f8c8d;
+  transform: translateX(0);
+}
+
+.individual-classes-wrapper {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.individual-classes-header {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.individual-classes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.individual-class-btn {
+  background: #172047;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.individual-class-btn:hover {
+  background: #202c6d;
+}
+
+.individual-class-btn .class-num {
+  font-weight: 700;
+  font-size: 15px;
+  font-family: "Shabnam", sans-serif;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.individual-class-btn .class-info {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Delete Modal */
+.delete-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 450px;
+  max-width: 90%;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.delete-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+  box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Archive Modal */
+.archive-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 450px;
+  max-width: 90%;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.archive-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+  box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+}
+
+.archive-modal-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.delete-modal-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-btn-confirm {
+  background: #984754;
+  color: white;
+}
+
+.modal-btn-confirm:hover {
+  background: #c0392b;
+}
+
+.modal-btn-archive {
+  background: #f39c12;
+  color: white;
+}
+
+.modal-btn-archive:hover {
+  background: #e67e22;
+}
+
+.modal-btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.modal-btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+/* Add Student Modal */
+.add-student-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 30px;
+  width: 500px;
+  max-width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.add-student-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-student-option-btn {
+  background: #1e2957;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.add-student-option-btn:hover {
+  background: #3d6bbe;
+  transform: translateY(-2px);
+}
+
+.add-student-option-btn.cancel-option {
+  background: #95a5a6;
+}
+
+.add-student-option-btn.cancel-option:hover {
+  background: #7f8c8d;
+}
+
+/* Success Message Animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: white;
+  padding: 18px 30px;
+  border-radius: 12px;
+  z-index: 10000;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.success-message i {
+  font-size: 20px;
+}
+
+.success-message.hide {
+  animation: slideOut 0.4s ease;
+}
+
+/* Download Photo Button */
+.btn-download-photo {
+  background: #e67e22;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download-photo:hover {
+  background: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
+}
+
+/* Excel Button for Individual Student */
+.btn-download-student-excel {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download-student-excel:hover {
+  background: #229954;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Clickable Photo Cursor */
+.student-avatar,
+.student-avatar-placeholder {
+  cursor: pointer;
+}
+
+/* Photo Fullscreen Modal */
+.photo-fullscreen-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#fullscreenPhoto {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 15px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Persian Date Picker Customization */
+.pwt-btn-calendar {
+  background: #3498db !important;
+}
+
+/* Loading Spinner for PDF */
+.pdf-loading {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 30px 50px;
+  border-radius: 15px;
+  z-index: 10001;
+  text-align: center;
+}
+
+.pdf-loading.active {
+  display: block;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Image Compression Modal */
+.compression-modal-content {
+  background: #283369;
+  border-radius: 15px;
+  padding: 35px;
+  width: 95%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.compression-title {
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: "Shabnam", sans-serif;
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.compression-section {
+  margin-bottom: 25px;
+}
+
+.compression-label {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.quality-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #1e2957;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.quality-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+}
+
+.quality-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+  border: none;
+}
+
+.quality-options {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.quality-option {
+  background: #1e2957;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  transition: all 0.3s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.quality-option:hover {
+  background: #243068;
+  border-color: #3498db;
+}
+
+.quality-option.active {
+  background: #3498db;
+  border-color: #3498db;
+}
+
+.size-display {
+  background: #1e2957;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.size-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  margin-bottom: 5px;
+}
+
+.size-value {
+  color: #3498db;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: "Shabnam", sans-serif;
+}
+
+.compression-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.compression-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Vazirmatn", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.compression-btn-download {
+  background: #e67e22;
+  color: white;
+}
+
+.compression-btn-download:hover {
+  background: #d35400;
+}
+
+.compression-btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.compression-btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+/* Custom Select Styling */
+.custom-select {
+  background: #172047;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: "Vazirmatn", sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.custom-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.custom-select option {
+  background: #172047;
+  color: white;
+}
+
+/* ==================== ریسپانسیو کارنامه ==================== */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    margin-right: 220px;
+  }
+
+  .classes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .form-grid,
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .students-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .report-student-info {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 18px 25px;
+    gap: 18px;
+  }
+
+  .report-table thead th,
+  .report-table tbody td {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(100%);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-right: 0;
+    width: 100%;
+    padding: 80px 20px 20px;
+  }
+
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons-container {
+    flex-direction: column;
+  }
+
+  .individual-classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .top-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .admin-info {
+    font-size: 16px;
+  }
+
+  .delete-modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .success-message {
+    min-width: auto;
+    max-width: 90%;
+  }
+
+  .students-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .students-modal-content {
+    padding: 20px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .report-modal-content {
+    width: 98%;
+    max-height: 95vh;
+  }
+
+  .report-header {
+    padding: 25px 15px 20px;
+  }
+
+  .report-school-name {
+    font-size: 20px;
+  }
+
+  .report-school-name::before {
+    font-size: 24px;
+  }
+
+  .report-title {
+    font-size: 18px;
+  }
+
+  .report-student-info {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 15px 20px;
+    gap: 15px;
+  }
+
+  .report-info-item {
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+  }
+
+  .report-info-label,
+  .report-info-value {
+    font-size: 13px;
+  }
+
+  .report-table {
+    font-size: 12px;
+  }
+
+  .report-table thead th,
+  .report-table tbody td {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+
+  .report-table .subject-col {
+    padding-right: 10px !important;
+  }
+
+  .report-footer {
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .report-averages {
+    width: 100%;
+    justify-content: space-around;
+    gap: 15px;
+  }
+
+  .report-average-label {
+    font-size: 12px;
+  }
+
+  .report-average-value {
+    font-size: 20px;
+  }
+
+  .report-download-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-download-report {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .main-content {
+    padding: 70px 15px 15px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .action-btn-main {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .students-modal-content,
+  .student-details-modal-content,
+  .add-student-form-modal-content,
+  .report-modal-content,
+  .excel-modal-content {
+    padding: 20px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .close-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .delete-class-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .student-card {
+    padding: 15px;
+  }
+
+  .student-card-name {
+    font-size: 15px;
+  }
+
+  .student-card-code {
+    font-size: 12px;
+  }
+
+  .quality-options {
+    flex-direction: column;
+  }
+
+  .quality-option {
+    width: 100%;
+  }
+
+  .report-modal-content {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .report-header {
+    padding: 20px 10px 15px;
+  }
+
+  .report-school-name {
+    font-size: 18px;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .report-school-name::before {
+    font-size: 20px;
+  }
+
+  .report-title {
+    font-size: 16px;
+  }
+
+  .report-student-info {
+    grid-template-columns: 1fr;
+    padding: 12px 15px;
+    gap: 12px;
+  }
+
+  .report-info-item {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 8px;
+  }
+
+  .report-info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .report-info-label,
+  .report-info-value {
+    font-size: 12px;
+  }
+
+  .report-table thead th,
+  .report-table tbody td {
+    padding: 8px 3px;
+    font-size: 11px;
+  }
+
+  .report-table .subject-col {
+    padding-right: 5px !important;
+    font-size: 11px;
+  }
+
+  .grade-excellent,
+  .grade-good,
+  .grade-average,
+  .grade-poor {
+    font-size: 13px !important;
+  }
+
+  .report-footer {
+    padding: 15px;
+  }
+
+  .report-averages {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .report-average {
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 8px;
+  }
+
+  .report-average:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .report-average-label {
+    font-size: 11px;
+  }
+
+  .report-average-value {
+    font-size: 18px;
+  }
+
+  .btn-download-report {
+    font-size: 13px;
+    padding: 10px 15px;
+  }
+}
+
+
+
+/* ==================== VALIDATION STYLES PATCH ====================
+   این استایل‌ها را به انتهای student.css اضافه کن
+   ============================================================== */
+
+/* پیام خطای زیر فیلد */
+.field-error-msg {
+  display: none;
+  color: #e74c3c;
+  font-size: 12px;
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 500;
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: rgba(231, 76, 60, 0.08);
+  border-right: 3px solid #e74c3c;
+  border-radius: 0 4px 4px 0;
+  animation: errorSlideIn 0.2s ease;
+  line-height: 1.5;
+}
+
+@keyframes errorSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* border قرمز روی input اشتباه */
+.detail-value-editable.error {
+  border-color: #e74c3c !important;
+  background: rgba(231, 76, 60, 0.05) !important;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15) !important;
+}
+
+/* border سبز روی input درست */
+.detail-value-editable.success {
+  border-color: #27ae60 !important;
+  box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.12) !important;
+}
+
+/* دکمه ذخیره در حالت disabled */
+#saveNewStudentBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* آیکون تیک سبز / ضربدر قرمز کنار فیلد (اختیاری، اگه بخوای) */
+.detail-item {
+  position: relative;
+}
+
+/* فرمت‌های مجاز عکس - راهنمای زیر دکمه آپلود */
+.photo-format-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: "Vazirmatn", sans-serif;
+  margin-top: 6px;
+  text-align: center;
+}
+
+
+/* ==================== VALIDATION CSS PATCH v2 ====================
+   این استایل‌ها را به انتهای student.css اضافه کن
+   ============================================================== */
+
+/* پیام خطای زیر فیلد */
+.field-error-msg {
+  display: none;
+  color: #e74c3c;
+  font-size: 12px;
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 500;
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: rgba(231, 76, 60, 0.08);
+  border-right: 3px solid #e74c3c;
+  border-radius: 0 4px 4px 0;
+  animation: errorSlideIn 0.2s ease;
+  line-height: 1.5;
+}
+
+@keyframes errorSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* border قرمز روی input اشتباه */
+.detail-value-editable.error {
+  border-color: #e74c3c !important;
+  background: rgba(231, 76, 60, 0.05) !important;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.18) !important;
+}
+
+/* border سبز روی input درست */
+.detail-value-editable.success {
+  border-color: #27ae60 !important;
+  box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.12) !important;
+}
+
+/* لرزش فیلد هنگام ورود کاراکتر ممنوع */
+@keyframes shake {
+  0%,100% { transform: translateX(0);   }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px);  }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px);  }
+}
+.detail-value-editable.shaking {
+  animation: shake 0.4s ease !important;
+  border-color: #e74c3c !important;
+}
+
+/* دکمه ذخیره disabled */
+#saveNewStudentBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* راهنمای فرمت عکس زیر دکمه آپلود */
+.photo-format-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.40);
+  font-family: "Vazirmatn", sans-serif;
+  margin-top: 7px;
+  text-align: center;
+  line-height: 1.6;
+}

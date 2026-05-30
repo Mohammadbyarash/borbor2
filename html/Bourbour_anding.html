@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<title>بوربور — سامانه هوشمند مدیریت مدارس</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --bg:#0c1322;--bg2:#111b30;--bg3:#162040;--bg4:#1a2650;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --text:#e8f0ff;--muted:rgba(180,200,255,0.5);--border:rgba(255,255,255,0.07);--border2:rgba(74,144,217,0.3);
+  --r:16px;--r2:10px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"Vazirmatn",Tahoma,sans-serif;
+  background:var(--bg);color:var(--text);
+  direction:rtl;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── GLOBAL BG EFFECTS ── */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(74,144,217,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(142,95,212,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,214,160,0.04) 0%,transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(74,144,217,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,0.025) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;right:0;left:0;z-index:900;
+  padding:0 5%;
+  background:rgba(12,19,34,0.85);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;height:68px;
+}
+.nav-logo{font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;text-decoration:none;}
+.nav-logo span{color:var(--accent);}
+.nav-logo small{font-size:10px;color:var(--muted);font-weight:400;display:block;letter-spacing:1px;text-transform:uppercase;margin-top:-4px;}
+.nav-links{display:flex;gap:2px;align-items:center;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:var(--r2);transition:all .2s;}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.05);}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;padding:9px 20px;border-radius:var(--r2);cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(74,144,217,.25);}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,144,217,.35);}
+.nav-mobile-btn{display:none;width:40px;height:40px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.nav-mobile-btn span{display:block;width:18px;height:2px;background:var(--muted);border-radius:2px;}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:100px 5% 60px;position:relative;z-index:1;text-align:center;
+}
+.hero-inner{max-width:860px;margin:auto;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.25);
+  color:var(--accent);font-size:12px;font-weight:700;
+  padding:6px 16px;border-radius:40px;margin-bottom:28px;
+  animation:fadeDown .7s ease both;
+}
+.hero-badge i{font-size:11px;}
+.hero h1{
+  font-size:clamp(36px,6vw,68px);font-weight:900;line-height:1.12;
+  letter-spacing:-2px;margin-bottom:24px;
+  animation:fadeDown .7s .1s ease both;
+}
+.hero h1 .grad{
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{
+  font-size:17px;color:var(--muted);line-height:1.8;max-width:580px;
+  margin:0 auto 40px;font-weight:400;
+  animation:fadeDown .7s .2s ease both;
+}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeDown .7s .3s ease both;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#fff;font-family:inherit;font-size:14px;font-weight:800;
+  padding:14px 30px;border-radius:var(--r2);cursor:pointer;
+  box-shadow:0 6px 24px rgba(74,144,217,.35);transition:all .25s;text-decoration:none;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(74,144,217,.45);}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:9px;
+  background:transparent;border:1px solid var(--border2);color:var(--text);
+  font-family:inherit;font-size:14px;font-weight:700;
+  padding:14px 28px;border-radius:var(--r2);cursor:pointer;
+  transition:all .25s;text-decoration:none;
+}
+.btn-secondary:hover{background:rgba(74,144,217,.08);border-color:var(--accent);}
+.hero-stats{
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;
+  margin-top:60px;padding-top:40px;
+  border-top:1px solid var(--border);
+  animation:fadeDown .7s .4s ease both;
+}
+.hero-stat-val{font-size:32px;font-weight:900;line-height:1;}
+.hero-stat-lbl{font-size:11px;color:var(--muted);margin-top:5px;}
+
+/* ── MARQUEE LOGOS ── */
+.marquee-section{padding:28px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;position:relative;z-index:1;}
+.marquee-track{display:flex;gap:40px;animation:marquee 22s linear infinite;width:max-content;}
+.marquee-item{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;font-weight:700;white-space:nowrap;opacity:.6;}
+.marquee-item i{font-size:18px;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTION COMMONS ── */
+section{position:relative;z-index:1;padding:90px 5%;}
+.section-label{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--accent3);margin-bottom:16px;
+}
+.section-label::before{content:"";width:18px;height:2px;background:var(--accent3);border-radius:2px;}
+.section-title{font-size:clamp(26px,3.5vw,40px);font-weight:900;letter-spacing:-1px;margin-bottom:14px;line-height:1.2;}
+.section-sub{font-size:15px;color:var(--muted);max-width:540px;line-height:1.8;}
+.section-head{margin-bottom:52px;}
+
+/* ── FEATURES ── */
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:18px;
+}
+.feat-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px 24px;
+  transition:all .28s;position:relative;overflow:hidden;
+}
+.feat-card::before{
+  content:"";position:absolute;top:0;right:0;left:0;height:3px;
+  opacity:0;transition:opacity .3s;
+}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.feat-card:hover::before{opacity:1;}
+.fc-1::before{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.fc-2::before{background:linear-gradient(90deg,var(--accent3),var(--accent));}
+.fc-3::before{background:linear-gradient(90deg,var(--accent4),var(--accent5));}
+.fc-4::before{background:linear-gradient(90deg,var(--accent2),var(--accent5));}
+.fc-5::before{background:linear-gradient(90deg,var(--accent3),var(--accent4));}
+.fc-6::before{background:linear-gradient(90deg,var(--accent),var(--accent3));}
+.feat-icon{
+  width:48px;height:48px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:18px;
+}
+.feat-title{font-size:15px;font-weight:800;margin-bottom:9px;}
+.feat-desc{font-size:12.5px;color:var(--muted);line-height:1.8;}
+.feat-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;
+  margin-top:14px;
+}
+
+/* ── HOW IT WORKS ── */
+.how-steps{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:0;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+}
+.how-step{
+  padding:32px 26px;border-left:1px solid var(--border);
+  position:relative;transition:background .25s;
+}
+.how-step:last-child{border-left:none;}
+.how-step:hover{background:rgba(74,144,217,.04);}
+.step-num{
+  font-size:48px;font-weight:900;
+  color:rgba(74,144,217,.12);
+  line-height:1;margin-bottom:12px;
+  font-variant-numeric:tabular-nums;
+}
+.step-icon{
+  width:40px;height:40px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;margin-bottom:16px;
+}
+.step-title{font-size:14px;font-weight:800;margin-bottom:8px;}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.8;}
+
+/* ── SHOWCASE / DASHBOARD PREVIEW ── */
+.showcase{padding:0 5% 90px;}
+.showcase-wrap{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;position:relative;
+}
+.showcase-top{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.02);
+}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot-r{background:#e74c3c;}.dot-y{background:#f39c12;}.dot-g{background:#2ecc71;}
+.showcase-url{
+  flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:6px;padding:5px 12px;font-size:11px;color:var(--muted);
+  display:flex;align-items:center;gap:6px;max-width:340px;margin:0 auto;
+}
+.showcase-body{padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+.mini-stat{
+  background:var(--bg4);border:1px solid var(--border);border-radius:10px;
+  padding:16px;
+}
+.mini-stat-val{font-size:22px;font-weight:900;line-height:1;}
+.mini-stat-lbl{font-size:9.5px;color:var(--muted);margin-top:4px;}
+.showcase-table{
+  grid-column:1/-1;
+  background:var(--bg4);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.st-head{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  font-size:9.5px;font-weight:700;color:var(--muted);background:rgba(74,144,217,.05);
+}
+.st-row{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  font-size:11.5px;align-items:center;
+}
+.st-row:last-child{border-bottom:none;}
+.st-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-left:6px;}
+.badge-sm{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:12px;}
+
+/* ── PLANS ── */
+.plans-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;
+}
+.plan-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px 24px;
+  position:relative;transition:all .28s;overflow:hidden;
+}
+.plan-card.popular{border-color:rgba(74,144,217,.4);background:linear-gradient(180deg,rgba(74,144,217,.07) 0%,var(--bg3) 100%);}
+.popular-badge{
+  position:absolute;top:16px;left:16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-size:9.5px;font-weight:800;
+  padding:4px 12px;border-radius:20px;
+  box-shadow:0 4px 14px rgba(74,144,217,.3);
+}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.plan-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:18px;}
+.plan-name{font-size:18px;font-weight:900;margin-bottom:6px;}
+.plan-desc{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.7;}
+.plan-price{margin-bottom:22px;}
+.plan-price-val{font-size:36px;font-weight:900;line-height:1;}
+.plan-price-unit{font-size:12px;color:var(--muted);margin-top:4px;}
+.plan-price-val sup{font-size:18px;vertical-align:top;margin-top:6px;display:inline-block;}
+.plan-features{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:10px;}
+.plan-features li{display:flex;align-items:center;gap:9px;font-size:12.5px;}
+.plan-features li i{font-size:13px;width:16px;text-align:center;flex-shrink:0;}
+.plan-features li.no{color:var(--muted);}
+.plan-btn{
+  width:100%;padding:11px;border-radius:var(--r2);
+  font-family:inherit;font-size:13px;font-weight:800;
+  cursor:pointer;transition:all .25s;border:1px solid;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;
+}
+.testi-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:26px 22px;
+  transition:all .25s;
+}
+.testi-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.testi-stars{display:flex;gap:3px;margin-bottom:16px;}
+.testi-stars i{font-size:12px;color:var(--accent4);}
+.testi-text{font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:18px;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;}
+.testi-name{font-size:13px;font-weight:800;}
+.testi-role{font-size:10.5px;color:var(--muted);}
+
+/* ── FAQ ── */
+.faq-list{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+.faq-item{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);
+  overflow:hidden;transition:border-color .2s;
+}
+.faq-item.open{border-color:var(--border2);}
+.faq-q{
+  width:100%;padding:18px 20px;background:transparent;border:none;
+  color:var(--text);font-family:inherit;font-size:13.5px;font-weight:700;
+  text-align:right;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:all .2s;
+}
+.faq-q:hover{background:rgba(255,255,255,.02);}
+.faq-icon{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);transition:all .25s;}
+.faq-item.open .faq-icon{background:rgba(74,144,217,.15);border-color:var(--border2);color:var(--accent);transform:rotate(45deg);}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s;
+  font-size:13px;color:var(--muted);line-height:1.9;
+  padding:0 20px;
+}
+.faq-item.open .faq-a{max-height:200px;padding:0 20px 18px;}
+
+/* ── CTA SECTION ── */
+.cta-section{
+  margin:0 5% 80px;
+  background:linear-gradient(135deg,rgba(74,144,217,.12),rgba(142,95,212,.1));
+  border:1px solid rgba(74,144,217,.2);border-radius:var(--r);
+  padding:60px 48px;text-align:center;position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:"";position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,144,217,.15),transparent 70%);
+  pointer-events:none;
+}
+.cta-section::after{
+  content:"";position:absolute;bottom:-60px;left:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(142,95,212,.12),transparent 70%);
+  pointer-events:none;
+}
+.cta-section h2{font-size:clamp(24px,3vw,36px);font-weight:900;letter-spacing:-1px;margin-bottom:14px;}
+.cta-section p{font-size:15px;color:var(--muted);max-width:480px;margin:0 auto 32px;line-height:1.8;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:48px 5% 30px;position:relative;z-index:1;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;
+}
+.footer-brand .logo{font-size:24px;font-weight:900;color:#fff;letter-spacing:-1px;text-decoration:none;display:inline-block;margin-bottom:12px;}
+.footer-brand .logo span{color:var(--accent);}
+.footer-brand p{font-size:12px;color:var(--muted);line-height:1.9;max-width:260px;}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.footer-col a{display:block;color:rgba(180,200,255,.55);text-decoration:none;font-size:12.5px;margin-bottom:9px;transition:color .2s;}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{
+  border-top:1px solid var(--border);padding-top:22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-size:11.5px;color:var(--muted);
+}
+.footer-socials{display:flex;gap:8px;}
+.social-btn{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:14px;transition:all .2s;text-decoration:none;
+}
+.social-btn:hover{border-color:var(--border2);color:var(--accent);background:rgba(74,144,217,.08);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .how-steps{grid-template-columns:1fr 1fr;}
+  .how-step{border-left:none;border-bottom:1px solid var(--border);}
+  .how-step:nth-child(2n){border-left:1px solid var(--border);}
+  .how-step:last-child,.how-step:nth-last-child(-n+2){border-bottom:none;}
+  .showcase-body{grid-template-columns:1fr 1fr;}
+  .st-head,.st-row{grid-template-columns:2fr 1fr 1fr;}
+  .st-head>*:nth-child(n+4),.st-row>*:nth-child(n+4){display:none;}
+}
+@media(max-width:640px){
+  nav{padding:0 4%;}
+  .nav-links{display:none;}
+  .nav-mobile-btn{display:flex;}
+  section{padding:60px 4%;}
+  .hero{padding:80px 4% 50px;}
+  .hero-stats{gap:24px;}
+  .footer-grid{grid-template-columns:1fr;}
+  .how-steps{grid-template-columns:1fr;}
+  .how-step{border-left:none!important;border-bottom:1px solid var(--border);}
+  .how-step:last-child{border-bottom:none;}
+  .cta-section{padding:40px 24px;}
+  .showcase-body{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">بور<span>بور</span><small>School Management</small></a>
+  <div class="nav-links">
+    <a href="#features">ویژگی‌ها</a>
+    <a href="#how">چطور کار می‌کنه</a>
+    <a href="#plans">قیمت‌ها</a>
+    <a href="#faq">سوالات</a>
+  </div>
+  <button class="nav-cta" onclick="scrollTo({top:document.getElementById('plans').offsetTop-80,behavior:'smooth'})">شروع رایگان <i class="fas fa-arrow-left" style="margin-right:6px;font-size:11px"></i></button>
+  <div class="nav-mobile-btn" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <i class="fas fa-bolt"></i>
+      جدیدترین سامانه مدیریت مدارس ایران
+    </div>
+    <h1>
+      مدیریت مدرسه‌ات را<br>
+      <span class="grad">هوشمندتر</span> کن
+    </h1>
+    <p>
+      بوربور یک پلتفرم یکپارچه برای مدیران مدارس است —
+      از حضور و غیاب تا لایسنس و گزارش، همه چیز در یک پنل ساده و قدرتمند.
+    </p>
+    <div class="hero-btns">
+      <a href="#plans" class="btn-primary">
+        <i class="fas fa-rocket" style="font-size:13px"></i>
+        یک ماه رایگان امتحان کن
+      </a>
+      <a href="#features" class="btn-secondary">
+        <i class="fas fa-play-circle" style="font-size:13px"></i>
+        ببین چطور کار می‌کنه
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val" style="color:var(--accent)">+۵۰۰</div>
+        <div class="hero-stat-lbl">مدرسه فعال</div>
+      </div>
+      <div>
+        <div class="hero-stat-val" style="color:var(--accent3)">+۱۲۰,۰۰۰</div>
+        <div class="hero-stat-lbl">دانش‌آموز ثبت‌شده</div>
+      </div>
+      <div>
+        <div class="hero-stat-val" style="color:var(--accent4)">۹۸٪</div>
+        <div class="hero-stat-lbl">رضایت کاربران</div>
+      </div>
+      <div>
+        <div class="hero-stat-val" style="color:var(--accent2)">۲۴/۷</div>
+        <div class="hero-stat-lbl">پشتیبانی آنلاین</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><i class="fas fa-school"></i> هنرستان شهید بوربور</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبیرستان نمونه تهران</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> دبستان پیشرفت اصفهان</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> مدرسه علوم مشهد</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> هنرستان فنی شیراز</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبستان کوثر کرج</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> متوسطه امام علی تبریز</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبیرستان شهید اهواز</div>
+    <!-- duplicate for loop -->
+    <div class="marquee-item"><i class="fas fa-school"></i> هنرستان شهید بوربور</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبیرستان نمونه تهران</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> دبستان پیشرفت اصفهان</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> مدرسه علوم مشهد</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> هنرستان فنی شیراز</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبستان کوثر کرج</div>
+    <div class="marquee-item"><i class="fas fa-school"></i> متوسطه امام علی تبریز</div>
+    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> دبیرستان شهید اهواز</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-head reveal">
+    <div class="section-label">ویژگی‌ها</div>
+    <h2 class="section-title">همه چیز در یک پنل</h2>
+    <p class="section-sub">هر ابزاری که یک مدیر مدرسه نیاز دارد، با طراحی ساده و سریع.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card fc-1 reveal">
+      <div class="feat-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-clipboard-check"></i></div>
+      <div class="feat-title">حضور و غیاب هوشمند</div>
+      <div class="feat-desc">ثبت لحظه‌ای حضور دانش‌آموزان با گزارش روزانه، هفتگی و ماهانه. ارسال خودکار SMS به والدین.</div>
+      <div class="feat-tag" style="background:rgba(74,144,217,.1);color:var(--accent);border:1px solid rgba(74,144,217,.2)"><i class="fas fa-check" style="font-size:9px"></i> SMS اتوماتیک</div>
+    </div>
+    <div class="feat-card fc-2 reveal">
+      <div class="feat-icon" style="background:rgba(6,214,160,.13);color:var(--accent3)"><i class="fas fa-chart-line"></i></div>
+      <div class="feat-title">گزارش‌های تحلیلی</div>
+      <div class="feat-desc">نمودارها و آمار دقیق از عملکرد تحصیلی، حضور، و پیشرفت دانش‌آموزان. خروجی Excel و Word.</div>
+      <div class="feat-tag" style="background:rgba(6,214,160,.1);color:var(--accent3);border:1px solid rgba(6,214,160,.2)"><i class="fas fa-check" style="font-size:9px"></i> خروجی Excel</div>
+    </div>
+    <div class="feat-card fc-3 reveal">
+      <div class="feat-icon" style="background:rgba(243,156,18,.13);color:var(--accent4)"><i class="fas fa-key"></i></div>
+      <div class="feat-title">مدیریت لایسنس</div>
+      <div class="feat-desc">صدور، تمدید و لغو لایسنس برای هر مدرسه. اعلان خودکار قبل از انقضا.</div>
+      <div class="feat-tag" style="background:rgba(243,156,18,.1);color:var(--accent4);border:1px solid rgba(243,156,18,.2)"><i class="fas fa-check" style="font-size:9px"></i> اعلان هوشمند</div>
+    </div>
+    <div class="feat-card fc-4 reveal">
+      <div class="feat-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-users-cog"></i></div>
+      <div class="feat-title">مدیریت دسترسی‌ها</div>
+      <div class="feat-desc">تعریف نقش‌های مختلف برای مدیران، اپراتورها و ناظران. ماتریس دسترسی کامل.</div>
+      <div class="feat-tag" style="background:rgba(142,95,212,.1);color:var(--accent2);border:1px solid rgba(142,95,212,.2)"><i class="fas fa-check" style="font-size:9px"></i> چند نقشی</div>
+    </div>
+    <div class="feat-card fc-5 reveal">
+      <div class="feat-icon" style="background:rgba(6,214,160,.1);color:var(--accent3)"><i class="fas fa-mobile-alt"></i></div>
+      <div class="feat-title">پنل موبایل‌پسند</div>
+      <div class="feat-desc">رابط کاربری ریسپانسیو که روی هر دستگاهی — موبایل، تبلت یا دسکتاپ — عالی کار می‌کند.</div>
+      <div class="feat-tag" style="background:rgba(6,214,160,.1);color:var(--accent3);border:1px solid rgba(6,214,160,.2)"><i class="fas fa-check" style="font-size:9px"></i> کامل ریسپانسیو</div>
+    </div>
+    <div class="feat-card fc-6 reveal">
+      <div class="feat-icon" style="background:rgba(74,144,217,.12);color:var(--accent)"><i class="fas fa-shield-alt"></i></div>
+      <div class="feat-title">امنیت و پشتیبان‌گیری</div>
+      <div class="feat-desc">بک‌آپ روزانه خودکار، رمزنگاری اطلاعات، و ثبت کامل تاریخچه تمام تغییرات.</div>
+      <div class="feat-tag" style="background:rgba(74,144,217,.1);color:var(--accent);border:1px solid rgba(74,144,217,.2)"><i class="fas fa-check" style="font-size:9px"></i> بک‌آپ روزانه</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="padding-top:0">
+  <div class="section-head reveal">
+    <div class="section-label">نحوه کار</div>
+    <h2 class="section-title">در ۳ قدم شروع کن</h2>
+    <p class="section-sub">راه‌اندازی بوربور برای مدرسه‌ات کمتر از ۵ دقیقه طول می‌کشد.</p>
+  </div>
+  <div class="how-steps reveal">
+    <div class="how-step">
+      <div class="step-num">۰۱</div>
+      <div class="step-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-user-plus"></i></div>
+      <div class="step-title">ثبت‌نام مدرسه</div>
+      <div class="step-desc">مشخصات مدرسه‌ات را وارد کن. یک ماه رایگان برای تست کامل بهت می‌دیم.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-num">۰۲</div>
+      <div class="step-icon" style="background:rgba(6,214,160,.13);color:var(--accent3)"><i class="fas fa-cog"></i></div>
+      <div class="step-title">راه‌اندازی پنل</div>
+      <div class="step-desc">دانش‌آموزان و معلم‌ها را وارد کن. تنظیمات کلاس‌ها و دسترسی‌ها را تعیین کن.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-num">۰۳</div>
+      <div class="step-icon" style="background:rgba(243,156,18,.13);color:var(--accent4)"><i class="fas fa-rocket"></i></div>
+      <div class="step-title">شروع به کار</div>
+      <div class="step-desc">پنل آماده‌ست! حضور و غیاب، گزارش و مدیریت رو از همین لحظه شروع کن.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-num">۰۴</div>
+      <div class="step-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-headset"></i></div>
+      <div class="step-title">پشتیبانی همیشگی</div>
+      <div class="step-desc">تیم پشتیبانی بوربور همیشه در کنارته. چت آنلاین، تلفن، یا ایمیل.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<div class="showcase">
+  <div class="section-head reveal" style="text-align:center;margin-bottom:32px">
+    <div class="section-label" style="justify-content:center">پیش‌نمایش</div>
+    <h2 class="section-title">پنل مدیریت بوربور</h2>
+  </div>
+  <div class="showcase-wrap reveal">
+    <div class="showcase-top">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <div class="showcase-url">
+        <i class="fas fa-lock" style="font-size:10px;color:var(--accent3)"></i>
+        panel.bourbour.ir/dashboard
+      </div>
+    </div>
+    <div class="showcase-body">
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--accent)">۸</div>
+        <div class="mini-stat-lbl">مدارس فعال</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--accent3)">۲,۳۵۰</div>
+        <div class="mini-stat-lbl">دانش‌آموزان</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--accent4)">۱۹۱</div>
+        <div class="mini-stat-lbl">معلمین</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--accent2)">۷</div>
+        <div class="mini-stat-lbl">لایسنس فعال</div>
+      </div>
+      <div class="showcase-table">
+        <div class="st-head">
+          <div>نام مدرسه</div>
+          <div>نوع</div>
+          <div>وضعیت</div>
+          <div>دانش‌آموز</div>
+          <div>پلان</div>
+        </div>
+        <div class="st-row">
+          <div style="font-weight:700">هنرستان شهید بوربور</div>
+          <div style="color:var(--muted);font-size:11px">هنرستان</div>
+          <div><span class="dot" style="background:#2ecc71"></span>فعال</div>
+          <div style="color:var(--accent)">۳۵۰</div>
+          <div><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--accent4)">طلایی</span></div>
+        </div>
+        <div class="st-row">
+          <div style="font-weight:700">دبیرستان نمونه تهران</div>
+          <div style="color:var(--muted);font-size:11px">دبیرستان</div>
+          <div><span class="dot" style="background:#2ecc71"></span>فعال</div>
+          <div style="color:var(--accent)">۲۸۰</div>
+          <div><span class="badge-sm" style="background:rgba(74,144,217,.15);color:var(--accent)">نقره‌ای</span></div>
+        </div>
+        <div class="st-row">
+          <div style="font-weight:700">دبستان پیشرفت</div>
+          <div style="color:var(--muted);font-size:11px">دبستان</div>
+          <div><span class="dot" style="background:#2ecc71"></span>فعال</div>
+          <div style="color:var(--accent)">۴۲۰</div>
+          <div><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--accent4)">طلایی</span></div>
+        </div>
+        <div class="st-row">
+          <div style="font-weight:700">مدرسه علوم مشهد</div>
+          <div style="color:var(--muted);font-size:11px">دبیرستان</div>
+          <div><span class="dot" style="background:var(--accent4)"></span>آزمایشی</div>
+          <div style="color:var(--accent)">۱۹۵</div>
+          <div><span class="badge-sm" style="background:rgba(180,200,255,.08);color:var(--muted)">رایگان</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="section-head reveal" style="text-align:center">
+    <div class="section-label" style="justify-content:center">قیمت‌گذاری</div>
+    <h2 class="section-title">پلان مناسب مدرسه‌ات را انتخاب کن</h2>
+    <p class="section-sub" style="max-width:460px;margin:0 auto">بدون قرارداد بلندمدت. هر زمان خواستی ارتقا بده یا لغو کن.</p>
+  </div>
+  <div class="plans-grid">
+    <!-- Free -->
+    <div class="plan-card reveal">
+      <div class="plan-icon" style="background:rgba(180,200,255,.08);color:var(--muted)"><i class="fas fa-hourglass"></i></div>
+      <div class="plan-name">رایگان</div>
+      <div class="plan-desc">مناسب برای آشنایی با سامانه</div>
+      <div class="plan-price">
+        <div class="plan-price-val" style="color:var(--text)">رایگان</div>
+        <div class="plan-price-unit">۱ ماه آزمایشی</div>
+      </div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> تا ۵۰ دانش‌آموز</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> پنل کامل</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> پشتیبانی ایمیل</li>
+        <li class="no"><i class="fas fa-times" style="color:rgba(231,76,60,.4)"></i> SMS اتوماتیک</li>
+        <li class="no"><i class="fas fa-times" style="color:rgba(231,76,60,.4)"></i> گزارش پیشرفته</li>
+      </ul>
+      <button class="plan-btn" style="background:transparent;border-color:var(--border);color:var(--muted)" onclick="showToast('ثبت‌نام رایگان')">
+        شروع رایگان
+      </button>
+    </div>
+    <!-- Bronze -->
+    <div class="plan-card reveal">
+      <div class="plan-icon" style="background:rgba(6,214,160,.13);color:var(--accent3)"><i class="fas fa-award"></i></div>
+      <div class="plan-name">برنزی</div>
+      <div class="plan-desc">مناسب مدارس کوچک و متوسط</div>
+      <div class="plan-price">
+        <div class="plan-price-val" style="color:var(--accent3)">
+          <sup>﷼</sup>۱,۲۰۰,۰۰۰
+        </div>
+        <div class="plan-price-unit">تومان / سالانه</div>
+      </div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> تا ۲۰۰ دانش‌آموز</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> پشتیبانی ایمیل</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> گزارش اولیه</li>
+        <li class="no"><i class="fas fa-times" style="color:rgba(231,76,60,.4)"></i> SMS اتوماتیک</li>
+        <li class="no"><i class="fas fa-times" style="color:rgba(231,76,60,.4)"></i> بک‌آپ روزانه</li>
+      </ul>
+      <button class="plan-btn" style="background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.3);color:var(--accent3)" onclick="showToast('انتخاب پلان برنزی')">
+        <i class="fas fa-arrow-left"></i> انتخاب
+      </button>
+    </div>
+    <!-- Silver POPULAR -->
+    <div class="plan-card popular reveal">
+      <div class="popular-badge">محبوب‌ترین</div>
+      <div class="plan-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-medal"></i></div>
+      <div class="plan-name">نقره‌ای</div>
+      <div class="plan-desc">انتخاب اکثر مدارس ایران</div>
+      <div class="plan-price">
+        <div class="plan-price-val" style="color:var(--accent)">
+          <sup>﷼</sup>۲,۱۶۰,۰۰۰
+        </div>
+        <div class="plan-price-unit">تومان / سالانه &nbsp;<span style="font-size:10px;background:rgba(6,214,160,.1);color:var(--accent3);border:1px solid rgba(6,214,160,.25);padding:2px 8px;border-radius:12px;font-weight:700">۱۰٪ تخفیف</span></div>
+      </div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> تا ۵۰۰ دانش‌آموز</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> پشتیبانی کاری</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> SMS اتوماتیک</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> گزارش پایه</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> بک‌آپ هفتگی</li>
+      </ul>
+      <button class="plan-btn" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;box-shadow:0 6px 20px rgba(74,144,217,.3)" onclick="showToast('انتخاب پلان نقره‌ای')">
+        <i class="fas fa-rocket" style="font-size:11px"></i> شروع کن
+      </button>
+    </div>
+    <!-- Gold -->
+    <div class="plan-card reveal">
+      <div class="plan-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-crown"></i></div>
+      <div class="plan-name">طلایی</div>
+      <div class="plan-desc">برای مدارس بزرگ و هنرستان‌ها</div>
+      <div class="plan-price">
+        <div class="plan-price-val" style="color:var(--accent4)">
+          <sup>﷼</sup>۴,۸۰۰,۰۰۰
+        </div>
+        <div class="plan-price-unit">تومان / سالانه</div>
+      </div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> دانش‌آموز نامحدود</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> پشتیبانی ۲۴/۷</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> گزارش پیشرفته</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> درگاه پرداخت</li>
+        <li><i class="fas fa-check" style="color:var(--accent3)"></i> بک‌آپ روزانه</li>
+      </ul>
+      <button class="plan-btn" style="background:rgba(243,156,18,.08);border-color:rgba(243,156,18,.3);color:var(--accent4)" onclick="showToast('انتخاب پلان طلایی')">
+        <i class="fas fa-arrow-left"></i> انتخاب
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" style="padding-top:0">
+  <div class="section-head reveal">
+    <div class="section-label">نظرات</div>
+    <h2 class="section-title">مدیران مدارس چی می‌گن</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testi-text">"از وقتی بوربور رو نصب کردیم، ثبت حضور و غیاب که قبلاً نیم‌ساعت وقت می‌برد الان در کمتر از ۲ دقیقه تموم می‌شه."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">AK</div>
+        <div>
+          <div class="testi-name">احمد کریمی</div>
+          <div class="testi-role">مدیر هنرستان شهید بوربور — تهران</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testi-text">"گزارش‌های اکسل که بوربور می‌ده خیلی حرفه‌ایه. وزارت آموزش و پرورش همیشه از کیفیت گزارشاتمون تعریف می‌کنه."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent3),#05a07a)">MM</div>
+        <div>
+          <div class="testi-name">مریم موسوی</div>
+          <div class="testi-role">مدیر دبیرستان نمونه — تهران</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+      <div class="testi-text">"پنل موبایل‌پسندشه و می‌تونم از هر جایی وضعیت مدرسه رو ببینم. پشتیبانی هم همیشه سریع جواب می‌ده."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent4),#e67e22)">RS</div>
+        <div>
+          <div class="testi-name">رضا صادقی</div>
+          <div class="testi-role">مدیر دبستان پیشرفت — اصفهان</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top:0">
+  <div class="section-head reveal" style="text-align:center">
+    <div class="section-label" style="justify-content:center">سوالات متداول</div>
+    <h2 class="section-title">سوال داری؟</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        آیا نیاز به نصب نرم‌افزار خاصی هست؟
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </button>
+      <div class="faq-a">خیر. بوربور یک سامانه کاملاً وب‌بیس است. فقط به مرورگر و اینترنت نیاز دارید. روی هر دستگاهی — ویندوز، مک، اندروید، iOS — بدون هیچ نصبی کار می‌کند.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        بعد از یک ماه آزمایشی چی می‌شه؟
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </button>
+      <div class="faq-a">پس از پایان دوره آزمایشی، دسترسی شما محدود می‌شود اما اطلاعات حذف نمی‌شوند. هر زمان پلان مناسب را انتخاب کنید، همه چیز دقیقاً از همان‌جا ادامه پیدا می‌کند.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        آیا می‌توانم بین پلان‌ها جابجا شوم؟
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </button>
+      <div class="faq-a">بله. در هر زمان می‌توانید پلان خود را ارتقا یا تغییر دهید. تفاوت قیمت به‌صورت نسبی محاسبه می‌شود و هیچ محدودیتی وجود ندارد.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        اطلاعات مدرسه ما کجا ذخیره می‌شه؟
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </button>
+      <div class="faq-a">تمام داده‌ها روی سرورهای امن داخل ایران ذخیره می‌شوند. بک‌آپ روزانه و رمزنگاری کامل اطلاعات برای همه پلان‌ها فعال است.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        چند مدرسه می‌توانم با یک حساب مدیریت کنم؟
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </button>
+      <div class="faq-a">با پنل سوپرادمین بوربور می‌توانید تعداد نامحدود مدرسه را از یک داشبورد مرکزی مدیریت کنید. هر مدرسه لایسنس جداگانه دارد.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <h2>آماده‌ای مدرسه‌ات رو متحول کنی؟</h2>
+  <p>همین الان ثبت‌نام کن و یک ماه رایگان از تمام امکانات بوربور استفاده کن.</p>
+  <div class="cta-btns">
+    <button class="btn-primary" onclick="showToast('ثبت‌نام رایگان')">
+      <i class="fas fa-rocket" style="font-size:13px"></i>
+      شروع رایگان — بدون کارت اعتباری
+    </button>
+    <button class="btn-secondary" onclick="showToast('تماس با تیم فروش')">
+      <i class="fas fa-headset" style="font-size:13px"></i>
+      صحبت با تیم فروش
+    </button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="logo" href="#">بور<span>بور</span></a>
+      <p>سامانه هوشمند مدیریت مدارس ایران. از حضور و غیاب تا گزارش سالانه، همه چیز در یک پنل.</p>
+      <div class="footer-socials" style="margin-top:20px">
+        <a class="social-btn" href="#"><i class="fab fa-instagram"></i></a>
+        <a class="social-btn" href="#"><i class="fab fa-telegram"></i></a>
+        <a class="social-btn" href="#"><i class="fab fa-linkedin"></i></a>
+        <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>محصول</h4>
+      <a href="#features">ویژگی‌ها</a>
+      <a href="#plans">قیمت‌گذاری</a>
+      <a href="#">آپدیت‌ها</a>
+      <a href="#">نقشه راه</a>
+    </div>
+    <div class="footer-col">
+      <h4>پشتیبانی</h4>
+      <a href="#faq">سوالات متداول</a>
+      <a href="#">مستندات</a>
+      <a href="#">چت آنلاین</a>
+      <a href="#">تماس با ما</a>
+    </div>
+    <div class="footer-col">
+      <h4>شرکت</h4>
+      <a href="#">درباره ما</a>
+      <a href="#">وبلاگ</a>
+      <a href="#">حریم خصوصی</a>
+      <a href="#">شرایط استفاده</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© ۱۴۰۴ بوربور — تمام حقوق محفوظ است</span>
+    <span>ساخته‌شده با ❤️ برای مدارس ایران</span>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:12px 22px;font-size:13px;font-weight:600;z-index:9999;display:flex;align-items:center;gap:9px;box-shadow:0 8px 30px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;opacity:0;">
+  <i class="fas fa-check-circle" style="color:var(--accent3)"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.1});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// TOAST
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg + ' — به زودی!';
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(80px)';
+  }, 3000);
+}
+
+// MOBILE MENU
+function toggleMobileMenu() {
+  showToast('منو موبایل');
+}
+
+// NAV scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.background = window.scrollY > 40 ? 'rgba(12,19,34,0.97)' : 'rgba(12,19,34,0.85)';
+});
+</script>
+</body>
+</html>

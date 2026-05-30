@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - مدیریت اولیا</title>
+    <link rel="stylesheet" href="../style/parents.css">
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <!-- داشبورد -->
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+        <!-- مدیریت کاربران (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link">
+            <i class="fas fa-users"></i>
+            مدیریت کاربران
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item">
+              <i class="fas fa-user-tie"></i>
+              مدیریت معاونان
+            </a>
+            <a href="../html/Teacher_management.html" class="submenu-item">
+              <i class="fas fa-chalkboard-teacher"></i>
+              مدیریت معلمین
+            </a>
+            <a href="../html/student.html" class="submenu-item">
+              <i class="fas fa-user-graduate"></i>
+              مدیریت دانش‌آموزان
+            </a>
+            <a href="../html/Parents.html" class="submenu-item">
+              <i class="fas fa-users"></i>
+              مدیریت اولیا
+            </a>
+          </div>
+        </div>
+
+        <!-- مدیریت کلاس‌ها (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link">
+            <i class="fas fa-chalkboard-teacher"></i>
+            مدیریت کلاس ها
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item">
+              <i class="fas fa-list"></i>
+                          مدیریت دروس
+
+            </a>
+            <a href="../html/Class-schedule.html" class="submenu-item">
+              <i class="fas fa-calendar-alt"></i>
+              برنامه و لیست کلاسی
+            </a>
+            <a href="../html/Attendance.html" class="submenu-item">
+              <i class="fas fa-clipboard-check"></i>
+              حضور و غیاب
+            </a>
+            <a href="../html/grades.html" class="submenu-item">
+              <i class="fas fa-star"></i>
+              نمرات
+            </a>
+          </div>
+        </div>
+
+        <!-- پیش ثبت نام ها -->
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <!-- گزارش ها -->
+        <div class="menu-item">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <!-- اطلاعیه ها -->
+        <div class="menu-item">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+
+         <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+
+        
+
+        <!-- تنظیمات -->
+        <div class="menu-item">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <!-- خروج -->
+        <div class="menu-item">
+          <a href="#">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+        <div class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">مدیریت اولیای دانش‌آموزان</h1>
+                <div class="header-left">
+
+                    <div class="admin-info">مدیر: آقای بیارش</div>
+                </div>
+            </div>
+
+            <div class="action-buttons-container">
+                <button class="action-btn-main btn-excel" onclick="exportParentsExcel()">
+                    <i class="fas fa-file-excel"></i>
+                    <span>خروجی Excel</span>
+                </button>
+                <button class="action-btn-main btn-sms" onclick="openGroupSmsModal()">
+                    <i class="fas fa-sms"></i>
+                    <span>پیامک گروهی</span>
+                </button>
+            </div>
+
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearchInput" placeholder="جستجو در همه کلاس‌ها (نام دانش‌آموز، نام پدر، نام مادر، شماره تماس)..." onkeyup="globalSearch()">
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByGrade('all')">
+                        <i class="fas fa-filter"></i>
+                        همه پایه‌ها
+                    </button>
+                    <button class="filter-btn" onclick="filterByGrade('دهم')">
+                        پایه دهم
+                    </button>
+                    <button class="filter-btn" onclick="filterByGrade('یازدهم')">
+                        پایه یازدهم
+                    </button>
+                    <button class="filter-btn" onclick="filterByGrade('دوازدهم')">
+                        پایه دوازدهم
+                    </button>
+                </div>
+            </div>
+
+            <div class="classes-grid" id="classesGrid">
+                <!-- Classes will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Parents Modal -->
+    <div class="modal" id="classParentsModal">
+        <div class="class-modal-content">
+            <button class="close-btn" onclick="closeClassParentsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title" id="classModalTitle">اولیای کلاس</h2>
+
+            <div class="modal-actions">
+                <div class="search-box-modal">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="modalSearchInput" placeholder="جستجو در این کلاس..." onkeyup="searchInModal()">
+                </div>
+                <button class="modal-action-btn btn-class-sms" onclick="openClassGroupSmsModal()">
+                    <i class="fas fa-sms"></i>
+                    پیامک گروهی کلاس
+                </button>
+            </div>
+
+            <!-- Debt Filter Buttons -->
+            <div class="debt-filter-section">
+                <button class="debt-filter-btn active" data-filter="all" onclick="filterByDebt('all')">
+                    <i class="fas fa-users"></i>
+                    همه دانش‌آموزان
+                </button>
+                <button class="debt-filter-btn" data-filter="debt" onclick="filterByDebt('debt')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    فقط بدهکاران
+                </button>
+                <button class="debt-filter-btn" data-filter="no-debt" onclick="filterByDebt('no-debt')">
+                    <i class="fas fa-check-circle"></i>
+                    بدون بدهی
+                </button>
+            </div>
+
+            <div class="parents-list" id="parentsList">
+                <!-- Parents will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SMS Modal -->
+    <div class="modal" id="smsModal">
+        <div class="sms-modal-content">
+            <button class="close-btn" onclick="closeSmsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title" id="smsModalTitle">ارسال پیامک</h2>
+
+            <div class="sms-recipient-info" id="smsRecipientInfo">
+                <!-- اطلاعات گیرنده در اینجا نمایش داده می‌شود -->
+            </div>
+
+            <div class="sms-recipient-select" id="smsRecipientSelect">
+                <label class="form-label">
+                    <i class="fas fa-user-check"></i>
+                    ارسال به:
+                </label>
+                <div class="recipient-buttons">
+                    <button class="recipient-btn" data-recipient="father" onclick="selectRecipient('father')">
+                        <i class="fas fa-male"></i>
+                        پدر
+                    </button>
+                    <button class="recipient-btn" data-recipient="mother" onclick="selectRecipient('mother')">
+                        <i class="fas fa-female"></i>
+                        مادر
+                    </button>
+                    <button class="recipient-btn" data-recipient="both" onclick="selectRecipient('both')">
+                        <i class="fas fa-users"></i>
+                        هر دو
+                    </button>
+                </div>
+            </div>
+
+            <div class="sms-reason-section">
+                <label class="form-label">
+                    <i class="fas fa-tag"></i>
+                    دلیل ارسال پیامک:
+                </label>
+                <div class="sms-reason-buttons">
+                    <button class="sms-reason-btn" data-reason="absence" onclick="selectSmsReason('absence')">
+                        <i class="fas fa-user-times"></i>
+                        غیبت
+                    </button>
+                    <button class="sms-reason-btn" data-reason="delay" onclick="selectSmsReason('delay')">
+                        <i class="fas fa-clock"></i>
+                        تاخیر
+                    </button>
+                    <button class="sms-reason-btn" data-reason="behavior" onclick="selectSmsReason('behavior')">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        رفتار
+                    </button>
+                    <button class="sms-reason-btn" data-reason="academic" onclick="selectSmsReason('academic')">
+                        <i class="fas fa-book"></i>
+                        تحصیلی
+                    </button>
+                    <button class="sms-reason-btn" data-reason="meeting" onclick="selectSmsReason('meeting')">
+                        <i class="fas fa-calendar-alt"></i>
+                        جلسه
+                    </button>
+                    <button class="sms-reason-btn" data-reason="tuition" onclick="selectSmsReason('tuition')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        بدهی شهریه
+                    </button>
+                    <button class="sms-reason-btn" data-reason="other" onclick="selectSmsReason('other')">
+                        <i class="fas fa-ellipsis-h"></i>
+                        سایر
+                    </button>
+                </div>
+            </div>
+
+            <div class="sms-message-section">
+                <label class="form-label">
+                    <i class="fas fa-comment-alt"></i>
+                    متن پیامک:
+                </label>
+                <textarea class="sms-textarea" id="smsMessage" placeholder="متن پیامک خود را وارد کنید..."></textarea>
+                <div class="sms-char-count">
+                    <span id="smsCharCount">0</span> / 300 کاراکتر
+                </div>
+            </div>
+
+            <div class="sms-quick-messages">
+                <h3 class="sms-quick-title">
+                    <i class="fas fa-bolt"></i>
+                    پیام‌های سریع
+                </h3>
+                <div class="sms-quick-grid" id="smsQuickGrid">
+                    <!-- پیام‌های سریع اینجا نمایش داده می‌شوند -->
+                </div>
+            </div>
+
+            <div class="sms-actions">
+                <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()">
+                    <i class="fas fa-save"></i>
+                    ذخیره متن
+                </button>
+                <button class="sms-btn sms-btn-send" onclick="sendSms()">
+                    <i class="fas fa-paper-plane"></i>
+                    ارسال پیامک
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Parent Details Modal -->
+    <div class="modal" id="viewParentModal">
+        <div class="parent-modal-content">
+            <button class="close-btn" onclick="closeViewParentModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="viewParentModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Edit Parent Modal -->
+    <div class="modal" id="editParentModal">
+        <div class="parent-modal-content edit-modal">
+            <button class="close-btn" onclick="closeEditParentModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="editParentModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Excel Filter Modal -->
+    <div class="modal" id="excelFilterModal">
+        <div class="excel-filter-modal-content">
+            <button class="close-btn" onclick="closeExcelFilterModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">
+                <i class="fas fa-file-excel"></i>
+                خروجی Excel اطلاعات اولیا
+            </h2>
+            
+            <div class="excel-filter-options">
+                <p class="filter-description">
+                    لطفاً نوع خروجی مورد نظر خود را انتخاب کنید:
+                </p>
+                
+                <div class="excel-filter-grid">
+                    <button type="button" class="excel-filter-option" onclick="generateExcelWithFilter('all')">
+                        <i class="fas fa-users"></i>
+                        <span class="option-title">همه دانش‌آموزان</span>
+                        <span class="option-desc">اطلاعات کامل تمام دانش‌آموزان و والدین</span>
+                    </button>
+                    
+                    <button type="button" class="excel-filter-option debt-option" onclick="generateExcelWithFilter('debt')">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="option-title">فقط بدهکاران</span>
+                        <span class="option-desc">فقط دانش‌آموزانی که بدهی شهریه دارند</span>
+                    </button>
+                    
+                    <button type="button" class="excel-filter-option no-debt-option" onclick="generateExcelWithFilter('no-debt')">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="option-title">غیر بدهکاران</span>
+                        <span class="option-desc">دانش‌آموزانی که بدهی ندارند</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMS Confirm Modal -->
+    <div class="modal" id="smsConfirmModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-question-circle"></i>
+                تأیید ارسال پیامک
+            </h2>
+            
+            <div class="confirm-info">
+                <div class="confirm-row">
+                    <span class="confirm-label">تعداد گیرندگان:</span>
+                    <span class="confirm-value" id="smsConfirmRecipients">0</span>
+                    <span class="confirm-unit">نفر</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">هزینه کل:</span>
+                    <span class="confirm-value" id="smsConfirmCost">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+                <div class="confirm-row recipient-info">
+                    <span class="confirm-label">گیرنده:</span>
+                    <span class="confirm-value-full" id="smsConfirmRecipientText"></span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeSmsConfirmModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="confirmSendSms()">
+                    <i class="fas fa-paper-plane"></i>
+                    ارسال پیامک
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Warning Modal -->
+    <div class="modal warning-modal" id="warningModal">
+        <div class="warning-modal-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="warning-title" id="warningTitle">توجه!</h3>
+            <p class="warning-message" id="warningMessage"></p>
+            <button class="btn-warning-ok" onclick="closeWarningModal()">
+                <i class="fas fa-check"></i>
+                متوجه شدم
+            </button>
+        </div>
+    </div>
+
+    <!-- SMS Confirm Modal -->
+
+    <!-- Low Balance Modal -->
+    <div class="modal" id="lowBalanceModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                موجودی ناکافی
+            </h2>
+            
+            <div class="confirm-info">
+                <p class="low-balance-message">موجودی شما برای ارسال پیامک کافی نیست.</p>
+                <div class="confirm-row">
+                    <span class="confirm-label">موجودی فعلی:</span>
+                    <span class="confirm-value" id="lowBalanceCurrent">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">موجودی مورد نیاز:</span>
+                    <span class="confirm-value" id="lowBalanceNeeded">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeLowBalanceModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="goToChargeFromLowBalance()">
+                    <i class="fas fa-wallet"></i>
+                    شارژ حساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charge Confirm Modal -->
+    <div class="modal" id="chargeConfirmModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-question-circle"></i>
+                تأیید پرداخت
+            </h2>
+            
+            <div class="confirm-info">
+                <p class="charge-confirm-message">آیا از پرداخت مبلغ زیر مطمئن هستید؟</p>
+                <div class="confirm-row highlight">
+                    <span class="confirm-label">مبلغ پرداختی:</span>
+                    <span class="confirm-value large" id="chargeConfirmAmount">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeChargeConfirmModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="confirmCharge()">
+                    <i class="fas fa-credit-card"></i>
+                    تأیید و پرداخت
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charge Modal -->
+    <div class="modal" id="chargeModal">
+        <div class="charge-modal-content">
+            <button class="close-btn" onclick="closeChargeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">
+                <i class="fas fa-wallet"></i>
+                شارژ حساب پیامک
+            </h2>
+
+            <div class="charge-info">
+                <div class="current-balance">
+                    <span class="balance-label">موجودی فعلی:</span>
+                    <span class="balance-value" id="smsBalanceAmount2">0</span>
+                    <span class="balance-unit">تومان</span>
+                </div>
+                <div class="sms-price-info">
+                    <i class="fas fa-info-circle"></i>
+                    هر پیامک 150 تومان
+                </div>
+            </div>
+
+            <div class="charge-options-section">
+                <h3 class="section-title">
+                    <i class="fas fa-list"></i>
+                    انتخاب مبلغ شارژ:
+                </h3>
+                <div class="charge-options-grid">
+                    <button class="charge-option-btn" data-amount="100000" onclick="selectChargeOption(100000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">100,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="200000" onclick="selectChargeOption(200000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">200,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="500000" onclick="selectChargeOption(500000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">500,000</span>
+                        <span class="unit">تومان</span>
+                        <span class="badge-popular">پرطرفدار</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="1000000" onclick="selectChargeOption(1000000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">1,000,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="custom-charge-section">
+                <h3 class="section-title">
+                    <i class="fas fa-edit"></i>
+                    مبلغ دلخواه:
+                </h3>
+                <div class="custom-charge-input-wrapper">
+                    <input 
+                        type="number" 
+                        id="customChargeAmount" 
+                        class="custom-charge-input" 
+                        placeholder="مبلغ مورد نظر خود را وارد کنید..."
+                        min="10000"
+                        step="10000"
+                        oninput="selectCustomCharge()"
+                    >
+                    <span class="input-unit">تومان</span>
+                </div>
+                <div class="min-charge-note">
+                    <i class="fas fa-exclamation-circle"></i>
+                    حداقل مبلغ شارژ: 10,000 تومان
+                </div>
+            </div>
+
+            <div class="charge-actions">
+                <button class="charge-btn charge-btn-pay" onclick="proceedToPayment()" disabled>
+                    <i class="fas fa-credit-card"></i>
+                    انتخاب مبلغ الزامی است
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jalali Calendar Modal -->
+<div class="modal" id="jalaliCalendarModal">
+    <div class="jalali-calendar-content" onclick="event.stopPropagation()">
+        <div class="jalali-cal-header">
+            <button class="jalali-nav-btn" onclick="jalaliPrevMonth()">&#8249;</button>
+            <div class="jalali-cal-title" id="jalaliCalTitle"></div>
+            <button class="jalali-nav-btn" onclick="jalaliNextMonth()">&#8250;</button>
+        </div>
+        <div class="jalali-year-nav">
+            <button class="jalali-year-btn" onclick="jalaliChangeYear(-1)">&#8249;</button>
+            <span class="jalali-year-label" id="jalaliYearLabel"></span>
+            <button class="jalali-year-btn" onclick="jalaliChangeYear(1)">&#8250;</button>
+        </div>
+        <div class="jalali-day-names">
+            <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+        </div>
+        <div class="jalali-days-grid" id="jalaliDaysGrid"></div>
+        <div class="jalali-cal-footer">
+            <button class="jalali-cancel-btn" onclick="closeJalaliCalendar()">انصراف</button>
+            <button class="jalali-today-btn" onclick="jalaliGoToday()">امروز</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Load JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script src="../javaScript/Parents.js"></script>
+    <script src="../javaScript/menu.js"></script>
+</body>
+</html>

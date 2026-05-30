@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور - مدیریت کلاس‌ها</title>
+    <link rel="stylesheet" href="../style/student.css" />
+    <link rel="stylesheet" href="../style/menu.css" />
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <link rel="icon" href="../image/iconB.png" />
+     <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+
+    <style>
+      /* ── PAGE LOADER (کپی از صفحه معلم) ── */
+      #pageLoader {
+        position: fixed; inset: 0; background: #0f1b3d;
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; z-index: 9999; gap: 18px;
+        transition: opacity 0.5s ease;
+      }
+      #pageLoader.hide { opacity: 0; pointer-events: none; }
+      .loader-spinner {
+        width: 58px; height: 58px;
+        border: 5px solid rgba(255,255,255,0.12);
+        border-top-color: #4da3ff; border-radius: 50%;
+        animation: spin 0.85s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .loader-text { color: #c8d8f0; font-family: Vazirmatn, sans-serif; font-size: 15px; }
+      .loader-sub  { color: #6a8ab0; font-family: Vazirmatn, sans-serif; font-size: 12px; margin-top: -8px; }
+    </style>
+  </head>
+  <body>
+
+    <!-- ── PAGE LOADER (مثل صفحه معلم، داخل HTML) ── -->
+    <div id="pageLoader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">در حال بارگذاری...</div>
+      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+    </div>
+
+    <!-- PDF Loading Indicator -->
+    <div class="pdf-loading" id="pdfLoading">
+      <div class="spinner"></div>
+      <div>در حال تولید فایل PDF...</div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+        <div class="menu-item">
+          <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+        </div>
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران <i class="fas fa-chevron-down submenu-arrow"></i></a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
+            <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+            <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+            <a href="../html/Parents.html" class="submenu-item"><i class="fas fa-users"></i> مدیریت اولیا</a>
+          </div>
+        </div>
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس ها <i class="fas fa-chevron-down submenu-arrow"></i></a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
+            <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
+            <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
+            <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
+          </div>
+        </div>
+        <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت نام ها</a></div>
+        <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش ها</a></div>
+        <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه ها</a></div>
+        <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> ارشیو</a></div>
+        <div class="menu-item"><a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a></div>
+        <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+        <div class="menu-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+      </div>
+
+      <div class="main-content">
+        <div class="top-header">
+          <h1 class="page-title">مدیریت کلاس ها</h1>
+          <div class="admin-info" id="adminInfo">در حال بارگذاری...</div>
+        </div>
+        <div class="action-buttons-container">
+          <button class="action-btn-main btn-excel" onclick="openExcelModal()">
+            <i class="fas fa-file-excel"></i><span>خروجی Excel</span>
+          </button>
+          <button class="action-btn-main btn-add-class" onclick="openAddClassModal()">
+            <i class="fas fa-plus-circle"></i><span>افزودن کلاس جدید</span>
+          </button>
+        </div>
+        <div class="classes-grid" id="classesGrid"></div>
+      </div>
+    </div>
+
+    <!-- Students List Modal -->
+    <div class="modal" id="studentsModal">
+      <div class="students-modal-content">
+        <button class="close-btn" onclick="closeStudentsModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title" id="studentsModalTitle">لیست دانش‌آموزان کلاس</h2>
+        <button class="add-student-btn" onclick="openAddStudentOptionsModal()">
+          <i class="fas fa-user-plus"></i><span>افزودن دانش‌آموز جدید</span>
+        </button>
+        <div class="search" style="margin-bottom:20px">
+          <input class="inp-search" type="text" id="studentSearchInput"
+            placeholder="جستجوی دانش‌آموز (نام، کد، کد ملی، شماره تماس)..." onkeyup="searchStudents()" />
+        </div>
+        <div class="students-container">
+          <div class="students-grid" id="studentsContainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal" id="studentDetailsModal">
+      <div class="student-details-modal-content">
+        <button class="close-btn" onclick="closeStudentDetailsModal()"><i class="fas fa-times"></i></button>
+        <div class="student-header">
+          <div class="student-avatar-container">
+            <img class="student-avatar" id="studentAvatarImg" style="display:none" onclick="showPhotoFullscreen(this.src)" />
+            <div class="student-avatar-placeholder" id="studentAvatarPlaceholder" onclick="showPlaceholderFullscreen()">A</div>
+            <button class="change-photo-btn" onclick="document.getElementById('changePhotoInput').click()">
+              <i class="fas fa-camera"></i>
+            </button>
+            <input type="file" id="changePhotoInput" class="photo-input" accept="image/*" onchange="handlePhotoChange(event)" />
+          </div>
+          <div class="student-basic-info">
+            <div class="student-name" id="studentName">نام دانش‌آموز</div>
+            <div class="student-code" id="studentCodeDisplay">کد: ------</div>
+            <button class="btn-download-photo" onclick="openImageCompressionModal()">
+              <i class="fas fa-download"></i><span>دانلود عکس پروفایل</span>
+            </button>
+            <button class="btn-download-student-excel" onclick="downloadStudentExcel()">
+              <i class="fas fa-file-excel"></i><span>دانلود Excel دانش‌آموز</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-user"></i> اطلاعات فردی</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام:</div>
+              <input type="text" class="detail-value-editable" id="editFirstName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">نام خانوادگی:</div>
+              <input type="text" class="detail-value-editable" id="editLastName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی:</div>
+              <!-- maxlength=10 و inputmode=numeric مستقیم در HTML -->
+              <input type="text" class="detail-value-editable" id="editNationalId"
+                maxlength="10" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="editBirthdate"
+                placeholder="1385/05/15" autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه:</div>
+              <!-- maxlength=11 و inputmode=numeric مستقیم در HTML -->
+              <input type="text" class="detail-value-editable" id="editMobile"
+                maxlength="11" inputmode="numeric" placeholder="09xxxxxxxxx" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره تلفن ثابت:</div>
+              <input type="text" class="detail-value-editable" id="editHomePhone"
+                maxlength="11" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-male"></i> اطلاعات پدر</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام پدر:</div>
+              <input type="text" class="detail-value-editable" id="editFatherName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی پدر:</div>
+              <input type="text" class="detail-value-editable" id="editFatherNationalId"
+                maxlength="10" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد پدر:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="editFatherBirthdate"
+                autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه پدر:</div>
+              <input type="text" class="detail-value-editable" id="editFatherMobile"
+                maxlength="11" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شغل پدر:</div>
+              <input type="text" class="detail-value-editable" id="editFatherJob" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تحصیلات پدر:</div>
+              <select class="custom-select" id="editFatherEducation">
+                <option value="" disabled selected>تحصیلات پدر</option>
+                <option value="bisavad">بی‌سواد</option>
+                <option value="nahzat">نهضت سواد آموزی</option>
+                <option value="ebtida">ابتدایی</option>
+                <option value="sikol">سیکل</option>
+                <option value="diplom">دیپلم</option>
+                <option value="fawq_diplom">فوق دیپلم</option>
+                <option value="karshenas">کارشناسی (لیسانس)</option>
+                <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                <option value="karshenas_arshad">کارشناسی ارشد (فوق لیسانس)</option>
+                <option value="doktori">دکتری</option>
+                <option value="fawq_doktori">فوق دکتری (پست‌دکتری)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-female"></i> اطلاعات مادر</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام مادر:</div>
+              <input type="text" class="detail-value-editable" id="editMotherName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی مادر:</div>
+              <input type="text" class="detail-value-editable" id="editMotherNationalId"
+                maxlength="10" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد مادر:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="editMotherBirthdate"
+                autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه مادر:</div>
+              <input type="text" class="detail-value-editable" id="editMotherMobile"
+                maxlength="11" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شغل مادر:</div>
+              <input type="text" class="detail-value-editable" id="editMotherJob" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تحصیلات مادر:</div>
+              <select class="custom-select" id="editMotherEducation">
+                <option value="" disabled selected>تحصیلات مادر</option>
+                <option value="bisavad">بی‌سواد</option>
+                <option value="nahzat">نهضت سواد آموزی</option>
+                <option value="ebtida">ابتدایی</option>
+                <option value="sikol">سیکل</option>
+                <option value="diplom">دیپلم</option>
+                <option value="fawq_diplom">فوق دیپلم</option>
+                <option value="karshenas">کارشناسی (لیسانس)</option>
+                <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                <option value="karshenas_arshad">کارشناسی ارشد (فوق لیسانس)</option>
+                <option value="doktori">دکتری</option>
+                <option value="fawq_doktori">فوق دکتری (پست‌دکتری)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-map-marker-alt"></i> اطلاعات سکونت</h3>
+          <div class="details-grid">
+            <div class="detail-item" style="grid-column:1/-1">
+              <div class="detail-label">آدرس:</div>
+              <input type="text" class="detail-value-editable" id="editAddress" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد پستی:</div>
+              <input type="text" class="detail-value-editable" id="editPostalCode"
+                maxlength="10" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-save-student" onclick="saveStudentDetails()">
+          <i class="fas fa-save"></i> ذخیره تغییرات
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Student Form Modal -->
+    <div class="modal" id="addStudentFormModal">
+      <div class="add-student-form-modal-content">
+        <button class="close-btn" onclick="closeAddStudentFormModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title">افزودن دانش‌آموز جدید</h2>
+
+        <div class="photo-upload-section">
+          <div class="photo-preview-container">
+            <img class="photo-preview" id="newStudentPhoto" style="display:none" />
+            <div class="photo-preview-placeholder" id="newStudentPhotoPlaceholder">
+              <i class="fas fa-camera"></i>
+            </div>
+          </div>
+          <button class="upload-photo-btn" onclick="document.getElementById('newStudentPhotoInput').click()">
+            <i class="fas fa-upload"></i> انتخاب عکس
+          </button>
+          <p class="photo-format-hint">فرمت‌های مجاز: JPG · PNG · WEBP · GIF (حداکثر 1 مگابایت)</p>
+          <input type="file" id="newStudentPhotoInput" class="photo-input" accept="image/*" onchange="handleNewStudentPhoto(event)" />
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-user"></i> اطلاعات فردی</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام: <span style="color:#e74c3c">*</span></div>
+              <input type="text" class="detail-value-editable" id="newFirstName" placeholder="نام" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">نام خانوادگی: <span style="color:#e74c3c">*</span></div>
+              <input type="text" class="detail-value-editable" id="newLastName" placeholder="نام خانوادگی" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی: <span style="color:#e74c3c">*</span></div>
+              <!-- maxlength=10 ، inputmode=numeric مستقیم در HTML - همین کافیه -->
+              <input type="text" class="detail-value-editable" id="newNationalId"
+                maxlength="10" inputmode="numeric" placeholder="0123456789" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="newBirthdate"
+                placeholder="1385/05/15" autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه:</div>
+              <!-- maxlength=11 ، inputmode=numeric مستقیم در HTML -->
+              <input type="text" class="detail-value-editable" id="newMobile"
+                maxlength="11" inputmode="numeric" placeholder="09xxxxxxxxx" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره تلفن ثابت:</div>
+              <input type="text" class="detail-value-editable" id="newHomePhone"
+                maxlength="11" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-male"></i> اطلاعات پدر</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام پدر:</div>
+              <input type="text" class="detail-value-editable" id="newFatherName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی پدر:</div>
+              <input type="text" class="detail-value-editable" id="newFatherNationalId"
+                maxlength="10" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد پدر:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="newFatherBirthdate"
+                autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه پدر:</div>
+              <input type="text" class="detail-value-editable" id="newFatherMobile"
+                maxlength="11" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شغل پدر:</div>
+              <input type="text" class="detail-value-editable" id="newFatherJob" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تحصیلات پدر:</div>
+              <select class="custom-select" id="newFatherEducation">
+                <option value="" disabled selected>تحصیلات پدر</option>
+                <option value="bisavad">بی‌سواد</option>
+                <option value="nahzat">نهضت سواد آموزی</option>
+                <option value="ebtida">ابتدایی</option>
+                <option value="sikol">سیکل</option>
+                <option value="diplom">دیپلم</option>
+                <option value="fawq_diplom">فوق دیپلم</option>
+                <option value="karshenas">کارشناسی (لیسانس)</option>
+                <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                <option value="karshenas_arshad">کارشناسی ارشد (فوق لیسانس)</option>
+                <option value="doktori">دکتری</option>
+                <option value="fawq_doktori">فوق دکتری (پست‌دکتری)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-female"></i> اطلاعات مادر</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">نام مادر:</div>
+              <input type="text" class="detail-value-editable" id="newMotherName" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد ملی مادر:</div>
+              <input type="text" class="detail-value-editable" id="newMotherNationalId"
+                maxlength="10" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تاریخ تولد مادر:</div>
+              <input type="text" class="detail-value-editable jdp-input" id="newMotherBirthdate"
+                autocomplete="off" readonly style="cursor:pointer" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شماره همراه مادر:</div>
+              <input type="text" class="detail-value-editable" id="newMotherMobile"
+                maxlength="11" inputmode="numeric" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">شغل مادر:</div>
+              <input type="text" class="detail-value-editable" id="newMotherJob" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">تحصیلات مادر:</div>
+              <select class="custom-select" id="newMotherEducation">
+                <option value="" disabled selected>تحصیلات مادر</option>
+                <option value="bisavad">بی‌سواد</option>
+                <option value="nahzat">نهضت سواد آموزی</option>
+                <option value="ebtida">ابتدایی</option>
+                <option value="sikol">سیکل</option>
+                <option value="diplom">دیپلم</option>
+                <option value="fawq_diplom">فوق دیپلم</option>
+                <option value="karshenas">کارشناسی (لیسانس)</option>
+                <option value="karshenas_napeyvaeste">کارشناسی ناپیوسته</option>
+                <option value="karshenas_arshad">کارشناسی ارشد (فوق لیسانس)</option>
+                <option value="doktori">دکتری</option>
+                <option value="fawq_doktori">فوق دکتری (پست‌دکتری)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title"><i class="fas fa-map-marker-alt"></i> اطلاعات سکونت</h3>
+          <div class="details-grid">
+            <div class="detail-item" style="grid-column:1/-1">
+              <div class="detail-label">آدرس:</div>
+              <input type="text" class="detail-value-editable" id="newAddress" />
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">کد پستی:</div>
+              <input type="text" class="detail-value-editable" id="newPostalCode"
+                maxlength="10" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+
+        <!-- id="saveNewStudentBtn" برای کنترل disabled از JS -->
+        <button class="btn-save-student" id="saveNewStudentBtn" onclick="addNewStudent()" disabled
+          style="opacity:0.5;cursor:not-allowed;transition:opacity 0.3s">
+          <i class="fas fa-user-plus"></i> افزودن دانش‌آموز
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal" id="reportModal">
+      <div class="report-modal-content" id="reportCardContent">
+        <button class="close-btn" onclick="closeReportModal()"><i class="fas fa-times"></i></button>
+        <div class="report-header">
+          <div class="report-school-name">هنرستان فنی و حرفه‌ای بوربر</div>
+          <div class="report-title">کارنامه تحصیلی سال 1403-1404</div>
+        </div>
+        <div class="report-student-info">
+          <div class="report-info-item"><span class="report-info-label">نام و نام خانوادگی:</span><span class="report-info-value" id="reportStudentName">-</span></div>
+          <div class="report-info-item"><span class="report-info-label">کد دانش‌آموز:</span><span class="report-info-value" id="reportStudentCode">-</span></div>
+          <div class="report-info-item"><span class="report-info-label">پایه:</span><span class="report-info-value" id="reportStudentGrade">دهم</span></div>
+          <div class="report-info-item"><span class="report-info-label">کلاس:</span><span class="report-info-value" id="reportStudentClass">-</span></div>
+          <div class="report-info-item"><span class="report-info-label">رشته:</span><span class="report-info-value" id="reportStudentField">-</span></div>
+          <div class="report-info-item"><span class="report-info-label">کد ملی:</span><span class="report-info-value" id="reportStudentNationalId">-</span></div>
+        </div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="subject-col">نام درس</th>
+              <th colspan="3">نیمسال اول</th>
+              <th colspan="3">نیمسال دوم</th>
+              <th rowspan="2">معدل سالانه</th>
+            </tr>
+            <tr>
+              <th>مستمر<br>(20)</th><th>میان‌ترم<br>(30)</th><th>نهایی<br>(50)</th>
+              <th>مستمر<br>(20)</th><th>میان‌ترم<br>(30)</th><th>نهایی<br>(50)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="subject-col">ریاضی</td><td>14</td><td>19</td><td>38</td><td>18</td><td>27</td><td>36</td><td class="grade-good">76.00</td></tr>
+            <tr><td class="subject-col">فیزیک</td><td>19</td><td>20</td><td>34</td><td>16</td><td>26</td><td>45</td><td class="grade-excellent">80.00</td></tr>
+            <tr><td class="subject-col">شیمی</td><td>16</td><td>27</td><td>33</td><td>19</td><td>20</td><td>45</td><td class="grade-excellent">80.00</td></tr>
+            <tr><td class="subject-col">ادبیات فارسی</td><td>17</td><td>26</td><td>43</td><td>18</td><td>22</td><td>45</td><td class="grade-excellent">85.50</td></tr>
+          </tbody>
+        </table>
+        <div class="report-footer">
+          <div class="report-averages">
+            <div class="report-average"><span class="report-average-label">معدل نیمسال اول</span><span class="report-average-value">76.09</span></div>
+            <div class="report-average"><span class="report-average-label">معدل نیمسال دوم</span><span class="report-average-value">81.27</span></div>
+            <div class="report-average"><span class="report-average-label">معدل کل سال</span><span class="report-average-value">78.68</span></div>
+          </div>
+          <div class="report-download-buttons">
+            <button class="btn-download-report" onclick="downloadReportPDF()"><i class="fas fa-file-pdf"></i><span>دریافت PDF</span></button>
+            <button class="btn-download-report excel-btn" onclick="downloadReportExcel()"><i class="fas fa-file-excel"></i><span>دریافت Excel</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Compression Modal -->
+    <div class="modal" id="imageCompressionModal">
+      <div class="compression-modal-content">
+        <button class="close-btn" onclick="closeImageCompressionModal()"><i class="fas fa-times"></i></button>
+        <h2 class="compression-title">دانلود عکس پروفایل</h2>
+        <div class="compression-section">
+          <label class="compression-label">انتخاب کیفیت تصویر:</label>
+          <div class="quality-options">
+            <button class="quality-option" onclick="setImageQuality(0.3)">کم</button>
+            <button class="quality-option active" onclick="setImageQuality(0.6)">متوسط</button>
+            <button class="quality-option" onclick="setImageQuality(0.9)">بالا</button>
+          </div>
+          <div style="margin-top:20px">
+            <label class="compression-label">تنظیم دقیق:</label>
+            <input type="range" class="quality-slider" id="qualitySlider" min="0.1" max="1" step="0.1" value="0.6" oninput="updateImageQuality(this.value)">
+          </div>
+        </div>
+        <div class="size-display">
+          <div class="size-label">حجم تقریبی فایل:</div>
+          <div class="size-value" id="estimatedSize">~ 150 KB</div>
+        </div>
+        <div class="compression-buttons">
+          <button class="compression-btn compression-btn-download" onclick="confirmImageDownload()"><i class="fas fa-download"></i> دانلود</button>
+          <button class="compression-btn compression-btn-cancel" onclick="closeImageCompressionModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo Fullscreen Modal -->
+    <div class="modal" id="photoFullscreenModal">
+      <div class="photo-fullscreen-content">
+        <button class="close-btn" onclick="closePhotoFullscreen()"><i class="fas fa-times"></i></button>
+        <img id="fullscreenPhoto" src="" alt="عکس دانش‌آموز">
+      </div>
+    </div>
+
+    <!-- Edit Class Modal -->
+    <div class="modal" id="editModal">
+      <div class="edit-modal-content">
+        <button class="close-btn" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title" id="editModalTitle">ویرایش کلاس</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">نام کلاس:</label>
+            <input type="text" class="form-input" id="editClassName" placeholder="مثال: دهم الکترونیک ۱" />
+          </div>
+        </div>
+        <button class="save-btn" onclick="saveClassChanges()"><i class="fas fa-save"></i> ذخیره تغییرات</button>
+      </div>
+    </div>
+
+    <!-- Excel Modal -->
+    <div class="modal" id="excelModal">
+      <div class="excel-modal-content">
+        <button class="close-btn" onclick="closeExcelModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title">دریافت خروجی Excel</h2>
+        <div class="excel-section">
+          <h3 class="excel-section-title"><i class="fas fa-chart-bar"></i><span>خروجی کلی</span></h3>
+          <div class="excel-options">
+            <button class="excel-option-btn" onclick="exportExcel('all')">
+              <div class="text">همه کلاس‌ها</div>
+              <span class="badge" id="allClassesCount">0 کلاس</span>
+              <i class="fas fa-file-excel icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="excel-section">
+          <h3 class="excel-section-title"><i class="fas fa-layer-group"></i><span>خروجی بر اساس پایه</span></h3>
+          <div class="excel-options">
+            <button class="excel-option-btn" onclick="exportExcel('grade10')"><div class="text">پایه دهم</div><i class="fas fa-graduation-cap icon"></i></button>
+            <button class="excel-option-btn" onclick="exportExcel('grade11')"><div class="text">پایه یازدهم</div><i class="fas fa-graduation-cap icon"></i></button>
+            <button class="excel-option-btn" onclick="exportExcel('grade12')"><div class="text">پایه دوازدهم</div><i class="fas fa-graduation-cap icon"></i></button>
+          </div>
+        </div>
+        <div class="excel-section">
+          <div class="individual-classes-wrapper">
+            <div class="individual-classes-header"><i class="fas fa-list"></i> دریافت خروجی کلاس‌های خاص:</div>
+            <div class="individual-classes-grid" id="individualClassOptions"></div>
+          </div>
+        </div>
+        <div class="excel-options">
+          <button class="excel-option-btn excel-option-btn-cancel" onclick="closeExcelModal()"><span class="text">انصراف</span><i class="fas fa-times icon"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Class Modal -->
+    <div class="modal" id="deleteClassModal">
+      <div class="delete-modal-content">
+        <div class="delete-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2 class="modal-title">حذف کلاس</h2>
+        <p class="delete-modal-text" id="deleteClassText">آیا مطمئن هستید که می‌خواهید این کلاس را حذف کنید؟</p>
+        <div class="delete-modal-buttons">
+          <button class="modal-btn modal-btn-confirm" onclick="confirmDeleteClass()"><i class="fas fa-trash-alt"></i> حذف کلاس</button>
+          <button class="modal-btn modal-btn-cancel" onclick="closeDeleteClassModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Class Modal -->
+    <div class="modal" id="addClassModal">
+      <div class="edit-modal-content">
+        <button class="close-btn" onclick="closeAddClassModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title">افزودن کلاس جدید</h2>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">شماره کلاس:</label><input type="text" class="form-input" id="newClassNumber" placeholder="مثال: 107" /></div>
+          <div class="form-group"><label class="form-label">پایه:</label>
+            <select class="form-select" id="newClassGrade"><option value="دهم">دهم</option><option value="یازدهم">یازدهم</option><option value="دوازدهم">دوازدهم</option></select>
+          </div>
+          <div class="form-group full-width"><label class="form-label">رشته:</label>
+            <select class="form-select" id="newClassField"><option value="کامپیوتر">کامپیوتر</option><option value="الکترونیک">الکترونیک</option></select>
+          </div>
+          <div class="form-group full-width"><label class="form-label">نام کلاس:</label><input type="text" class="form-input" id="newClassName" placeholder="دهم الکترونیک ۱" /></div>
+        </div>
+        <button class="save-btn" onclick="addNewClass()"><i class="fas fa-plus-circle"></i> افزودن کلاس</button>
+      </div>
+    </div>
+
+    <!-- Add Student Options Modal -->
+    <div class="modal" id="addStudentOptionsModal">
+      <div class="add-student-modal-content">
+        <button class="close-btn" onclick="closeAddStudentOptionsModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title">افزودن دانش‌آموز</h2>
+        <div class="add-student-options">
+          <button class="add-student-option-btn" onclick="openAddStudentFormModal()"><i class="fas fa-pen"></i> افزودن دستی</button>
+          <button class="add-student-option-btn" onclick="alert('آپلود فایل Excel')"><i class="fas fa-file-excel"></i> افزودن از طریق Excel</button>
+          <button class="add-student-option-btn cancel-option" onclick="closeAddStudentOptionsModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archive Class Modal -->
+    <div class="modal" id="archiveClassModal">
+      <div class="archive-modal-content">
+        <div class="archive-icon"><i class="fas fa-archive"></i></div>
+        <h2 class="modal-title">انتقال به ارشیو</h2>
+        <p class="archive-modal-text" id="archiveClassText">آیا مطمئن هستید که می‌خواهید این کلاس را به ارشیو منتقل کنید؟</p>
+        <div class="delete-modal-buttons">
+          <button class="modal-btn modal-btn-archive" onclick="confirmArchiveClass()"><i class="fas fa-archive"></i> انتقال به ارشیو</button>
+          <button class="modal-btn modal-btn-cancel" onclick="closeArchiveClassModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archive Student Modal -->
+    <div class="modal" id="archiveStudentModal">
+      <div class="archive-modal-content">
+        <div class="archive-icon"><i class="fas fa-archive"></i></div>
+        <h2 class="modal-title">انتقال دانش‌آموز به ارشیو</h2>
+        <p class="archive-modal-text" id="archiveStudentText">آیا مطمئن هستید که می‌خواهید این دانش‌آموز را به ارشیو منتقل کنید؟</p>
+        <div class="delete-modal-buttons">
+          <button class="modal-btn modal-btn-archive" onclick="confirmArchiveStudent()"><i class="fas fa-archive"></i> انتقال به ارشیو</button>
+          <button class="modal-btn modal-btn-cancel" onclick="closeArchiveStudentModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="../javaScript/student.js"></script>
+    <script src="../javaScript/menu.js"></script>
+  </body>
+</html>

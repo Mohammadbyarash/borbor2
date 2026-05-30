@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>بوربور — پنل مدیریت مدارس</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap');
+:root{
+  --bg-main:#0f1629;--bg-card:#162040;--bg-card2:#1a2650;--bg-sidebar:#0b1120;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#2ecc71;--absent:#e74c3c;--late:#f39c12;--leave:#8e5fd4;
+  --text:#e8f0ff;--text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(74,144,217,0.35);
+  --sidebar-w:258px;--radius:18px;--radius-sm:11px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:"Vazirmatn",Tahoma,sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 5%,rgba(74,144,217,0.13) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(142,95,212,0.1) 0%,transparent 55%);pointer-events:none;z-index:0;}
+body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(74,144,217,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:26px 14px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:400;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.5);}
+.sidebar.open{transform:translateX(0);}
+.sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(74,144,217,.2);border-radius:4px;}
+.sb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.logo{font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;}.logo span{color:var(--accent);}
+.sb-close{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;font-family:inherit;}
+.sb-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.logo-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-bottom:22px;letter-spacing:1px;text-transform:uppercase;}
+.admin-block{background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.1));border:1px solid rgba(74,144,217,.2);border-radius:var(--radius-sm);padding:15px 13px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.admin-avatar{width:46px;height:46px;background:linear-gradient(135deg,var(--accent4),#e67e22);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(243,156,18,.35);}
+.admin-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.admin-role{font-size:10px;color:var(--text-muted);}
+.admin-badge{margin-top:7px;display:inline-block;background:rgba(243,156,18,.14);color:var(--accent4);font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid rgba(243,156,18,.22);}
+.nav-section-label{font-size:9px;font-weight:700;color:rgba(180,200,255,.28);letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;margin:14px 0 8px;}
+.nav-item{margin-bottom:2px;}
+.nav-item a{color:rgba(180,200,255,.58);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:11px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:all .2s;position:relative;cursor:pointer;}
+.nav-item a i{font-size:14px;width:20px;text-align:center;flex-shrink:0;opacity:.75;}
+.nav-item a:hover{background:rgba(255,255,255,.05);color:#fff;}
+/* ACTIVE SIDEBAR ITEM */
+.nav-item.active a{
+  background:linear-gradient(90deg,rgba(74,144,217,.22),rgba(74,144,217,.06));
+  color:#fff;font-weight:700;
+  border:1px solid rgba(74,144,217,.28);
+  box-shadow:0 2px 16px rgba(74,144,217,.12);
+}
+.nav-item.active a::before{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:65%;background:var(--accent);border-radius:3px 0 0 3px;}
+.nav-item.active a i{opacity:1;color:var(--accent);}
+/* Active page indicator dot */
+.nav-item.active a::after{
+  content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent3);
+  box-shadow:0 0 8px rgba(6,214,160,.7);
+  animation:pulse-dot 2s infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:translateY(-50%) scale(1);}50%{opacity:.6;transform:translateY(-50%) scale(1.3);}}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px;}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center;line-height:1.7;}
+
+/* ══ OVERLAY + HAMBURGER ══ */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199;}.sb-overlay.on{display:block;}
+.hamburger{position:fixed;top:16px;right:20px;z-index:300;width:44px;height:44px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.hamburger:hover{border-color:var(--border-hover);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text-muted);border-radius:2px;transition:all .3s;}
+.hamburger:hover span{background:var(--text);}
+
+/* ══ MAIN ══ */
+.main-content{min-height:100vh;padding:72px 24px 36px;position:relative;z-index:1;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:14px;flex-wrap:wrap;}
+.greeting h1{font-size:20px;font-weight:800;line-height:1.3;}.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:7px;}
+.top-actions{display:flex;align-items:center;gap:9px;}
+.action-btn{width:40px;height:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;position:relative;}
+.action-btn:hover{color:#fff;border-color:var(--border-hover);}
+.notif-dot{position:absolute;top:8px;left:8px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.profile-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--accent4),#e67e22);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;box-shadow:0 3px 10px rgba(243,156,18,.35);}
+.add-school-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.add-school-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,144,217,.4);}
+
+/* Export buttons */
+.export-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.export-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .22s;border:1px solid;}
+.export-btn.xlsx-btn{background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.3);color:var(--accent3);}
+.export-btn.xlsx-btn:hover{background:rgba(6,214,160,.16);transform:translateY(-1px);}
+.export-btn.word-btn{background:rgba(74,144,217,.08);border-color:rgba(74,144,217,.3);color:var(--accent);}
+.export-btn.word-btn:hover{background:rgba(74,144,217,.16);transform:translateY(-1px);}
+
+/* ══ STAT CARDS ══ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:all .25s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.stat-card::before{content:"";position:absolute;top:-30px;left:-20px;width:80px;height:80px;border-radius:50%;opacity:.06;pointer-events:none;}
+.stat-card.sc-blue::before{background:var(--accent);}
+.stat-card.sc-green::before{background:var(--present);}
+.stat-card.sc-yellow::before{background:var(--accent4);}
+.stat-card.sc-purple::before{background:var(--accent2);}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:rgba(74,144,217,.15);color:var(--accent);}
+.si-green{background:rgba(46,204,113,.15);color:var(--present);}
+.si-yellow{background:rgba(243,156,18,.15);color:var(--accent4);}
+.si-purple{background:rgba(142,95,212,.15);color:var(--accent2);}
+.stat-val{font-size:26px;font-weight:900;line-height:1;}
+.stat-lbl{font-size:10.5px;color:var(--text-muted);margin-top:3px;}
+.stat-sub{font-size:9.5px;margin-top:5px;display:flex;align-items:center;gap:3px;}
+
+/* ══ CARD / TOOLBAR ══ */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.card-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:9px;}
+.card-title i{color:var(--accent);}
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:220px;}
+.search-wrap input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;padding:10px 38px 10px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--border-hover);}
+.search-wrap input::placeholder{color:var(--text-muted);}
+.search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;}
+.filter-select{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;outline:none;transition:border-color .2s;}
+.filter-select:focus{border-color:var(--border-hover);}
+.filter-select option{background:var(--bg-card2);}
+.view-toggle{display:flex;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.vt-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;transition:all .2s;}
+.vt-btn.active{background:rgba(74,144,217,.18);color:var(--accent);}
+.vt-btn:hover:not(.active){background:rgba(255,255,255,.05);color:var(--text);}
+
+/* ══ SCHOOL GRID ══ */
+.schools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+.school-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .28s;position:relative;}
+.school-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 14px 38px rgba(0,0,0,.35);}
+.school-card-top{height:6px;}
+.school-card-body{padding:20px 18px 16px;}
+.school-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.school-logo{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+.school-name{font-size:14px;font-weight:800;line-height:1.3;margin-bottom:4px;}
+.school-address{font-size:10.5px;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+.sub-plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:6px;}
+.school-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.03);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.school-stat{text-align:center;}
+.school-stat-val{font-size:18px;font-weight:900;line-height:1;}
+.school-stat-lbl{font-size:9px;color:var(--text-muted);margin-top:3px;}
+.school-footer{display:flex;gap:8px;align-items:center;}
+.school-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sd-active{background:var(--present);box-shadow:0 0 6px rgba(46,204,113,.5);}
+.sd-inactive{background:var(--absent);}
+.sd-trial{background:var(--accent4);}
+.school-status-lbl{font-size:10.5px;font-weight:700;flex:1;}
+.enter-btn{display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:11.5px;font-weight:800;padding:9px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:all .25s;box-shadow:0 3px 10px rgba(74,144,217,.25);}
+.enter-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(74,144,217,.4);}
+.card-menu-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
+.card-menu-btn:hover{border-color:var(--border-hover);color:var(--text);}
+.exp-badge{position:absolute;top:12px;left:12px;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;}
+
+/* ══ TABLE VIEW ══ */
+.school-table-wrap{overflow-x:auto;}
+.school-table{width:100%;border-collapse:collapse;}
+.school-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(74,144,217,.06);border-bottom:1px solid var(--border);white-space:nowrap;}
+.school-table td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.school-table tr:last-child td{border-bottom:none;}
+.school-table tbody tr{transition:background .15s;cursor:pointer;}
+.school-table tbody tr:hover td{background:rgba(255,255,255,.025);}
+.t-cell{display:flex;align-items:center;gap:10px;}
+.t-logo{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+.t-name{font-size:12.5px;font-weight:700;}
+.t-city{font-size:10px;color:var(--text-muted);}
+.row-actions{display:flex;gap:5px;opacity:0;transition:opacity .2s;}
+.school-table tbody tr:hover .row-actions{opacity:1;}
+.ra-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ra-btn.ra-enter:hover{border-color:rgba(74,144,217,.4);color:var(--accent);background:rgba(74,144,217,.1);}
+.ra-btn.ra-edit:hover{border-color:rgba(6,214,160,.4);color:var(--accent3);background:rgba(6,214,160,.1);}
+.ra-btn.ra-del:hover{border-color:rgba(231,76,60,.4);color:var(--absent);background:rgba(231,76,60,.1);}
+
+/* ══ PAGINATION ══ */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text-muted);}
+.page-btns{display:flex;gap:5px;}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.pg-btn.active{background:rgba(74,144,217,.2);border-color:var(--accent);color:#fff;font-weight:700;}
+.pg-btn:hover:not(.active){background:rgba(255,255,255,.05);color:var(--text);}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ══ SUBSCRIPTION SECTION ══ */
+.sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.sub-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;transition:all .25s;position:relative;overflow:hidden;}
+.sub-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.plan-gold{background:rgba(243,156,18,.15);color:var(--accent4);border:1px solid rgba(243,156,18,.25);}
+.plan-silver{background:rgba(74,144,217,.15);color:var(--accent);border:1px solid rgba(74,144,217,.25);}
+.plan-bronze{background:rgba(6,214,160,.13);color:var(--accent3);border:1px solid rgba(6,214,160,.22);}
+.plan-free{background:rgba(180,200,255,.08);color:var(--text-muted);border:1px solid var(--border);}
+.sub-school-name{font-size:13.5px;font-weight:800;margin-bottom:4px;}
+.sub-info-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11.5px;}
+.sub-info-row:last-of-type{border-bottom:none;}
+.sub-lbl{color:var(--text-muted);}
+.sub-val{font-weight:700;}
+.sub-exp-bar{height:5px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:10px;}
+.sub-exp-fill{height:100%;border-radius:4px;transition:width .8s;}
+.sub-exp-lbl{font-size:9.5px;color:var(--text-muted);margin-top:5px;display:flex;justify-content:space-between;}
+.sub-actions{display:flex;gap:7px;margin-top:14px;}
+.sub-btn{flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sub-btn.renew{border-color:rgba(6,214,160,.3);color:var(--accent3);background:rgba(6,214,160,.06);}
+.sub-btn.renew:hover{background:rgba(6,214,160,.14);}
+.sub-btn.upgrade{border-color:rgba(74,144,217,.3);color:var(--accent);background:rgba(74,144,217,.06);}
+.sub-btn.upgrade:hover{background:rgba(74,144,217,.14);}
+.sub-btn.revoke{border-color:rgba(231,76,60,.3);color:var(--absent);background:rgba(231,76,60,.06);}
+.sub-btn.revoke:hover{background:rgba(231,76,60,.14);}
+
+/* ══ LICENSE SECTION ══ */
+.license-table-wrap{overflow-x:auto;}
+.license-table{width:100%;border-collapse:collapse;}
+.license-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(142,95,212,.06);border-bottom:1px solid var(--border);}
+.license-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.license-table tr:last-child td{border-bottom:none;}
+.license-table tbody tr:hover td{background:rgba(255,255,255,.02);}
+.lic-key{font-family:monospace;font-size:11px;color:var(--accent3);direction:ltr;text-align:left;letter-spacing:.5px;}
+.lic-status{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.ls-active{background:rgba(46,204,113,.13);color:var(--present);border:1px solid rgba(46,204,113,.2);}
+.ls-expired{background:rgba(231,76,60,.13);color:var(--absent);border:1px solid rgba(231,76,60,.2);}
+.ls-trial{background:rgba(243,156,18,.13);color:var(--accent4);border:1px solid rgba(243,156,18,.2);}
+.ls-revoked{background:rgba(180,200,255,.08);color:var(--text-muted);border:1px solid var(--border);}
+.lic-copy-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.lic-copy-btn:hover{border-color:rgba(6,214,160,.4);color:var(--accent3);background:rgba(6,214,160,.08);}
+.gen-lic-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent2),#6a3fa0);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:9px 18px;border-radius:var(--radius-sm);cursor:pointer;transition:all .25s;box-shadow:0 4px 14px rgba(142,95,212,.3);}
+.gen-lic-btn:hover{transform:translateY(-1px);}
+
+/* ══ REPORTS SECTION ══ */
+.reports-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;}
+.report-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;transition:all .25s;cursor:pointer;}
+.report-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.report-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.report-title{font-size:13px;font-weight:800;margin-bottom:5px;}
+.report-desc{font-size:10.5px;color:var(--text-muted);line-height:1.7;}
+.report-meta{margin-top:12px;font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+.mini-chart{height:48px;display:flex;align-items:flex-end;gap:4px;margin-top:12px;}
+.mc-bar{flex:1;border-radius:3px 3px 0 0;min-width:6px;transition:height .4s;}
+
+/* ══ PLANS SECTION ══ */
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:24px;}
+.plan-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;position:relative;transition:all .25s;overflow:hidden;}
+.plan-card:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3);}
+.plan-card-glow{position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;opacity:.06;pointer-events:none;}
+.plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.plan-title-wrap{display:flex;align-items:center;gap:12px;}
+.plan-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.plan-name{font-size:16px;font-weight:900;margin-bottom:2px;}
+.plan-desc-small{font-size:10.5px;color:var(--text-muted);}
+.plan-toggle{display:flex;align-items:center;gap:8px;}
+.plan-toggle label{font-size:11px;color:var(--text-muted);cursor:pointer;}
+.toggle-switch{position:relative;width:36px;height:20px;cursor:pointer;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:20px;transition:.3s;border:1px solid var(--border);}
+.toggle-thumb{position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;right:2px;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+.toggle-switch input:checked+.toggle-track{background:rgba(6,214,160,.3);border-color:rgba(6,214,160,.5);}
+.toggle-switch input:checked~.toggle-thumb{right:auto;left:2px;}
+.plan-price-row{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;}
+.plan-price-label{font-size:10px;color:var(--text-muted);margin-bottom:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.plan-price-input-wrap{display:flex;align-items:center;gap:8px;}
+.plan-price-input{flex:1;background:var(--bg-main);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:20px;font-weight:900;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;direction:ltr;text-align:center;}
+.plan-price-input:focus{border-color:var(--border-hover);}
+.price-unit{font-size:11px;color:var(--text-muted);font-weight:700;white-space:nowrap;}
+.plan-discount-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.discount-input-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:150px;}
+.discount-input-wrap label{font-size:11px;color:var(--text-muted);white-space:nowrap;font-weight:700;}
+.discount-input{width:70px;background:var(--bg-main);border:1px solid var(--border);color:var(--accent4);font-family:inherit;font-size:14px;font-weight:900;padding:7px 10px;border-radius:8px;outline:none;transition:border-color .2s;direction:ltr;text-align:center;}
+.discount-input:focus{border-color:rgba(243,156,18,.4);}
+.final-price-badge{padding:6px 14px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.25);border-radius:20px;font-size:11px;font-weight:800;color:var(--accent3);}
+.plan-features-list{margin-bottom:16px;}
+.plan-feature-item{display:flex;align-items:center;gap:8px;font-size:11.5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.plan-feature-item:last-child{border-bottom:none;}
+.plan-feature-item i{font-size:10px;color:var(--accent3);}
+.plan-save-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.plan-save-btn:hover{transform:translateY(-1px);}
+
+/* Plan subscribers table */
+.plan-subscribers-card{margin-top:6px;}
+.ps-table{width:100%;border-collapse:collapse;}
+.ps-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:10px 14px;background:rgba(74,144,217,.05);border-bottom:1px solid var(--border);}
+.ps-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.ps-table tr:last-child td{border-bottom:none;}
+.ps-table tbody tr:hover td{background:rgba(255,255,255,.02);}
+.ps-action-btn{padding:5px 12px;border-radius:7px;border:1px solid;font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:all .2s;margin-left:5px;}
+.ps-renew{border-color:rgba(6,214,160,.3);color:var(--accent3);background:rgba(6,214,160,.06);}
+.ps-renew:hover{background:rgba(6,214,160,.14);}
+.ps-revoke{border-color:rgba(231,76,60,.3);color:var(--absent);background:rgba(231,76,60,.06);}
+.ps-revoke:hover{background:rgba(231,76,60,.14);}
+
+/* ══ TAB SYSTEM ══ */
+.page-tabs{display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;overflow-x:auto;}
+.page-tab{flex:1;min-width:80px;padding:13px 10px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .25s;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;}
+.page-tab i{font-size:13px;}
+.page-tab.active{color:#fff;background:rgba(74,144,217,.12);}
+.page-tab.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.page-tab:hover:not(.active){background:rgba(255,255,255,.04);color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeUp .3s ease both;}
+
+/* ══ MODAL ══ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px);}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:var(--bg-card);border:1px solid rgba(74,144,217,.25);border-radius:var(--radius);width:100%;max-width:560px;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:fadeUp .3s ease both;margin:auto;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-hdr-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:10px;}.modal-hdr-title i{color:var(--accent);}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;}
+.modal-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-size:10.5px;font-weight:700;color:var(--text-muted);}
+.fg input,.fg select{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:border-color .2s;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--border-hover);}
+.fg input::placeholder{color:rgba(180,200,255,.2);}
+.modal-ftr{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--border);}
+.modal-save{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:10px 28px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.modal-save:hover{transform:translateY(-2px);}
+.modal-cancel{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:12px;font-weight:600;padding:10px 22px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.modal-cancel:hover{border-color:var(--border-hover);color:var(--text);}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 22px;font-size:12.5px;font-weight:600;z-index:9000;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;display:flex;align-items:center;gap:10px;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,204,113,.3);}.toast.success i{color:var(--present);}
+.toast.info{border-color:rgba(74,144,217,.3);}.toast.info i{color:var(--accent);}
+.toast.error{border-color:rgba(231,76,60,.3);}.toast.error i{color:var(--absent);}
+
+/* ══ NOTIF DROPDOWN ══ */
+.notif-wrap{position:relative;}
+.notif-dropdown{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-8px);width:340px;background:var(--bg-card);border:1px solid rgba(74,144,217,.2);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.55);z-index:500;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;overflow:hidden;}
+.notif-dropdown.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.nd-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);}
+.nd-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;}.nd-title i{color:var(--accent);}
+.nd-list{max-height:280px;overflow-y:auto;}
+.nd-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;font-size:11.5px;}
+.nd-item:last-child{border-bottom:none;}
+.nd-item:hover{background:rgba(255,255,255,.03);}
+.nd-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+
+/* ══ ACTIVITY FEED ══ */
+.activity-feed{display:flex;flex-direction:column;gap:0;}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);position:relative;}
+.activity-item:last-child{border-bottom:none;}
+.activity-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.activity-body{flex:1;}
+.activity-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+.activity-sub{font-size:11px;color:var(--text-muted);}
+.activity-time{font-size:10px;color:var(--text-muted);margin-top:3px;display:flex;align-items:center;gap:4px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){.main-content{padding:68px 13px 26px;}.stats-row{grid-template-columns:1fr 1fr;}.form-grid{grid-template-columns:1fr;}.page-tab span{display:none;}}
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()" title="منو">
+  <span></span><span></span><span></span>
+</button>
+<div class="sb-overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="logo">بور<span>بور</span></div>
+    <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="logo-sub">پنل مدیریت مدارس</div>
+  <div class="admin-block">
+    <div class="admin-avatar">S</div>
+    <div>
+      <div class="admin-name">سامان رضوی</div>
+      <div class="admin-role">مدیر کل سامانه</div>
+      <div class="admin-badge">Super Admin</div>
+    </div>
+  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item" id="sb-schools" onclick="switchTab('schools');closeSidebar()"><a href="#"><i class="fas fa-school"></i> داشبورد مدارس</a></div>
+  <div class="nav-item" id="sb-subscriptions" onclick="switchTab('subscriptions');closeSidebar()"><a href="#"><i class="fas fa-id-card"></i> اشتراک‌ها</a></div>
+  <div class="nav-item" id="sb-licenses" onclick="switchTab('licenses');closeSidebar()"><a href="#"><i class="fas fa-key"></i> لایسنس‌ها</a></div>
+  <div class="nav-item" id="sb-plans" onclick="switchTab('plans');closeSidebar()"><a href="#"><i class="fas fa-tags"></i> پلان‌های پرداخت</a></div>
+  <div class="nav-item" id="sb-reports" onclick="switchTab('reports');closeSidebar()"><a href="#"><i class="fas fa-chart-bar"></i> گزارش‌ها</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">تنظیمات</div>
+  <div class="nav-item"><a href="../html/Super_admin_management.html"><i class="fas fa-users-cog"></i> مدیریت ادمین‌ها</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_setting.html"><i class="fas fa-cog"></i> تنظیمات سامانه</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting">
+      <h1 id="pageTitle">داشبورد <span>مدارس</span></h1>
+      <p><i class="fas fa-school" style="color:var(--accent3);font-size:11px"></i> مدیریت کلیه مدارس &nbsp;|&nbsp; سال تحصیلی ۱۴۰۴–۱۴۰۵</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-wrap">
+        <div class="action-btn" onclick="toggleNotif(event)" id="notifBtn">
+          <i class="fas fa-bell"></i>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="notif-dropdown" id="notifDD">
+          <div class="nd-head"><div class="nd-title"><i class="fas fa-bell"></i> اطلاعیه‌ها</div><span style="font-size:10px;color:var(--text-muted)">۳ جدید</span></div>
+          <div class="nd-list">
+            <div class="nd-item"><div class="nd-icon" style="background:rgba(231,76,60,.15);color:var(--absent)"><i class="fas fa-exclamation"></i></div><div><div style="font-weight:700;margin-bottom:2px">لایسنس رو به انقضا</div><div style="color:var(--text-muted)">هنرستان شهید بوربور — ۵ روز مانده</div></div></div>
+            <div class="nd-item"><div class="nd-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-school"></i></div><div><div style="font-weight:700;margin-bottom:2px">مدرسه جدید ثبت شد</div><div style="color:var(--text-muted)">دبیرستان نمونه تهران</div></div></div>
+            <div class="nd-item"><div class="nd-icon" style="background:rgba(6,214,160,.15);color:var(--accent3)"><i class="fas fa-check"></i></div><div><div style="font-weight:700;margin-bottom:2px">پرداخت تایید شد</div><div style="color:var(--text-muted)">دبستان پیشرفت — اشتراک سالانه</div></div></div>
+          </div>
+        </div>
+      </div>
+      <button class="add-school-btn" onclick="openAddSchoolModal()"><i class="fas fa-plus"></i> افزودن مدرسه</button>
+      <div class="profile-btn">S</div>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card sc-blue">
+      <div class="stat-icon si-blue"><i class="fas fa-school"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--accent)" id="st-schools">۰</div>
+        <div class="stat-lbl">کل مدارس</div>
+        <div class="stat-sub" style="color:var(--accent3)"><i class="fas fa-circle" style="font-size:6px"></i> <span id="st-active">۰</span> فعال</div>
+      </div>
+    </div>
+    <div class="stat-card sc-green">
+      <div class="stat-icon si-green"><i class="fas fa-user-graduate"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--present)" id="st-students">۰</div>
+        <div class="stat-lbl">کل دانش‌آموزان</div>
+      </div>
+    </div>
+    <div class="stat-card sc-yellow">
+      <div class="stat-icon si-yellow"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--accent4)" id="st-teachers">۰</div>
+        <div class="stat-lbl">کل معلمین</div>
+      </div>
+    </div>
+    <div class="stat-card sc-purple">
+      <div class="stat-icon si-purple"><i class="fas fa-key"></i></div>
+      <div>
+        <div class="stat-val" style="color:var(--accent2)" id="st-licenses">۰</div>
+        <div class="stat-lbl">لایسنس فعال</div>
+        <div class="stat-sub" style="color:var(--absent)"><i class="fas fa-exclamation-circle" style="font-size:9px"></i> <span id="st-expiring">۰</span> رو به انقضا</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE TABS -->
+  <div class="page-tabs">
+    <button class="page-tab active" id="tab-schools" onclick="switchTab('schools')"><i class="fas fa-school"></i><span>مدارس</span></button>
+    <button class="page-tab" id="tab-subscriptions" onclick="switchTab('subscriptions')"><i class="fas fa-id-card"></i><span>اشتراک‌ها</span></button>
+    <button class="page-tab" id="tab-licenses" onclick="switchTab('licenses')"><i class="fas fa-key"></i><span>لایسنس‌ها</span></button>
+    <button class="page-tab" id="tab-plans" onclick="switchTab('plans')"><i class="fas fa-tags"></i><span>پلان‌ها</span></button>
+    <button class="page-tab" id="tab-reports" onclick="switchTab('reports')"><i class="fas fa-chart-bar"></i><span>گزارش‌ها</span></button>
+  </div>
+
+  <!-- ══ TAB: SCHOOLS ══ -->
+  <div class="tab-panel active" id="panel-schools">
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="schoolSearch" placeholder="جستجو نام مدرسه، شهر، مدیر..." oninput="applySchoolFilters()"/>
+        </div>
+        <select class="filter-select" id="schoolTypeFilter" onchange="applySchoolFilters()">
+          <option value="all">همه انواع</option>
+          <option value="دبستان">دبستان</option>
+          <option value="متوسطه">متوسطه اول</option>
+          <option value="دبیرستان">دبیرستان</option>
+          <option value="هنرستان">هنرستان</option>
+        </select>
+        <select class="filter-select" id="schoolStatusFilter" onchange="applySchoolFilters()">
+          <option value="all">همه وضعیت‌ها</option>
+          <option value="active">فعال</option>
+          <option value="trial">آزمایشی</option>
+          <option value="inactive">غیرفعال</option>
+        </select>
+        <div class="view-toggle">
+          <button class="vt-btn active" id="btnGrid" onclick="setSchoolView('grid')" title="کارت"><i class="fas fa-th-large"></i></button>
+          <button class="vt-btn" id="btnTable" onclick="setSchoolView('table')" title="جدول"><i class="fas fa-list"></i></button>
+        </div>
+        <div class="export-bar">
+          <button class="export-btn xlsx-btn" onclick="exportSchoolsExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="export-btn word-btn" onclick="exportSchoolsWord()"><i class="fas fa-file-word"></i> Word</button>
+        </div>
+      </div>
+      <div id="schoolsGridView"><div class="schools-grid" id="schoolsGrid"></div></div>
+      <div id="schoolsTableView" style="display:none">
+        <div class="school-table-wrap">
+          <table class="school-table">
+            <thead><tr>
+              <th>مدرسه</th><th>نوع</th><th>شهر</th><th>مدیر</th>
+              <th>دانش‌آموز</th><th>معلم</th><th>وضعیت</th><th>اشتراک</th><th>اقدام</th>
+            </tr></thead>
+            <tbody id="schoolsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="schoolPageInfo"></div>
+        <div class="page-btns" id="schoolPageBtns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: SUBSCRIPTIONS ══ -->
+  <div class="tab-panel" id="panel-subscriptions">
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-id-card"></i> مدیریت اشتراک‌ها</div>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
+          <select class="filter-select" id="subPlanFilter" onchange="renderSubscriptions()">
+            <option value="all">همه پلان‌ها</option>
+            <option value="طلایی">طلایی</option>
+            <option value="نقره‌ای">نقره‌ای</option>
+            <option value="برنزی">برنزی</option>
+            <option value="رایگان">رایگان</option>
+          </select>
+          <button class="export-btn xlsx-btn" onclick="exportSubsExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="export-btn word-btn" onclick="exportSubsWord()"><i class="fas fa-file-word"></i> Word</button>
+          <button class="add-school-btn" style="font-size:11.5px;padding:9px 16px;" onclick="showToast('امکان افزودن اشتراک جدید','info')">
+            <i class="fas fa-plus"></i> اشتراک جدید
+          </button>
+        </div>
+      </div>
+      <div class="sub-grid" id="subGrid"></div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: LICENSES ══ -->
+  <div class="tab-panel" id="panel-licenses">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-key"></i> مدیریت لایسنس‌ها</div>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
+          <select class="filter-select" id="licStatusFilter" onchange="renderLicenses()">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="فعال">فعال</option>
+            <option value="آزمایشی">آزمایشی</option>
+            <option value="منقضی">منقضی</option>
+            <option value="لغو شده">لغو شده</option>
+          </select>
+          <button class="export-btn xlsx-btn" onclick="exportLicensesExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="export-btn word-btn" onclick="exportLicensesWord()"><i class="fas fa-file-word"></i> Word</button>
+          <button class="gen-lic-btn" onclick="generateLicense()">
+            <i class="fas fa-plus"></i> لایسنس جدید
+          </button>
+        </div>
+      </div>
+      <div class="license-table-wrap">
+        <table class="license-table">
+          <thead><tr>
+            <th>#</th><th>مدرسه</th><th>کلید لایسنس</th><th>نوع پلان</th>
+            <th>تاریخ صدور</th><th>تاریخ انقضا</th><th>وضعیت</th><th>اقدام</th>
+          </tr></thead>
+          <tbody id="licenseTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: PLANS ══ -->
+  <div class="tab-panel" id="panel-plans">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-tags"></i> تنظیم پلان‌های پرداخت</div>
+        <div style="font-size:11px;color:var(--text-muted)">تغییرات را ذخیره کنید تا روی همه اشتراک‌های جدید اعمال شود</div>
+      </div>
+      <div class="plans-grid" id="plansGrid"></div>
+    </div>
+    <div class="card plan-subscribers-card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-list-alt"></i> مشترکین فعال پلان‌ها</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <select class="filter-select" id="planSubsFilter" onchange="renderPlanSubscribers()">
+            <option value="all">همه پلان‌ها</option>
+            <option value="طلایی">طلایی</option>
+            <option value="نقره‌ای">نقره‌ای</option>
+            <option value="برنزی">برنزی</option>
+            <option value="رایگان">رایگان</option>
+          </select>
+          <button class="export-btn xlsx-btn" onclick="exportPlansExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="export-btn word-btn" onclick="exportPlansWord()"><i class="fas fa-file-word"></i> Word</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="ps-table">
+          <thead><tr>
+            <th>مدرسه</th><th>پلان فعلی</th><th>تاریخ انقضا</th><th>قیمت پرداختی</th><th>وضعیت</th><th>اقدام</th>
+          </tr></thead>
+          <tbody id="planSubsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: REPORTS ══ -->
+  <div class="tab-panel" id="panel-reports">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="export-btn xlsx-btn" onclick="exportReportsExcel()"><i class="fas fa-file-excel"></i> خروجی Excel</button>
+      <button class="export-btn word-btn" onclick="exportReportsWord()"><i class="fas fa-file-word"></i> خروجی Word</button>
+    </div>
+    <div class="reports-grid" id="reportsGrid"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;flex-wrap:wrap;">
+      <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-chart-line"></i> رشد مدارس</div></div>
+        <div id="growthChart" style="display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:10px;"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:9.5px;color:var(--text-muted);">
+          <span>مهر</span><span>آبان</span><span>آذر</span><span>دی</span><span>بهمن</span><span>اسفند</span><span>فروردین</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-history"></i> آخرین فعالیت‌ها</div></div>
+        <div class="activity-feed" id="activityFeed"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SCHOOL MODAL -->
+<div class="modal-backdrop" id="addSchoolModal" onclick="closeModalOutside(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i class="fas fa-school"></i> افزودن مدرسه جدید</div>
+      <button class="modal-close" onclick="closeAddSchoolModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><label>نام مدرسه</label><input type="text" id="m_name" placeholder="نام کامل مدرسه..."/></div>
+        <div class="fg"><label>نوع مدرسه</label>
+          <select id="m_type"><option>دبستان</option><option>متوسطه</option><option>دبیرستان</option><option>هنرستان</option></select>
+        </div>
+        <div class="fg"><label>شهر</label><input type="text" id="m_city" placeholder="تهران..."/></div>
+        <div class="fg"><label>نام مدیر</label><input type="text" id="m_principal" placeholder="نام و نام خانوادگی..."/></div>
+        <div class="fg"><label>تلفن</label><input type="text" id="m_phone" placeholder="۰۲۱..." dir="ltr"/></div>
+        <div class="fg"><label>پلان اشتراک</label>
+          <select id="m_plan"><option value="رایگان">رایگان (۱ ماه آزمایشی)</option><option value="برنزی">برنزی</option><option value="نقره‌ای">نقره‌ای</option><option value="طلایی">طلایی</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>آدرس</label><input type="text" id="m_address" placeholder="آدرس کامل..."/></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-cancel" onclick="closeAddSchoolModal()">انصراف</button>
+      <button class="modal-save" onclick="addSchool()"><i class="fas fa-save" style="margin-left:6px"></i> ثبت مدرسه</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i></i><span id="toastMsg"></span></div>
+
+<script>
+const fa = n => String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const en = n => String(n).replace(/[۰-۹]/g,d=>'0123456789'['۰۱۲۳۴۵۶۷۸۹'.indexOf(d)]);
+
+/* ══ DATA ══ */
+let schools = [
+  {id:1,name:'هنرستان شهید بوربور',type:'هنرستان',city:'تهران',principal:'احمد کریمی',phone:'02112345678',address:'تهران، میدان آزادی',students:350,teachers:28,status:'active',plan:'طلایی',planColor:'gold',logo:'ب',logoColor:['rgba(74,144,217,0.2)','var(--accent)'],established:'۱۳۷۸',code:'SCH-001',licExpiry:'۱۴۰۵/۰۳/۳۱'},
+  {id:2,name:'دبیرستان نمونه تهران',type:'دبیرستان',city:'تهران',principal:'مریم موسوی',phone:'02198765432',address:'تهران، شهرک غرب',students:280,teachers:22,status:'active',plan:'نقره‌ای',planColor:'silver',logo:'ن',logoColor:['rgba(142,95,212,0.2)','var(--accent2)'],established:'۱۳۸۲',code:'SCH-002',licExpiry:'۱۴۰۵/۰۶/۱۵'},
+  {id:3,name:'دبستان پیشرفت',type:'دبستان',city:'اصفهان',principal:'رضا صادقی',phone:'03134567890',address:'اصفهان، خیابان چهارباغ',students:420,teachers:32,status:'active',plan:'طلایی',planColor:'gold',logo:'پ',logoColor:['rgba(6,214,160,0.18)','var(--accent3)'],established:'۱۳۷۵',code:'SCH-003',licExpiry:'۱۴۰۵/۱۲/۲۹'},
+  {id:4,name:'مدرسه علوم مشهد',type:'دبیرستان',city:'مشهد',principal:'علی رضایی',phone:'05138901234',address:'مشهد، بلوار وکیل‌آباد',students:195,teachers:18,status:'trial',plan:'رایگان',planColor:'free',logo:'ع',logoColor:['rgba(243,156,18,0.18)','var(--accent4)'],established:'۱۳۹۰',code:'SCH-004',licExpiry:'۱۴۰۴/۰۳/۰۵'},
+  {id:5,name:'هنرستان فنی شیراز',type:'هنرستان',city:'شیراز',principal:'فاطمه نوری',phone:'07136789012',address:'شیراز، بلوار معالی‌آباد',students:310,teachers:25,status:'active',plan:'نقره‌ای',planColor:'silver',logo:'ه',logoColor:['rgba(232,142,192,0.18)','#e88ec0'],established:'۱۳۸۵',code:'SCH-005',licExpiry:'۱۴۰۵/۰۹/۳۰'},
+  {id:6,name:'متوسطه اول امام علی',type:'متوسطه',city:'تبریز',principal:'حسین محمدی',phone:'04113456789',address:'تبریز، خیابان ارتش',students:240,teachers:20,status:'active',plan:'برنزی',planColor:'bronze',logo:'ا',logoColor:['rgba(74,144,217,0.15)','var(--accent)'],established:'۱۳۸۸',code:'SCH-006',licExpiry:'۱۴۰۵/۰۴/۳۱'},
+  {id:7,name:'دبستان کوثر',type:'دبستان',city:'کرج',principal:'زهرا احمدی',phone:'02634567890',address:'کرج، گوهردشت',students:380,teachers:30,status:'active',plan:'طلایی',planColor:'gold',logo:'ک',logoColor:['rgba(6,214,160,0.18)','var(--accent3)'],established:'۱۳۸۰',code:'SCH-007',licExpiry:'۱۴۰۶/۰۱/۳۱'},
+  {id:8,name:'دبیرستان شهدای اهواز',type:'دبیرستان',city:'اهواز',principal:'کریم زارع',phone:'06134567890',address:'اهواز، کوی ملت',students:175,teachers:16,status:'inactive',plan:'منقضی',planColor:'free',logo:'ش',logoColor:['rgba(231,76,60,0.15)','var(--absent)'],established:'۱۳۸۶',code:'SCH-008',licExpiry:'۱۴۰۳/۱۲/۲۹'},
+];
+
+let licenses = [
+  {id:1,school:'هنرستان شهید بوربور',key:'BB-2024-GOLD-A3F9',plan:'طلایی',issued:'۱۴۰۴/۰۴/۰۱',expiry:'۱۴۰۵/۰۳/۳۱',status:'فعال'},
+  {id:2,school:'دبیرستان نمونه تهران',key:'BB-2024-SILV-B7K2',plan:'نقره‌ای',issued:'۱۴۰۴/۰۷/۱۵',expiry:'۱۴۰۵/۰۶/۱۵',status:'فعال'},
+  {id:3,school:'دبستان پیشرفت',key:'BB-2024-GOLD-C1M8',plan:'طلایی',issued:'۱۴۰۴/۰۱/۰۱',expiry:'۱۴۰۵/۱۲/۲۹',status:'فعال'},
+  {id:4,school:'مدرسه علوم مشهد',key:'BB-2024-FREE-D5P4',plan:'آزمایشی',issued:'۱۴۰۴/۰۲/۰۶',expiry:'۱۴۰۴/۰۳/۰۵',status:'آزمایشی'},
+  {id:5,school:'هنرستان فنی شیراز',key:'BB-2024-SILV-E9Q6',plan:'نقره‌ای',issued:'۱۴۰۴/۱۰/۰۱',expiry:'۱۴۰۵/۰۹/۳۰',status:'فعال'},
+  {id:6,school:'متوسطه اول امام علی',key:'BB-2024-BRNZ-F2R3',plan:'برنزی',issued:'۱۴۰۴/۰۵/۰۱',expiry:'۱۴۰۵/۰۴/۳۱',status:'فعال'},
+  {id:7,school:'دبستان کوثر',key:'BB-2024-GOLD-G8S1',plan:'طلایی',issued:'۱۴۰۵/۰۲/۰۱',expiry:'۱۴۰۶/۰۱/۳۱',status:'فعال'},
+  {id:8,school:'دبیرستان شهدای اهواز',key:'BB-2023-BRNZ-H4T7',plan:'برنزی',issued:'۱۴۰۳/۰۱/۰۱',expiry:'۱۴۰۳/۱۲/۲۹',status:'منقضی'},
+];
+
+// Plans data — editable
+let plans = [
+  {id:'gold',name:'طلایی',nameEn:'GOLD',icon:'fas fa-crown',iconBg:'rgba(243,156,18,.18)',iconColor:'var(--accent4)',price:4800000,discount:0,active:true,
+   features:['دسترسی نامحدود','پشتیبانی ۲۴/۷','گزارش پیشرفته','درگاه پرداخت','بک‌آپ روزانه'],
+   btnGrad:'linear-gradient(135deg,var(--accent4),#e67e22)',btnShadow:'rgba(243,156,18,.3)'},
+  {id:'silver',name:'نقره‌ای',nameEn:'SILVER',icon:'fas fa-medal',iconBg:'rgba(74,144,217,.18)',iconColor:'var(--accent)',price:2400000,discount:10,active:true,
+   features:['تا ۵۰۰ دانش‌آموز','پشتیبانی کاری','گزارش پایه','بک‌آپ هفتگی'],
+   btnGrad:'linear-gradient(135deg,var(--accent),var(--accent2))',btnShadow:'rgba(74,144,217,.3)'},
+  {id:'bronze',name:'برنزی',nameEn:'BRONZE',icon:'fas fa-award',iconBg:'rgba(6,214,160,.15)',iconColor:'var(--accent3)',price:1200000,discount:0,active:true,
+   features:['تا ۲۰۰ دانش‌آموز','پشتیبانی ایمیل','گزارش اولیه'],
+   btnGrad:'linear-gradient(135deg,var(--accent3),#05a07a)',btnShadow:'rgba(6,214,160,.3)'},
+  {id:'free',name:'رایگان',nameEn:'FREE',icon:'fas fa-hourglass',iconBg:'rgba(180,200,255,.1)',iconColor:'var(--text-muted)',price:0,discount:0,active:true,
+   features:['۱ ماه آزمایشی','تا ۵۰ دانش‌آموز','پشتیبانی محدود'],
+   btnGrad:'linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06))',btnShadow:'rgba(255,255,255,.08)'},
+];
+
+const activityData = [
+  {icon:'fas fa-school',bg:'rgba(74,144,217,.15)',col:'var(--accent)',title:'مدرسه جدید ثبت شد',sub:'دبستان کوثر — کرج',time:'۱ ساعت پیش'},
+  {icon:'fas fa-key',bg:'rgba(243,156,18,.15)',col:'var(--accent4)',title:'لایسنس صادر شد',sub:'هنرستان فنی شیراز — نقره‌ای',time:'۳ ساعت پیش'},
+  {icon:'fas fa-exclamation-circle',bg:'rgba(231,76,60,.15)',col:'var(--absent)',title:'لایسنس در آستانه انقضا',sub:'مدرسه علوم مشهد — ۵ روز مانده',time:'دیروز'},
+  {icon:'fas fa-check-circle',bg:'rgba(6,214,160,.15)',col:'var(--accent3)',title:'اشتراک تمدید شد',sub:'دبستان پیشرفت — طلایی یکساله',time:'۲ روز پیش'},
+  {icon:'fas fa-times-circle',bg:'rgba(231,76,60,.15)',col:'var(--absent)',title:'مدرسه غیرفعال شد',sub:'دبیرستان شهدای اهواز',time:'۳ روز پیش'},
+];
+
+/* ══ STATE ══ */
+let schoolView='grid';
+let filteredSchools=[...schools];
+let schoolPage=1;
+const SPER=6;
+
+/* ══ STATS ══ */
+function updateStats(){
+  document.getElementById('st-schools').textContent=fa(schools.length);
+  document.getElementById('st-active').textContent=fa(schools.filter(s=>s.status==='active').length);
+  document.getElementById('st-students').textContent=fa(schools.reduce((a,s)=>a+s.students,0));
+  document.getElementById('st-teachers').textContent=fa(schools.reduce((a,s)=>a+s.teachers,0));
+  document.getElementById('st-licenses').textContent=fa(licenses.filter(l=>l.status==='فعال').length);
+  document.getElementById('st-expiring').textContent=fa(licenses.filter(l=>l.status==='آزمایشی').length);
+}
+
+/* ══ SIDEBAR ACTIVE STATE ══ */
+function updateSidebarActive(tab){
+  ['schools','subscriptions','licenses','plans','reports'].forEach(t=>{
+    const el=document.getElementById('sb-'+t);
+    if(el) el.classList.toggle('active',t===tab);
+  });
+}
+
+/* ══ SIDEBAR ══ */
+function toggleSidebar(){const sb=document.getElementById('sidebar');sb.classList.contains('open')?closeSidebar():openSidebar();}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('on');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('on');document.body.style.overflow='';}
+document.getElementById('overlay').addEventListener('click',closeSidebar);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidebar();});
+
+/* ══ NOTIF ══ */
+function toggleNotif(e){e.stopPropagation();document.getElementById('notifDD').classList.toggle('open');}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('notifDD');
+  if(dd.classList.contains('open')&&!e.target.closest('.notif-wrap'))dd.classList.remove('open');
+});
+
+/* ══ TOAST ══ */
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast'),i=t.querySelector('i');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast '+type+' show';
+  i.className=type==='success'?'fas fa-check-circle':type==='error'?'fas fa-times-circle':'fas fa-info-circle';
+  clearTimeout(t._tid);t._tid=setTimeout(()=>{t.className='toast '+type;},3200);
+}
+
+/* ══ TABS ══ */
+function switchTab(id){
+  document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  updateSidebarActive(id);
+  const titles={
+    'schools':'داشبورد <span style="color:var(--accent)">مدارس</span>',
+    'subscriptions':'مدیریت <span style="color:var(--accent)">اشتراک‌ها</span>',
+    'licenses':'مدیریت <span style="color:var(--accent)">لایسنس‌ها</span>',
+    'plans':'پلان‌های <span style="color:var(--accent)">پرداخت</span>',
+    'reports':'<span style="color:var(--accent)">گزارش‌ها</span>'
+  };
+  document.getElementById('pageTitle').innerHTML=titles[id]||'';
+  if(id==='subscriptions')renderSubscriptions();
+  if(id==='licenses')renderLicenses();
+  if(id==='plans'){renderPlans();renderPlanSubscribers();}
+  if(id==='reports')renderReports();
+}
+
+/* ══ SCHOOL VIEW ══ */
+function setSchoolView(v){
+  schoolView=v;
+  document.getElementById('schoolsGridView').style.display=v==='grid'?'block':'none';
+  document.getElementById('schoolsTableView').style.display=v==='table'?'block':'none';
+  document.getElementById('btnGrid').classList.toggle('active',v==='grid');
+  document.getElementById('btnTable').classList.toggle('active',v==='table');
+  applySchoolFilters();
+}
+
+function applySchoolFilters(){
+  const q=document.getElementById('schoolSearch').value.trim().toLowerCase();
+  const type=document.getElementById('schoolTypeFilter').value;
+  const status=document.getElementById('schoolStatusFilter').value;
+  filteredSchools=schools.filter(s=>{
+    const str=(s.name+s.city+s.principal).toLowerCase();
+    return(!q||str.includes(q))&&(type==='all'||s.type===type)&&(status==='all'||s.status===status);
+  });
+  schoolPage=1;renderSchools();
+}
+
+function renderSchools(){
+  const total=filteredSchools.length;
+  const pages=Math.max(1,Math.ceil(total/SPER));
+  if(schoolPage>pages)schoolPage=pages;
+  const slice=filteredSchools.slice((schoolPage-1)*SPER,schoolPage*SPER);
+  if(schoolView==='grid')renderSchoolGrid(slice);else renderSchoolTable(slice);
+  renderSchoolPagination(total,pages);
+}
+
+function planBadge(plan){
+  const map={طلایی:'plan-gold',نقره‌ای:'plan-silver',برنزی:'plan-bronze',رایگان:'plan-free',منقضی:'plan-free'};
+  const icons={طلایی:'fas fa-crown',نقره‌ای:'fas fa-medal',برنزی:'fas fa-award',رایگان:'fas fa-hourglass',منقضی:'fas fa-ban'};
+  return`<span class="sub-plan-badge ${map[plan]||'plan-free'}"><i class="${icons[plan]||'fas fa-circle'}" style="font-size:8px"></i> ${plan}</span>`;
+}
+
+function statusInfo(s){
+  if(s==='active')return{cls:'sd-active',lbl:'فعال',color:'var(--present)'};
+  if(s==='trial')return{cls:'sd-trial',lbl:'آزمایشی',color:'var(--accent4)'};
+  return{cls:'sd-inactive',lbl:'غیرفعال',color:'var(--absent)'};
+}
+
+function typeColorTop(type){
+  const m={هنرستان:'linear-gradient(90deg,var(--accent),var(--accent2))',دبیرستان:'linear-gradient(90deg,var(--accent3),var(--present))',دبستان:'linear-gradient(90deg,var(--accent4),#e67e22)',متوسطه:'linear-gradient(90deg,var(--accent2),#c0392b)'};
+  return m[type]||'linear-gradient(90deg,var(--accent),var(--accent2))';
+}
+
+function renderSchoolGrid(slice){
+  const grid=document.getElementById('schoolsGrid');
+  grid.innerHTML='';
+  if(!slice.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:50px;color:var(--text-muted)"><i class="fas fa-search" style="font-size:36px;display:block;margin-bottom:14px;opacity:.3"></i>مدرسه‌ای یافت نشد</div>`;return;}
+  slice.forEach(s=>{
+    const si=statusInfo(s.status);
+    const card=document.createElement('div');
+    card.className='school-card';
+    const expWarning=s.status==='trial'?`<div class="exp-badge" style="background:rgba(243,156,18,.15);color:var(--accent4);border:1px solid rgba(243,156,18,.25)"><i class="fas fa-exclamation-triangle" style="font-size:8px;margin-left:3px"></i>رو به انقضا</div>`:
+      s.status==='inactive'?`<div class="exp-badge" style="background:rgba(231,76,60,.13);color:var(--absent);border:1px solid rgba(231,76,60,.2)"><i class="fas fa-ban" style="font-size:8px;margin-left:3px"></i>غیرفعال</div>`:'';
+    card.innerHTML=`
+      <div class="school-card-top" style="background:${typeColorTop(s.type)}"></div>
+      ${expWarning}
+      <div class="school-card-body">
+        <div class="school-header">
+          <div class="school-logo" style="background:${s.logoColor[0]};color:${s.logoColor[1]}">${s.logo}</div>
+          <div style="flex:1;min-width:0">
+            <div class="school-name">${s.name}</div>
+            <div class="school-address"><i class="fas fa-map-marker-alt" style="font-size:9px"></i>${s.city} — ${s.address.split('،')[0]||s.city}</div>
+            <div style="margin-top:5px">${planBadge(s.plan)}</div>
+          </div>
+          <button class="card-menu-btn" onclick="event.stopPropagation();showToast('منوی مدرسه','info')"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+        <div class="school-stats">
+          <div class="school-stat"><div class="school-stat-val" style="color:var(--accent)">${fa(s.students)}</div><div class="school-stat-lbl">دانش‌آموز</div></div>
+          <div class="school-stat"><div class="school-stat-val" style="color:var(--accent2)">${fa(s.teachers)}</div><div class="school-stat-lbl">معلم</div></div>
+          <div class="school-stat"><div class="school-stat-val" style="color:var(--accent3)">${fa(Math.round(s.students/s.teachers))}</div><div class="school-stat-lbl">نسبت کلاس</div></div>
+        </div>
+        <div class="school-footer">
+          <div class="school-status-dot ${si.cls}"></div>
+          <div class="school-status-lbl" style="color:${si.color}">${si.lbl}</div>
+          <div style="font-size:9.5px;color:var(--text-muted);margin-left:auto;margin-right:8px">${s.code}</div>
+          <button class="enter-btn" onclick="enterSchool(${s.id})"><i class="fas fa-sign-in-alt"></i> ورود</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderSchoolTable(slice){
+  const tbody=document.getElementById('schoolsTableBody');
+  tbody.innerHTML='';
+  if(!slice.length){tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)">مدرسه‌ای یافت نشد</td></tr>`;return;}
+  slice.forEach(s=>{
+    const si=statusInfo(s.status);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="t-cell"><div class="t-logo" style="background:${s.logoColor[0]};color:${s.logoColor[1]}">${s.logo}</div><div><div class="t-name">${s.name}</div><div class="t-city">${s.code}</div></div></div></td>
+      <td>${s.type}</td><td>${s.city}</td><td>${s.principal}</td>
+      <td style="font-weight:800;color:var(--accent)">${fa(s.students)}</td>
+      <td style="font-weight:800;color:var(--accent2)">${fa(s.teachers)}</td>
+      <td><div style="display:flex;align-items:center;gap:7px"><span class="school-status-dot ${si.cls}"></span><span style="font-size:11px;color:${si.color};font-weight:700">${si.lbl}</span></div></td>
+      <td>${planBadge(s.plan)}</td>
+      <td onclick="event.stopPropagation()"><div class="row-actions">
+        <button class="ra-btn ra-enter" title="ورود" onclick="enterSchool(${s.id})"><i class="fas fa-sign-in-alt"></i></button>
+        <button class="ra-btn ra-edit" title="ویرایش" onclick="showToast('ویرایش مدرسه','info')"><i class="fas fa-edit"></i></button>
+        <button class="ra-btn ra-del" title="حذف" onclick="showToast('نیاز به تایید دارد','error')"><i class="fas fa-trash"></i></button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderSchoolPagination(total,pages){
+  document.getElementById('schoolPageInfo').textContent=`نمایش ${fa(Math.min((schoolPage-1)*SPER+1,total))}–${fa(Math.min(schoolPage*SPER,total))} از ${fa(total)} مدرسه`;
+  const btns=document.getElementById('schoolPageBtns');btns.innerHTML='';
+  const prev=document.createElement('button');prev.className='pg-btn';prev.innerHTML='<i class="fas fa-chevron-right"></i>';prev.disabled=schoolPage===1;prev.onclick=()=>{schoolPage--;renderSchools();};btns.appendChild(prev);
+  for(let p=1;p<=pages;p++){const b=document.createElement('button');b.className='pg-btn'+(p===schoolPage?' active':'');b.textContent=fa(p);const pp=p;b.onclick=()=>{schoolPage=pp;renderSchools();};btns.appendChild(b);}
+  const next=document.createElement('button');next.className='pg-btn';next.innerHTML='<i class="fas fa-chevron-left"></i>';next.disabled=schoolPage===pages;next.onclick=()=>{schoolPage++;renderSchools();};btns.appendChild(next);
+}
+
+function enterSchool(id){
+  const s=schools.find(x=>x.id===id);
+  if(!s)return;
+  showToast(`در حال ورود به ${s.name}...`,'info');
+}
+
+/* ══ SUBSCRIPTIONS ══ */
+function renderSubscriptions(){
+  const planF=document.getElementById('subPlanFilter').value;
+  const grid=document.getElementById('subGrid');
+  grid.innerHTML='';
+  let list=schools.filter(s=>planF==='all'||s.plan===planF);
+  list.forEach(s=>{
+    const planClass={طلایی:'plan-gold',نقره‌ای:'plan-silver',برنزی:'plan-bronze',رایگان:'plan-free',منقضی:'plan-free'}[s.plan]||'plan-free';
+    const pct=s.status==='active'?Math.floor(Math.random()*60)+40:s.status==='trial'?20:5;
+    const fillColor=pct>60?'var(--accent3)':pct>30?'var(--accent4)':'var(--absent)';
+    const planData=plans.find(p=>p.name===s.plan);
+    const price=planData?calcFinalPrice(planData):0;
+    const card=document.createElement('div');
+    card.className='sub-card';
+    card.innerHTML=`
+      <div class="sub-plan-badge ${planClass}"><i class="fas fa-crown" style="font-size:9px"></i> پلان ${s.plan}</div>
+      <div class="sub-school-name">${s.name}</div>
+      <div class="sub-info-row"><span class="sub-lbl">مدیر</span><span class="sub-val">${s.principal}</span></div>
+      <div class="sub-info-row"><span class="sub-lbl">شهر</span><span class="sub-val">${s.city}</span></div>
+      <div class="sub-info-row"><span class="sub-lbl">قیمت پلان</span><span class="sub-val" style="color:var(--accent3)">${price>0?fa(price.toLocaleString())+' تومان':'رایگان'}</span></div>
+      <div class="sub-info-row"><span class="sub-lbl">تاریخ انقضا</span><span class="sub-val" style="color:${s.status==='trial'?'var(--accent4)':s.status==='inactive'?'var(--absent)':'var(--text)'}">${s.licExpiry}</span></div>
+      <div class="sub-exp-bar"><div class="sub-exp-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+      <div class="sub-exp-lbl"><span>${fa(pct)}٪ مانده</span><span>${s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'منقضی'}</span></div>
+      <div class="sub-actions">
+        <button class="sub-btn renew" onclick="renewSub('${s.name}')"><i class="fas fa-redo" style="font-size:10px"></i> تمدید</button>
+        <button class="sub-btn upgrade" onclick="showToast('ارتقای پلان ${s.name}','info')"><i class="fas fa-arrow-up" style="font-size:10px"></i> ارتقا</button>
+        <button class="sub-btn revoke" onclick="revokeSub('${s.name}')"><i class="fas fa-ban" style="font-size:10px"></i> لغو</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renewSub(name){
+  showToast(`اشتراک ${name} تمدید شد ✓`,'success');
+}
+function revokeSub(name){
+  const s=schools.find(x=>x.name===name);
+  if(s){s.status='inactive';renderSubscriptions();updateStats();}
+  showToast(`اشتراک ${name} لغو شد`,'error');
+}
+
+/* ══ LICENSES ══ */
+function renderLicenses(){
+  const stF=document.getElementById('licStatusFilter').value;
+  const tbody=document.getElementById('licenseTableBody');
+  tbody.innerHTML='';
+  const list=licenses.filter(l=>stF==='all'||l.status===stF);
+  const statusMap={فعال:'ls-active',آزمایشی:'ls-trial',منقضی:'ls-expired','لغو شده':'ls-revoked'};
+  const statusIcon={فعال:'fas fa-check-circle',آزمایشی:'fas fa-hourglass-half',منقضی:'fas fa-times-circle','لغو شده':'fas fa-ban'};
+  list.forEach((l,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="color:var(--text-muted);font-size:11px">${fa(i+1)}</td>
+      <td style="font-weight:700">${l.school}</td>
+      <td><div style="display:flex;align-items:center;gap:7px">
+        <span class="lic-key">${l.key}</span>
+        <button class="lic-copy-btn" onclick="copyKey('${l.key}')"><i class="fas fa-copy"></i></button>
+      </div></td>
+      <td>${planBadge(l.plan)}</td>
+      <td style="color:var(--text-muted);font-size:11px">${l.issued}</td>
+      <td style="font-size:11.5px;font-weight:700;color:${l.status==='منقضی'?'var(--absent)':l.status==='آزمایشی'?'var(--accent4)':'var(--text)'}">${l.expiry}</td>
+      <td><span class="lic-status ${statusMap[l.status]||'ls-active'}"><i class="${statusIcon[l.status]||'fas fa-circle'}" style="font-size:9px"></i> ${l.status}</span></td>
+      <td><div style="display:flex;gap:5px">
+        <button class="lic-copy-btn" style="width:auto;padding:0 9px;font-size:10px;font-family:inherit;color:var(--accent3)" onclick="renewLic(${l.id})">تمدید</button>
+        <button class="lic-copy-btn" style="width:auto;padding:0 9px;font-size:10px;font-family:inherit;color:var(--absent)" onclick="revokeLic(${l.id})">لغو</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renewLic(id){
+  const l=licenses.find(x=>x.id===id);
+  if(l){l.status='فعال';renderLicenses();updateStats();}
+  showToast('لایسنس تمدید شد ✓','success');
+}
+function revokeLic(id){
+  const l=licenses.find(x=>x.id===id);
+  if(l){l.status='لغو شده';renderLicenses();updateStats();}
+  showToast('لایسنس لغو شد','error');
+}
+
+function copyKey(key){
+  navigator.clipboard.writeText(key).catch(()=>{});
+  showToast('کلید لایسنس کپی شد','success');
+}
+
+function generateLicense(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+  const seg=()=>Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  const key=`BB-2024-NEW-${seg()}`;
+  showToast(`لایسنس جدید صادر شد: ${key}`,'success');
+}
+
+/* ══ PLANS ══ */
+function calcFinalPrice(p){
+  const disc=parseFloat(p.discount)||0;
+  return Math.round(p.price*(1-disc/100));
+}
+
+function renderPlans(){
+  const grid=document.getElementById('plansGrid');
+  grid.innerHTML='';
+  plans.forEach(p=>{
+    const final=calcFinalPrice(p);
+    const card=document.createElement('div');
+    card.className='plan-card';
+    card.style.borderColor=p.active?'rgba(74,144,217,.18)':'rgba(255,255,255,.05)';
+    const featuresHtml=p.features.map(f=>`<div class="plan-feature-item"><i class="fas fa-check-circle"></i>${f}</div>`).join('');
+    card.innerHTML=`
+      <div class="plan-card-glow" style="background:${p.iconColor}"></div>
+      <div class="plan-header">
+        <div class="plan-title-wrap">
+          <div class="plan-icon" style="background:${p.iconBg};color:${p.iconColor}"><i class="${p.icon}"></i></div>
+          <div>
+            <div class="plan-name">${p.name}</div>
+            <div class="plan-desc-small">${p.nameEn} Plan</div>
+          </div>
+        </div>
+        <div class="plan-toggle">
+          <label for="toggle-${p.id}" style="font-size:10.5px;color:${p.active?'var(--accent3)':'var(--text-muted)'}">${p.active?'فعال':'غیرفعال'}</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-${p.id}" ${p.active?'checked':''} onchange="togglePlan('${p.id}',this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+      <div class="plan-price-row">
+        <div class="plan-price-label">قیمت پایه (تومان / سالانه)</div>
+        <div class="plan-price-input-wrap">
+          <input class="plan-price-input" type="number" id="price-${p.id}" value="${p.price}" min="0" step="100000" onchange="updatePlanPrice('${p.id}',this.value)" ${p.id==='free'?'readonly style="opacity:.5"':''}/>
+          <span class="price-unit">تومان</span>
+        </div>
+      </div>
+      <div class="plan-discount-row">
+        <div class="discount-input-wrap">
+          <label>تخفیف:</label>
+          <input class="discount-input" type="number" id="disc-${p.id}" value="${p.discount}" min="0" max="100" onchange="updatePlanDiscount('${p.id}',this.value)" ${p.id==='free'?'readonly style="opacity:.5"':''}/>
+          <span style="font-size:11px;color:var(--accent4)">٪</span>
+        </div>
+        <div class="final-price-badge" id="final-${p.id}">
+          ${final>0?'قیمت نهایی: '+fa(final.toLocaleString())+' تومان':'رایگان'}
+        </div>
+      </div>
+      <div class="plan-features-list">${featuresHtml}</div>
+      <button class="plan-save-btn" style="background:${p.btnGrad};box-shadow:0 4px 14px ${p.btnShadow};" onclick="savePlan('${p.id}')">
+        <i class="fas fa-save"></i> ذخیره تغییرات پلان ${p.name}
+      </button>`;
+    grid.appendChild(card);
+  });
+}
+
+function togglePlan(id,val){
+  const p=plans.find(x=>x.id===id);
+  if(p){p.active=val;showToast(`پلان ${p.name} ${val?'فعال':'غیرفعال'} شد`,val?'success':'info');}
+}
+
+function updatePlanPrice(id,val){
+  const p=plans.find(x=>x.id===id);
+  if(!p)return;
+  p.price=parseFloat(val)||0;
+  refreshFinalBadge(p);
+}
+
+function updatePlanDiscount(id,val){
+  const p=plans.find(x=>x.id===id);
+  if(!p)return;
+  p.discount=Math.min(100,Math.max(0,parseFloat(val)||0));
+  refreshFinalBadge(p);
+}
+
+function refreshFinalBadge(p){
+  const final=calcFinalPrice(p);
+  const el=document.getElementById('final-'+p.id);
+  if(el)el.textContent=final>0?'قیمت نهایی: '+fa(final.toLocaleString())+' تومان':'رایگان';
+}
+
+function savePlan(id){
+  const p=plans.find(x=>x.id===id);
+  const priceEl=document.getElementById('price-'+id);
+  const discEl=document.getElementById('disc-'+id);
+  if(priceEl)p.price=parseFloat(priceEl.value)||0;
+  if(discEl)p.discount=parseFloat(discEl.value)||0;
+  refreshFinalBadge(p);
+  showToast(`پلان ${p.name} با موفقیت ذخیره شد ✓`,'success');
+}
+
+/* ══ PLAN SUBSCRIBERS ══ */
+function renderPlanSubscribers(){
+  const f=document.getElementById('planSubsFilter').value;
+  const tbody=document.getElementById('planSubsBody');
+  tbody.innerHTML='';
+  const list=schools.filter(s=>f==='all'||s.plan===f);
+  list.forEach(s=>{
+    const si=statusInfo(s.status);
+    const planData=plans.find(p=>p.name===s.plan);
+    const price=planData?calcFinalPrice(planData):0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-weight:700">${s.name}</td>
+      <td>${planBadge(s.plan)}</td>
+      <td style="font-size:11px;color:${s.status==='trial'?'var(--accent4)':s.status==='inactive'?'var(--absent)':'var(--text-muted)'}">${s.licExpiry}</td>
+      <td style="font-weight:800;color:var(--accent3)">${price>0?fa(price.toLocaleString())+' تومان':'رایگان'}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><span class="school-status-dot ${si.cls}"></span><span style="font-size:11px;font-weight:700;color:${si.color}">${si.lbl}</span></div></td>
+      <td>
+        <button class="ps-action-btn ps-renew" onclick="renewSub('${s.name}')"><i class="fas fa-redo" style="font-size:9px"></i> تمدید</button>
+        <button class="ps-action-btn ps-revoke" onclick="revokeSub('${s.name}')"><i class="fas fa-ban" style="font-size:9px"></i> لغو</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ══ REPORTS ══ */
+function renderReports(){
+  const cards=[
+    {icon:'fas fa-chart-pie',bg:'rgba(74,144,217,.15)',col:'var(--accent)',title:'گزارش کلی مدارس',desc:'آمار کامل مدارس شامل فعال، غیرفعال، آزمایشی',bars:[60,75,80,70,85,90,88]},
+    {icon:'fas fa-money-bill-wave',bg:'rgba(6,214,160,.15)',col:'var(--accent3)',title:'گزارش مالی اشتراک‌ها',desc:'درآمد ماهانه از اشتراک‌های فعال و تمدیدی',bars:[40,55,60,72,68,80,85]},
+    {icon:'fas fa-user-graduate',bg:'rgba(142,95,212,.15)',col:'var(--accent2)',title:'آمار دانش‌آموزان',desc:'تعداد دانش‌آموزان به تفکیک پایه و مدرسه',bars:[30,45,50,60,55,70,75]},
+    {icon:'fas fa-exclamation-triangle',bg:'rgba(231,76,60,.15)',col:'var(--absent)',title:'لایسنس‌های رو به انقضا',desc:'لیست لایسنس‌هایی که تا ۳۰ روز آینده منقضی می‌شوند',bars:[20,15,25,10,30,12,8]},
+  ];
+  const grid=document.getElementById('reportsGrid');
+  grid.innerHTML='';
+  cards.forEach(rc=>{
+    const maxBar=Math.max(...rc.bars);
+    const barsHtml=rc.bars.map(v=>`<div class="mc-bar" style="height:${Math.round(v/maxBar*44)+4}px;background:${rc.col};opacity:0.7;"></div>`).join('');
+    const card=document.createElement('div');
+    card.className='report-card';
+    card.innerHTML=`
+      <div class="report-icon" style="background:${rc.bg};color:${rc.col}"><i class="${rc.icon}"></i></div>
+      <div class="report-title">${rc.title}</div>
+      <div class="report-desc">${rc.desc}</div>
+      <div class="mini-chart">${barsHtml}</div>
+      <div class="report-meta"><i class="fas fa-download" style="font-size:9px"></i> دانلود گزارش</div>`;
+    card.onclick=()=>showToast(`گزارش "${rc.title}" در حال آماده‌سازی...`,'info');
+    grid.appendChild(card);
+  });
+  const growthData=[3,4,4,5,6,6,8];
+  const maxG=Math.max(...growthData);
+  const gc=document.getElementById('growthChart');
+  gc.innerHTML=growthData.map((v,i)=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;">
+      <div style="font-size:10px;font-weight:800;color:var(--accent)">${fa(v)}</div>
+      <div style="width:100%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent2));height:${Math.round(v/maxG*80)+8}px;"></div>
+    </div>`).join('');
+  const feed=document.getElementById('activityFeed');
+  feed.innerHTML=activityData.map(a=>`
+    <div class="activity-item">
+      <div class="activity-icon" style="background:${a.bg};color:${a.col}"><i class="${a.icon}"></i></div>
+      <div class="activity-body">
+        <div class="activity-title">${a.title}</div>
+        <div class="activity-sub">${a.sub}</div>
+        <div class="activity-time"><i class="fas fa-clock" style="font-size:9px"></i>${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ ADD SCHOOL MODAL ══ */
+function openAddSchoolModal(){document.getElementById('addSchoolModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeAddSchoolModal(){document.getElementById('addSchoolModal').classList.remove('open');document.body.style.overflow='';}
+function closeModalOutside(e){if(e.target===document.getElementById('addSchoolModal'))closeAddSchoolModal();}
+function addSchool(){
+  const name=document.getElementById('m_name').value.trim();
+  const city=document.getElementById('m_city').value.trim();
+  if(!name||!city){showToast('نام مدرسه و شهر الزامی است','error');return;}
+  const colors=[['rgba(74,144,217,0.2)','var(--accent)'],['rgba(6,214,160,0.18)','var(--accent3)'],['rgba(142,95,212,0.2)','var(--accent2)'],['rgba(243,156,18,0.18)','var(--accent4)']];
+  const c=colors[schools.length%colors.length];
+  const plan=document.getElementById('m_plan').value;
+  schools.push({
+    id:schools.length+1,name,type:document.getElementById('m_type').value,
+    city,principal:document.getElementById('m_principal').value||'—',
+    phone:document.getElementById('m_phone').value,address:document.getElementById('m_address').value,
+    students:0,teachers:0,status:plan==='رایگان'?'trial':'active',
+    plan,logo:name[0],logoColor:c,established:'۱۴۰۴',code:`SCH-00${schools.length+1}`,licExpiry:'۱۴۰۵/۱۲/۲۹'
+  });
+  closeAddSchoolModal();applySchoolFilters();updateStats();
+  showToast(`مدرسه "${name}" با موفقیت اضافه شد`,'success');
+}
+
+/* ══ EXPORT HELPERS ══ */
+function downloadExcel(data, filename, headers){
+  const wsData=[headers,...data];
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(wsData);
+  // Column widths
+  ws['!cols']=headers.map(()=>({wch:20}));
+  XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
+  XLSX.writeFile(wb,filename+'.xlsx');
+  showToast('فایل Excel با موفقیت دانلود شد ✓','success');
+}
+
+function downloadWord(html, filename){
+  const full=`<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><style>body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12pt;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ccc;padding:6px 10px;text-align:right;}th{background:#4a90d9;color:#fff;}tr:nth-child(even){background:#f5f8ff;}</style></head><body>${html}</body></html>`;
+  const blob=new Blob(['\ufeff',full],{type:'application/msword'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.doc';a.click();
+  showToast('فایل Word با موفقیت دانلود شد ✓','success');
+}
+
+/* ══ SCHOOLS EXPORT ══ */
+function exportSchoolsExcel(){
+  const headers=['کد مدرسه','نام مدرسه','نوع','شهر','مدیر','دانش‌آموز','معلم','وضعیت','پلان','تاریخ انقضا'];
+  const data=schools.map(s=>[s.code,s.name,s.type,s.city,s.principal,s.students,s.teachers,
+    s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'غیرفعال',s.plan,s.licExpiry]);
+  downloadExcel(data,'مدارس_بوربور',headers);
+}
+function exportSchoolsWord(){
+  let html=`<h2>لیست مدارس — بوربور</h2><table><tr><th>کد</th><th>نام</th><th>نوع</th><th>شهر</th><th>مدیر</th><th>دانش‌آموز</th><th>پلان</th><th>وضعیت</th></tr>`;
+  schools.forEach(s=>{html+=`<tr><td>${s.code}</td><td>${s.name}</td><td>${s.type}</td><td>${s.city}</td><td>${s.principal}</td><td>${s.students}</td><td>${s.plan}</td><td>${s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'غیرفعال'}</td></tr>`;});
+  html+='</table>';
+  downloadWord(html,'مدارس_بوربور');
+}
+
+/* ══ SUBSCRIPTIONS EXPORT ══ */
+function exportSubsExcel(){
+  const headers=['نام مدرسه','مدیر','شهر','پلان','تاریخ انقضا','وضعیت'];
+  const data=schools.map(s=>[s.name,s.principal,s.city,s.plan,s.licExpiry,
+    s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'غیرفعال']);
+  downloadExcel(data,'اشتراک‌های_بوربور',headers);
+}
+function exportSubsWord(){
+  let html=`<h2>مدیریت اشتراک‌ها — بوربور</h2><table><tr><th>نام مدرسه</th><th>مدیر</th><th>شهر</th><th>پلان</th><th>تاریخ انقضا</th><th>وضعیت</th></tr>`;
+  schools.forEach(s=>{html+=`<tr><td>${s.name}</td><td>${s.principal}</td><td>${s.city}</td><td>${s.plan}</td><td>${s.licExpiry}</td><td>${s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'غیرفعال'}</td></tr>`;});
+  html+='</table>';
+  downloadWord(html,'اشتراک‌های_بوربور');
+}
+
+/* ══ LICENSES EXPORT ══ */
+function exportLicensesExcel(){
+  const headers=['#','مدرسه','کلید لایسنس','پلان','تاریخ صدور','تاریخ انقضا','وضعیت'];
+  const data=licenses.map((l,i)=>[i+1,l.school,l.key,l.plan,l.issued,l.expiry,l.status]);
+  downloadExcel(data,'لایسنس‌های_بوربور',headers);
+}
+function exportLicensesWord(){
+  let html=`<h2>مدیریت لایسنس‌ها — بوربور</h2><table><tr><th>#</th><th>مدرسه</th><th>کلید لایسنس</th><th>پلان</th><th>تاریخ صدور</th><th>انقضا</th><th>وضعیت</th></tr>`;
+  licenses.forEach((l,i)=>{html+=`<tr><td>${i+1}</td><td>${l.school}</td><td style="direction:ltr">${l.key}</td><td>${l.plan}</td><td>${l.issued}</td><td>${l.expiry}</td><td>${l.status}</td></tr>`;});
+  html+='</table>';
+  downloadWord(html,'لایسنس‌های_بوربور');
+}
+
+/* ══ PLANS EXPORT ══ */
+function exportPlansExcel(){
+  const headers=['پلان','قیمت پایه (تومان)','تخفیف (٪)','قیمت نهایی (تومان)','وضعیت','تعداد مشترک'];
+  const data=plans.map(p=>[p.name,p.price,p.discount,calcFinalPrice(p),p.active?'فعال':'غیرفعال',schools.filter(s=>s.plan===p.name).length]);
+  downloadExcel(data,'پلان‌های_بوربور',headers);
+}
+function exportPlansWord(){
+  let html=`<h2>پلان‌های پرداخت — بوربور</h2><table><tr><th>پلان</th><th>قیمت پایه</th><th>تخفیف</th><th>قیمت نهایی</th><th>وضعیت</th><th>مشترکین</th></tr>`;
+  plans.forEach(p=>{html+=`<tr><td>${p.name}</td><td>${p.price.toLocaleString()} تومان</td><td>${p.discount}٪</td><td>${calcFinalPrice(p).toLocaleString()} تومان</td><td>${p.active?'فعال':'غیرفعال'}</td><td>${schools.filter(s=>s.plan===p.name).length}</td></tr>`;});
+  html+='</table><br><h3>مشترکین فعال</h3><table><tr><th>مدرسه</th><th>پلان</th><th>انقضا</th><th>وضعیت</th></tr>';
+  schools.forEach(s=>{html+=`<tr><td>${s.name}</td><td>${s.plan}</td><td>${s.licExpiry}</td><td>${s.status==='active'?'فعال':s.status==='trial'?'آزمایشی':'غیرفعال'}</td></tr>`;});
+  html+='</table>';
+  downloadWord(html,'پلان‌های_بوربور');
+}
+
+/* ══ REPORTS EXPORT ══ */
+function exportReportsExcel(){
+  const headers=['شاخص','مقدار'];
+  const data=[
+    ['کل مدارس',schools.length],
+    ['مدارس فعال',schools.filter(s=>s.status==='active').length],
+    ['مدارس آزمایشی',schools.filter(s=>s.status==='trial').length],
+    ['مدارس غیرفعال',schools.filter(s=>s.status==='inactive').length],
+    ['کل دانش‌آموزان',schools.reduce((a,s)=>a+s.students,0)],
+    ['کل معلمین',schools.reduce((a,s)=>a+s.teachers,0)],
+    ['لایسنس فعال',licenses.filter(l=>l.status==='فعال').length],
+    ['لایسنس آزمایشی',licenses.filter(l=>l.status==='آزمایشی').length],
+    ['لایسنس منقضی',licenses.filter(l=>l.status==='منقضی').length],
+  ];
+  downloadExcel(data,'گزارش_بوربور',headers);
+}
+function exportReportsWord(){
+  const active=schools.filter(s=>s.status==='active').length;
+  const trial=schools.filter(s=>s.status==='trial').length;
+  const inactive=schools.filter(s=>s.status==='inactive').length;
+  let html=`<h2>گزارش کلی سامانه بوربور</h2>
+    <h3>آمار مدارس</h3>
+    <table><tr><th>شاخص</th><th>مقدار</th></tr>
+    <tr><td>کل مدارس</td><td>${schools.length}</td></tr>
+    <tr><td>فعال</td><td>${active}</td></tr>
+    <tr><td>آزمایشی</td><td>${trial}</td></tr>
+    <tr><td>غیرفعال</td><td>${inactive}</td></tr>
+    <tr><td>کل دانش‌آموزان</td><td>${schools.reduce((a,s)=>a+s.students,0)}</td></tr>
+    <tr><td>کل معلمین</td><td>${schools.reduce((a,s)=>a+s.teachers,0)}</td></tr>
+    </table>
+    <br><h3>وضعیت لایسنس‌ها</h3>
+    <table><tr><th>وضعیت</th><th>تعداد</th></tr>
+    <tr><td>فعال</td><td>${licenses.filter(l=>l.status==='فعال').length}</td></tr>
+    <tr><td>آزمایشی</td><td>${licenses.filter(l=>l.status==='آزمایشی').length}</td></tr>
+    <tr><td>منقضی</td><td>${licenses.filter(l=>l.status==='منقضی').length}</td></tr>
+    </table>`;
+  downloadWord(html,'گزارش_بوربور');
+}
+
+/* ══ INIT ══ */
+updateStats();
+applySchoolFilters();
+updateSidebarActive('schools');
+</script>
+</body>
+</html>

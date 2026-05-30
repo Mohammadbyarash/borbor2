@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور - مدیریت دروس</title>
+    <link rel="icon" href="../image/iconB.png" />
+    <link
+      rel="stylesheet"
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    />
+    <link rel="stylesheet" href="../style/courses.css" />
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/theme-loader.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+  <body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <!-- داشبورد -->
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+        <!-- مدیریت کاربران (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link">
+            <i class="fas fa-users"></i>
+            مدیریت کاربران
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item">
+              <i class="fas fa-user-tie"></i>
+              مدیریت معاونان
+            </a>
+            <a href="../html/Teacher_management.html" class="submenu-item">
+              <i class="fas fa-chalkboard-teacher"></i>
+              مدیریت معلمین
+            </a>
+            <a href="../html/student.html" class="submenu-item">
+              <i class="fas fa-user-graduate"></i>
+              مدیریت دانش‌آموزان
+            </a>
+            <a href="../html/Parents.html" class="submenu-item">
+              <i class="fas fa-users"></i>
+              مدیریت اولیا
+            </a>
+          </div>
+        </div>
+
+        <!-- مدیریت کلاس‌ها (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link">
+            <i class="fas fa-chalkboard-teacher"></i>
+            مدیریت کلاس ها
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item">
+              <i class="fas fa-list"></i>
+                          مدیریت دروس
+
+            </a>
+            <a href="../html/Class-schedule.html" class="submenu-item">
+              <i class="fas fa-calendar-alt"></i>
+              برنامه و لیست کلاسی
+            </a>
+            <a href="../html/Attendance.html" class="submenu-item">
+              <i class="fas fa-clipboard-check"></i>
+              حضور و غیاب
+            </a>
+            <a href="../html/grades.html" class="submenu-item">
+              <i class="fas fa-star"></i>
+              نمرات
+            </a>
+          </div>
+        </div>
+
+        <!-- پیش ثبت نام ها -->
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <!-- گزارش ها -->
+        <div class="menu-item">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <!-- اطلاعیه ها -->
+        <div class="menu-item">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+
+         <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+
+        
+
+        <!-- تنظیمات -->
+        <div class="menu-item">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <!-- خروج -->
+        <div class="menu-item">
+          <a href="../api/logout">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="top-header">
+          <h1 class="page-title">مدیریت دروس</h1>
+            <div class="admin-info" id="adminInfoDisplay">در حال بارگذاری...</div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="search-section">
+          <input
+            class="search-input"
+            type="text"
+            id="courseSearch"
+            placeholder="جستجوی درس (نام، کد درس، نویسنده، ...)"
+          />
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-group">
+            <label>فیلتر بر اساس:</label>
+            <select class="filter-select" id="fieldFilter">
+              <option value="">همه رشته‌ها</option>
+              <option value="ریاضی">ریاضی</option>
+              <option value="تجربی">تجربی</option>
+              <option value="انسانی">انسانی</option>
+              <option value="کامپیوتر">کامپیوتر</option>
+              <option value="الکترونیک">الکترونیک</option>
+            </select>
+            <select class="filter-select" id="unitFilter">
+              <option value="">همه واحدها</option>
+              <option value="1">1 واحد</option>
+              <option value="2">2 واحد</option>
+              <option value="3">3 واحد</option>
+              <option value="4">4 واحد</option>
+            </select>
+          </div>
+          <div class="action-buttons">
+            <button
+              class="action-btn btn-excel"
+              onclick="openExcelExportModal()"
+            >
+              <i class="fas fa-file-excel"></i>
+              خروجی Excel
+            </button>
+            <button class="action-btn btn-add" onclick="openAddCourseModal()">
+              <i class="fas fa-plus"></i>
+              افزودن درس جدید
+            </button>
+          </div>
+        </div>
+
+        <!-- Courses Table -->
+        <div class="table-container">
+          <div class="data-grid">
+            <div class="grid-header">
+              <div class="grid-cell">عکس جلد</div>
+              <div class="grid-cell">نام درس</div>
+              <div class="grid-cell">کد درس</div>
+              <div class="grid-cell">تعداد واحد</div>
+              <div class="grid-cell">رشته</div>
+              <div class="grid-cell">PDF</div>
+              <div class="grid-cell">عملیات</div>
+            </div>
+
+            <div class="grid-body" id="coursesTableBody">
+              <!-- Courses will be rendered here by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div dir="ltr" class="pagination">
+            <button
+              class="pagination-btn"
+              id="prevBtn"
+              onclick="changePage(-1)"
+            >
+              ‹
+            </button>
+            <span id="pageInfo">صفحه 1 از 1</span>
+            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+              ›
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Details Modal -->
+    <div class="modal" id="courseDetailsModal">
+      <div class="specs-modal-content">
+        <button class="close-btn" onclick="closeCourseDetailsModal()">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <h2 class="specs-modal-title">مشخصات درس</h2>
+
+        <!-- View Mode -->
+        <div
+          class="specs-info"
+          id="detailsViewMode"
+          style="display: flex; flex-direction: column"
+        >
+          <div
+            class="specs-row"
+            style="justify-content: center; margin-bottom: 20px"
+          >
+            <div id="courseCoverContainer">
+              <img class="course-cover-large" id="courseCoverImage" src="" alt="جلد کتاب" />
+            </div>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نام درس:</span>
+            <span class="specs-value" id="detailCourseName">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">کد درس:</span>
+            <span class="specs-value" id="detailCourseCode">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">تعداد واحد:</span>
+            <span class="specs-value" id="detailCourseUnits">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">رشته:</span>
+            <span class="specs-value" id="detailCourseField">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نویسنده:</span>
+            <span class="specs-value" id="detailCourseAuthor">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">ناشر:</span>
+            <span class="specs-value" id="detailCoursePublisher">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">سال انتشار:</span>
+            <span class="specs-value" id="detailCourseYear">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نوع ارزیابی:</span>
+            <span class="specs-value" id="detailCourseEvaluation">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">فایل PDF:</span>
+            <span class="specs-value" id="detailCoursePDF">-</span>
+          </div>
+          <div class="specs-row" style="flex-direction: column; align-items: flex-start">
+            <span class="specs-label">سرفصل‌ها:</span>
+            <span class="specs-value" id="detailCourseTopics" style="white-space: pre-line; margin-top: 10px">-</span>
+          </div>
+          <div class="specs-row" style="flex-direction: column; align-items: flex-start">
+            <span class="specs-label">توضیحات درس:</span>
+            <span class="specs-value" id="detailCourseDescription" style="white-space: pre-line; margin-top: 10px">-</span>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <div
+          class="specs-info"
+          id="detailsEditMode"
+          style="display: none; flex-direction: column"
+        >
+          <div
+            class="specs-row"
+            style="
+              justify-content: center;
+              margin-bottom: 20px;
+              flex-direction: column;
+              align-items: center;
+              gap: 10px;
+            "
+          >
+            <div id="editCourseCoverContainer">
+              <img class="course-cover-large" id="editCourseCoverImage" src="" alt="جلد کتاب" />
+            </div>
+            <input
+              type="file"
+              id="editCoverUpload"
+              class="photo-input"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              onchange="handleEditCoverUpload(this)"
+            />
+            <label for="editCoverUpload" class="photo-upload-btn">
+              <i class="fas fa-image"></i> تغییر عکس جلد
+            </label>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نام درس:</span>
+            <input type="text" class="edit-input" id="editCourseName" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">کد درس:</span>
+            <input type="text" class="edit-input" id="editCourseCode" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">تعداد واحد:</span>
+            <input type="number" class="edit-input" id="editCourseUnits" min="1" max="6" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">رشته:</span>
+            <select class="edit-input" id="editCourseField">
+              <option value="ریاضی">ریاضی</option>
+              <option value="تجربی">تجربی</option>
+              <option value="انسانی">انسانی</option>
+              <option value="کامپیوتر">کامپیوتر</option>
+              <option value="الکترونیک">الکترونیک</option>
+            </select>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نویسنده:</span>
+            <input type="text" class="edit-input" id="editCourseAuthor" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">ناشر:</span>
+            <input type="text" class="edit-input" id="editCoursePublisher" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">سال انتشار:</span>
+            <input type="text" class="edit-input" id="editCourseYear" placeholder="1402" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نوع ارزیابی:</span>
+            <select class="edit-input" id="editCourseEvaluation">
+              <option value="امتحان ترم">امتحان ترم</option>
+              <option value="پروژه">پروژه</option>
+              <option value="امتحان + پروژه">امتحان + پروژه</option>
+              <option value="کوییز">کوییز</option>
+            </select>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">فایل PDF:</span>
+            <div style="display: flex; gap: 10px; align-items: center; width: 100%">
+              <input
+                type="file"
+                id="editPDFUpload"
+                class="photo-input"
+                accept="application/pdf"
+                onchange="handleEditPDFUpload(this)"
+              />
+              <label for="editPDFUpload" class="photo-upload-btn" style="margin: 0">
+                <i class="fas fa-file-pdf"></i> آپلود PDF
+              </label>
+              <span id="editPDFStatus" style="color: rgba(255,255,255,0.7); font-size: 14px">بدون فایل</span>
+            </div>
+          </div>
+          <div class="specs-row" style="flex-direction: column; align-items: flex-start">
+            <span class="specs-label">سرفصل‌ها:</span>
+            <textarea class="edit-textarea" id="editCourseTopics" rows="6" placeholder="• مقدمات و تعاریف اولیه
+• حد و پیوستگی
+• مشتق و کاربردها"></textarea>
+          </div>
+          <div class="specs-row" style="flex-direction: column; align-items: flex-start">
+            <span class="specs-label">توضیحات درس:</span>
+            <textarea class="edit-textarea" id="editCourseDescription" rows="4" placeholder="توضیحات کامل درباره درس..."></textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px">
+          <button
+            class="specs-edit-btn"
+            id="detailsEditBtn"
+            onclick="enableDetailsEdit()"
+          >
+            <i class="fas fa-edit"></i> ویرایش
+          </button>
+          <button
+            class="specs-save-btn"
+            id="detailsSaveBtn"
+            style="display: none"
+            onclick="saveDetailsEdit()"
+          >
+            <i class="fas fa-check"></i> ذخیره
+          </button>
+          <button
+            class="specs-cancel-btn"
+            id="detailsCancelBtn"
+            style="display: none"
+            onclick="cancelDetailsEdit()"
+          >
+            <i class="fas fa-times"></i> لغو
+          </button>
+          <button class="specs-close-btn" onclick="closeCourseDetailsModal()">
+            بستن
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteConfirmModal">
+      <div class="confirm-modal-content">
+        <div class="confirm-icon delete">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+
+        <h2 class="confirm-title">ارشیو درس</h2>
+
+        <p class="confirm-message">
+          آیا مطمئن هستید که می‌خواهید درس
+          <strong id="deleteCourseNameDisplay">این درس</strong>
+          را ارشیو کنید؟
+        </p>
+
+        <div class="confirm-info">
+          <i class="fas fa-info-circle"></i>
+          <span>این عملیات قابل بازگشت نیست و درس به طور کامل ارشیو خواهد شد.</span>
+        </div>
+
+        <div class="confirm-buttons">
+          <button
+            class="confirm-btn btn-danger"
+            onclick="confirmDeleteCourse()"
+          >
+            <i class="fas fa-trash"></i>
+            ارشیو درس
+          </button>
+          <button
+            class="confirm-btn btn-secondary"
+            onclick="closeDeleteModal()"
+          >
+            <i class="fas fa-times"></i>
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Choose Method Modal -->
+    <div class="modal" id="chooseMethodModal">
+      <div class="options-modal-content">
+        <h2 class="options-modal-title">اضافه کردن درس</h2>
+        <div class="option-list">
+          <button class="option-btn" onclick="openManualAddModal()">
+            <i class="fas fa-pen"></i>
+            افزودن دستی
+          </button>
+          <button class="option-btn" onclick="openExcelImportModal()">
+            <i class="fas fa-file-excel"></i>
+            افزودن از طریق Excel
+          </button>
+        </div>
+        <button
+          class="modal-btn modal-btn-cancel"
+          style="width: 100%; margin-top: 15px"
+          onclick="closeChooseMethodModal()"
+        >
+          انصراف
+        </button>
+      </div>
+    </div>
+
+    <!-- Manual Add Course Modal -->
+    <div class="modal" id="manualAddModal">
+      <div class="modal-content add-course-content">
+        <h2 class="modal-title">افزودن درس جدید</h2>
+
+        <div class="add-course-form">
+          <!-- اطلاعات پایه -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <i class="fas fa-book"></i>
+              اطلاعات پایه
+            </h3>
+            
+            <!-- عکس جلد -->
+            <div class="form-group" style="text-align: center">
+              <div id="addCourseCoverContainer" style="margin-bottom: 15px">
+                <div class="course-cover-placeholder">
+                  <i class="fas fa-book"></i>
+                  <p>عکس جلد کتاب</p>
+                </div>
+              </div>
+              <input
+                type="file"
+                id="addCoverUpload"
+                class="photo-input"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onchange="handleAddCoverUpload(this)"
+              />
+              <label for="addCoverUpload" class="photo-upload-btn">
+                <i class="fas fa-image"></i> انتخاب عکس جلد
+              </label>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label"
+                  >نام درس: <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addCourseName"
+                  placeholder="مثال: ریاضی 1"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >کد درس: <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addCourseCode"
+                  placeholder="مثال: MATH-101"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >تعداد واحد: <span class="required">*</span></label
+                >
+                <input
+                  type="number"
+                  class="form-input"
+                  id="addCourseUnits"
+                  min="1"
+                  max="6"
+                  placeholder="3"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >رشته: <span class="required">*</span></label
+                >
+                <select class="form-input" id="addCourseField">
+                  <option value="">انتخاب کنید</option>
+                  <option value="ریاضی">ریاضی</option>
+                  <option value="تجربی">تجربی</option>
+                  <option value="انسانی">انسانی</option>
+                  <option value="کامپیوتر">کامپیوتر</option>
+                  <option value="الکترونیک">الکترونیک</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- اطلاعات تکمیلی -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <i class="fas fa-info-circle"></i>
+              اطلاعات تکمیلی
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">نویسنده:</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addCourseAuthor"
+                  placeholder="دکتر محمدرضا احمدی"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">ناشر:</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addCoursePublisher"
+                  placeholder="انتشارات علمی فرهنگ"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">سال انتشار:</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addCourseYear"
+                  placeholder="1402"
+                  maxlength="4"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">نوع ارزیابی:</label>
+                <select class="form-input" id="addCourseEvaluation">
+                  <option value="امتحان ترم">امتحان ترم</option>
+                  <option value="پروژه">پروژه</option>
+                  <option value="امتحان + پروژه">امتحان + پروژه</option>
+                  <option value="کوییز">کوییز</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- فایل PDF -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <i class="fas fa-file-pdf"></i>
+              فایل PDF درس (اختیاری)
+            </h3>
+            <div class="form-group">
+              <div style="display: flex; gap: 10px; align-items: center">
+                <input
+                  type="file"
+                  id="addPDFUpload"
+                  class="photo-input"
+                  accept="application/pdf"
+                  onchange="handleAddPDFUpload(this)"
+                />
+                <label for="addPDFUpload" class="photo-upload-btn" style="margin: 0">
+                  <i class="fas fa-file-pdf"></i> انتخاب فایل PDF
+                </label>
+                <span id="addPDFStatus" style="color: rgba(255,255,255,0.7); font-size: 14px">بدون فایل</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- سرفصل‌ها و توضیحات -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <i class="fas fa-list"></i>
+              سرفصل‌ها و توضیحات
+            </h3>
+            <div class="form-group">
+              <label class="form-label">سرفصل‌های درس:</label>
+              <textarea 
+                class="form-textarea" 
+                id="addCourseTopics" 
+                rows="6"
+                placeholder="• مقدمات و تعاریف اولیه&#10;• حد و پیوستگی&#10;• مشتق و کاربردها&#10;• انتگرال و محاسبات"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">توضیحات درس:</label>
+              <textarea 
+                class="form-textarea" 
+                id="addCourseDescription" 
+                rows="4"
+                placeholder="این درس شامل مباحث پایه و اصول اولیه است که..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button
+            class="modal-btn modal-btn-confirm"
+            id="saveCourseBtn"
+            onclick="saveNewCourse()"
+          >
+            <i class="fas fa-plus"></i>
+            افزودن درس
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeManualAddModal()"
+          >
+            <i class="fas fa-times"></i>
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Excel Export Modal -->
+    <div class="modal" id="excelExportModal">
+      <div class="excel-modal-content">
+        <button class="close-btn" onclick="closeExcelExportModal()">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <h2 class="modal-title">انتخاب گروه برای خروجی Excel</h2>
+
+        <div class="excel-section">
+          <h3 class="excel-section-title">
+            <i class="fas fa-file-excel"></i>
+            انتخاب دسته‌بندی
+          </h3>
+
+          <div class="excel-options">
+            <button class="excel-option-btn excel-all-btn" onclick="exportExcelAll()">
+              <div class="excel-btn-content">
+                <i class="fas fa-layer-group"></i>
+                همه دروس
+              </div>
+              <span class="excel-badge" id="allCoursesCount">0</span>
+            </button>
+
+            <button class="excel-option-btn" onclick="exportExcelByField('ریاضی')">
+              <div class="excel-btn-content">
+                <i class="fas fa-calculator"></i>
+                دروس ریاضی
+              </div>
+              <span class="excel-badge" id="mathCoursesCount">0</span>
+            </button>
+
+            <button class="excel-option-btn" onclick="exportExcelByField('تجربی')">
+              <div class="excel-btn-content">
+                <i class="fas fa-flask"></i>
+                دروس تجربی
+              </div>
+              <span class="excel-badge" id="scienceCoursesCount">0</span>
+            </button>
+
+            <button class="excel-option-btn" onclick="exportExcelByField('انسانی')">
+              <div class="excel-btn-content">
+                <i class="fas fa-book-open"></i>
+                دروس انسانی
+              </div>
+              <span class="excel-badge" id="humanitiesCoursesCount">0</span>
+            </button>
+
+            <button class="excel-option-btn" onclick="exportExcelByField('کامپیوتر')">
+              <div class="excel-btn-content">
+                <i class="fas fa-laptop-code"></i>
+                دروس کامپیوتر
+              </div>
+              <span class="excel-badge" id="computerCoursesCount">0</span>
+            </button>
+
+            <button class="excel-option-btn" onclick="exportExcelByField('الکترونیک')">
+              <div class="excel-btn-content">
+                <i class="fas fa-microchip"></i>
+                دروس الکترونیک
+              </div>
+              <span class="excel-badge" id="electronicsCoursesCount">0</span>
+            </button>
+          </div>
+
+          <button class="excel-cancel-btn" onclick="closeExcelExportModal()">
+            <i class="fas fa-times"></i>
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Notification Toast -->
+    <div class="toast-notification" id="successToast">
+      <div class="toast-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="toast-content">
+        <div class="toast-title">موفقیت‌آمیز!</div>
+        <div class="toast-message" id="toastMessage">
+          عملیات با موفقیت انجام شد
+        </div>
+      </div>
+      <button class="toast-close" onclick="closeToast()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <script src="../javaScript/courses.js"></script>
+    <script src="../javaScript/menu.js"></script>
+  </body>
+</html>

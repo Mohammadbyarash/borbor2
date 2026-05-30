@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — حضور و غیاب</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg-main:#1a2346;--bg-card:#1f2b52;--bg-card2:#1c2849;--bg-sidebar:#141d3d;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#2ecc71;--absent:#e74c3c;--late:#f39c12;--leave:#8e5fd4;
+  --text:#eaf0fb;--text-muted:rgba(220,230,255,0.52);
+  --border:rgba(255,255,255,0.08);--border-hover:rgba(74,144,217,0.3);
+  --sidebar-w:252px;--radius:16px;--radius-sm:10px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 55% at 18% 8%,rgba(74,144,217,.11) 0%,transparent 60%),radial-gradient(ellipse 55% 45% at 82% 92%,rgba(142,95,212,.09) 0%,transparent 60%);pointer-events:none;z-index:0}
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:24px 14px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.logo{color:#fff;font-size:27px;font-weight:800;text-align:center;margin-bottom:22px;letter-spacing:-.5px}
+.logo span{color:var(--accent)}
+.teacher-block{background:linear-gradient(135deg,rgba(74,144,217,.13),rgba(142,95,212,.1));border:1px solid rgba(74,144,217,.18);border-radius:var(--radius-sm);padding:14px 12px;margin-bottom:22px;display:flex;align-items:center;gap:11px}
+.teacher-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.teacher-name{font-size:13px;font-weight:700}
+.teacher-role{font-size:10px;color:var(--text-muted);margin-top:3px}
+.teacher-badge{margin-top:6px;display:inline-block;background:rgba(6,214,160,.12);color:var(--accent3);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(6,214,160,.2)}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px 14px}
+.nav-item{margin-bottom:3px}
+.nav-item a{color:rgba(220,230,255,.65);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:10px;border-radius:var(--radius-sm);font-size:13px;transition:all .2s;position:relative}
+.nav-item a i{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-item a:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav-item.active a{background:rgba(74,144,217,.15);color:#fff;font-weight:600;border:1px solid rgba(74,144,217,.2)}
+.nav-item.active a::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:3px 0 0 3px}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center}
+.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:26px 22px 32px;position:relative;z-index:1}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.greeting-block h1{font-size:18px;font-weight:700;line-height:1.4}
+.greeting-block h1 span{color:var(--accent)}
+.greeting-block p{font-size:12px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.top-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.action-btn{position:relative;width:38px;height:38px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s}
+.action-btn:hover{color:#fff;border-color:var(--border-hover)}
+.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main)}
+.profile-btn{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer}
+.day-selector-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.day-selector-label{font-size:12px;color:var(--text-muted);font-weight:600;white-space:nowrap;flex-shrink:0}
+.day-selector-label i{color:var(--accent);margin-left:5px}
+.day-pills{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.day-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:600;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:52px}
+.day-pill:hover{border-color:var(--border-hover);color:var(--text)}
+.day-pill.active{background:rgba(74,144,217,.18);border-color:rgba(74,144,217,.4);color:#fff}
+.day-pill.today{border-color:rgba(6,214,160,.4)}
+.day-pill.today .dp-label::after{content:'';display:inline-block;width:5px;height:5px;background:var(--accent3);border-radius:50%;margin-right:4px;vertical-align:middle}
+.day-pill.holiday{border-color:rgba(231,76,60,.3);color:rgba(231,76,60,.6)}
+.day-pill.holiday.active{background:rgba(231,76,60,.12);border-color:rgba(231,76,60,.5);color:#e74c3c}
+.dp-name{font-size:11px;font-weight:700}
+.dp-date{font-size:9.5px;opacity:.75}
+.dp-holiday{font-size:8.5px;color:var(--absent);opacity:.8;text-align:center;max-width:55px;line-height:1.2;margin-top:1px}
+.cal-btn{width:36px;height:36px;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:14px;transition:all .2s;flex-shrink:0}
+.cal-btn:hover{color:var(--accent);border-color:rgba(74,144,217,.3)}
+.tab-nav{display:flex;gap:6px;margin-bottom:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:6px;overflow-x:auto}
+.tab-nav::-webkit-scrollbar{height:0}
+.tab-btn{flex:1;min-width:90px;padding:10px 12px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+.tab-btn:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.tab-btn.active{background:rgba(74,144,217,.18);color:#fff;border:1px solid rgba(74,144,217,.25)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.class-cards-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.class-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.class-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.cc-blue::before{background:linear-gradient(90deg,#4a90d9,#8e5fd4)}
+.cc-red::before{background:linear-gradient(90deg,#ef4444,#f97316)}
+.cc-green::before{background:linear-gradient(90deg,#06d6a0,#2ecc71)}
+.cc-yellow::before{background:linear-gradient(90deg,#f39c12,#e67e22)}
+.class-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.25);border-color:var(--border-hover)}
+.class-card.selected{border-color:var(--accent);background:rgba(74,144,217,.1);box-shadow:0 0 0 2px rgba(74,144,217,.2),0 8px 24px rgba(0,0,0,.2)}
+.cc-time{font-size:10px;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.cc-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.cc-grade{font-size:11px;color:var(--text-muted);margin-bottom:3px}
+.cc-room{font-size:10px;color:var(--text-muted);margin-bottom:10px}
+.cc-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.cc-count{font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;color:var(--accent)}
+.cc-status{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:20px}
+.cs-wait{background:rgba(255,255,255,.07);color:var(--text-muted)}
+.cs-now{background:rgba(74,144,217,.2);color:var(--accent);animation:blink 2s infinite}
+.cs-done{background:rgba(46,204,113,.15);color:var(--present)}
+.att-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.att-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.att-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.att-title i{color:var(--accent)}
+.att-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-wrap input{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 32px 7px 10px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12px;width:160px;transition:all .2s;outline:none}
+.search-wrap input:focus{border-color:var(--accent);width:190px}
+.search-wrap input::placeholder{color:var(--text-muted)}
+.search-wrap i{position:absolute;right:10px;color:var(--text-muted);font-size:12px;pointer-events:none}
+.blk-btn{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.blk-btn:hover{border-color:var(--border-hover);color:var(--text)}
+.blk-p{border-color:rgba(46,204,113,.25);color:var(--present);background:rgba(46,204,113,.07)}
+.blk-a{border-color:rgba(231,76,60,.25);color:var(--absent);background:rgba(231,76,60,.07)}
+.prog-wrap{padding:10px 16px;background:var(--bg-card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prog-track{flex:1;min-width:60px;height:6px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:4px;transition:width .4s ease}
+.prog-txt{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.prog-counts{display:flex;gap:8px;flex-wrap:wrap}
+.pc{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700}
+.pcdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.stu-row{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);transition:background .15s}
+.stu-row:last-child{border-bottom:none}
+.stu-row:hover{background:rgba(255,255,255,.02)}
+.stu-row.row-a{background:rgba(231,76,60,.04)}
+.sn{font-size:11px;color:var(--text-muted);min-width:20px;text-align:center;flex-shrink:0}
+.sav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.si{flex:1;min-width:0}
+.si-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.si-warn{font-size:9.5px;color:var(--absent);font-weight:700;display:inline-flex;align-items:center;gap:3px}
+.si-code{font-size:10px;color:var(--text-muted);margin-top:2px}
+.stbtns{display:flex;gap:3px;flex-shrink:0}
+.sb{width:62px;height:30px;border:1px solid rgba(255,255,255,.07);border-radius:7px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;transition:all .18s;background:var(--bg-card2);display:flex;align-items:center;justify-content:center;gap:3px;color:rgba(220,230,255,.35)}
+.sb:hover{transform:scale(1.06)}
+.sb.sp.on{color:var(--present);background:rgba(46,204,113,.16);border-color:rgba(46,204,113,.4);box-shadow:0 0 8px rgba(46,204,113,.15)}
+.sb.sa.on{color:var(--absent);background:rgba(231,76,60,.16);border-color:rgba(231,76,60,.4);box-shadow:0 0 8px rgba(231,76,60,.15)}
+.sb.sl.on{color:var(--late);background:rgba(243,156,18,.16);border-color:rgba(243,156,18,.4);box-shadow:0 0 8px rgba(243,156,18,.15)}
+.sb.sv.on{color:var(--leave);background:rgba(142,95,212,.16);border-color:rgba(142,95,212,.4);box-shadow:0 0 8px rgba(142,95,212,.15)}
+.nb{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .18s;flex-shrink:0}
+.nb:hover{color:var(--accent);border-color:rgba(74,144,217,.3)}
+.nb.noted{color:var(--accent4);border-color:rgba(243,156,18,.3);background:rgba(243,156,18,.07)}
+.note-row{display:none;padding:6px 14px 10px;border-bottom:1px solid var(--border);background:rgba(74,144,217,.04)}
+.note-row.open{display:flex;align-items:center;gap:8px}
+.note-inp{flex:1;background:var(--bg-card2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.note-inp:focus{border-color:var(--accent)}
+.note-inp::placeholder{color:var(--text-muted)}
+.note-sbtn{padding:7px 10px;border-radius:7px;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:1px solid;white-space:nowrap}
+.ns-save{background:rgba(74,144,217,.2);border-color:rgba(74,144,217,.3);color:var(--accent)}
+.ns-cancel{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--text-muted)}
+.att-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(0,0,0,.08)}
+.fstats{display:flex;gap:10px;flex-wrap:wrap}
+.fsi{font-size:11px;display:flex;align-items:center;gap:5px}
+.fsidot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.save-btn{padding:10px 22px;background:linear-gradient(135deg,var(--accent),#3674c7);border:none;border-radius:var(--radius-sm);color:#fff;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(74,144,217,.3);white-space:nowrap}
+.save-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,144,217,.4)}
+.save-btn:disabled{opacity:.45;cursor:default}
+.save-btn.done{background:linear-gradient(135deg,var(--present),#27ae60);box-shadow:0 4px 14px rgba(46,204,113,.3)}
+.empty-s{padding:60px 20px;text-align:center}
+.empty-s i{font-size:48px;color:rgba(74,144,217,.2);margin-bottom:16px;display:block}
+.empty-s h3{font-size:15px;font-weight:700;margin-bottom:8px;color:rgba(220,230,255,.6)}
+.empty-s p{font-size:12.5px;color:var(--text-muted)}
+.hist-filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.fsel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12.5px;outline:none;cursor:pointer;min-width:130px}
+.fsel:focus{border-color:var(--accent)}
+.fsel option{background:#1a2346}
+.hist-list{display:flex;flex-direction:column;gap:10px}
+.hi{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .22s}
+.hi:hover{border-color:var(--border-hover)}
+.hi-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.hi-info{flex:1;min-width:120px}
+.hi-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.hi-meta{font-size:10.5px;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hi-stats{display:flex;gap:6px}
+.hi-stat{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:8px;font-size:9px;min-width:38px;text-align:center}
+.hi-stat b{font-size:14px;font-weight:800;line-height:1.3}
+.hi-chev{color:var(--text-muted);font-size:13px;flex-shrink:0;transition:transform .2s}
+.hi.open .hi-chev{transform:rotate(180deg)}
+.hi-body{display:none;padding:12px 16px 14px;border-top:1px solid var(--border)}
+.hi.open .hi-body{display:block}
+.hi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
+.hd-cell{display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg-card2);border-radius:8px}
+.hd-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.hd-name{flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hd-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0;white-space:nowrap}
+.rep-filters{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.rfbtn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:600;transition:all .2s;white-space:nowrap}
+.rfbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(74,144,217,.1)}
+.rep-list{display:flex;flex-direction:column;gap:10px}
+.rep-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .22s}
+.rep-item:hover{transform:translateX(-4px)}
+.rep-item.danger{border-color:rgba(231,76,60,.25)}
+.rep-item.warn{border-color:rgba(243,156,18,.2)}
+.rep-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.rep-info{flex:1;min-width:0}
+.rep-name{font-size:14px;font-weight:700;margin-bottom:3px}
+.rep-cls{font-size:11px;color:var(--text-muted);margin-bottom:7px}
+.rep-bar-row{display:flex;align-items:center;gap:8px}
+.rep-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.rep-fill{height:100%;border-radius:3px}
+.rep-bar-txt{font-size:10px;color:var(--text-muted);white-space:nowrap}
+.rep-right{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;min-width:65px}
+.rep-cnt{font-size:28px;font-weight:800;line-height:1}
+.rep-lbl{font-size:10px;color:var(--text-muted)}
+.rep-badge{font-size:10px;font-weight:700;padding:4px 8px;border-radius:20px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.rb-d{background:rgba(231,76,60,.15);color:var(--absent);border:1px solid rgba(231,76,60,.2)}
+.rb-w{background:rgba(243,156,18,.15);color:var(--late);border:1px solid rgba(243,156,18,.2)}
+.cal-month-nav{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cmn-btn{width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:14px;transition:all .2s;flex-shrink:0}
+.cmn-btn:hover{color:var(--accent);border-color:rgba(74,144,217,.3)}
+.cmn-title{flex:1;text-align:center;font-size:15px;font-weight:700;direction:rtl}
+.cmn-cls-select{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:12px;outline:none;min-width:140px}
+.cmn-cls-select option{background:#1a2346}
+.cal-grid-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
+.cal-wd{padding:10px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted)}
+.cal-wd.fri{color:var(--absent);opacity:.7}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day{min-height:72px;padding:6px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;cursor:default;transition:background .18s}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day:hover:not(.other-month){background:rgba(255,255,255,.025)}
+.cal-day.other-month{opacity:.3;pointer-events:none}
+.cal-day.today .cd-num{background:var(--accent);color:#fff;border-radius:50%}
+.cal-day.holiday{background:rgba(231,76,60,.05)}
+.cal-day.holiday .cd-num{color:var(--absent)}
+.cal-day.friday{background:rgba(255,255,255,.015)}
+.cal-day.friday .cd-num{color:var(--absent);opacity:.6}
+.cd-num{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-bottom:3px}
+.cd-holiday-name{font-size:8.5px;color:rgba(231,76,60,.75);line-height:1.3;margin-bottom:3px;font-weight:600}
+.cd-stats{display:flex;flex-direction:column;gap:2px}
+.cd-stat-row{display:flex;align-items:center;gap:3px;font-size:9px;font-weight:600}
+.cds-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cal-legend{display:flex;gap:16px;padding:10px 16px;border-top:1px solid var(--border);flex-wrap:wrap}
+.cleg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
+.cleg-box{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.dp-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center}
+.dp-overlay.open{display:flex}
+.dp-popup{background:var(--bg-card);border:1px solid rgba(74,144,217,.25);border-radius:var(--radius);width:320px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:popIn .25s cubic-bezier(.34,1.56,.64,1)}
+.dp-popup-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dp-popup-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.dp-popup-title i{color:var(--accent)}
+.dp-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.05);border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s}
+.dp-close:hover{background:rgba(231,76,60,.15);color:var(--absent)}
+.dp-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.dp-nav-btn{width:32px;height:32px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s}
+.dp-nav-btn:hover{color:var(--accent);border-color:rgba(74,144,217,.3)}
+.dp-nav-title{font-size:14px;font-weight:700}
+.dp-wdays{display:grid;grid-template-columns:repeat(7,1fr);padding:8px 12px 4px;text-align:center}
+.dp-wd{font-size:10px;font-weight:700;color:var(--text-muted);padding:4px 0}
+.dp-wd.fri{color:rgba(231,76,60,.6)}
+.dp-cells{display:grid;grid-template-columns:repeat(7,1fr);padding:4px 12px 12px;gap:2px}
+.dp-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .18s;position:relative}
+.dp-cell:hover:not(.other):not(.holiday-cell){background:rgba(74,144,217,.15);color:#fff}
+.dp-cell.other{opacity:.25;pointer-events:none}
+.dp-cell.today-cell{color:var(--accent);font-weight:800}
+.dp-cell.today-cell::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--accent);border-radius:50%}
+.dp-cell.selected-cell{background:var(--accent);color:#fff;font-weight:800}
+.dp-cell.holiday-cell{color:rgba(231,76,60,.6)}
+.dp-cell.holiday-cell:hover:not(.other){background:rgba(231,76,60,.12)}
+.dp-cell.friday-cell{color:rgba(231,76,60,.5)}
+.dp-cell.has-data::before{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--accent3);border-radius:50%}
+.dp-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.dp-selected-txt{flex:1;font-size:12px;color:var(--text-muted)}
+.dp-selected-txt strong{color:var(--text)}
+.dp-confirm-btn{padding:8px 16px;background:linear-gradient(135deg,var(--accent),#3674c7);border:none;border-radius:8px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.dp-confirm-btn:hover{transform:translateY(-1px)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--bg-card);border:1px solid rgba(46,204,113,.3);border-radius:var(--radius-sm);padding:12px 22px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--present);box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:1000;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:var(--radius-sm);cursor:pointer;align-items:center;justify-content:center;font-size:18px}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199}
+.sb-overlay.on{display:block}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.class-cards-wrap,.att-wrap,.tab-nav,.day-selector-wrap{animation:fadeUp .4s ease both}
+@media(max-width:1200px){.class-cards-wrap{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1060px){:root{--sidebar-w:210px}.main-content{padding:20px 14px 28px}}
+@media(max-width:768px){
+  .menu-toggle{display:flex}.sidebar{transform:translateX(110%)}.sidebar.open{transform:translateX(0)}
+  .main-content{margin-right:0;padding:64px 12px 24px}.class-cards-wrap{grid-template-columns:repeat(2,1fr);gap:8px}
+  .att-hdr{flex-direction:column;align-items:flex-start}.att-toolbar{width:100%;justify-content:flex-start}
+  .search-wrap input{width:140px}.search-wrap input:focus{width:150px}
+  .blk-btn span{display:none}.sb{width:56px;font-size:10px;height:28px}.cc-grade{display:none}
+  .hi-stats{display:none}.stbtns{gap:2px}.rep-right{display:none}
+  .att-footer{flex-direction:column;align-items:flex-start}.fstats{gap:8px}
+}
+@media(max-width:480px){
+  .class-cards-wrap{grid-template-columns:repeat(2,1fr);gap:6px}.class-card{padding:12px 10px}
+  .cc-room{display:none}.sb{width:48px;font-size:9.5px;height:27px}.sb i{display:none}
+  .prog-counts{display:none}.day-pill{min-width:44px;padding:6px 8px}.dp-date{display:none}
+  .hi-stats{display:none}.top-bar h1{font-size:15px}
+}
+@media(max-width:360px){.sb{width:42px;height:26px}.stbtns{gap:1px}}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sb-overlay" id="overlay"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo">بور<span>بور</span></div>
+
+  <div class="teacher-block">
+    <div class="teacher-avatar">م</div>
+    <div>
+      <div class="teacher-name">مریم رضایی</div>
+      <div class="teacher-role">معلم فیزیک</div>
+      <div class="teacher-badge">پایه یازدهم</div>
+    </div>
+  </div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_dashboard .html"><i class="fas fa-home"></i> داشبورد</a>
+  </div>
+  <div class="nav-item active">
+    <a href="../html/teacher_attendance.html"><i class="fas fa-clipboard-check"></i> ثبت حضور و غیاب</a>
+  </div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_grades.html"><i class="fas fa-star"></i> نمرات</a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-item">
+    <a href="../html/teacher_notices.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۴</span></a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+  </div>
+  <div class="nav-item">
+    <a href="../html/teacher_profile.html"><i class="fas fa-cog"></i> تنظیمات</a>
+  </div>
+  <div class="nav-item">
+    <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+  </div>
+
+  <div class="sidebar-footer">بوربور v1.0 — سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1><i class="fas fa-clipboard-check" style="color:var(--accent);font-size:16px;margin-left:6px"></i>حضور و غیاب — <span id="topDateLabel">در حال بارگذاری...</span></h1>
+      <p><i class="fas fa-circle" style="color:var(--accent3);font-size:8px"></i> <span id="topDayName"></span> — ۴ کلاس</p>
+    </div>
+    <div class="top-actions">
+      <div class="action-btn" onclick="openDatePicker()"><i class="fas fa-calendar-alt"></i></div>
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">م</div>
+    </div>
+  </div>
+
+  <div class="day-selector-wrap">
+    <div class="day-selector-label"><i class="fas fa-calendar-week"></i>انتخاب روز:</div>
+    <div class="day-pills" id="dayPills"></div>
+    <div class="cal-btn" onclick="openDatePicker()" title="انتخاب از تقویم"><i class="fas fa-calendar"></i></div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('att',this)"><i class="fas fa-clipboard-list"></i> ثبت حضور</button>
+    <button class="tab-btn" onclick="switchTab('hist',this)"><i class="fas fa-history"></i> تاریخچه</button>
+    <button class="tab-btn" onclick="switchTab('rep',this)"><i class="fas fa-exclamation-triangle"></i> غیبت مکرر</button>
+    <button class="tab-btn" onclick="switchTab('monthly',this)"><i class="fas fa-calendar-alt"></i> تقویم ماهیانه</button>
+  </div>
+
+  <div class="tab-content active" id="tab-att">
+    <div class="class-cards-wrap" id="classCards"></div>
+    <div class="att-wrap" id="attWrap">
+      <div class="empty-s">
+        <i class="fas fa-hand-pointer"></i>
+        <h3>یک کلاس انتخاب کنید</h3>
+        <p>برای ثبت حضور، روی یکی از کارت‌های بالا کلیک کنید</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-hist">
+    <div class="hist-filters">
+      <select class="fsel" id="hfClass" onchange="renderHistory()">
+        <option value="">همه کلاس‌ها</option>
+        <option value="c1">یازدهم تجربی الف</option>
+        <option value="c2">یازدهم تجربی ب</option>
+        <option value="c3">دوازدهم تجربی الف</option>
+        <option value="c4">دوازدهم تجربی ب</option>
+      </select>
+      <select class="fsel" id="hfTime" onchange="renderHistory()">
+        <option value="all">همه تاریخ‌ها</option>
+        <option value="today">امروز</option>
+        <option value="week">این هفته</option>
+        <option value="month">این ماه</option>
+      </select>
+    </div>
+    <div class="hist-list" id="histList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-rep">
+    <div class="rep-filters">
+      <span style="font-size:12px;color:var(--text-muted);font-weight:600">فیلتر:</span>
+      <button class="rfbtn on" onclick="setRepFilter('all',this)">همه</button>
+      <button class="rfbtn" onclick="setRepFilter('danger',this)">بحرانی ۵+</button>
+      <button class="rfbtn" onclick="setRepFilter('warn',this)">هشدار ۳–۴</button>
+      <select class="fsel" id="rfClass" onchange="renderRepeated()" style="margin-right:auto">
+        <option value="">همه کلاس‌ها</option>
+        <option value="c1">یازدهم تجربی الف</option>
+        <option value="c2">یازدهم تجربی ب</option>
+        <option value="c3">دوازدهم تجربی الف</option>
+        <option value="c4">دوازدهم تجربی ب</option>
+      </select>
+    </div>
+    <div class="rep-list" id="repList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-monthly">
+    <div class="cal-month-nav">
+      <button class="cmn-btn" onclick="changeCalMonth(-1)"><i class="fas fa-chevron-right"></i></button>
+      <div class="cmn-title" id="calMonthTitle"></div>
+      <button class="cmn-btn" onclick="changeCalMonth(1)"><i class="fas fa-chevron-left"></i></button>
+      <select class="cmn-cls-select" id="calClass" onchange="renderMonthCal()">
+        <option value="">همه کلاس‌ها</option>
+        <option value="c1">یازدهم الف</option>
+        <option value="c2">یازدهم ب</option>
+        <option value="c3">دوازدهم الف</option>
+        <option value="c4">دوازدهم ب</option>
+      </select>
+    </div>
+    <div class="cal-grid-wrap">
+      <div class="cal-weekdays">
+        <div class="cal-wd">شنبه</div><div class="cal-wd">یک‌شنبه</div><div class="cal-wd">دوشنبه</div>
+        <div class="cal-wd">سه‌شنبه</div><div class="cal-wd">چهارشنبه</div><div class="cal-wd">پنج‌شنبه</div>
+        <div class="cal-wd fri">جمعه</div>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+      <div class="cal-legend">
+        <div class="cleg"><div class="cleg-box" style="background:rgba(46,204,113,.25)"></div>حاضر</div>
+        <div class="cleg"><div class="cleg-box" style="background:rgba(231,76,60,.25)"></div>غایب</div>
+        <div class="cleg"><div class="cleg-box" style="background:rgba(74,144,217,.3);border-radius:50%"></div>امروز</div>
+        <div class="cleg"><div class="cleg-box" style="background:rgba(231,76,60,.15)"></div>تعطیل رسمی</div>
+        <div class="cleg"><div class="cleg-box" style="background:rgba(255,255,255,.04)"></div>جمعه</div>
+        <div class="cleg"><div class="cleg-box" style="background:rgba(6,214,160,.3);border-radius:50%"></div>دارای داده</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dp-overlay" id="dpOverlay" onclick="closeDatePickerOverlay(event)">
+  <div class="dp-popup" id="dpPopup">
+    <div class="dp-popup-hdr">
+      <div class="dp-popup-title"><i class="fas fa-calendar-alt"></i>انتخاب تاریخ شمسی</div>
+      <button class="dp-close" onclick="closeDatePicker()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="dp-nav">
+      <button class="dp-nav-btn" onclick="dpChangeMonth(-1)"><i class="fas fa-chevron-right"></i></button>
+      <div class="dp-nav-title" id="dpNavTitle"></div>
+      <button class="dp-nav-btn" onclick="dpChangeMonth(1)"><i class="fas fa-chevron-left"></i></button>
+    </div>
+    <div class="dp-wdays">
+      <div class="dp-wd">ش</div><div class="dp-wd">ی</div><div class="dp-wd">د</div>
+      <div class="dp-wd">س</div><div class="dp-wd">چ</div><div class="dp-wd">پ</div>
+      <div class="dp-wd fri">ج</div>
+    </div>
+    <div class="dp-cells" id="dpCells"></div>
+    <div class="dp-footer">
+      <div class="dp-selected-txt">انتخاب شده: <strong id="dpSelectedTxt">—</strong></div>
+      <button class="dp-confirm-btn" onclick="confirmDate()">تأیید</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
+
+<script>
+/* ════════════════════════════════════════
+   SHAMSI (JALALI) CALENDAR ENGINE — FIXED
+   Based on jalaali-js (github.com/jalaali/jalaali-js)
+   All four functions verified correct
+════════════════════════════════════════ */
+const JC = (function() {
+  // Internal: Jalali calendar info for a given year
+  function jalCal(jy) {
+    var breaks = [-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+    var bl = breaks.length, gy = jy + 621, leapJ = -14, jp = breaks[0], jm2, jump = 0, leap, n, i;
+    for (i = 1; i < bl; i++) {
+      jm2 = breaks[i]; jump = jm2 - jp;
+      if (jy < jm2) break;
+      leapJ += ~~(jump/33)*8 + ~~((jump%33)/4);
+      jp = jm2;
+    }
+    n = jy - jp;
+    leapJ += ~~(n/33)*8 + ~~((n%33+3)/4);
+    if ((jump%33===4 || jump%33===0) && leapJ - ~~(gy/4) + ~~((gy+800)/400) - ~~((gy+78)/100) === 0)
+      leapJ++;
+    var leapG = ~~(gy/4) - ~~((~~(gy/100)+1)*3/4) - 150;
+    var march = 20 + leapJ - leapG;
+    if (jump - n < 6) n = n - jump + ~~((jump+4)/33)*33;
+    leap = ((n+1)%33-1)%4;
+    if (leap === -1) leap = 4;
+    return {gy, leapJ, leapG, march, leap};
+  }
+
+  // Gregorian date → Julian Day Number
+  function g2d(gy, gm, gd) {
+    var d = ~~((gy + ~~((gm-8)/6) + 100100) * 1461/4)
+          + ~~((153*((gm+9)%12)+2)/5) + gd - 34840408;
+    return d - ~~((~~((gy+100100+~~((gm-8)/6))/100))*3/4) + 752;
+  }
+
+  // Julian Day Number → Gregorian date
+  function d2g(jdn) {
+    var j = 4*jdn + 139361631
+          + ~~(~~((4*jdn+183187720)/146097)*3/4)*4 - 3908;
+    var i = ~~((j%1461)/4)*5 + 308;
+    var gd = ~~((i%153)/5) + 1;
+    var gm = (~~(i/153)%12) + 1;
+    var gy = ~~(j/1461) - 100100 + ~~((8-gm)/6);
+    return [gy, gm, gd];
+  }
+
+  // Jalali date → Julian Day Number
+  function j2d(jy, jm, jd) {
+    var r = jalCal(jy);
+    return g2d(r.gy, 3, r.march)
+         + (jm <= 6 ? (jm-1)*31 : 186+(jm-7)*30)
+         + jd - 1;
+  }
+
+  // Julian Day Number → Jalali date
+  function d2j(jdn) {
+    var gy = d2g(jdn)[0] - 621;
+    var r = jalCal(gy);
+    var jdn1f = g2d(r.gy, 3, r.march);
+    var k = jdn - jdn1f;
+    if (k >= 0) {
+      if (k < 365 + r.leap) {
+        var jd2 = k, jm2;
+        if (jd2 < 186) { jm2 = 1 + ~~(jd2/31); jd2 = jd2%31+1; }
+        else { jd2 -= 186; jm2 = 7 + ~~(jd2/30); jd2 = jd2%30+1; }
+        return [gy, jm2, jd2];
+      }
+      gy++;
+    } else { gy--; }
+    r = jalCal(gy);
+    jdn1f = g2d(r.gy, 3, r.march);
+    k = jdn - jdn1f;
+    var jd3, jm3;
+    if (k < 186) { jm3 = 1+~~(k/31); jd3 = k%31+1; }
+    else { k -= 186; jm3 = 7+~~(k/30); jd3 = k%30+1; }
+    return [gy, jm3, jd3];
+  }
+
+  return {
+    // Convert Gregorian to Jalali
+    toJalali(gy, gm, gd) { return d2j(g2d(gy, gm, gd)); },
+
+    // Convert Jalali to Gregorian
+    toGregorian(jy, jm, jd) { return d2g(j2d(jy, jm, jd)); },
+
+    // Is Jalali year a leap year?
+    isLeap(jy) { return jalCal(jy).leap === 0; },
+
+    // Days in a Jalali month
+    daysInMonth(jy, jm) {
+      if (jm <= 6) return 31;
+      if (jm <= 11) return 30;
+      return JC.isLeap(jy) ? 30 : 29;
+    },
+
+    // Weekday of Jalali date: 0=Sat, 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri
+    weekday(jy, jm, jd) {
+      var [gy, gm, gd] = d2g(j2d(jy, jm, jd));
+      return (new Date(gy, gm-1, gd).getDay() + 1) % 7;
+    },
+
+    // Today in Jalali
+    today() {
+      var n = new Date();
+      return d2j(g2d(n.getFullYear(), n.getMonth()+1, n.getDate()));
+    },
+
+    // Format as "YYYY/MM/DD"
+    fmt(jy, jm, jd) {
+      return `${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`;
+    }
+  };
+})();
+
+const JMONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const JDAYS_LONG=['شنبه','یک‌شنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'];
+
+/* ════ HOLIDAYS ════ */
+const HOLIDAYS_1404={
+  "1404/01/01":"نوروز","1404/01/02":"نوروز","1404/01/03":"نوروز","1404/01/04":"نوروز",
+  "1404/01/12":"روز جمهوری اسلامی","1404/01/13":"روز طبیعت (سیزده‌بدر)",
+  "1404/02/06":"شهادت امام محمد باقر","1404/02/15":"شهادت امام علی",
+  "1404/02/25":"عید فطر","1404/02/26":"عید فطر",
+  "1404/03/05":"شهادت امام جعفر صادق",
+  "1404/03/14":"رحلت امام خمینی","1404/03/15":"قیام ۱۵ خرداد",
+  "1404/03/26":"ولادت امام علی — روز پدر",
+  "1404/04/17":"عید قربان","1404/04/25":"عید غدیر خم",
+  "1404/05/05":"شهادت امام علی","1404/05/29":"تاسوعای حسینی","1404/05/30":"عاشورای حسینی",
+  "1404/06/09":"اربعین حسینی","1404/06/19":"رحلت پیامبر و شهادت امام حسن",
+  "1404/06/21":"شهادت امام رضا","1404/07/13":"شهادت امام حسن عسکری",
+  "1404/08/03":"ولادت پیامبر — هفته وحدت","1404/09/07":"شهادت حضرت فاطمه",
+  "1404/10/22":"دهه فجر — ۲۲ بهمن","1404/11/22":"پیروزی انقلاب",
+  "1404/12/29":"ملی‌شدن صنعت نفت",
+};
+const HOLIDAYS_1403={
+  "1403/01/01":"نوروز","1403/01/02":"نوروز","1403/01/03":"نوروز","1403/01/04":"نوروز",
+  "1403/01/12":"روز جمهوری","1403/01/13":"سیزده‌بدر",
+  "1403/02/14":"عید فطر","1403/02/15":"عید فطر",
+  "1403/03/14":"رحلت امام خمینی","1403/03/15":"قیام ۱۵ خرداد",
+  "1403/03/28":"ولادت امام علی","1403/04/27":"عید قربان","1403/05/05":"عید غدیر",
+  "1403/05/19":"تاسوعا","1403/05/20":"عاشورا","1403/05/29":"اربعین",
+  "1403/06/08":"رحلت پیامبر","1403/06/10":"شهادت امام رضا",
+  "1403/10/22":"دهه فجر","1403/11/22":"پیروزی انقلاب",
+};
+const HOLIDAYS_1405={
+  "1405/01/01":"نوروز","1405/01/02":"نوروز","1405/01/03":"نوروز","1405/01/04":"نوروز",
+  "1405/01/12":"روز جمهوری اسلامی","1405/01/13":"سیزده‌بدر",
+};
+const ALL_HOLIDAYS={...HOLIDAYS_1403,...HOLIDAYS_1404,...HOLIDAYS_1405};
+
+function isHoliday(jy,jm,jd){
+  return ALL_HOLIDAYS[JC.fmt(jy,jm,jd)]||null;
+}
+function isFriday(jy,jm,jd){return JC.weekday(jy,jm,jd)===6;}
+
+/* ════ DATA ════ */
+const CLASSES=[
+  {id:'c1',color:'cc-red',   time:'۷:۳۰–۸:۱۵',  name:'فیزیک ۱',grade:'یازدهم تجربی الف',room:'کلاس ۲۰۴',icon:'fas fa-atom',cnt:30},
+  {id:'c2',color:'cc-blue',  time:'۸:۲۰–۹:۰۵',  name:'فیزیک ۱',grade:'یازدهم تجربی ب', room:'کلاس ۲۰۵',icon:'fas fa-atom',cnt:28,now:true},
+  {id:'c3',color:'cc-green', time:'۱۰:۱۵–۱۱:۰۰',name:'فیزیک ۲',grade:'دوازدهم تجربی الف',room:'آزمایشگاه ۱',icon:'fas fa-flask',cnt:28},
+  {id:'c4',color:'cc-yellow',time:'۱۱:۱۰–۱۱:۵۵',name:'فیزیک ۲',grade:'دوازدهم تجربی ب',room:'کلاس ۳۰۱',icon:'fas fa-flask',cnt:26},
+];
+
+const STUDENTS={
+  c1:[
+    {id:'s101',name:'نیلوفر حسینی',code:'۰۱۰۱'},{id:'s102',name:'رضا نوروزی',code:'۰۱۰۲'},
+    {id:'s103',name:'سارا کریمی',code:'۰۱۰۳'},{id:'s104',name:'محمد علوی',code:'۰۱۰۴'},
+    {id:'s105',name:'فاطمه رضایی',code:'۰۱۰۵'},{id:'s106',name:'امیر تهرانی',code:'۰۱۰۶'},
+    {id:'s107',name:'مریم صادقی',code:'۰۱۰۷'},{id:'s108',name:'حسین احمدی',code:'۰۱۰۸'},
+    {id:'s109',name:'ندا کاظمی',code:'۰۱۰۹'},{id:'s110',name:'آرش رستمی',code:'۰۱۱۰'},
+    {id:'s111',name:'شیما بهرامی',code:'۰۱۱۱'},{id:'s112',name:'پارسا نیکنام',code:'۰۱۱۲'},
+    {id:'s113',name:'الناز قاسمی',code:'۰۱۱۳'},{id:'s114',name:'یاسر محمدی',code:'۰۱۱۴'},
+    {id:'s115',name:'روژان حیدری',code:'۰۱۱۵'},{id:'s116',name:'کیانوش صفری',code:'۰۱۱۶'},
+    {id:'s117',name:'تینا مرادی',code:'۰۱۱۷'},{id:'s118',name:'سیاوش اکبری',code:'۰۱۱۸'},
+    {id:'s119',name:'گلناز شکوهی',code:'۰۱۱۹'},{id:'s120',name:'بهروز سلطانی',code:'۰۱۲۰'},
+    {id:'s121',name:'لیلا نظری',code:'۰۱۲۱'},{id:'s122',name:'میثم رحیمی',code:'۰۱۲۲'},
+    {id:'s123',name:'سوفیا اسدی',code:'۰۱۲۳'},{id:'s124',name:'فرزاد جعفری',code:'۰۱۲۴'},
+    {id:'s125',name:'مهسا ولی‌زاده',code:'۰۱۲۵'},{id:'s126',name:'دانیال پور',code:'۰۱۲۶'},
+    {id:'s127',name:'رویا کریمیان',code:'۰۱۲۷'},{id:'s128',name:'آیدا شیرازی',code:'۰۱۲۸'},
+    {id:'s129',name:'علیرضا منتظری',code:'۰۱۲۹'},{id:'s130',name:'بیتا خسروی',code:'۰۱۳۰'},
+  ],
+  c2:[
+    {id:'s201',name:'علی مختاری',code:'۰۲۰۱'},{id:'s202',name:'زهرا موسوی',code:'۰۲۰۲'},
+    {id:'s203',name:'محمد کریمی',code:'۰۲۰۳'},{id:'s204',name:'سارا احمدی',code:'۰۲۰۴'},
+    {id:'s205',name:'حامد شریفی',code:'۰۲۰۵'},{id:'s206',name:'فرناز طاهری',code:'۰۲۰۶'},
+    {id:'s207',name:'امیرعلی نصیری',code:'۰۲۰۷'},{id:'s208',name:'سمیرا داودی',code:'۰۲۰۸'},
+    {id:'s209',name:'رامین اسکندری',code:'۰۲۰۹'},{id:'s210',name:'نازنین فروغی',code:'۰۲۱۰'},
+    {id:'s211',name:'مهدی جوادی',code:'۰۲۱۱'},{id:'s212',name:'یلدا پورعلی',code:'۰۲۱۲'},
+    {id:'s213',name:'صادق معتمدی',code:'۰۲۱۳'},{id:'s214',name:'ریحانه گلزار',code:'۰۲۱۴'},
+    {id:'s215',name:'کاوه ایمانی',code:'۰۲۱۵'},{id:'s216',name:'شبنم اسماعیلی',code:'۰۲۱۶'},
+    {id:'s217',name:'حمید مصطفوی',code:'۰۲۱۷'},{id:'s218',name:'آزاده پارسا',code:'۰۲۱۸'},
+    {id:'s219',name:'بابک زارعی',code:'۰۲۱۹'},{id:'s220',name:'مینا طباطبایی',code:'۰۲۲۰'},
+    {id:'s221',name:'امید قنبری',code:'۰۲۲۱'},{id:'s222',name:'درسا حمیدی',code:'۰۲۲۲'},
+    {id:'s223',name:'وحید رهنما',code:'۰۲۲۳'},{id:'s224',name:'الهه سادات',code:'۰۲۲۴'},
+    {id:'s225',name:'ستار محمودی',code:'۰۲۲۵'},{id:'s226',name:'نرگس امینی',code:'۰۲۲۶'},
+    {id:'s227',name:'جواد حقیقی',code:'۰۲۲۷'},{id:'s228',name:'سانا رزم‌آرا',code:'۰۲۲۸'},
+  ],
+  c3:[
+    {id:'s301',name:'احمد رزاقی',code:'۰۳۰۱'},{id:'s302',name:'مرضیه تقوی',code:'۰۳۰۲'},
+    {id:'s303',name:'سینا بیات',code:'۰۳۰۳'},{id:'s304',name:'فریده سهرابی',code:'۰۳۰۴'},
+    {id:'s305',name:'مسعود صفوی',code:'۰۳۰۵'},{id:'s306',name:'حانیه دهقان',code:'۰۳۰۶'},
+    {id:'s307',name:'شاهین ملکی',code:'۰۳۰۷'},{id:'s308',name:'زینب حیدری',code:'۰۳۰۸'},
+    {id:'s309',name:'میلاد کوهی',code:'۰۳۰۹'},{id:'s310',name:'آرمین قریشی',code:'۰۳۱۰'},
+    {id:'s311',name:'لادن نجفی',code:'۰۳۱۱'},{id:'s312',name:'ایمان فلاح',code:'۰۳۱۲'},
+    {id:'s313',name:'ترانه میری',code:'۰۳۱۳'},{id:'s314',name:'رحمان خلیلی',code:'۰۳۱۴'},
+    {id:'s315',name:'یاسمن سرلک',code:'۰۳۱۵'},{id:'s316',name:'توحید باقری',code:'۰۳۱۶'},
+    {id:'s317',name:'اشکان رئیسی',code:'۰۳۱۷'},{id:'s318',name:'مژده زمانی',code:'۰۳۱۸'},
+    {id:'s319',name:'نوید قاسم‌پور',code:'۰۳۱۹'},{id:'s320',name:'سپیده محتشم',code:'۰۳۲۰'},
+    {id:'s321',name:'برزو فخری',code:'۰۳۲۱'},{id:'s322',name:'نسترن یزدانی',code:'۰۳۲۲'},
+    {id:'s323',name:'کامران داریوش',code:'۰۳۲۳'},{id:'s324',name:'هلیا طاهرزاده',code:'۰۳۲۴'},
+    {id:'s325',name:'شروین علی‌پور',code:'۰۳۲۵'},{id:'s326',name:'مهتاب سیاوشی',code:'۰۳۲۶'},
+    {id:'s327',name:'ارسلان کمالی',code:'۰۳۲۷'},{id:'s328',name:'دینا فریدپور',code:'۰۳۲۸'},
+  ],
+  c4:[
+    {id:'s401',name:'رامتین آذری',code:'۰۴۰۱'},{id:'s402',name:'ساناز شهیدی',code:'۰۴۰۲'},
+    {id:'s403',name:'کورش ملک‌زاده',code:'۰۴۰۳'},{id:'s404',name:'مهناز قربانی',code:'۰۴۰۴'},
+    {id:'s405',name:'فیروز دانشور',code:'۰۴۰۵'},{id:'s406',name:'شادی اسلامی',code:'۰۴۰۶'},
+    {id:'s407',name:'بردیا خاکی',code:'۰۴۰۷'},{id:'s408',name:'نیکا وطنی',code:'۰۴۰۸'},
+    {id:'s409',name:'هومن صدیق',code:'۰۴۰۹'},{id:'s410',name:'لاله عسگری',code:'۰۴۱۰'},
+    {id:'s411',name:'ارشیا فتحی',code:'۰۴۱۱'},{id:'s412',name:'نیایش ربیعی',code:'۰۴۱۲'},
+    {id:'s413',name:'سهند مرزبان',code:'۰۴۱۳'},{id:'s414',name:'پریسا جلالی',code:'۰۴۱۴'},
+    {id:'s415',name:'یانیس قلی‌پور',code:'۰۴۱۵'},{id:'s416',name:'تابان سهیلی',code:'۰۴۱۶'},
+    {id:'s417',name:'دامون پیروزی',code:'۰۴۱۷'},{id:'s418',name:'لیلا خان‌محمدی',code:'۰۴۱۸'},
+    {id:'s419',name:'مانی حسن‌پور',code:'۰۴۱۹'},{id:'s420',name:'ستایش نور',code:'۰۴۲۰'},
+    {id:'s421',name:'شایان رنجبر',code:'۰۴۲۱'},{id:'s422',name:'ارغوان میرزایی',code:'۰۴۲۲'},
+    {id:'s423',name:'آرتین صمدی',code:'۰۴۲۳'},{id:'s424',name:'شکوفه مرادی',code:'۰۴۲۴'},
+    {id:'s425',name:'کیارش رهبر',code:'۰۴۲۵'},{id:'s426',name:'پانته‌آ سرمدی',code:'۰۴۲۶'},
+  ],
+};
+
+const HISTORY_DATA=[
+  {date:'1404/02/25',dk:'week',cid:'c1',sess:'ساعت اول',p:27,a:2,l:1,v:0,tot:30,
+   stus:[...STUDENTS.c1.slice(0,27).map(s=>({...s,st:'p'})),{...STUDENTS.c1[27],st:'a'},{...STUDENTS.c1[28],st:'a'},{...STUDENTS.c1[29],st:'l'}]},
+  {date:'1404/02/23',dk:'week',cid:'c2',sess:'ساعت دوم',p:24,a:3,l:1,v:0,tot:28,
+   stus:[...STUDENTS.c2.slice(0,24).map(s=>({...s,st:'p'})),{...STUDENTS.c2[24],st:'a'},{...STUDENTS.c2[25],st:'a'},{...STUDENTS.c2[26],st:'a'},{...STUDENTS.c2[27],st:'l'}]},
+  {date:'1404/02/22',dk:'week',cid:'c3',sess:'ساعت پنجم',p:25,a:2,l:1,v:0,tot:28,
+   stus:[...STUDENTS.c3.slice(0,25).map(s=>({...s,st:'p'})),{...STUDENTS.c3[25],st:'a'},{...STUDENTS.c3[26],st:'a'},{...STUDENTS.c3[27],st:'l'}]},
+  {date:'1404/02/20',dk:'week',cid:'c1',sess:'ساعت اول',p:26,a:3,l:1,v:0,tot:30,
+   stus:[...STUDENTS.c1.slice(0,26).map(s=>({...s,st:'p'})),{...STUDENTS.c1[26],st:'a'},{...STUDENTS.c1[27],st:'a'},{...STUDENTS.c1[28],st:'a'},{...STUDENTS.c1[29],st:'l'}]},
+  {date:'1404/02/18',dk:'month',cid:'c4',sess:'ساعت ششم',p:22,a:3,l:1,v:0,tot:26,
+   stus:[...STUDENTS.c4.slice(0,22).map(s=>({...s,st:'p'})),{...STUDENTS.c4[22],st:'a'},{...STUDENTS.c4[23],st:'a'},{...STUDENTS.c4[24],st:'a'},{...STUDENTS.c4[25],st:'l'}]},
+];
+
+const REPEATED=[
+  {sid:'s204',name:'سارا احمدی',  cid:'c2',cls:'یازدهم تجربی ب',   abs:7,lvl:'danger'},
+  {sid:'s103',name:'سارا کریمی',  cid:'c1',cls:'یازدهم تجربی الف', abs:5,lvl:'danger'},
+  {sid:'s203',name:'محمد کریمی',  cid:'c2',cls:'یازدهم تجربی ب',   abs:5,lvl:'danger'},
+  {sid:'s119',name:'گلناز شکوهی', cid:'c1',cls:'یازدهم تجربی الف', abs:4,lvl:'warn'},
+  {sid:'s309',name:'میلاد کوهی',  cid:'c3',cls:'دوازدهم تجربی الف',abs:4,lvl:'warn'},
+  {sid:'s222',name:'درسا حمیدی',  cid:'c2',cls:'یازدهم تجربی ب',   abs:3,lvl:'warn'},
+  {sid:'s415',name:'یانیس قلی‌پور',cid:'c4',cls:'دوازدهم تجربی ب', abs:3,lvl:'warn'},
+];
+
+/* ════ STATE ════ */
+var [todayJY,todayJM,todayJD] = JC.today();
+var selDateJY=todayJY, selDateJM=todayJM, selDateJD=todayJD;
+var selCls=null, att={}, notes={}, repFilter='all', query='';
+var saved = JSON.parse(localStorage.getItem('bb_sessions_v2')||'[]');
+var calViewJY=todayJY, calViewJM=todayJM;
+var dpViewJY=todayJY, dpViewJM=todayJM;
+var dpSelectedJY=todayJY, dpSelectedJM=todayJM, dpSelectedJD=todayJD;
+
+const f = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const AV_BG=['rgba(74,144,217,.22)','rgba(142,95,212,.22)','rgba(6,214,160,.22)','rgba(243,156,18,.22)','rgba(231,76,60,.22)','rgba(46,204,113,.22)'];
+const AV_CLR=['#4a90d9','#8e5fd4','#06d6a0','#f39c12','#e74c3c','#2ecc71'];
+const av=(name,i)=>`background:${AV_BG[i%6]};color:${AV_CLR[i%6]}`;
+
+/* ════ WEEK DAYS ════ */
+function addDays(jy,jm,jd,delta){
+  var [gy,gm,gdd]=JC.toGregorian(jy,jm,jd);
+  var d=new Date(gy,gm-1,gdd);
+  d.setDate(d.getDate()+delta);
+  return JC.toJalali(d.getFullYear(),d.getMonth()+1,d.getDate());
+}
+
+function getWeekDays(){
+  var wd=JC.weekday(selDateJY,selDateJM,selDateJD);
+  var days=[];
+  for(var i=0;i<7;i++){
+    var diff=i-wd;
+    var [jy,jm,jd]=addDays(selDateJY,selDateJM,selDateJD,diff);
+    var holiday=isHoliday(jy,jm,jd);
+    var fri=JC.weekday(jy,jm,jd)===6;
+    days.push({jy,jm,jd,dayName:JDAYS_LONG[i],holiday,fri});
+  }
+  return days;
+}
+
+function renderDayPills(){
+  var days=getWeekDays();
+  var [ty,tm,td]=JC.today();
+  var html=days.slice(0,6).map(day=>{
+    var isToday=day.jy===ty&&day.jm===tm&&day.jd===td;
+    var isSel=day.jy===selDateJY&&day.jm===selDateJM&&day.jd===selDateJD;
+    var cls='day-pill'+(isSel?' active':'')+(isToday?' today':'')+(day.holiday||day.fri?' holiday':'');
+    var holidayLabel=day.holiday?`<div class="dp-holiday">${day.holiday.length>8?day.holiday.slice(0,8)+'…':day.holiday}</div>`:'';
+    return `<div class="${cls}" onclick="selectDay(${day.jy},${day.jm},${day.jd})">
+      <div class="dp-name">${day.dayName}</div>
+      <div class="dp-date">${f(day.jd)} ${JMONTHS[day.jm-1]}</div>
+      ${holidayLabel}
+    </div>`;
+  }).join('');
+  document.getElementById('dayPills').innerHTML=html;
+  var selDateStr=`${f(selDateJD)} ${JMONTHS[selDateJM-1]} ${f(selDateJY)}`;
+  document.getElementById('topDateLabel').textContent=selDateStr;
+  var wd=JC.weekday(selDateJY,selDateJM,selDateJD);
+  document.getElementById('topDayName').textContent=JDAYS_LONG[wd];
+}
+
+function selectDay(jy,jm,jd){
+  selDateJY=jy;selDateJM=jm;selDateJD=jd;
+  selCls=null;att={};notes={};query='';
+  renderDayPills();renderCards();
+  document.getElementById('attWrap').innerHTML=`<div class="empty-s"><i class="fas fa-hand-pointer"></i><h3>یک کلاس انتخاب کنید</h3><p>برای ثبت حضور، روی یکی از کارت‌های بالا کلیک کنید</p></div>`;
+}
+
+function getSelDateKey(){ return JC.fmt(selDateJY,selDateJM,selDateJD); }
+function getSelDateFa(){ return `${f(selDateJD)} ${JMONTHS[selDateJM-1]} ${f(selDateJY)}`; }
+
+/* ════ TABS ════ */
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='hist') renderHistory();
+  if(id==='rep') renderRepeated();
+  if(id==='monthly') renderMonthCal();
+}
+
+/* ════ CLASS CARDS ════ */
+function renderCards(){
+  var dateKey=getSelDateKey();
+  var allSess=[...HISTORY_DATA,...saved];
+  var holiday=isHoliday(selDateJY,selDateJM,selDateJD);
+  var fri=JC.weekday(selDateJY,selDateJM,selDateJD)===6;
+  var holidayBanner='';
+  if(holiday||fri) holidayBanner=`<div style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:12.5px;font-weight:600;color:#e74c3c;display:flex;align-items:center;gap:8px;"><i class="fas fa-moon"></i>${holiday||'جمعه — تعطیل'}</div>`;
+  document.getElementById('classCards').innerHTML=holidayBanner+CLASSES.map(c=>{
+    var done=allSess.some(s=>s.cid===c.id&&s.date===dateKey);
+    var statusHtml=done?`<span class="cc-status cs-done"><i class="fas fa-check" style="margin-left:3px;font-size:8px"></i>ثبت‌شده</span>`:c.now?`<span class="cc-status cs-now"><i class="fas fa-circle" style="font-size:7px;margin-left:3px"></i>الان</span>`:`<span class="cc-status cs-wait">در انتظار</span>`;
+    var sel=selCls&&selCls.id===c.id;
+    return `<div class="class-card ${c.color}${sel?' selected':''}" onclick="selectClass('${c.id}')">
+      <div class="cc-time"><i class="fas fa-clock" style="font-size:9px"></i>${c.time}</div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-grade">${c.grade}</div>
+      <div class="cc-room"><i class="${c.icon}" style="font-size:9px;margin-left:4px"></i>${c.room}</div>
+      <div class="cc-footer"><span class="cc-count"><i class="fas fa-users" style="font-size:9px"></i>${f(c.cnt)} نفر</span>${statusHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectClass(cid){
+  selCls=CLASSES.find(c=>c.id===cid);
+  var key='bb_att_'+cid+'_'+getSelDateKey();
+  var sv=JSON.parse(localStorage.getItem(key)||'null');
+  if(sv){att=sv.att||{};notes=sv.notes||{};}
+  else{att={};notes={};}
+  query='';
+  renderCards();renderSheet();
+}
+
+/* ════ ATT SHEET ════ */
+function renderSheet(){
+  if(!selCls) return;
+  var cls=selCls, sts=STUDENTS[cls.id];
+  var filt=sts.filter(s=>!query||s.name.includes(query));
+  var cnt=counts(sts);
+  var marked=sts.filter(s=>att[s.id]).length;
+  var pct=sts.length?Math.round(marked/sts.length*100):0;
+  var dateKey=getSelDateKey();
+  var allSess=[...HISTORY_DATA,...saved];
+  var isDone=allSess.some(s=>s.cid===cls.id&&s.date===dateKey);
+  document.getElementById('attWrap').innerHTML=`
+  <div class="att-hdr">
+    <div class="att-title"><i class="fas fa-clipboard-list"></i>${cls.name} — ${cls.grade} | ${cls.room} | ${getSelDateFa()}</div>
+    <div class="att-toolbar">
+      <div class="search-wrap"><i class="fas fa-search"></i><input type="text" placeholder="جستجو..." value="${query}" oninput="query=this.value;renderSheet()"></div>
+      <button class="blk-btn blk-p" onclick="bulkSet('p')"><i class="fas fa-check"></i><span>همه حاضر</span></button>
+      <button class="blk-btn blk-a" onclick="bulkSet('a')"><i class="fas fa-times"></i><span>همه غایب</span></button>
+      <button class="blk-btn" onclick="bulkSet('')"><i class="fas fa-undo"></i><span>پاک</span></button>
+    </div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="prog-txt">${f(marked)} از ${f(sts.length)} ثبت</div>
+    <div class="prog-counts">
+      <div class="pc"><div class="pcdot" style="background:#2ecc71"></div>${f(cnt.p)}</div>
+      <div class="pc"><div class="pcdot" style="background:#e74c3c"></div>${f(cnt.a)}</div>
+      <div class="pc"><div class="pcdot" style="background:#f39c12"></div>${f(cnt.l)}</div>
+      <div class="pc"><div class="pcdot" style="background:#8e5fd4"></div>${f(cnt.v)}</div>
+    </div>
+  </div>
+  <div id="stuList">${filt.length?filt.map((s,i)=>stuRow(s,i)).join(''):'<div class="empty-s" style="padding:30px"><i class="fas fa-search"></i><h3>نتیجه‌ای یافت نشد</h3></div>'}</div>
+  <div class="att-footer">
+    <div class="fstats">
+      <div class="fsi"><div class="fsidot" style="background:#2ecc71"></div>حاضر: <strong style="color:#2ecc71">${f(cnt.p)}</strong></div>
+      <div class="fsi"><div class="fsidot" style="background:#e74c3c"></div>غایب: <strong style="color:#e74c3c">${f(cnt.a)}</strong></div>
+      <div class="fsi"><div class="fsidot" style="background:#f39c12"></div>تأخیر: <strong style="color:#f39c12">${f(cnt.l)}</strong></div>
+      <div class="fsi"><div class="fsidot" style="background:#8e5fd4"></div>مرخصی: <strong style="color:#8e5fd4">${f(cnt.v)}</strong></div>
+    </div>
+    <button class="save-btn${isDone?' done':''}" onclick="saveAtt()" ${marked===0?'disabled':''}>
+      <i class="fas fa-${isDone?'check':'save'}"></i>${isDone?'ثبت‌شده':'ذخیره حضور'}
+    </button>
+  </div>`;
+}
+
+function stuRow(s,i){
+  var st=att[s.id]||'';
+  var noted=!!notes[s.id];
+  var rep=REPEATED.find(r=>r.sid===s.id);
+  var warn=rep?`<span class="si-warn"><i class="fas fa-exclamation-triangle"></i>${f(rep.abs)} غیبت</span>`:'';
+  return `<div class="stu-row${st==='a'?' row-a':''}" id="row-${s.id}">
+    <div class="sn">${f(i+1)}</div>
+    <div class="sav" style="${av(s.name,i)}">${s.name[0]}</div>
+    <div class="si"><div class="si-name">${s.name}${warn}</div><div class="si-code">کد: ${s.code}</div></div>
+    <div class="stbtns">
+      <button class="sb sp${st==='p'?' on':''}" onclick="setSt('${s.id}','p')"><i class="fas fa-check" style="font-size:9px"></i>حاضر</button>
+      <button class="sb sa${st==='a'?' on':''}" onclick="setSt('${s.id}','a')"><i class="fas fa-times" style="font-size:9px"></i>غایب</button>
+      <button class="sb sl${st==='l'?' on':''}" onclick="setSt('${s.id}','l')"><i class="fas fa-clock" style="font-size:9px"></i>تأخیر</button>
+      <button class="sb sv${st==='v'?' on':''}" onclick="setSt('${s.id}','v')"><i class="fas fa-file-medical" style="font-size:9px"></i>مرخصی</button>
+    </div>
+    <button class="nb${noted?' noted':''}" onclick="toggleNote('${s.id}')"><i class="fas fa-comment${noted?'':'-alt'}"></i></button>
+  </div>
+  <div class="note-row" id="nr-${s.id}">
+    <input class="note-inp" placeholder="یادداشت برای ${s.name}..." id="ni-${s.id}" value="${notes[s.id]||''}">
+    <button class="note-sbtn ns-save" onclick="saveNote('${s.id}')">ذخیره</button>
+    <button class="note-sbtn ns-cancel" onclick="closeNote('${s.id}')">بستن</button>
+  </div>`;
+}
+
+function setSt(sid,status){
+  att[sid]=att[sid]===status?'':status;
+  var key='bb_att_'+selCls.id+'_'+getSelDateKey();
+  localStorage.setItem(key,JSON.stringify({att,notes}));
+  renderSheet();
+}
+function bulkSet(st){
+  STUDENTS[selCls.id].forEach(s=>att[s.id]=st||undefined);
+  if(!st) att={};
+  var key='bb_att_'+selCls.id+'_'+getSelDateKey();
+  localStorage.setItem(key,JSON.stringify({att,notes}));
+  renderSheet();
+}
+function counts(sts){
+  var p=0,a=0,l=0,v=0;
+  sts.forEach(s=>{var x=att[s.id];if(x==='p')p++;else if(x==='a')a++;else if(x==='l')l++;else if(x==='v')v++;});
+  return{p,a,l,v};
+}
+function toggleNote(sid){
+  var r=document.getElementById('nr-'+sid);
+  var isOpen=r.classList.contains('open');
+  document.querySelectorAll('.note-row.open').forEach(x=>x.classList.remove('open'));
+  if(!isOpen){r.classList.add('open');setTimeout(()=>document.getElementById('ni-'+sid)?.focus(),50);}
+}
+function saveNote(sid){
+  notes[sid]=(document.getElementById('ni-'+sid).value||'').trim();
+  if(!notes[sid]) delete notes[sid];
+  var key='bb_att_'+selCls.id+'_'+getSelDateKey();
+  localStorage.setItem(key,JSON.stringify({att,notes}));
+  closeNote(sid);renderSheet();showToast('یادداشت ذخیره شد');
+}
+function closeNote(sid){document.getElementById('nr-'+sid)?.classList.remove('open');}
+function saveAtt(){
+  if(!selCls) return;
+  var cls=selCls, sts=STUDENTS[cls.id], cnt=counts(sts), dateKey=getSelDateKey();
+  var session={date:dateKey,dk:'today',cid:cls.id,sess:cls.time,p:cnt.p,a:cnt.a,l:cnt.l,v:cnt.v,tot:sts.length,
+    stus:sts.map(s=>({...s,st:att[s.id]||'p',note:notes[s.id]||''})),ts:Date.now()};
+  saved=saved.filter(s=>!(s.cid===cls.id&&s.date===dateKey));
+  saved.unshift(session);
+  localStorage.setItem('bb_sessions_v2',JSON.stringify(saved));
+  showToast(`حضور ${cls.grade} — ${getSelDateFa()} ذخیره شد ✓`);
+  renderCards();renderSheet();
+}
+
+/* ════ HISTORY ════ */
+const CLS_NAMES={c1:'یازدهم تجربی الف',c2:'یازدهم تجربی ب',c3:'دوازدهم تجربی الف',c4:'دوازدهم تجربی ب'};
+const CLS_ICON={c1:'fas fa-atom',c2:'fas fa-atom',c3:'fas fa-flask',c4:'fas fa-flask'};
+const CLS_COL={c1:['rgba(239,68,68,.15)','#ef4444'],c2:['rgba(74,144,217,.15)','#4a90d9'],c3:['rgba(6,214,160,.15)','#06d6a0'],c4:['rgba(243,156,18,.15)','#f39c12']};
+const ST_TAG={p:{bg:'rgba(46,204,113,.14)',cl:'#2ecc71',txt:'حاضر'},a:{bg:'rgba(231,76,60,.14)',cl:'#e74c3c',txt:'غایب'},l:{bg:'rgba(243,156,18,.14)',cl:'#f39c12',txt:'تأخیر'},v:{bg:'rgba(142,95,212,.14)',cl:'#8e5fd4',txt:'مرخصی'}};
+
+function renderHistory(){
+  var fc=document.getElementById('hfClass').value;
+  var ft=document.getElementById('hfTime').value;
+  var data=[...HISTORY_DATA,...saved];
+  if(fc) data=data.filter(s=>s.cid===fc);
+  var todayKey=JC.fmt(todayJY,todayJM,todayJD);
+  if(ft==='today') data=data.filter(s=>s.date===todayKey||s.dk==='today');
+  else if(ft==='week') data=data.filter(s=>['today','week'].includes(s.dk));
+  else if(ft==='month') data=data.filter(s=>['today','week','month'].includes(s.dk));
+  var list=document.getElementById('histList');
+  if(!data.length){list.innerHTML=`<div class="empty-s"><i class="fas fa-history"></i><h3>سابقه‌ای یافت نشد</h3><p>فیلترها را تغییر دهید</p></div>`;return;}
+  list.innerHTML=data.map((s,i)=>{
+    var [bg,cl]=CLS_COL[s.cid]||CLS_COL.c1;
+    var pct=Math.round(s.p/s.tot*100);
+    var cells=(s.stus||[]).map((st,j)=>{
+      var tag=ST_TAG[st.st]||ST_TAG.p;
+      return `<div class="hd-cell"><div class="hd-av" style="${av(st.name,j)}">${st.name[0]}</div><div class="hd-name">${st.name}</div><span class="hd-tag" style="background:${tag.bg};color:${tag.cl}">${tag.txt}</span></div>`;
+    }).join('');
+    var dp=s.date.split('/');
+    var dateFa=dp.length===3?`${f(parseInt(dp[2]))} ${JMONTHS[parseInt(dp[1])-1]} ${f(parseInt(dp[0]))}`:s.date;
+    return `<div class="hi" id="hi${i}">
+      <div class="hi-hdr" onclick="toggleHi('hi${i}')">
+        <div class="hi-icon" style="background:${bg};color:${cl}"><i class="${CLS_ICON[s.cid]}"></i></div>
+        <div class="hi-info"><div class="hi-title">فیزیک — ${CLS_NAMES[s.cid]}</div>
+          <div class="hi-meta"><span><i class="fas fa-calendar" style="font-size:9px"></i> ${dateFa}</span><span><i class="fas fa-clock" style="font-size:9px"></i> ${s.sess}</span><span><i class="fas fa-chart-pie" style="font-size:9px"></i> ${f(pct)}٪ حضور</span></div></div>
+        <div class="hi-stats">
+          <div class="hi-stat" style="background:rgba(46,204,113,.12);color:#2ecc71"><b>${f(s.p)}</b>حاضر</div>
+          <div class="hi-stat" style="background:rgba(231,76,60,.12);color:#e74c3c"><b>${f(s.a)}</b>غایب</div>
+          <div class="hi-stat" style="background:rgba(243,156,18,.12);color:#f39c12"><b>${f(s.l)}</b>تأخیر</div>
+        </div>
+        <i class="fas fa-chevron-down hi-chev"></i>
+      </div>
+      <div class="hi-body"><div class="hi-grid">${cells}</div></div>
+    </div>`;
+  }).join('');
+}
+function toggleHi(id){document.getElementById(id).classList.toggle('open');}
+
+/* ════ REPEATED ════ */
+function setRepFilter(fv,btn){
+  repFilter=fv;
+  document.querySelectorAll('.rfbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRepeated();
+}
+function renderRepeated(){
+  var fc=document.getElementById('rfClass').value;
+  var data=[...REPEATED];
+  if(fc) data=data.filter(r=>r.cid===fc);
+  if(repFilter==='danger') data=data.filter(r=>r.lvl==='danger');
+  if(repFilter==='warn') data=data.filter(r=>r.lvl==='warn');
+  data.sort((a,b)=>b.abs-a.abs);
+  var max=data.length?Math.max(...data.map(r=>r.abs)):1;
+  var list=document.getElementById('repList');
+  if(!data.length){list.innerHTML=`<div class="empty-s"><i class="fas fa-check-circle" style="color:rgba(46,204,113,.3)"></i><h3>غیبت مکرری ثبت نشده</h3></div>`;return;}
+  list.innerHTML=data.map((r,i)=>{
+    var cl=r.lvl==='danger'?'#e74c3c':'#f39c12';
+    var rbg=r.lvl==='danger'?'rgba(231,76,60,.22)':'rgba(243,156,18,.22)';
+    var w=Math.round(r.abs/max*100);
+    var badge=r.lvl==='danger'?`<span class="rep-badge rb-d"><i class="fas fa-exclamation-triangle"></i>بحرانی</span>`:`<span class="rep-badge rb-w"><i class="fas fa-exclamation-circle"></i>هشدار</span>`;
+    return `<div class="rep-item ${r.lvl}">
+      <div class="rep-av" style="background:${rbg};color:${cl}">${r.name[0]}</div>
+      <div class="rep-info"><div class="rep-name">${r.name}</div><div class="rep-cls">${r.cls} — فیزیک</div>
+        <div class="rep-bar-row"><div class="rep-track"><div class="rep-fill" style="width:${w}%;background:${cl}"></div></div><div class="rep-bar-txt">${f(r.abs)} غیبت از ابتدای ترم</div></div></div>
+      <div class="rep-right"><div class="rep-cnt" style="color:${cl}">${f(r.abs)}</div><div class="rep-lbl">غیبت</div>${badge}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ════ MONTHLY CALENDAR ════ */
+function changeCalMonth(d){
+  calViewJM+=d;
+  if(calViewJM>12){calViewJM=1;calViewJY++;}
+  if(calViewJM<1){calViewJM=12;calViewJY--;}
+  renderMonthCal();
+}
+
+function renderMonthCal(){
+  var jy=calViewJY, jm=calViewJM;
+  document.getElementById('calMonthTitle').textContent=`${JMONTHS[jm-1]} ${f(jy)}`;
+  var daysInM=JC.daysInMonth(jy,jm);
+  var firstWD=JC.weekday(jy,jm,1);
+  var [ty,tm,td]=JC.today();
+  var allSess=[...HISTORY_DATA,...saved];
+  var selCls2=document.getElementById('calClass').value;
+  var prevM=jm-1, prevY=jy;
+  if(prevM<1){prevM=12;prevY--;}
+  var prevDays=JC.daysInMonth(prevY,prevM);
+  var cells=[];
+  for(var i=firstWD-1;i>=0;i--) cells.push({jy:prevY,jm:prevM,jd:prevDays-i,other:true});
+  for(var d2=1;d2<=daysInM;d2++) cells.push({jy,jm,jd:d2,other:false});
+  var remaining=42-cells.length;
+  var nextM=jm+1, nextY=jy;
+  if(nextM>12){nextM=1;nextY++;}
+  for(var d3=1;d3<=remaining;d3++) cells.push({jy:nextY,jm:nextM,jd:d3,other:true});
+  document.getElementById('calDays').innerHTML=cells.map(cell=>{
+    var key=JC.fmt(cell.jy,cell.jm,cell.jd);
+    var holiday=isHoliday(cell.jy,cell.jm,cell.jd);
+    var fri=JC.weekday(cell.jy,cell.jm,cell.jd)===6;
+    var isToday=cell.jy===ty&&cell.jm===tm&&cell.jd===td;
+    var daySess=allSess.filter(s=>s.date===key&&(selCls2===''||s.cid===selCls2));
+    var totP=0,totA=0;
+    daySess.forEach(s=>{totP+=s.p;totA+=s.a;});
+    var cls='cal-day';
+    if(cell.other) cls+=' other-month';
+    if(isToday) cls+=' today';
+    if(holiday&&!cell.other) cls+=' holiday';
+    if(fri&&!holiday) cls+=' friday';
+    var statsHtml=daySess.length&&!cell.other?`<div class="cd-stats">${totP>0?`<div class="cd-stat-row"><div class="cds-dot" style="background:#2ecc71"></div><span style="color:#2ecc71">${f(totP)}</span></div>`:''} ${totA>0?`<div class="cd-stat-row"><div class="cds-dot" style="background:#e74c3c"></div><span style="color:#e74c3c">${f(totA)}</span></div>`:''}</div>`:'';
+    var holidayHtml=holiday&&!cell.other?`<div class="cd-holiday-name">${holiday.length>10?holiday.slice(0,9)+'…':holiday}</div>`:'';
+    return `<div class="${cls}" onclick="calDayClick(${cell.jy},${cell.jm},${cell.jd},${cell.other})">
+      <div class="cd-num">${f(cell.jd)}</div>${holidayHtml}${statsHtml}
+    </div>`;
+  }).join('');
+}
+
+function calDayClick(jy,jm,jd,other){
+  if(other) return;
+  selectDay(jy,jm,jd);
+  var attBtn=document.querySelector('.tab-btn');
+  switchTab('att',attBtn);
+  showToast(`روز ${f(jd)} ${JMONTHS[jm-1]} انتخاب شد`);
+}
+
+/* ════ DATE PICKER ════ */
+function openDatePicker(){
+  dpViewJY=selDateJY;dpViewJM=selDateJM;
+  dpSelectedJY=selDateJY;dpSelectedJM=selDateJM;dpSelectedJD=selDateJD;
+  renderDpCells();
+  document.getElementById('dpOverlay').classList.add('open');
+}
+function closeDatePicker(){document.getElementById('dpOverlay').classList.remove('open');}
+function closeDatePickerOverlay(e){if(e.target===document.getElementById('dpOverlay')) closeDatePicker();}
+function dpChangeMonth(d){
+  dpViewJM+=d;
+  if(dpViewJM>12){dpViewJM=1;dpViewJY++;}
+  if(dpViewJM<1){dpViewJM=12;dpViewJY--;}
+  renderDpCells();
+}
+function renderDpCells(){
+  var jy=dpViewJY, jm=dpViewJM;
+  document.getElementById('dpNavTitle').textContent=`${JMONTHS[jm-1]} ${f(jy)}`;
+  var daysInM=JC.daysInMonth(jy,jm);
+  var firstWD=JC.weekday(jy,jm,1);
+  var [ty,tm,td]=JC.today();
+  var prevM=jm-1, prevY=jy;
+  if(prevM<1){prevM=12;prevY--;}
+  var prevDays=JC.daysInMonth(prevY,prevM);
+  var allSess=[...HISTORY_DATA,...saved];
+  var cells=[];
+  for(var i=firstWD-1;i>=0;i--) cells.push({jy:prevY,jm:prevM,jd:prevDays-i,other:true});
+  for(var d2=1;d2<=daysInM;d2++) cells.push({jy,jm,jd:d2,other:false});
+  var rem=35-cells.length;
+  var nextM=jm+1, nextY=jy;
+  if(nextM>12){nextM=1;nextY++;}
+  for(var d3=1;d3<=Math.max(rem,0);d3++) cells.push({jy:nextY,jm:nextM,jd:d3,other:true});
+  document.getElementById('dpCells').innerHTML=cells.map(cell=>{
+    var key=JC.fmt(cell.jy,cell.jm,cell.jd);
+    var holiday=isHoliday(cell.jy,cell.jm,cell.jd);
+    var fri=JC.weekday(cell.jy,cell.jm,cell.jd)===6;
+    var isToday=cell.jy===ty&&cell.jm===tm&&cell.jd===td;
+    var isSel=cell.jy===dpSelectedJY&&cell.jm===dpSelectedJM&&cell.jd===dpSelectedJD;
+    var hasData=allSess.some(s=>s.date===key);
+    var cls='dp-cell';
+    if(cell.other) cls+=' other';
+    if(isToday&&!isSel) cls+=' today-cell';
+    if(isSel) cls+=' selected-cell';
+    if(holiday) cls+=' holiday-cell';
+    if(fri&&!holiday) cls+=' friday-cell';
+    if(hasData&&!cell.other) cls+=' has-data';
+    var title=holiday?` title="${holiday}"`:fri?' title="جمعه"':'';
+    return `<div class="${cls}"${title} onclick="${cell.other?'':`dpSelectDay(${cell.jy},${cell.jm},${cell.jd})`}">${f(cell.jd)}</div>`;
+  }).join('');
+  document.getElementById('dpSelectedTxt').textContent=`${f(dpSelectedJD)} ${JMONTHS[dpSelectedJM-1]} ${f(dpSelectedJY)}`;
+}
+function dpSelectDay(jy,jm,jd){
+  dpSelectedJY=jy;dpSelectedJM=jm;dpSelectedJD=jd;
+  renderDpCells();
+}
+function confirmDate(){
+  selectDay(dpSelectedJY,dpSelectedJM,dpSelectedJD);
+  closeDatePicker();
+  showToast(`تاریخ ${f(dpSelectedJD)} ${JMONTHS[dpSelectedJM-1]} ${f(dpSelectedJY)} انتخاب شد`);
+}
+
+/* ════ TOAST ════ */
+var tt;
+function showToast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  var t=document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(tt);
+  tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ════ SIDEBAR ════ */
+var sb=document.getElementById('sidebar');
+var ov=document.getElementById('overlay');
+document.getElementById('menuToggle').addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('on');});
+ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('on');});
+
+/* ════ INIT ════ */
+renderDayPills();
+renderCards();
+renderRepeated();
+</script>
+</body>
+</html>

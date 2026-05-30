@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور - مدیریت معاونین</title>
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="../style/Assistant_management.css" />
+    <link rel="stylesheet" href="../style/menu.css" />
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+  <style>
+    #pageLoader {
+      position: fixed; inset: 0; background: #0f1b3d;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; z-index: 9999; gap: 18px;
+      transition: opacity 0.5s ease;
+    }
+    #pageLoader.hide { opacity: 0; pointer-events: none; }
+    .loader-spinner {
+      width: 58px; height: 58px;
+      border: 5px solid rgba(255,255,255,0.12);
+      border-top-color: #4da3ff; border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { color: #c8d8f0; font-family: Vazirmatn, sans-serif; font-size: 15px; }
+    .loader-sub  { color: #6a8ab0; font-family: Vazirmatn, sans-serif; font-size: 12px; margin-top: -8px; }
+
+    /* JDP */
+    #jdp-custom-overlay { display:none; position:fixed; inset:0; z-index:10000; }
+    #jdp-custom-popup {
+      display:none; position:fixed; z-index:10001;
+      background:#1a2a4a; border:1px solid rgba(255,255,255,0.15);
+      border-radius:14px; padding:16px; width:300px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.5);
+      font-family:Vazirmatn,sans-serif; direction:rtl;
+    }
+    .jdp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .jdp-month-year { color:#fff; font-size:15px; font-weight:600; cursor:pointer; padding:4px 10px; border-radius:8px; transition:background 0.2s; }
+    .jdp-month-year:hover { background:rgba(255,255,255,0.1); }
+    .jdp-nav-btn { background:rgba(255,255,255,0.08); border:none; color:#fff; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+    .jdp-nav-btn:hover { background:rgba(255,255,255,0.18); }
+    .jdp-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:6px; }
+    .jdp-weekday  { text-align:center; color:rgba(255,255,255,0.45); font-size:11px; padding:4px 0; }
+    .jdp-days     { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+    .jdp-day { text-align:center; padding:6px 2px; border-radius:8px; color:#d0e0f8; font-size:13px; cursor:pointer; transition:background 0.15s,color 0.15s; }
+    .jdp-day:hover   { background:rgba(77,163,255,0.25); color:#fff; }
+    .jdp-day.today   { border:1px solid #4da3ff; color:#4da3ff; }
+    .jdp-day.selected{ background:#4da3ff; color:#fff; font-weight:700; }
+    .jdp-day.empty   { cursor:default; }
+    .jdp-year-nav    { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .jdp-year-range  { color:#fff; font-size:14px; font-weight:600; }
+    .jdp-year-month-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+    .jdp-ym-item { text-align:center; padding:8px 4px; border-radius:8px; color:#d0e0f8; font-size:13px; cursor:pointer; transition:background 0.15s; }
+    .jdp-ym-item:hover  { background:rgba(77,163,255,0.25); color:#fff; }
+    .jdp-ym-item.active { background:#4da3ff; color:#fff; font-weight:700; }
+    .jdp-footer { display:flex; gap:8px; margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; }
+    .jdp-today-btn,.jdp-clear-btn { flex:1; padding:7px; border:none; border-radius:8px; font-family:Vazirmatn,sans-serif; font-size:12px; cursor:pointer; transition:background 0.2s; }
+    .jdp-today-btn { background:#4da3ff; color:#fff; }
+    .jdp-today-btn:hover { background:#3a8de0; }
+    .jdp-clear-btn { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); }
+    .jdp-clear-btn:hover { background:rgba(255,255,255,0.15); }
+    .date-input-wrapper { position:relative; display:flex; align-items:center; }
+    .date-icon { position:absolute; right:12px; color:rgba(255,255,255,0.4); pointer-events:none; font-size:14px; }
+    .date-input-wrapper .form-input { padding-right:36px; cursor:pointer; }
+  </style>
+  </head>
+  <body>
+
+    <div id="pageLoader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">در حال بارگذاری...</div>
+      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+    </div>
+
+
+    <!-- JDP POPUP -->
+<div id="jdp-custom-overlay"></div>
+<div id="jdp-custom-popup">
+  <div class="jdp-header">
+    <button class="jdp-nav-btn" id="jdpPrevBtn">‹</button>
+    <div class="jdp-month-year" id="jdpMonthYear" onclick="jdpToggleMonthView()"></div>
+    <button class="jdp-nav-btn" id="jdpNextBtn">›</button>
+  </div>
+  <div id="jdpDayView">
+    <div class="jdp-weekdays">
+      <div class="jdp-weekday">ش</div>
+      <div class="jdp-weekday">ی</div>
+      <div class="jdp-weekday">د</div>
+      <div class="jdp-weekday">س</div>
+      <div class="jdp-weekday">چ</div>
+      <div class="jdp-weekday">پ</div>
+      <div class="jdp-weekday">ج</div>
+    </div>
+    <div class="jdp-days" id="jdpDaysGrid"></div>
+  </div>
+  <div id="jdpMonthView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearPrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpMonthGrid"></div>
+  </div>
+  <div id="jdpYearView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearRangeLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpYearGrid"></div>
+  </div>
+  <div class="jdp-footer">
+    <button class="jdp-today-btn" onclick="jdpGoToday()">امروز</button>
+    <button class="jdp-clear-btn" onclick="jdpClear()">پاک کردن</button>
+  </div>
+</div>
+
+    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+        <div class="menu-item"><a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a></div>
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران <i class="fas fa-chevron-down submenu-arrow"></i></a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
+            <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+            <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+            <a href="../html/Parents.html" class="submenu-item"><i class="fas fa-users"></i> مدیریت اولیا</a>
+          </div>
+        </div>
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس ها <i class="fas fa-chevron-down submenu-arrow"></i></a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
+            <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
+            <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
+            <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
+          </div>
+        </div>
+        <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت نام ها</a></div>
+        <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش ها</a></div>
+        <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه ها</a></div>
+        <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> ارشیو</a></div>
+        <div class="menu-item"><a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a></div>
+        <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+        <div class="menu-item"><a href="../api/logout"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+      </div>
+
+      <div class="main-content">
+        <div class="top-header">
+          <h1 class="page-title">مدیریت معاونین</h1>
+          <div class="admin-info" id="adminInfo">در حال بارگذاری...</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#3498db"><i class="fas fa-user-shield"></i></div>
+            <div class="stat-info"><div class="stat-label">مجموع معاونین</div><div class="stat-value" id="totalAssistants">—</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#27ae60"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info"><div class="stat-label">حاضر امروز</div><div class="stat-value" id="presentAssistants">—</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#f39c12"><i class="fas fa-calendar-times"></i></div>
+            <div class="stat-info"><div class="stat-label">در مرخصی</div><div class="stat-value" id="onLeaveAssistants">—</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#9b59b6"><i class="fas fa-tasks"></i></div>
+            <div class="stat-info"><div class="stat-label">وظایف فعال</div><div class="stat-value" id="activeTasks">—</div></div>
+          </div>
+        </div>
+
+        <div class="search-section">
+          <input class="search-input" type="text" id="assistantSearch" placeholder="جستجوی معاون (نام، کد ملی، موبایل، ...)" />
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-group">
+            <label>فیلتر بر اساس:</label>
+            <select class="filter-select" id="positionFilter"><option value="">همه</option></select>
+            <select class="filter-select" id="statusFilter">
+              <option value="">همه وضعیت‌ها</option>
+              <option value="present">حاضر</option>
+              <option value="absent">غایب</option>
+              <option value="leave">مرخصی</option>
+            </select>
+          </div>
+          <div class="action-buttons">
+            <button class="action-btn btn-excel" onclick="exportAssistantsExcel()"><i class="fas fa-file-excel"></i> خروجی Excel</button>
+            <button class="action-btn btn-add" onclick="openAddAssistantModal()"><i class="fas fa-user-plus"></i> افزودن معاون جدید</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="data-grid">
+            <div class="grid-header">
+              <div class="grid-cell">معاون</div>
+              <div class="grid-cell">کد ملی</div>
+              <div class="grid-cell">موبایل</div>
+              <div class="grid-cell">نام کاربری</div>
+              <div class="grid-cell">وضعیت حضور</div>
+              <div class="grid-cell">عملیات</div>
+            </div>
+            <div class="grid-body" id="assistantsTableBody"></div>
+          </div>
+          <div dir="ltr" class="pagination">
+            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">‹</button>
+            <span id="pageInfo">صفحه 1 از 1</span>
+            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assistant Info Modal -->
+    <div class="modal" id="assistantInfoModal">
+      <div class="specs-modal-content">
+        <button class="close-btn" onclick="closeAssistantInfoModal()"><i class="fas fa-times"></i></button>
+        <h2 class="specs-modal-title">اطلاعات معاون</h2>
+        <div class="specs-info" id="infoViewMode" style="display:flex;flex-direction:column">
+          <div class="specs-row" style="justify-content:center;margin-bottom:20px">
+            <div id="infoAssistantAvatar"><div class="info-avatar-large">؟</div></div>
+          </div>
+          <div class="specs-row"><span class="specs-label">نام و نام خانوادگی:</span><span class="specs-value" id="infoAssistantName">-</span></div>
+          <div class="specs-row"><span class="specs-label">کد ملی:</span><span class="specs-value" id="infoAssistantNationalId">-</span></div>
+          <div class="specs-row"><span class="specs-label">موبایل:</span><span class="specs-value" id="infoAssistantPhone">-</span></div>
+          <div class="specs-row"><span class="specs-label">نام کاربری:</span><span class="specs-value" id="infoAssistantUsername">-</span></div>
+          <div class="specs-row"><span class="specs-label">سمت:</span><span class="specs-value" id="infoAssistantPosition">-</span></div>
+          <div class="specs-row"><span class="specs-label">مدرک تحصیلی:</span><span class="specs-value" id="infoAssistantDegree">-</span></div>
+          <div class="specs-row"><span class="specs-label">ایمیل:</span><span class="specs-value" id="infoAssistantEmail">-</span></div>
+          <div class="specs-row"><span class="specs-label">تاریخ تولد:</span><span class="specs-value" id="infoAssistantBirthDate">-</span></div>
+          <div class="specs-row"><span class="specs-label">تاریخ شروع همکاری:</span><span class="specs-value" id="infoAssistantCoopDate">-</span></div>
+          <div class="specs-row"><span class="specs-label">سابقه کار:</span><span class="specs-value" id="infoAssistantExperience">-</span></div>
+        </div>
+        <div class="specs-info" id="infoEditMode" style="display:none;flex-direction:column">
+          <div class="specs-row" style="justify-content:center;flex-direction:column;align-items:center;gap:10px;margin-bottom:10px">
+  <div id="infoAssistantAvatarEdit"><div class="info-avatar-large">؟</div></div>
+  <input type="file" id="editAssistantPhotoInput" style="display:none"
+         accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+         onchange="handleAssistantPhotoUpload(this)" />
+  <label for="editAssistantPhotoInput" class="photo-upload-btn" style="cursor:pointer">
+    <i class="fas fa-camera"></i> تغییر عکس (اختیاری)
+  </label>
+  <p style="font-size:11px;color:rgba(255,255,255,0.4);margin:0;text-align:center">
+    JPG · PNG · WEBP · GIF &nbsp;|&nbsp; حداکثر ۱ مگابایت
+  </p>
+</div>
+          <div class="specs-row"><span class="specs-label">نام:</span><input type="text" class="edit-input" id="editAssistantName" /></div>
+          <div class="specs-row"><span class="specs-label">موبایل:</span><input type="text" class="edit-input" id="editAssistantPhone" /></div>
+          <div class="specs-row"><span class="specs-label">کد ملی:</span><input type="text" class="edit-input" id="editAssistantNationalId" /></div>
+          <div class="specs-row"><span class="specs-label">سمت:</span>
+            <select class="edit-input" id="editAssistantPosition">
+              <option value="">—</option>
+              <option value="educational">معاون آموزشی</option>
+              <option value="student_affairs">معاون پرورشی</option>
+              <option value="administrative">معاون اداری/مالی</option>
+            </select>
+          </div>
+          <div class="specs-row"><span class="specs-label">مدرک:</span><input type="text" class="edit-input" id="editAssistantDegree" /></div>
+          <div class="specs-row"><span class="specs-label">ایمیل:</span><input type="email" class="edit-input" id="editAssistantEmail" /></div>
+          <div class="specs-row"><span class="specs-label">تاریخ تولد:</span>
+            <div class="date-input-wrapper" style="max-width:280px">
+              <i class="fas fa-calendar-alt date-icon"></i>
+              <input type="text" class="edit-input jdp-input" id="editAssistantBirthDate" placeholder="1370/05/12" autocomplete="off" readonly />
+            </div>
+          </div>
+          <div class="specs-row"><span class="specs-label">شروع همکاری:</span>
+            <div class="date-input-wrapper" style="max-width:280px">
+              <i class="fas fa-calendar-alt date-icon"></i>
+              <input type="text" class="edit-input jdp-input" id="editAssistantCoopDate" placeholder="1398/01/01" autocomplete="off" readonly />
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="specs-edit-btn" id="editBtn" onclick="enableInfoEdit()"><i class="fas fa-edit"></i> ویرایش</button>
+          <button class="specs-save-btn" id="saveBtn" style="display:none" onclick="saveInfoEdit()"><i class="fas fa-check"></i> ذخیره</button>
+          <button class="specs-cancel-btn" id="cancelBtn" style="display:none" onclick="cancelInfoEdit()"><i class="fas fa-times"></i> لغو</button>
+          <button class="specs-close-btn" onclick="closeAssistantInfoModal()">بستن</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Assistant Modal -->
+    <div class="modal" id="addAssistantModal">
+      <div class="modal-content add-assistant-content">
+        <h2 class="modal-title">افزودن معاون جدید</h2>
+        <div class="add-assistant-form">
+
+          <!-- اطلاعات شخصی -->
+          <div class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-user"></i> اطلاعات شخصی</h3>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;
+            margin-bottom:20px;padding-bottom:20px;
+            border-bottom:1px solid rgba(255,255,255,0.1)">
+  <div style="position:relative">
+    <div id="newAssistantPhotoPH"
+         style="width:100px;height:100px;border-radius:50%;
+                background:linear-gradient(135deg,#667eea,#764ba2);
+                display:flex;align-items:center;justify-content:center;
+                font-size:40px;color:white;border:3px solid rgba(255,255,255,0.2)">
+      <i class="fas fa-camera"></i>
+    </div>
+    <img id="newAssistantPhotoPreview" src="" alt="عکس معاون"
+         style="display:none;width:100px;height:100px;border-radius:50%;
+                object-fit:cover;border:3px solid rgba(255,255,255,0.2)" />
+  </div>
+  <input type="file" id="newAssistantPhotoInput" style="display:none"
+         accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+         onchange="handleNewAssistantPhoto(this)" />
+  <label for="newAssistantPhotoInput" class="photo-upload-btn" style="cursor:pointer">
+    <i class="fas fa-upload"></i> انتخاب عکس (اختیاری)
+  </label>
+  <p style="font-size:11px;color:rgba(255,255,255,0.4);margin:0;text-align:center">
+    JPG · PNG · WEBP · GIF &nbsp;|&nbsp; حداکثر ۱ مگابایت
+  </p>
+</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">نام و نام خانوادگی: <span class="required">*</span></label>
+                <input type="text" class="form-input" id="addAssistantName" placeholder="مثال: احمد محمدی" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">شماره موبایل: <span class="required">*</span></label>
+                <input type="tel" class="form-input" id="addAssistantPhone" placeholder="09123456789" maxlength="11" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">کد ملی: <span class="required">*</span></label>
+                <input type="text" class="form-input" id="addAssistantNationalId" placeholder="0123456789" maxlength="10" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">ایمیل:</label>
+                <input type="email" class="form-input" id="addAssistantEmail" placeholder="example@email.com" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">تاریخ تولد:</label>
+                <div class="date-input-wrapper">
+                  <i class="fas fa-calendar-alt date-icon"></i>
+                  <input type="text" class="form-input jdp-input" id="addAssistantBirthDate" placeholder="1370/05/12" autocomplete="off" readonly />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">تاریخ شروع همکاری:</label>
+                <div class="date-input-wrapper">
+                  <i class="fas fa-calendar-alt date-icon"></i>
+                  <input type="text" class="form-input jdp-input" id="addAssistantCoopDate" placeholder="1398/01/01" autocomplete="off" readonly />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">نام کاربری: <span class="required">*</span></label>
+                <input type="text" class="form-input" id="addAssistantUsername" placeholder="نام کاربری" autocomplete="off" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">رمز عبور: <span class="required">*</span></label>
+                <input type="password" class="form-input" id="addAssistantPassword" placeholder="حداقل ۶ کاراکتر" autocomplete="new-password" />
+              </div>
+            </div>
+          </div>
+
+          <!-- اطلاعات شغلی -->
+          <div class="form-section">
+            <h3 class="form-section-title"><i class="fas fa-briefcase"></i> اطلاعات شغلی</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">سمت معاونت:</label>
+                <select class="form-input" id="addAssistantPosition">
+                  <option value="">انتخاب کنید</option>
+                  <option value="educational">معاون آموزشی</option>
+                  <option value="student_affairs">معاون پرورشی</option>
+                  <option value="administrative">معاون اداری/مالی</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">مدرک تحصیلی:</label>
+                <select class="form-input" id="addAssistantDegree">
+                  <option value="">انتخاب کنید</option>
+                  <option value="کارشناسی">کارشناسی</option>
+                  <option value="کارشناسی ارشد">کارشناسی ارشد</option>
+                  <option value="دکتری">دکتری</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">رشته تحصیلی:</label>
+                <input type="text" class="form-input" id="addAssistantField" placeholder="مثال: مدیریت آموزشی" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">سابقه کار (سال):</label>
+                <input type="number" class="form-input" id="addAssistantExperience" placeholder="5" min="0" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-confirm" id="saveAssistantBtn" onclick="saveNewAssistant()" disabled>
+            <i class="fas fa-plus"></i> افزودن معاون
+          </button>
+          <button class="modal-btn modal-btn-cancel" onclick="closeAddAssistantModal()">
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- Delete Modal -->
+    <div class="modal" id="deletePermanentModal">
+      <div class="confirm-modal-content">
+        <div class="confirm-icon delete"><i class="fas fa-archive"></i></div>
+        <h2 class="confirm-title">انتقال به ارشیو</h2>
+        <p class="confirm-message">آیا مطمئن هستید که می‌خواهید <strong id="deleteAssistantName">این معاون</strong
+        >
+را ارشیو کنید؟
+        </p>
+        <div class="confirm-info"><i class="fas fa-info-circle"></i><span>این عملیات قابل بازگشت نیست.</span></div>
+        <div class="confirm-buttons">
+          <button class="confirm-btn btn-danger" onclick="confirmDeletePermanent()"><i class="fas fa-trash"></i> ارشیو</button>
+          <button class="confirm-btn btn-secondary" onclick="closeDeletePermanentModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disable Modal -->
+    <div class="modal" id="disableConfirmModal">
+      <div class="confirm-modal-content">
+        <div class="confirm-icon warning"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2 class="confirm-title">غیرفعال کردن معاون</h2>
+        <p class="confirm-message">آیا مطمئن هستید که می‌خواهید <strong id="disableAssistantName">این معاون</strong> را غیرفعال کنید؟</p>
+        <div class="confirm-buttons">
+          <button class="confirm-btn btn-danger" onclick="confirmDisableAssistant()"><i class="fas fa-ban"></i> غیرفعال</button>
+          <button class="confirm-btn btn-secondary" onclick="closeDisableModal()"><i class="fas fa-times"></i> انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal" id="assistantDetailsModal">
+      <div class="modal-content assistant-details-content">
+        <button class="close-btn" onclick="closeAssistantDetailsModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title">جزئیات معاون</h2>
+        <p style="color:rgba(255,255,255,0.6);text-align:center;padding:40px">این بخش به زودی فعال می‌شود</p>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-notification" id="successToast">
+      <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="toast-content">
+        <div class="toast-title">موفقیت‌آمیز!</div>
+        <div class="toast-message" id="toastMessage">اطلاعات با موفقیت به‌روزرسانی شد</div>
+      </div>
+      <button class="toast-close" onclick="closeToast()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <script src="../javaScript/Assistant_management.js"></script>
+    <script src="../javaScript/menu.js"></script>
+  </body>
+</html>

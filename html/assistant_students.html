@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>بوربور — مدیریت دانش‌آموزان</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<style>
+@font-face{font-family:"Vazirmatn";src:url("../font/Vazirmatn-Regular.woff2") format("woff2");font-weight:400;font-display:swap;}
+@font-face{font-family:"Vazirmatn";src:url("../font/Vazirmatn-Medium.woff2") format("woff2");font-weight:500;font-display:swap;}
+@font-face{font-family:"Shabnam";src:url("../font/Shabnam-Bold.woff2") format("woff2");font-weight:700;font-display:swap;}
+:root{
+  --bg-main:#0f1629;--bg-card:#162040;--bg-card2:#1a2650;--bg-sidebar:#0b1120;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#2ecc71;--absent:#e74c3c;--late:#f39c12;--leave:#8e5fd4;
+  --text:#e8f0ff;--text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(74,144,217,0.35);
+  --sidebar-w:258px;--radius:18px;--radius-sm:11px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:"Vazirmatn","Shabnam",Tahoma,sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 5%,rgba(74,144,217,0.13) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(142,95,212,0.1) 0%,transparent 55%),radial-gradient(ellipse 45% 45% at 55% 45%,rgba(6,214,160,0.04) 0%,transparent 65%);pointer-events:none;z-index:0;}
+body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(74,144,217,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:26px 14px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:400;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.5);}
+.sidebar.open{transform:translateX(0);}
+.sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(74,144,217,.2);border-radius:4px;}
+.sb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.logo{font-size:28px;font-weight:900;color:#fff;}.logo span{color:var(--accent);}
+.sb-close{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;font-family:inherit;}
+.sb-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.logo-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-bottom:22px;letter-spacing:1px;text-transform:uppercase;}
+.deputy-block{background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.1));border:1px solid rgba(74,144,217,.2);border-radius:var(--radius-sm);padding:15px 13px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.deputy-avatar{width:46px;height:46px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(74,144,217,.35);overflow:hidden;}
+.deputy-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;}
+.deputy-name{font-size:13px;font-weight:700;margin-bottom:2px;}.deputy-role{font-size:10px;color:var(--text-muted);}
+.deputy-badge{margin-top:7px;display:inline-block;background:rgba(243,156,18,.14);color:var(--accent4);font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid rgba(243,156,18,.22);}
+.nav-section-label{font-size:9px;font-weight:700;color:rgba(180,200,255,.28);letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;margin:14px 0 8px;}
+.nav-item{margin-bottom:2px;}.nav-item a{color:rgba(180,200,255,.58);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:11px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:all .2s;position:relative;}
+.nav-item a i{font-size:14px;width:20px;text-align:center;flex-shrink:0;opacity:.75;}
+.nav-item a:hover{background:rgba(255,255,255,.05);color:#fff;}
+.nav-item.active a{background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.05));color:#fff;font-weight:700;border:1px solid rgba(74,144,217,.22);}
+.nav-item.active a::before{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:65%;background:var(--accent);border-radius:3px 0 0 3px;}
+.nav-item.active a i{opacity:1;color:var(--accent);}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:20px;text-align:center;}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px;}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center;line-height:1.7;}
+
+/* ══ OVERLAY + HAMBURGER ══ */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199;}.sb-overlay.on{display:block;}
+.hamburger{position:fixed;top:16px;right:20px;z-index:300;width:44px;height:44px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.hamburger:hover{border-color:var(--border-hover);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text-muted);border-radius:2px;transition:all .3s;}
+.hamburger:hover span{background:var(--text);}
+
+/* ══ MAIN ══ */
+.main-content{min-height:100vh;padding:72px 24px 36px;position:relative;z-index:1;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:14px;}
+.greeting h1{font-size:20px;font-weight:800;line-height:1.3;}.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:7px;}
+.top-actions{display:flex;align-items:center;gap:9px;}
+
+/* NOTIFICATION */
+.notif-wrap{position:relative;}
+.action-btn{position:relative;width:40px;height:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
+.action-btn:hover{color:#fff;border-color:var(--border-hover);}
+.notif-dot{position:absolute;top:8px;left:8px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.notif-dropdown{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-8px);width:340px;background:var(--bg-card);border:1px solid rgba(74,144,217,.2);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.55);z-index:500;opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;overflow:hidden;}
+.notif-dropdown.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.notif-dropdown::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:11px;height:11px;background:var(--bg-card);border-top:1px solid rgba(74,144,217,.2);border-right:1px solid rgba(74,144,217,.2);}
+.nd-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border);}
+.nd-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;}.nd-title i{color:var(--accent);}
+.nd-badge-count{background:var(--accent5);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;}
+.nd-mark-all{font-size:10.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;padding:0;}
+.nd-list{max-height:300px;overflow-y:auto;}.nd-list::-webkit-scrollbar{width:3px;}.nd-list::-webkit-scrollbar-thumb{background:rgba(74,144,217,.2);border-radius:3px;}
+.nd-item{display:flex;align-items:flex-start;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative;}
+.nd-item:last-child{border-bottom:none;}.nd-item:hover{background:rgba(255,255,255,.03);}
+.nd-item.unread{background:rgba(74,144,217,.04);}
+.nd-item.unread::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;}
+.nd-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px;}
+.nd-icon.red{background:rgba(231,76,60,.15);color:var(--absent);}.nd-icon.blue{background:rgba(74,144,217,.15);color:var(--accent);}
+.nd-icon.green{background:rgba(46,204,113,.15);color:var(--present);}.nd-icon.orange{background:rgba(243,156,18,.15);color:var(--accent4);}
+.nd-icon.purple{background:rgba(142,95,212,.15);color:var(--accent2);}
+.nd-body{flex:1;min-width:0;}.nd-item-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+.nd-item-desc{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nd-item-time{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;}
+.nd-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;}
+.nd-footer{padding:11px 16px;border-top:1px solid var(--border);background:rgba(74,144,217,.04);}
+.nd-footer a{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700;color:var(--accent);text-decoration:none;}
+
+/* ══ ADD BTN / PROFILE BTN ══ */
+.add-student-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.add-student-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,144,217,.4);}
+.profile-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(74,144,217,.35);overflow:hidden;}
+.profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;}
+
+/* ══ STAT CARDS ══ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:all .25s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:rgba(74,144,217,.15);color:var(--accent);}.si-green{background:rgba(46,204,113,.15);color:var(--present);}
+.si-yellow{background:rgba(243,156,18,.15);color:var(--accent4);}.si-purple{background:rgba(142,95,212,.15);color:var(--accent2);}
+.stat-val{font-size:26px;font-weight:900;line-height:1;}.stat-lbl{font-size:10.5px;color:var(--text-muted);margin-top:3px;}
+
+/* ══ CARD / TOOLBAR ══ */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:220px;}
+.search-wrap input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;padding:10px 38px 10px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--border-hover);}
+.search-wrap input::placeholder{color:var(--text-muted);}
+.search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;}
+.filter-select{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;outline:none;transition:border-color .2s;}
+.filter-select:focus{border-color:var(--border-hover);}
+.filter-select option{background:var(--bg-card2);}
+.view-toggle{display:flex;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.vt-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;transition:all .2s;}
+.vt-btn.active{background:rgba(74,144,217,.18);color:var(--accent);}
+.vt-btn:hover:not(.active){background:rgba(255,255,255,.05);color:var(--text);}
+.export-btn{display:flex;align-items:center;gap:7px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.25);color:var(--accent3);font-family:inherit;font-size:12px;font-weight:700;padding:9px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.export-btn:hover{background:rgba(6,214,160,.18);}
+
+/* ══ TABLE ══ */
+.stu-table-wrap{overflow-x:auto;}
+.stu-table{width:100%;border-collapse:collapse;}
+.stu-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(74,144,217,.06);border-bottom:1px solid var(--border);white-space:nowrap;}
+.stu-table td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.stu-table tr:last-child td{border-bottom:none;}
+.stu-table tbody tr{transition:background .15s;cursor:pointer;}
+.stu-table tbody tr:hover td{background:rgba(255,255,255,.025);}
+.s-cell{display:flex;align-items:center;gap:11px;}
+.s-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden;}
+.s-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.s-name{font-size:12.5px;font-weight:700;}.s-id{font-size:10px;color:var(--text-muted);}
+.grade-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.gb-10{background:rgba(74,144,217,.15);color:var(--accent);}.gb-11{background:rgba(6,214,160,.13);color:var(--accent3);}.gb-12{background:rgba(243,156,18,.14);color:var(--accent4);}
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.sp-active{background:rgba(46,204,113,.13);color:var(--present);border:1px solid rgba(46,204,113,.2);}
+.sp-warned{background:rgba(231,76,60,.13);color:var(--absent);border:1px solid rgba(231,76,60,.2);}
+.sp-debt{background:rgba(243,156,18,.13);color:var(--accent4);border:1px solid rgba(243,156,18,.2);}
+.abs-mini{font-size:13px;font-weight:900;}
+.row-actions{display:flex;gap:5px;opacity:0;transition:opacity .2s;}
+.stu-table tbody tr:hover .row-actions{opacity:1;}
+.ra-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ra-btn.ra-profile:hover{border-color:rgba(74,144,217,.4);color:var(--accent);background:rgba(74,144,217,.1);}
+.ra-btn.ra-edit:hover{border-color:rgba(6,214,160,.4);color:var(--accent3);background:rgba(6,214,160,.1);}
+.ra-btn.ra-del:hover{border-color:rgba(231,76,60,.4);color:var(--absent);background:rgba(231,76,60,.1);}
+.th-sort{cursor:pointer;user-select:none;}.th-sort:hover{color:var(--text);}
+.sort-icon{font-size:9px;margin-right:4px;}
+
+/* ══ GRID VIEW ══ */
+.stu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.stu-grid-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px 16px;transition:all .25s;cursor:pointer;position:relative;overflow:hidden;text-align:center;}
+.stu-grid-card::before{content:"";position:absolute;top:0;right:0;left:0;height:3px;}
+.stu-grid-card.g10::before{background:linear-gradient(90deg,#4a90d9,#8e5fd4);}
+.stu-grid-card.g11::before{background:linear-gradient(90deg,#06d6a0,#2ecc71);}
+.stu-grid-card.g12::before{background:linear-gradient(90deg,#f39c12,#e67e22);}
+.stu-grid-card:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.3);}
+.sgc-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 12px;box-shadow:0 4px 14px rgba(0,0,0,.3);overflow:hidden;}
+.sgc-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.sgc-name{font-size:13px;font-weight:800;margin-bottom:3px;}.sgc-class{font-size:10.5px;color:var(--text-muted);margin-bottom:12px;}
+.sgc-stats{display:flex;justify-content:center;gap:16px;margin-bottom:14px;}
+.sgcs-val{font-size:16px;font-weight:900;}.sgcs-lbl{font-size:9px;color:var(--text-muted);margin-top:1px;}
+.sgc-actions{display:flex;gap:6px;}
+.sgca-btn{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:10.5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.sgca-btn.btn-profile:hover{border-color:rgba(74,144,217,.5);color:var(--accent);background:rgba(74,144,217,.1);}
+.sgca-btn.btn-edit:hover{border-color:rgba(6,214,160,.5);color:var(--accent3);background:rgba(6,214,160,.1);}
+
+/* ══ PAGINATION ══ */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text-muted);}
+.page-btns{display:flex;gap:5px;}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.pg-btn.active{background:rgba(74,144,217,.2);border-color:var(--accent);color:#fff;font-weight:700;}
+.pg-btn:hover:not(.active){background:rgba(255,255,255,.05);color:var(--text);}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 22px;font-size:12.5px;font-weight:600;z-index:9000;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;display:flex;align-items:center;gap:10px;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,204,113,.3);}.toast.success i{color:var(--present);}
+.toast.warning{border-color:rgba(243,156,18,.3);}.toast.warning i{color:var(--late);}
+.toast.error{border-color:rgba(231,76,60,.3);}.toast.error i{color:var(--absent);}
+
+/* ══ PROFILE PANEL ══ */
+.profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:4000;display:none;backdrop-filter:blur(4px);}
+.profile-overlay.open{display:block;}
+.profile-panel{position:fixed;left:0;top:0;height:100vh;width:500px;max-width:95vw;background:var(--bg-card);border-right:1px solid rgba(74,144,217,.2);z-index:4001;display:flex;flex-direction:column;transform:translateX(-110%);transition:transform .4s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.profile-panel.open{transform:translateX(0);}
+.pp-header{padding:0;flex-shrink:0;position:relative;}
+.pp-cover{height:120px;background:linear-gradient(135deg,rgba(74,144,217,.3),rgba(142,95,212,.25));position:relative;overflow:hidden;}
+.pp-cover::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(74,144,217,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,.06) 1px,transparent 1px);background-size:24px 24px;}
+.pp-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2;font-family:inherit;}
+.pp-close:hover{background:rgba(231,76,60,.4);}
+.pp-av-wrap{position:absolute;bottom:10px;right:24px;cursor:pointer;}
+.pp-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;border:3px solid var(--bg-card);box-shadow:0 4px 20px rgba(0,0,0,.4);overflow:hidden;position:relative;}
+.pp-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;}
+.pp-av-hover{position:absolute;inset:0;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:16px;color:#fff;}
+.pp-av-wrap:hover .pp-av-hover{opacity:1;}
+.pp-identity{padding:38px 24px 18px;border-bottom:1px solid var(--border);}
+.pp-name{font-size:17px;font-weight:900;margin-bottom:4px;}
+.pp-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pp-tabs{display:flex;background:var(--bg-card2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.pp-tab{flex:1;padding:12px 8px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center;gap:6px;}
+.pp-tab.active{color:#fff;background:rgba(74,144,217,.1);}
+.pp-tab.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);}
+.pp-body{flex:1;overflow-y:auto;padding:20px;}
+.pp-body::-webkit-scrollbar{width:4px;}.pp-body::-webkit-scrollbar-thumb{background:rgba(74,144,217,.2);border-radius:4px;}
+.pp-tab-panel{display:none;animation:fadeUp .3s ease both;}.pp-tab-panel.active{display:block;}
+.pp-section{margin-bottom:20px;}
+.pp-sec-title{font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;}
+.pp-sec-title i{color:var(--accent);}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pp-field{background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+.pp-field-label{font-size:9.5px;color:var(--text-muted);margin-bottom:4px;font-weight:700;}
+.pp-field-val{font-size:12.5px;font-weight:600;}.pp-field-val.dir-ltr{direction:ltr;text-align:left;}
+.pp-att-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;}
+.pp-att-date{font-size:11px;color:var(--text-muted);}.pp-att-subject{font-size:12px;font-weight:600;}
+.pp-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;}
+.ppb-absent{background:rgba(231,76,60,.15);color:var(--absent);}.ppb-late{background:rgba(243,156,18,.15);color:var(--late);}.ppb-leave{background:rgba(142,95,212,.15);color:var(--leave);}
+.pp-score-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;}
+.pp-score-subject{font-size:12px;font-weight:600;}.pp-score-val{font-size:18px;font-weight:900;}
+.pp-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+.pp-edit-btn{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:11px;border-radius:var(--radius-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .25s;}
+.pp-edit-btn:hover{transform:translateY(-2px);}
+.pp-sms-btn{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.25);color:var(--accent3);font-family:inherit;font-size:12px;font-weight:700;padding:11px 18px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.pp-sms-btn:hover{background:rgba(6,214,160,.2);}
+.pp-dl-btn{background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.25);color:var(--accent);font-family:inherit;font-size:12px;font-weight:700;padding:11px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.pp-dl-btn:hover{background:rgba(74,144,217,.2);}
+.pp-mini-stat{display:flex;gap:10px;margin-bottom:16px;}
+.pp-ms-item{flex:1;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;}
+.pp-ms-val{font-size:20px;font-weight:900;line-height:1;}.pp-ms-lbl{font-size:9px;color:var(--text-muted);margin-top:3px;}
+
+/* ══ PHOTO LIGHTBOX ══ */
+.photo-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(8px);}
+.photo-lightbox.open{display:flex;}
+.photo-lightbox img{max-width:90vw;max-height:75vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.8);object-fit:contain;}
+.lb-name{color:#fff;font-size:15px;font-weight:700;}
+.lb-actions{display:flex;gap:10px;}
+.lb-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;}
+.lb-btn:hover{background:rgba(255,255,255,.2);}
+.lb-close{position:absolute;top:20px;left:20px;width:40px;height:40px;background:rgba(231,76,60,.2);border:1px solid rgba(231,76,60,.4);color:#fff;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all .2s;}
+.lb-close:hover{background:rgba(231,76,60,.4);}
+
+/* ══ EDIT MODAL ══ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:5000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px);}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:var(--bg-card);border:1px solid rgba(74,144,217,.25);border-radius:var(--radius);width:100%;max-width:680px;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:fadeUp .3s ease both;margin:auto;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius) var(--radius) 0 0;}
+.modal-hdr-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:10px;}.modal-hdr-title i{color:var(--accent);}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;}
+.modal-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.modal-body{padding:22px;display:flex;flex-direction:column;gap:18px;}
+.edit-section{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.es-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.es-body{padding:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:6px;}.fg label{font-size:10.5px;font-weight:700;color:var(--text-muted);}
+.fg input,.fg select{background:var(--bg-main);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:border-color .2s;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--border-hover);}
+.fg input::placeholder{color:rgba(180,200,255,.2);}
+.fg input[readonly]{cursor:pointer;background:var(--bg-main);}
+.toggle-row{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.tr-opt{flex:1;padding:9px 6px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
+.tr-opt.tr-active-alive{background:rgba(46,204,113,.18);color:var(--present);}
+.tr-opt.tr-active-dead{background:rgba(231,76,60,.18);color:var(--absent);}
+.guardian-block{display:none;}.guardian-block.show{display:block;}
+.modal-ftr{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--border);}
+.modal-save{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:10px 28px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.modal-save:hover{transform:translateY(-2px);}
+.modal-cancel{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:12px;font-weight:600;padding:10px 22px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.modal-cancel:hover{border-color:var(--border-hover);color:var(--text);}
+
+/* ══ AVATAR UPLOAD IN MODAL ══ */
+.av-upload-wrap{display:flex;align-items:center;gap:16px;padding:14px;background:rgba(74,144,217,.05);border-radius:10px;border:1px dashed rgba(74,144,217,.25);margin-bottom:14px;}
+.av-preview{width:60px;height:60px;border-radius:50%;background:rgba(74,144,217,.15);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;border:2px solid rgba(74,144,217,.3);}
+.av-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;}
+.av-preview-hover{position:absolute;inset:0;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:14px;color:#fff;}
+.av-preview:hover .av-preview-hover{opacity:1;}
+.av-upload-info h4{font-size:12px;font-weight:700;margin-bottom:4px;}
+.av-upload-info p{font-size:10.5px;color:var(--text-muted);line-height:1.6;}
+.av-upload-btn{margin-top:8px;background:rgba(74,144,217,.12);border:1px solid rgba(74,144,217,.3);color:var(--accent);font-family:inherit;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.av-upload-btn:hover{background:rgba(74,144,217,.22);}
+.av-err-msg{font-size:11px;color:var(--absent);margin-top:5px;display:none;}
+.av-err-msg.show{display:block;}
+
+/* ══ DELETE CONFIRM ══ */
+.confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:6000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.confirm-modal.open{display:flex;}
+.confirm-box{background:var(--bg-card);border:1px solid rgba(231,76,60,.3);border-radius:var(--radius);padding:28px;width:380px;max-width:90vw;text-align:center;animation:fadeUp .25s ease both;}
+.confirm-icon{width:56px;height:56px;background:rgba(231,76,60,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--absent);margin:0 auto 16px;}
+.confirm-title{font-size:16px;font-weight:800;margin-bottom:8px;}
+.confirm-msg{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:22px;}
+.confirm-btns{display:flex;gap:10px;justify-content:center;}
+.confirm-del{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.35);color:var(--absent);font-family:inherit;font-size:12.5px;font-weight:800;padding:10px 28px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.confirm-del:hover{background:rgba(231,76,60,.28);}
+.confirm-no{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:12px;font-weight:600;padding:10px 22px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.confirm-no:hover{border-color:var(--border-hover);color:var(--text);}
+
+/* ══ DATE PICKER (inline wrapper) ══ */
+.dp-wrap{position:relative;}
+.dp-trigger{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--accent);cursor:pointer;font-size:14px;z-index:1;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:1100px){:root{--sidebar-w:218px;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){.sidebar{transform:translateX(110%);}.main-content{margin-right:0;padding:68px 13px 26px;}.stats-row{grid-template-columns:1fr 1fr;}.form-grid,.form-grid-3{grid-template-columns:1fr;}.profile-panel{width:100%;max-width:100vw;}}
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()" title="منو">
+  <span></span><span></span><span></span>
+</button>
+<div class="sb-overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="logo">بور<span>بور</span></div>
+    <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+  <div class="deputy-block">
+    <div class="deputy-avatar" id="sidebarAv"><span id="sidebarAvInitial">ا</span><img id="sidebarAvImg" src="" alt=""/></div>
+    <div>
+      <div class="deputy-name" id="sidebarName">احمد کریمی</div>
+      <div class="deputy-role">معاون آموزشی</div>
+      <div class="deputy-badge">هنرستان شهید بوربور</div>
+    </div>
+  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item"><a href="assistant_dashboard.html"><i class="fas fa-th-large"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="assistant_attendance.html"><i class="fas fa-clipboard-check"></i> مدیریت حضور و غیاب <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item active"><a href="#"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a></div>
+  <div class="nav-item"><a href="assistant_teachers_management.html"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a></div>
+  <div class="nav-item"><a href="assistant_grades_management.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">گزارش‌ها و پیام‌ها</div>
+  <div class="nav-item"><a href="assistant_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a></div>
+  <div class="nav-item"><a href="assistant_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۵</span></a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item"><a href="assistant_profile.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting">
+      <h1>مدیریت <span>دانش‌آموزان</span></h1>
+      <p><i class="fas fa-users" style="color:var(--accent3);font-size:11px"></i> سال تحصیلی ۱۴۰۴–۱۴۰۵ &nbsp;|&nbsp; هنرستان شهید بوربور</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-wrap">
+        <div class="action-btn" id="notifBtn" onclick="toggleNotif(event)">
+          <i class="fas fa-bell"></i>
+          <div class="notif-dot" id="notifDot"></div>
+        </div>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="nd-head">
+            <div class="nd-title"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nd-badge-count" id="ndCount">۵</span></div>
+            <button class="nd-mark-all" onclick="markAllRead()"><i class="fas fa-check-double" style="margin-left:4px;font-size:10px"></i>همه خوانده شد</button>
+          </div>
+          <div class="nd-list" id="ndList"></div>
+          <div class="nd-footer"><a href="assistant_notifications.html"><i class="fas fa-list"></i> مشاهده تمام اطلاعیه‌ها <i class="fas fa-chevron-left" style="font-size:10px;margin-right:auto"></i></a></div>
+        </div>
+      </div>
+      <button class="add-student-btn" onclick="openEditModal(null)"><i class="fas fa-user-plus"></i> دانش‌آموز جدید</button>
+      <div class="profile-btn" id="topProfileBtn"><span id="topProfileInitial">ا</span><img id="topProfileImg" src="" alt=""/></div>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card sc-blue"><div class="stat-icon si-blue"><i class="fas fa-users"></i></div><div><div class="stat-val" style="color:var(--accent)" id="statTotal">۰</div><div class="stat-lbl">کل دانش‌آموزان</div></div></div>
+    <div class="stat-card sc-green"><div class="stat-icon si-green"><i class="fas fa-user-check"></i></div><div><div class="stat-val" style="color:var(--present)" id="statActive">۰</div><div class="stat-lbl">وضعیت عادی</div></div></div>
+    <div class="stat-card sc-yellow"><div class="stat-icon si-yellow"><i class="fas fa-exclamation-triangle"></i></div><div><div class="stat-val" style="color:var(--accent4)" id="statDebt">۰</div><div class="stat-lbl">بدهی شهریه</div></div></div>
+    <div class="stat-card sc-purple"><div class="stat-icon si-purple"><i class="fas fa-user-times"></i></div><div><div class="stat-val" style="color:var(--absent)" id="statWarned">۰</div><div class="stat-lbl">غیبت مکرر</div></div></div>
+  </div>
+
+  <!-- MAIN TABLE CARD -->
+  <div class="card">
+    <div class="toolbar">
+      <div class="search-wrap"><i class="fas fa-search search-icon"></i><input type="text" id="searchInput" placeholder="جستجو نام، کد ملی، کلاس..." oninput="applyFilters()"/></div>
+      <select class="filter-select" id="gradeFilter" onchange="updateClassFilter();applyFilters()">
+        <option value="all">همه پایه‌ها</option>
+        <option value="10">دهم</option>
+        <option value="11">یازدهم</option>
+        <option value="12">دوازدهم</option>
+      </select>
+      <select class="filter-select" id="classFilter" onchange="applyFilters()">
+        <option value="all">همه کلاس‌ها</option>
+      </select>
+      <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+        <option value="all">همه وضعیت‌ها</option>
+        <option value="normal">عادی</option>
+        <option value="debt">بدهکار</option>
+        <option value="warned">غیبت مکرر</option>
+      </select>
+      <div class="view-toggle">
+        <button class="vt-btn active" id="btnTable" onclick="setView('table')" title="نمای جدول"><i class="fas fa-list"></i></button>
+        <button class="vt-btn" id="btnGrid" onclick="setView('grid')" title="نمای کارت"><i class="fas fa-th-large"></i></button>
+      </div>
+      <button class="export-btn" onclick="exportExcel()"><i class="fas fa-file-excel"></i> خروجی اکسل</button>
+    </div>
+    <div id="tableView" class="stu-table-wrap">
+      <table class="stu-table">
+        <thead><tr>
+          <th class="th-sort" onclick="sortBy('name')">دانش‌آموز <i class="fas fa-sort sort-icon"></i></th>
+          <th>کد ملی</th>
+          <th class="th-sort" onclick="sortBy('grade')">پایه / کلاس <i class="fas fa-sort sort-icon"></i></th>
+          <th>کلاس (شماره)</th>
+          <th>تلفن پدر</th>
+          <th class="th-sort" onclick="sortBy('abs')">غیبت <i class="fas fa-sort sort-icon"></i></th>
+          <th>وضعیت</th>
+          <th>اقدام</th>
+        </tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div id="gridView" style="display:none"><div class="stu-grid" id="gridBody"></div></div>
+    <div class="pagination"><div class="page-info" id="pageInfo"></div><div class="page-btns" id="pageBtns"></div></div>
+  </div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfile()"></div>
+<div class="profile-panel" id="profilePanel">
+  <div class="pp-header">
+    <div class="pp-cover" id="ppCover">
+      <button class="pp-close" onclick="closeProfile()"><i class="fas fa-times"></i></button>
+      <div class="pp-av-wrap" id="ppAvWrap" onclick="openLightbox()">
+        <div class="pp-av" id="ppAv">
+          <img id="ppAvImg" src="" alt=""/>
+          <span id="ppAvInitial"></span>
+          <div class="pp-av-hover"><i class="fas fa-expand-alt"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="pp-identity"><div class="pp-name" id="ppName"></div><div class="pp-meta" id="ppMeta"></div></div>
+  </div>
+  <div class="pp-tabs">
+    <button class="pp-tab active" onclick="switchPPTab('info',this)"><i class="fas fa-id-card"></i> اطلاعات</button>
+    <button class="pp-tab" onclick="switchPPTab('att',this)"><i class="fas fa-calendar-check"></i> حضور</button>
+    <button class="pp-tab" onclick="switchPPTab('scores',this)"><i class="fas fa-star"></i> نمرات</button>
+    <button class="pp-tab" onclick="switchPPTab('family',this)"><i class="fas fa-users"></i> خانواده</button>
+  </div>
+  <div class="pp-body">
+    <div class="pp-tab-panel active" id="pp-info"><div class="pp-mini-stat" id="ppMiniStats"></div><div class="pp-section"><div class="pp-sec-title"><i class="fas fa-user"></i> اطلاعات فردی</div><div class="pp-grid" id="ppPersonalFields"></div></div><div class="pp-section"><div class="pp-sec-title"><i class="fas fa-map-marker-alt"></i> آدرس و تماس</div><div class="pp-grid" id="ppContactFields"></div></div></div>
+    <div class="pp-tab-panel" id="pp-att"><div class="pp-mini-stat" id="ppAttStats"></div><div class="pp-section"><div class="pp-sec-title"><i class="fas fa-history"></i> سابقه غیبت و تأخیر</div><div id="ppAttList"></div></div></div>
+    <div class="pp-tab-panel" id="pp-scores"><div class="pp-section"><div class="pp-sec-title"><i class="fas fa-graduation-cap"></i> نمرات ترم جاری</div><div id="ppScoreList"></div></div></div>
+    <div class="pp-tab-panel" id="pp-family"><div class="pp-section"><div class="pp-sec-title"><i class="fas fa-male"></i> اطلاعات پدر</div><div class="pp-grid" id="ppFatherFields"></div></div><div class="pp-section" style="margin-top:16px"><div class="pp-sec-title"><i class="fas fa-female"></i> اطلاعات مادر</div><div class="pp-grid" id="ppMotherFields"></div></div></div>
+  </div>
+  <div class="pp-footer">
+    <button class="pp-edit-btn" id="ppEditBtn"><i class="fas fa-edit"></i> ویرایش</button>
+    <button class="pp-sms-btn"><i class="fas fa-sms"></i> پیامک</button>
+    <button class="pp-dl-btn" id="ppDlBtn" onclick="downloadPhoto()"><i class="fas fa-download"></i> دانلود عکس</button>
+  </div>
+</div>
+
+<!-- PHOTO LIGHTBOX -->
+<div class="photo-lightbox" id="photoLightbox">
+  <button class="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <img id="lbImg" src="" alt=""/>
+  <div class="lb-name" id="lbName"></div>
+  <div class="lb-actions">
+    <button class="lb-btn" onclick="downloadPhoto()"><i class="fas fa-download"></i> دانلود عکس</button>
+    <button class="lb-btn" onclick="closeLightbox()"><i class="fas fa-times"></i> بستن</button>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-backdrop" id="editModal" onclick="closeEditModalOutside(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i class="fas fa-user-edit"></i><span id="editModalTitle">ویرایش اطلاعات دانش‌آموز</span></div>
+      <button class="modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <!-- AVATAR UPLOAD -->
+      <div class="edit-section">
+        <div class="es-header" style="color:var(--accent3)"><i class="fas fa-camera"></i> تصویر دانش‌آموز</div>
+        <div class="es-body">
+          <div class="av-upload-wrap">
+            <div class="av-preview" id="avPreview" onclick="document.getElementById('studentAvatarInput').click()">
+              <span id="avPreviewInitial">؟</span>
+              <img id="avPreviewImg" src="" alt=""/>
+              <div class="av-preview-hover"><i class="fas fa-camera"></i></div>
+            </div>
+            <div class="av-upload-info">
+              <h4>آپلود عکس دانش‌آموز</h4>
+              <p>فرمت‌های مجاز: JPG, PNG, GIF, WEBP, SVG<br>حداکثر حجم: <strong style="color:var(--accent)">۱ مگابایت</strong></p>
+              <button class="av-upload-btn" onclick="document.getElementById('studentAvatarInput').click()"><i class="fas fa-upload"></i> انتخاب تصویر</button>
+              <div class="av-err-msg" id="avEditErr"></div>
+            </div>
+          </div>
+          <input type="file" id="studentAvatarInput" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" style="display:none"/>
+        </div>
+      </div>
+      <!-- STUDENT INFO -->
+      <div class="edit-section">
+        <div class="es-header" style="color:var(--accent)"><i class="fas fa-user-graduate"></i> اطلاعات دانش‌آموز</div>
+        <div class="es-body">
+          <div class="form-grid" style="margin-bottom:12px">
+            <div class="fg"><label>نام</label><input type="text" id="ef_fname" placeholder="نام..."/></div>
+            <div class="fg"><label>نام خانوادگی</label><input type="text" id="ef_lname" placeholder="نام خانوادگی..."/></div>
+            <div class="fg"><label>کد ملی</label><input type="text" id="ef_national" placeholder="۰۰۰۰۰۰۰۰۰۰" dir="ltr"/></div>
+            <div class="fg">
+              <label>تاریخ تولد</label>
+              <div class="dp-wrap">
+                <input type="text" id="ef_bdate" placeholder="مثال: ۱۳۸۵/۰۶/۱۵" readonly onclick="JDP_S.open(this)"/>
+                <span class="dp-trigger" onclick="JDP_S.open(document.getElementById('ef_bdate'))"><i class="fas fa-calendar-alt"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="fg">
+              <label>پایه</label>
+              <select id="ef_grade" onchange="updateEditClassOptions()">
+                <option value="10">دهم</option><option value="11">یازدهم</option><option value="12">دوازدهم</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>کلاس</label>
+              <select id="ef_class">
+                <option value="101">۱۰۱</option><option value="102">۱۰۲</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <label style="font-size:10.5px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:8px">وضعیت بدهی شهریه</label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div class="toggle-row" style="width:180px">
+                <button class="tr-opt tr-alive tr-active-alive" id="eDebtNo" onclick="toggleEditDebt(false)">بدون بدهی</button>
+                <button class="tr-opt tr-dead" id="eDebtYes" onclick="toggleEditDebt(true)">بدهکار</button>
+              </div>
+              <div id="eDebtAmtWrap" style="display:none;flex:1;min-width:120px">
+                <input type="text" style="background:var(--bg-main);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;width:100%" id="ef_debt" placeholder="مبلغ بدهی (تومان)" dir="ltr"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FATHER -->
+      <div class="edit-section">
+        <div class="es-header" style="color:var(--accent2)">
+          <i class="fas fa-male"></i> اطلاعات پدر
+          <div class="toggle-row" style="margin-right:auto;width:160px">
+            <button class="tr-opt tr-alive tr-active-alive" id="eFatherAlive" onclick="toggleEditParent('father','alive')"><i class="fas fa-heart" style="font-size:9px"></i> در قید حیات</button>
+            <button class="tr-opt tr-dead" id="eFatherDead" onclick="toggleEditParent('father','deceased')">فوت شده</button>
+          </div>
+        </div>
+        <div class="es-body">
+          <div class="form-grid-3" style="margin-bottom:12px">
+            <div class="fg"><label>نام</label><input type="text" id="ef_f_fname" placeholder="نام پدر..."/></div>
+            <div class="fg"><label>نام خانوادگی</label><input type="text" id="ef_f_lname" placeholder="نام خانوادگی..."/></div>
+            <div class="fg"><label>کد ملی</label><input type="text" id="ef_f_national" placeholder="۰۰۰۰۰۰۰۰۰۰" dir="ltr"/></div>
+            <div class="fg"><label>تحصیلات</label><select id="ef_f_edu"><option value="">انتخاب...</option><option>زیر دیپلم</option><option>دیپلم</option><option>فوق دیپلم</option><option>لیسانس</option><option>فوق لیسانس</option><option>دکترا</option></select></div>
+            <div class="fg"><label>شغل</label><input type="text" id="ef_f_job" placeholder="شغل..."/></div>
+            <div class="fg"><label>شماره موبایل</label><input type="text" id="ef_f_phone" placeholder="۰۹۱۲۰۰۰۰۰۰۰" dir="ltr"/></div>
+          </div>
+        </div>
+      </div>
+      <!-- MOTHER -->
+      <div class="edit-section">
+        <div class="es-header" style="color:#e88ec0">
+          <i class="fas fa-female"></i> اطلاعات مادر
+          <div class="toggle-row" style="margin-right:auto;width:160px">
+            <button class="tr-opt tr-alive tr-active-alive" id="eMotherAlive" onclick="toggleEditParent('mother','alive')"><i class="fas fa-heart" style="font-size:9px"></i> در قید حیات</button>
+            <button class="tr-opt tr-dead" id="eMotherDead" onclick="toggleEditParent('mother','deceased')">فوت شده</button>
+          </div>
+        </div>
+        <div class="es-body">
+          <div class="form-grid-3">
+            <div class="fg"><label>نام</label><input type="text" id="ef_m_fname" placeholder="نام مادر..."/></div>
+            <div class="fg"><label>نام خانوادگی</label><input type="text" id="ef_m_lname" placeholder="نام خانوادگی..."/></div>
+            <div class="fg"><label>کد ملی</label><input type="text" id="ef_m_national" placeholder="۰۰۰۰۰۰۰۰۰۰" dir="ltr"/></div>
+            <div class="fg"><label>تحصیلات</label><select id="ef_m_edu"><option value="">انتخاب...</option><option>زیر دیپلم</option><option>دیپلم</option><option>فوق دیپلم</option><option>لیسانس</option><option>فوق لیسانس</option><option>دکترا</option></select></div>
+            <div class="fg"><label>شغل</label><input type="text" id="ef_m_job" placeholder="شغل..."/></div>
+            <div class="fg"><label>شماره موبایل</label><input type="text" id="ef_m_phone" placeholder="۰۹۱۲۰۰۰۰۰۰۰" dir="ltr"/></div>
+          </div>
+        </div>
+      </div>
+      <!-- GUARDIAN -->
+      <div class="edit-section guardian-block" id="eGuardianBlock">
+        <div class="es-header" style="color:var(--accent4)"><i class="fas fa-shield-alt"></i> اطلاعات سرپرست</div>
+        <div class="es-body">
+          <div class="form-grid-3">
+            <div class="fg"><label>نام</label><input type="text" id="ef_g_fname" placeholder="نام سرپرست..."/></div>
+            <div class="fg"><label>نام خانوادگی</label><input type="text" id="ef_g_lname" placeholder="..."/></div>
+            <div class="fg"><label>نسبت</label><input type="text" id="ef_g_rel" placeholder="مثلاً: عمو..."/></div>
+            <div class="fg"><label>کد ملی</label><input type="text" id="ef_g_national" placeholder="۰۰۰۰۰۰۰۰۰۰" dir="ltr"/></div>
+            <div class="fg"><label>شماره تماس</label><input type="text" id="ef_g_phone" placeholder="۰۹۱۲۰۰۰۰۰۰۰" dir="ltr"/></div>
+          </div>
+        </div>
+      </div>
+      <!-- ADDRESS -->
+      <div class="edit-section">
+        <div class="es-header" style="color:var(--accent3)"><i class="fas fa-map-marker-alt"></i> آدرس و تماس</div>
+        <div class="es-body">
+          <div class="form-grid" style="margin-bottom:12px">
+            <div class="fg"><label>تلفن منزل</label><input type="text" id="ef_home_phone" placeholder="۰۲۱۰۰۰۰۰۰۰" dir="ltr"/></div>
+            <div class="fg"><label>کد پستی</label><input type="text" id="ef_postal" placeholder="۰۰۰۰۰۰۰۰۰۰" dir="ltr"/></div>
+          </div>
+          <div class="fg"><label>آدرس کامل</label><input type="text" id="ef_address" placeholder="استان، شهر، خیابان، کوچه، پلاک..."/></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-cancel" onclick="closeEditModal()">انصراف</button>
+      <button class="modal-save" onclick="saveEdit()"><i class="fas fa-save" style="margin-left:6px"></i> ذخیره اطلاعات</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-box">
+    <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+    <div class="confirm-title">حذف دانش‌آموز</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="closeConfirm()">انصراف</button>
+      <button class="confirm-del" onclick="confirmDelete()"><i class="fas fa-trash-alt" style="margin-left:5px"></i> بله، حذف شود</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+/* ─── CLASS MAP ─── */
+const CLASS_MAP = {
+  10: ['101','102','103','104'],
+  11: ['111','112','113','114','115'],
+  12: ['121','122','123','124','125']
+};
+
+/* ─── NOTIFICATIONS ─── */
+const NOTIFS = [
+  {id:1,icon:'fas fa-user-times',iconCls:'red',title:'غیبت مکرر دانش‌آموز',desc:'رامتین آذری ۷ روز غیبت ثبت شده — نیاز به پیگیری',time:'۵ دقیقه پیش',unread:true},
+  {id:2,icon:'fas fa-graduation-cap',iconCls:'orange',title:'افت تحصیلی',desc:'معدل ۳ دانش‌آموز کمتر از ۱۰ شده است',time:'۲ ساعت پیش',unread:true},
+  {id:3,icon:'fas fa-calendar-check',iconCls:'blue',title:'برنامه هفتگی به‌روز شد',desc:'برنامه درسی ترم دوم بارگذاری شد',time:'دیروز',unread:true},
+  {id:4,icon:'fas fa-star',iconCls:'purple',title:'یادآوری ثبت نمرات',desc:'مهلت ثبت نمرات میان‌ترم سه روز دیگر است',time:'۲ روز پیش',unread:true},
+  {id:5,icon:'fas fa-check-circle',iconCls:'green',title:'گزارش ماهانه آماده شد',desc:'گزارش فروردین ۱۴۰۴ قابل مشاهده است',time:'۳ روز پیش',unread:false},
+];
+let notifData = NOTIFS.map(n=>({...n}));
+function renderNotifs(){
+  const list = document.getElementById('ndList');
+  const unread = notifData.filter(n=>n.unread).length;
+  document.getElementById('ndCount').textContent = fa(unread);
+  document.getElementById('ndDot') && (document.getElementById('notifDot').style.display = unread?'block':'none');
+  list.innerHTML = notifData.map(n=>`
+    <div class="nd-item${n.unread?' unread':''}" onclick="readNotif(${n.id})">
+      <div class="nd-icon ${n.iconCls}"><i class="${n.icon}"></i></div>
+      <div class="nd-body">
+        <div class="nd-item-title">${n.title}</div>
+        <div class="nd-item-desc">${n.desc}</div>
+        <div class="nd-item-time"><i class="fas fa-clock"></i>${n.time}</div>
+      </div>
+      ${n.unread?'<div class="nd-unread-dot"></div>':''}
+    </div>`).join('');
+}
+function toggleNotif(e){e.stopPropagation();document.getElementById('notifDropdown').classList.toggle('open');}
+function readNotif(id){const n=notifData.find(x=>x.id===id);if(n&&n.unread){n.unread=false;renderNotifs();}}
+function markAllRead(){notifData.forEach(n=>{n.unread=false;});renderNotifs();showToast('همه اطلاعیه‌ها خوانده شد','info');}
+
+/* ─── DATA ─── */
+const avatarColors=[['rgba(74,144,217,0.2)','var(--accent)'],['rgba(142,95,212,0.2)','var(--accent2)'],['rgba(6,214,160,0.2)','var(--accent3)'],['rgba(243,156,18,0.2)','var(--accent4)'],['rgba(232,142,192,0.2)','#e88ec0)']];
+let students=[
+  {id:1,fname:'سارا',lname:'احمدی',national:'0012345678',bdate:'۱۳۸۵/۰۶/۱۴',grade:11,cls:'112',abs:5,status:'warned',debt:false,debtAmt:'',photo:null,father:{fname:'محمد',lname:'احمدی',national:'0023456789',edu:'لیسانس',job:'مهندس',phone:'09121234567',alive:true},mother:{fname:'مریم',lname:'رضایی',national:'0034567890',edu:'فوق دیپلم',job:'خانه‌دار',phone:'09131234568',alive:true},guardian:null,homePhone:'02112345678',postal:'1234567890',address:'تهران، خیابان ولیعصر، پلاک ۱۵'},
+  {id:2,fname:'رامتین',lname:'آذری',national:'0056789012',bdate:'۱۳۸۵/۰۳/۲۲',grade:12,cls:'122',abs:7,status:'warned',debt:true,debtAmt:'2500000',photo:null,father:{fname:'علی',lname:'آذری',national:'0067890123',edu:'دیپلم',job:'کاسب',phone:'09141234569',alive:true},mother:{fname:'زهره',lname:'آذری',national:'0078901234',edu:'دیپلم',job:'خانه‌دار',phone:'09151234570',alive:true},guardian:null,homePhone:'02123456789',postal:'2345678901',address:'تهران، نارمک، خیابان هنگام، پلاک ۴۲'},
+  {id:3,fname:'نیلوفر',lname:'میرزایی',national:'0089012345',bdate:'۱۳۸۵/۱۱/۰۵',grade:10,cls:'101',abs:0,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'حسین',lname:'میرزایی',national:'0090123456',edu:'فوق لیسانس',job:'دکتر',phone:'09161234571',alive:true},mother:{fname:'فریده',lname:'موسوی',national:'0001234567',edu:'لیسانس',job:'معلم',phone:'09171234572',alive:true},guardian:null,homePhone:'02134567890',postal:'3456789012',address:'تهران، شهرک غرب، پلاک ۷۸'},
+  {id:4,fname:'محمد',lname:'علوی',national:'0112345678',bdate:'۱۳۸۵/۰۹/۱۸',grade:10,cls:'102',abs:5,status:'warned',debt:false,debtAmt:'',photo:null,father:{fname:'رضا',lname:'علوی',national:'0123456789',edu:'لیسانس',job:'حسابدار',phone:'09181234573',alive:true},mother:{fname:'نسرین',lname:'کاظمی',national:'0134567890',edu:'لیسانس',job:'پرستار',phone:'09191234574',alive:true},guardian:null,homePhone:'02145678901',postal:'4567890123',address:'تهران، تهرانپارس، پلاک ۳۳'},
+  {id:5,fname:'فاطمه',lname:'کاظمی',national:'0145678901',bdate:'۱۳۸۵/۰۱/۳۰',grade:10,cls:'101',abs:1,status:'normal',debt:true,debtAmt:'1500000',photo:null,father:{fname:'اکبر',lname:'کاظمی',national:'0156789012',edu:'دیپلم',job:'راننده',phone:'09201234575',alive:true},mother:{fname:'شهناز',lname:'ابراهیمی',national:'0167890123',edu:'زیر دیپلم',job:'خانه‌دار',phone:'09211234576',alive:true},guardian:null,homePhone:'',postal:'5678901234',address:'تهران، خزانه، پلاک ۱۲'},
+  {id:6,fname:'آرین',lname:'صفایی',national:'0178901234',bdate:'۱۳۸۵/۰۷/۱۱',grade:11,cls:'111',abs:2,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'مجید',lname:'صفایی',national:'0189012345',edu:'فوق لیسانس',job:'استاد دانشگاه',phone:'09221234577',alive:true},mother:{fname:'لیلا',lname:'نجفی',national:'0190123456',edu:'فوق لیسانس',job:'پژوهشگر',phone:'09231234578',alive:true},guardian:null,homePhone:'02156789012',postal:'6789012345',address:'تهران، الهیه، پلاک ۲۲۰'},
+  {id:7,fname:'گلناز',lname:'شکوهی',national:'0201234567',bdate:'۱۳۸۵/۰۴/۲۵',grade:11,cls:'113',abs:4,status:'warned',debt:false,debtAmt:'',photo:null,father:{fname:'داود',lname:'شکوهی',national:'0212345678',edu:'لیسانس',job:'مدیر',phone:'09241234579',alive:true},mother:{fname:'مهری',lname:'صالحی',national:'0223456789',edu:'لیسانس',job:'کارمند',phone:'09251234580',alive:false},guardian:null,homePhone:'02167890123',postal:'7890123456',address:'تهران، پونک، پلاک ۹۹'},
+  {id:8,fname:'دانیار',lname:'نوروزی',national:'0234567890',bdate:'۱۳۸۵/۱۰/۰۷',grade:12,cls:'121',abs:0,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'بهروز',lname:'نوروزی',national:'0245678901',edu:'دیپلم',job:'نانوا',phone:'09261234581',alive:true},mother:{fname:'پریسا',lname:'نوروزی',national:'0256789012',edu:'دیپلم',job:'خانه‌دار',phone:'09271234582',alive:true},guardian:null,homePhone:'02178901234',postal:'8901234567',address:'تهران، دزاشیب، پلاک ۵۵'},
+  {id:9,fname:'هانیه',lname:'قدیری',national:'0267890123',bdate:'۱۳۸۵/۰۸/۱۵',grade:12,cls:'123',abs:2,status:'normal',debt:true,debtAmt:'3000000',photo:null,father:{fname:'امیر',lname:'قدیری',national:'0278901234',edu:'فوق لیسانس',job:'مهندس کامپیوتر',phone:'09281234583',alive:true},mother:{fname:'ندا',lname:'حسینی',national:'0289012345',edu:'لیسانس',job:'طراح',phone:'09291234584',alive:true},guardian:null,homePhone:'02189012345',postal:'9012345678',address:'تهران، جردن، پلاک ۱۸۰'},
+  {id:10,fname:'سینا',lname:'موسوی',national:'0290123456',bdate:'۱۳۸۵/۰۲/۰۳',grade:10,cls:'102',abs:0,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'کریم',lname:'موسوی',national:'0301234567',edu:'لیسانس',job:'وکیل',phone:'09301234585',alive:true},mother:{fname:'شیرین',lname:'عباسی',national:'0312345678',edu:'فوق لیسانس',job:'مدیر',phone:'09311234586',alive:true},guardian:null,homePhone:'02190123456',postal:'0123456789',address:'تهران، نیاوران، پلاک ۳۰'},
+  {id:11,fname:'لیلا',lname:'ابراهیمی',national:'0323456789',bdate:'۱۳۸۵/۱۲/۱۰',grade:11,cls:'112',abs:3,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'یوسف',lname:'ابراهیمی',national:'0334567890',edu:'دیپلم',job:'تعمیرکار',phone:'09321234587',alive:true},mother:{fname:'زینب',lname:'محمدی',national:'0345678901',edu:'دیپلم',job:'خیاط',phone:'09331234588',alive:true},guardian:null,homePhone:'02101234567',postal:'1234098765',address:'تهران، مولوی، پلاک ۷'},
+  {id:12,fname:'کیان',lname:'رستمی',national:'0356789012',bdate:'۱۳۸۵/۰۵/۲۸',grade:12,cls:'124',abs:1,status:'normal',debt:false,debtAmt:'',photo:null,father:{fname:'فرهاد',lname:'رستمی',national:'0367890123',edu:'فوق لیسانس',job:'پزشک',phone:'09341234589',alive:true},mother:{fname:'ملیکا',lname:'طاهری',national:'0378901234',edu:'لیسانس',job:'داروساز',phone:'09351234590',alive:true},guardian:null,homePhone:'02112341234',postal:'2345091234',address:'تهران، فرمانیه، پلاک ۲۵۰'},
+];
+const absenceHistory=[
+  {date:'۱۴۰۴/۰۲/۲۶',subject:'ریاضی',type:'absent'},
+  {date:'۱۴۰۴/۰۲/۲۲',subject:'زیست‌شناسی',type:'absent'},
+  {date:'۱۴۰۴/۰۲/۱۸',subject:'فیزیک',type:'late'},
+  {date:'۱۴۰۴/۰۲/۱۲',subject:'ادبیات',type:'leave'},
+  {date:'۱۴۰۴/۰۱/۲۵',subject:'شیمی',type:'absent'},
+];
+const scoresData=[
+  {subject:'ریاضی',score:16.5,teacher:'علی محمدی'},
+  {subject:'فیزیک',score:14,teacher:'مریم رضایی'},
+  {subject:'زیست‌شناسی',score:18,teacher:'فاطمه نوری'},
+  {subject:'ادبیات',score:17,teacher:'زهرا حسینی'},
+  {subject:'شیمی',score:15.5,teacher:'رضا صادقی'},
+  {subject:'دین و زندگی',score:19,teacher:'محمد امینی'},
+];
+
+/* ─── STATE ─── */
+let filteredStudents=[...students];
+let currentPage=1;const PER_PAGE=8;
+let sortKey=null,sortAsc=true;
+let currentView='table';
+let editingId=null,deleteId=null;
+let eFatherStatus='alive',eMotherStatus='alive';
+let currentEditPhoto=null;
+let currentProfileId=null;
+
+/* ─── HELPERS ─── */
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast'),i=t.querySelector('i');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast '+type+' show';
+  i.className=type==='success'?'fas fa-check-circle':type==='error'?'fas fa-times-circle':'fas fa-info-circle';
+  clearTimeout(t._tid);t._tid=setTimeout(()=>{t.className='toast '+type;},3000);
+}
+function getAvColor(idx){return avatarColors[idx%avatarColors.length];}
+function gradeBadgeClass(g){return g===10?'gb-10':g===11?'gb-11':'gb-12';}
+function gradeName(g){return g===10?'دهم':g===11?'یازدهم':'دوازدهم';}
+function statusInfo(s){
+  if(s==='warned')return{cls:'sp-warned',lbl:'غیبت مکرر',icon:'fas fa-exclamation-circle'};
+  if(s==='debt')return{cls:'sp-debt',lbl:'بدهی شهریه',icon:'fas fa-money-bill'};
+  return{cls:'sp-active',lbl:'وضعیت عادی',icon:'fas fa-check-circle'};
+}
+function computeStatus(s){if(s.abs>=5)return'warned';if(s.debt)return'debt';return'normal';}
+
+/* ─── CLASS FILTER ─── */
+function updateClassFilter(){
+  const grade=document.getElementById('gradeFilter').value;
+  const sel=document.getElementById('classFilter');
+  sel.innerHTML='<option value="all">همه کلاس‌ها</option>';
+  if(grade==='all'){
+    [10,11,12].forEach(g=>{CLASS_MAP[g].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent='کلاس '+c;sel.appendChild(o);});});
+  } else {
+    const g=parseInt(grade);
+    CLASS_MAP[g].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent='کلاس '+c;sel.appendChild(o);});
+  }
+}
+function updateEditClassOptions(){
+  const grade=parseInt(document.getElementById('ef_grade').value);
+  const sel=document.getElementById('ef_class');
+  const cur=sel.value;
+  sel.innerHTML='';
+  CLASS_MAP[grade].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent='کلاس '+c;sel.appendChild(o);});
+  if(CLASS_MAP[grade].includes(cur))sel.value=cur;
+}
+
+/* ─── STATS ─── */
+function updateStats(){
+  document.getElementById('statTotal').textContent=fa(students.length);
+  document.getElementById('statActive').textContent=fa(students.filter(s=>computeStatus(s)==='normal').length);
+  document.getElementById('statDebt').textContent=fa(students.filter(s=>s.debt).length);
+  document.getElementById('statWarned').textContent=fa(students.filter(s=>s.abs>=5).length);
+}
+
+/* ─── FILTER / SORT ─── */
+function applyFilters(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const g=document.getElementById('gradeFilter').value;
+  const c=document.getElementById('classFilter').value;
+  const st=document.getElementById('statusFilter').value;
+  filteredStudents=students.filter(s=>{
+    const fullName=(s.fname+' '+s.lname).toLowerCase();
+    const matchQ=!q||fullName.includes(q)||s.national.includes(q)||String(s.grade).includes(q)||s.cls.includes(q);
+    const matchG=g==='all'||String(s.grade)===g;
+    const matchC=c==='all'||s.cls===c;
+    const cs=computeStatus(s);
+    const matchS=st==='all'||cs===st;
+    return matchQ&&matchG&&matchC&&matchS;
+  });
+  if(sortKey)doSort(sortKey,false);
+  currentPage=1;render();
+}
+function sortBy(key){if(sortKey===key)sortAsc=!sortAsc;else{sortKey=key;sortAsc=true;}doSort(key,true);}
+function doSort(key,re){
+  filteredStudents.sort((a,b)=>{
+    let va,vb;
+    if(key==='name'){va=a.fname+a.lname;vb=b.fname+b.lname;}
+    else if(key==='grade'){va=a.grade*100+parseInt(a.cls);vb=b.grade*100+parseInt(b.cls);}
+    else if(key==='abs'){va=a.abs;vb=b.abs;}
+    return(va>vb?1:-1)*(sortAsc?1:-1);
+  });
+  if(re){currentPage=1;render();}
+}
+
+/* ─── AVATAR HTML ─── */
+function avHtml(s,size,cls){
+  const ci=(s.id-1)%avatarColors.length;
+  const[bg,col]=avatarColors[ci];
+  const style=`width:${size}px;height:${size}px;background:${bg};color:${col}`;
+  if(s.photo){
+    return`<div class="${cls}" style="${style}"><img src="${s.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block"/></div>`;
+  }
+  return`<div class="${cls}" style="${style}">${s.fname[0]}</div>`;
+}
+
+/* ─── RENDER ─── */
+function render(){
+  updateStats();
+  const total=filteredStudents.length;
+  const pages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>pages)currentPage=pages;
+  const slice=filteredStudents.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
+  if(currentView==='table')renderTable(slice);else renderGrid(slice);
+  renderPagination(total,pages);
+}
+function renderTable(slice){
+  const tbody=document.getElementById('tableBody');tbody.innerHTML='';
+  if(!slice.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:10px"></i>دانش‌آموزی یافت نشد</td></tr>`;return;}
+  slice.forEach(s=>{
+    const ci=(s.id-1)%avatarColors.length;
+    const[bg,col]=avatarColors[ci];
+    const cs=computeStatus(s);const si=statusInfo(cs);
+    const tr=document.createElement('tr');tr.onclick=()=>openProfile(s.id);
+    let avHtmlStr=s.photo
+      ?`<div class="s-av"><img src="${s.photo}" alt=""/></div>`
+      :`<div class="s-av" style="background:${bg};color:${col}">${s.fname[0]}</div>`;
+    tr.innerHTML=`
+      <td><div class="s-cell">${avHtmlStr}<div><div class="s-name">${s.fname} ${s.lname}</div><div class="s-id">${s.national}</div></div></div></td>
+      <td style="direction:ltr;color:var(--text-muted);font-size:11.5px">${s.national}</td>
+      <td><span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)}</span></td>
+      <td><span class="grade-badge" style="background:rgba(74,144,217,0.1);color:var(--accent);border:1px solid rgba(74,144,217,0.2)">کلاس ${s.cls}</span></td>
+      <td style="direction:ltr;font-size:11.5px;color:var(--text-muted)">${s.father.phone}</td>
+      <td><span class="abs-mini" style="color:${s.abs>=5?'var(--absent)':s.abs>=3?'var(--late)':'var(--accent3)'}">${fa(s.abs)}</span></td>
+      <td><span class="status-pill ${si.cls}"><i class="${si.icon}" style="font-size:9px"></i> ${si.lbl}</span></td>
+      <td onclick="event.stopPropagation()"><div class="row-actions">
+        <button class="ra-btn ra-profile" title="پروفایل" onclick="openProfile(${s.id})"><i class="fas fa-eye"></i></button>
+        <button class="ra-btn ra-edit" title="ویرایش" onclick="openEditModal(${s.id})"><i class="fas fa-edit"></i></button>
+        <button class="ra-btn ra-del" title="حذف" onclick="openConfirm(${s.id})"><i class="fas fa-trash"></i></button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function renderGrid(slice){
+  const grid=document.getElementById('gridBody');grid.innerHTML='';
+  if(!slice.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-search" style="font-size:28px;display:block;margin-bottom:10px"></i>دانش‌آموزی یافت نشد</div>`;return;}
+  slice.forEach(s=>{
+    const ci=(s.id-1)%avatarColors.length;
+    const[bg,col]=avatarColors[ci];
+    const cs=computeStatus(s);const si=statusInfo(cs);
+    const card=document.createElement('div');card.className=`stu-grid-card g${s.grade}`;
+    let avStr=s.photo
+      ?`<div class="sgc-av"><img src="${s.photo}" alt=""/></div>`
+      :`<div class="sgc-av" style="background:${bg};color:${col}">${s.fname[0]}</div>`;
+    card.innerHTML=`${avStr}
+      <div class="sgc-name">${s.fname} ${s.lname}</div>
+      <div class="sgc-class">${gradeName(s.grade)} | کلاس ${s.cls}</div>
+      <div class="sgc-stats">
+        <div class="sgcs-item"><div class="sgcs-val" style="color:${s.abs>=5?'var(--absent)':s.abs>=3?'var(--late)':'var(--accent3)'}">${fa(s.abs)}</div><div class="sgcs-lbl">غیبت</div></div>
+        <div class="sgcs-item"><div class="sgcs-val" style="color:var(--accent)">${fa(scoresData.length)}</div><div class="sgcs-lbl">درس</div></div>
+      </div>
+      <div class="sgc-actions">
+        <button class="sgca-btn btn-profile" onclick="openProfile(${s.id})"><i class="fas fa-eye"></i> پروفایل</button>
+        <button class="sgca-btn btn-edit" onclick="openEditModal(${s.id})"><i class="fas fa-edit"></i> ویرایش</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+function renderPagination(total,pages){
+  document.getElementById('pageInfo').textContent=`نمایش ${fa(Math.min((currentPage-1)*PER_PAGE+1,total))}–${fa(Math.min(currentPage*PER_PAGE,total))} از ${fa(total)} دانش‌آموز`;
+  const btns=document.getElementById('pageBtns');btns.innerHTML='';
+  const prev=document.createElement('button');prev.className='pg-btn';prev.innerHTML='<i class="fas fa-chevron-right"></i>';prev.disabled=currentPage===1;prev.onclick=()=>{currentPage--;render();};btns.appendChild(prev);
+  const maxShow=5;let start=Math.max(1,currentPage-2),end=Math.min(pages,start+maxShow-1);start=Math.max(1,end-maxShow+1);
+  for(let p=start;p<=end;p++){const b=document.createElement('button');b.className='pg-btn'+(p===currentPage?' active':'');b.textContent=fa(p);const pp=p;b.onclick=()=>{currentPage=pp;render();};btns.appendChild(b);}
+  const next=document.createElement('button');next.className='pg-btn';next.innerHTML='<i class="fas fa-chevron-left"></i>';next.disabled=currentPage===pages;next.onclick=()=>{currentPage++;render();};btns.appendChild(next);
+}
+
+/* ─── VIEW TOGGLE ─── */
+function setView(v){
+  currentView=v;
+  document.getElementById('tableView').style.display=v==='table'?'block':'none';
+  document.getElementById('gridView').style.display=v==='grid'?'block':'none';
+  document.getElementById('btnTable').classList.toggle('active',v==='table');
+  document.getElementById('btnGrid').classList.toggle('active',v==='grid');
+  render();
+}
+
+/* ─── EXCEL EXPORT ─── */
+function exportExcel(){
+  const headers=['نام','نام خانوادگی','کد ملی','پایه','کلاس','غیبت','وضعیت','بدهی','تلفن پدر'];
+  const rows=filteredStudents.map(s=>[
+    s.fname,s.lname,s.national,gradeName(s.grade),s.cls,s.abs,
+    computeStatus(s)==='warned'?'غیبت مکرر':computeStatus(s)==='debt'?'بدهکار':'عادی',
+    s.debt?s.debtAmt:'',s.father.phone
+  ]);
+  let csv='\uFEFF'+headers.join(',')+'\n'+rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='students_'+new Date().toLocaleDateString('fa-IR').replace(/\//g,'-')+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  showToast('فایل اکسل دانلود شد');
+}
+
+/* ─── PROFILE PANEL ─── */
+function openProfile(id){
+  const s=students.find(x=>x.id===id);if(!s)return;
+  currentProfileId=id;
+  const ci=(s.id-1)%avatarColors.length;
+  const[bg,col]=avatarColors[ci];
+  const ppAv=document.getElementById('ppAv');
+  const ppAvImg=document.getElementById('ppAvImg');
+  const ppAvInitial=document.getElementById('ppAvInitial');
+  ppAv.style.background=bg;ppAv.style.color=col;
+  if(s.photo){ppAvImg.src=s.photo;ppAvImg.style.display='block';ppAvInitial.style.display='none';}
+  else{ppAvImg.style.display='none';ppAvInitial.style.display='block';ppAvInitial.textContent=s.fname[0];}
+  document.getElementById('ppName').textContent=s.fname+' '+s.lname;
+  const cs=computeStatus(s);const si=statusInfo(cs);
+  document.getElementById('ppMeta').innerHTML=`
+    <span class="grade-badge ${gradeBadgeClass(s.grade)}">${gradeName(s.grade)} — کلاس ${s.cls}</span>
+    <span class="status-pill ${si.cls}"><i class="${si.icon}" style="font-size:9px"></i> ${si.lbl}</span>
+    ${s.debt?`<span class="pp-badge ppb-absent"><i class="fas fa-money-bill"></i> بدهکار</span>`:''}`;
+  document.getElementById('ppMiniStats').innerHTML=`
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:${s.abs>=5?'var(--absent)':s.abs>=3?'var(--late)':'var(--accent3)'}">${fa(s.abs)}</div><div class="pp-ms-lbl">غیبت</div></div>
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:var(--accent)">${fa(scoresData.reduce((a,b)=>a+b.score,0)/scoresData.length).replace('.','/').slice(0,4)}</div><div class="pp-ms-lbl">معدل</div></div>
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:var(--accent2)">${fa(scoresData.length)}</div><div class="pp-ms-lbl">تعداد دروس</div></div>`;
+  function makeField(lbl,val,ltr=false){return`<div class="pp-field"><div class="pp-field-label">${lbl}</div><div class="pp-field-val${ltr?' dir-ltr':''}">${val||'—'}</div></div>`;}
+  document.getElementById('ppPersonalFields').innerHTML=makeField('نام',s.fname)+makeField('نام خانوادگی',s.lname)+makeField('کد ملی',s.national,true)+makeField('تاریخ تولد',s.bdate);
+  document.getElementById('ppContactFields').innerHTML=makeField('تلفن منزل',s.homePhone,true)+makeField('کد پستی',s.postal,true)+`<div class="pp-field" style="grid-column:1/-1"><div class="pp-field-label">آدرس</div><div class="pp-field-val">${s.address||'—'}</div></div>`;
+  document.getElementById('ppAttStats').innerHTML=`
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:var(--absent)">${fa(absenceHistory.filter(a=>a.type==='absent').length)}</div><div class="pp-ms-lbl">غیبت</div></div>
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:var(--late)">${fa(absenceHistory.filter(a=>a.type==='late').length)}</div><div class="pp-ms-lbl">تأخیر</div></div>
+    <div class="pp-ms-item"><div class="pp-ms-val" style="color:var(--leave)">${fa(absenceHistory.filter(a=>a.type==='leave').length)}</div><div class="pp-ms-lbl">مرخصی</div></div>`;
+  document.getElementById('ppAttList').innerHTML=absenceHistory.map(a=>{
+    const typeMap={absent:{cls:'ppb-absent',lbl:'غایب',icon:'fas fa-times'},late:{cls:'ppb-late',lbl:'تأخیر',icon:'fas fa-clock'},leave:{cls:'ppb-leave',lbl:'مرخصی',icon:'fas fa-umbrella-beach'}};
+    const t=typeMap[a.type];
+    return`<div class="pp-att-row"><div><div class="pp-att-subject">${a.subject}</div><div class="pp-att-date">${a.date}</div></div><span class="pp-badge ${t.cls}"><i class="${t.icon}"></i> ${t.lbl}</span></div>`;
+  }).join('');
+  document.getElementById('ppScoreList').innerHTML=scoresData.map(sc=>{
+    const col=sc.score>=17?'var(--present)':sc.score>=14?'var(--accent)':sc.score>=10?'var(--late)':'var(--absent)';
+    return`<div class="pp-score-row"><div><div class="pp-score-subject">${sc.subject}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${sc.teacher}</div></div><div class="pp-score-val" style="color:${col}">${String(sc.score).replace('.','/') }</div></div>`;
+  }).join('');
+  function parentFields(p){return makeField('نام',p.fname)+makeField('نام خانوادگی',p.lname)+makeField('کد ملی',p.national,true)+makeField('تحصیلات',p.edu)+makeField('شغل',p.job)+makeField('موبایل',p.phone,true);}
+  document.getElementById('ppFatherFields').innerHTML=parentFields(s.father);
+  document.getElementById('ppMotherFields').innerHTML=parentFields(s.mother);
+  document.getElementById('ppEditBtn').onclick=()=>{closeProfile();openEditModal(id);};
+  // download btn
+  const dlBtn=document.getElementById('ppDlBtn');
+  dlBtn.style.display=s.photo?'flex':'none';
+  document.querySelectorAll('.pp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.pp-tab').classList.add('active');
+  document.querySelectorAll('.pp-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pp-info').classList.add('active');
+  document.getElementById('profileOverlay').classList.add('open');
+  document.getElementById('profilePanel').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeProfile(){
+  document.getElementById('profileOverlay').classList.remove('open');
+  document.getElementById('profilePanel').classList.remove('open');
+  document.body.style.overflow='';
+}
+function switchPPTab(id,btn){
+  document.querySelectorAll('.pp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pp-tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('pp-'+id).classList.add('active');
+}
+
+/* ─── LIGHTBOX ─── */
+function openLightbox(){
+  const s=students.find(x=>x.id===currentProfileId);
+  if(!s||!s.photo)return;
+  document.getElementById('lbImg').src=s.photo;
+  document.getElementById('lbName').textContent=s.fname+' '+s.lname;
+  document.getElementById('photoLightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('photoLightbox').classList.remove('open');}
+function downloadPhoto(){
+  const s=students.find(x=>x.id===currentProfileId);
+  if(!s||!s.photo){showToast('عکسی برای دانلود وجود ندارد','warning');return;}
+  const a=document.createElement('a');a.href=s.photo;a.download=s.fname+'_'+s.lname+'.jpg';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  showToast('عکس دانلود شد');
+}
+
+/* ─── AVATAR UPLOAD ─── */
+const ALLOWED_TYPES=['image/jpeg','image/png','image/gif','image/webp','image/svg+xml'];
+const MAX_SIZE=1*1024*1024;
+document.getElementById('studentAvatarInput').addEventListener('change',function(e){
+  const file=e.target.files[0];
+  const errEl=document.getElementById('avEditErr');
+  errEl.classList.remove('show');errEl.textContent='';
+  if(!file)return;
+  if(!ALLOWED_TYPES.includes(file.type)){errEl.textContent='⚠ فرمت مجاز نیست. فقط JPG، PNG، GIF، WEBP و SVG.';errEl.classList.add('show');this.value='';return;}
+  if(file.size>MAX_SIZE){errEl.textContent=`⚠ حجم فایل (${(file.size/1024/1024).toFixed(2)} MB) بیشتر از ۱ مگابایت است.`;errEl.classList.add('show');this.value='';return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    currentEditPhoto=ev.target.result;
+    const img=document.getElementById('avPreviewImg');
+    const init=document.getElementById('avPreviewInitial');
+    img.src=ev.target.result;img.style.display='block';init.style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ─── EDIT MODAL ─── */
+function openEditModal(id){
+  editingId=id;currentEditPhoto=null;
+  const isNew=id===null;
+  document.getElementById('editModalTitle').textContent=isNew?'افزودن دانش‌آموز جدید':'ویرایش اطلاعات دانش‌آموز';
+  eFatherStatus='alive';eMotherStatus='alive';
+  resetEditToggle('father','alive');resetEditToggle('mother','alive');
+  document.getElementById('eGuardianBlock').classList.remove('show');
+  toggleEditDebt(false);
+  // Reset avatar preview
+  const avImg=document.getElementById('avPreviewImg');
+  const avInit=document.getElementById('avPreviewInitial');
+  avImg.style.display='none';avImg.src='';avInit.style.display='block';
+  document.getElementById('studentAvatarInput').value='';
+  document.getElementById('avEditErr').classList.remove('show');
+  if(!isNew){
+    const s=students.find(x=>x.id===id);if(!s)return;
+    document.getElementById('ef_fname').value=s.fname;
+    document.getElementById('ef_lname').value=s.lname;
+    document.getElementById('ef_national').value=s.national;
+    document.getElementById('ef_bdate').value=s.bdate;
+    document.getElementById('ef_grade').value=s.grade;
+    updateEditClassOptions();
+    document.getElementById('ef_class').value=s.cls;
+    toggleEditDebt(s.debt);
+    if(s.debt)document.getElementById('ef_debt').value=s.debtAmt;
+    document.getElementById('ef_f_fname').value=s.father.fname;
+    document.getElementById('ef_f_lname').value=s.father.lname;
+    document.getElementById('ef_f_national').value=s.father.national;
+    document.getElementById('ef_f_edu').value=s.father.edu;
+    document.getElementById('ef_f_job').value=s.father.job;
+    document.getElementById('ef_f_phone').value=s.father.phone;
+    if(!s.father.alive){resetEditToggle('father','deceased');eFatherStatus='deceased';}
+    document.getElementById('ef_m_fname').value=s.mother.fname;
+    document.getElementById('ef_m_lname').value=s.mother.lname;
+    document.getElementById('ef_m_national').value=s.mother.national;
+    document.getElementById('ef_m_edu').value=s.mother.edu;
+    document.getElementById('ef_m_job').value=s.mother.job;
+    document.getElementById('ef_m_phone').value=s.mother.phone;
+    if(!s.mother.alive){resetEditToggle('mother','deceased');eMotherStatus='deceased';}
+    checkGuardian();
+    document.getElementById('ef_home_phone').value=s.homePhone;
+    document.getElementById('ef_postal').value=s.postal;
+    document.getElementById('ef_address').value=s.address;
+    // load existing photo
+    if(s.photo){currentEditPhoto=s.photo;avImg.src=s.photo;avImg.style.display='block';avInit.style.display='none';}
+    avInit.textContent=s.fname[0];
+    if(s.guardian){
+      document.getElementById('ef_g_fname').value=s.guardian.fname||'';
+      document.getElementById('ef_g_lname').value=s.guardian.lname||'';
+      document.getElementById('ef_g_rel').value=s.guardian.relation||'';
+      document.getElementById('ef_g_national').value=s.guardian.national||'';
+      document.getElementById('ef_g_phone').value=s.guardian.phone||'';
+    }
+  } else {
+    ['ef_fname','ef_lname','ef_national','ef_f_fname','ef_f_lname','ef_f_national','ef_f_job','ef_f_phone','ef_m_fname','ef_m_lname','ef_m_national','ef_m_job','ef_m_phone','ef_g_fname','ef_g_lname','ef_g_rel','ef_g_national','ef_g_phone','ef_home_phone','ef_postal','ef_address','ef_debt'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.value='';});
+    document.getElementById('ef_grade').value='10';
+    updateEditClassOptions();
+    document.getElementById('ef_bdate').value='';
+    avInit.textContent='؟';
+  }
+  document.getElementById('editModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeEditModal(){document.getElementById('editModal').classList.remove('open');document.body.style.overflow='';}
+function closeEditModalOutside(e){if(e.target===document.getElementById('editModal'))closeEditModal();}
+function toggleEditDebt(has){
+  document.getElementById('eDebtNo').className='tr-opt tr-alive'+(has?'':' tr-active-alive');
+  document.getElementById('eDebtYes').className='tr-opt tr-dead'+(has?' tr-active-dead':'');
+  document.getElementById('eDebtAmtWrap').style.display=has?'flex':'none';
+}
+function toggleEditParent(who,status){
+  if(who==='father'){eFatherStatus=status;resetEditToggle('father',status);}
+  else{eMotherStatus=status;resetEditToggle('mother',status);}
+  checkGuardian();
+}
+function resetEditToggle(who,status){
+  const pre=who==='father'?'eFather':'eMother';
+  document.getElementById(pre+'Alive').className='tr-opt tr-alive'+(status==='alive'?' tr-active-alive':'');
+  document.getElementById(pre+'Dead').className='tr-opt tr-dead'+(status==='deceased'?' tr-active-dead':'');
+}
+function checkGuardian(){document.getElementById('eGuardianBlock').classList.toggle('show',eFatherStatus==='deceased'&&eMotherStatus==='deceased');}
+function saveEdit(){
+  const fname=document.getElementById('ef_fname').value.trim();
+  const lname=document.getElementById('ef_lname').value.trim();
+  if(!fname||!lname){showToast('نام و نام خانوادگی الزامی است','warning');return;}
+  const debt=document.getElementById('eDebtYes').classList.contains('tr-active-dead');
+  const newData={
+    fname,lname,
+    national:document.getElementById('ef_national').value.trim(),
+    bdate:document.getElementById('ef_bdate').value.trim(),
+    grade:+document.getElementById('ef_grade').value,
+    cls:document.getElementById('ef_class').value,
+    debt,debtAmt:debt?document.getElementById('ef_debt').value:'',
+    abs:editingId?students.find(s=>s.id===editingId).abs:0,
+    photo:currentEditPhoto,
+    father:{fname:document.getElementById('ef_f_fname').value,lname:document.getElementById('ef_f_lname').value,national:document.getElementById('ef_f_national').value,edu:document.getElementById('ef_f_edu').value,job:document.getElementById('ef_f_job').value,phone:document.getElementById('ef_f_phone').value,alive:eFatherStatus==='alive'},
+    mother:{fname:document.getElementById('ef_m_fname').value,lname:document.getElementById('ef_m_lname').value,national:document.getElementById('ef_m_national').value,edu:document.getElementById('ef_m_edu').value,job:document.getElementById('ef_m_job').value,phone:document.getElementById('ef_m_phone').value,alive:eMotherStatus==='alive'},
+    guardian:eFatherStatus==='deceased'&&eMotherStatus==='deceased'?{fname:document.getElementById('ef_g_fname').value,lname:document.getElementById('ef_g_lname').value,relation:document.getElementById('ef_g_rel').value,national:document.getElementById('ef_g_national').value,phone:document.getElementById('ef_g_phone').value}:null,
+    homePhone:document.getElementById('ef_home_phone').value,
+    postal:document.getElementById('ef_postal').value,
+    address:document.getElementById('ef_address').value,
+  };
+  if(editingId){
+    const idx=students.findIndex(s=>s.id===editingId);
+    if(idx>=0)students[idx]={...students[idx],...newData};
+    showToast('اطلاعات دانش‌آموز بروزرسانی شد');
+  } else {
+    newData.id=Math.max(...students.map(s=>s.id))+1;
+    students.push(newData);
+    showToast('دانش‌آموز جدید با موفقیت اضافه شد');
+  }
+  closeEditModal();applyFilters();
+}
+
+/* ─── DELETE ─── */
+function openConfirm(id){
+  deleteId=id;const s=students.find(x=>x.id===id);
+  document.getElementById('confirmMsg').textContent=`آیا مطمئن هستید که می‌خواهید «${s.fname} ${s.lname}» را از سیستم حذف کنید؟ این عمل قابل بازگشت نیست.`;
+  document.getElementById('confirmModal').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmModal').classList.remove('open');deleteId=null;}
+function confirmDelete(){
+  if(!deleteId)return;
+  students=students.filter(s=>s.id!==deleteId);
+  closeConfirm();applyFilters();showToast('دانش‌آموز با موفقیت حذف شد','error');
+}
+
+/* ─── SIDEBAR ─── */
+function toggleSidebar(){const sb=document.getElementById('sidebar');sb.classList.contains('open')?closeSidebar():openSidebar();}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('on');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('on');document.body.style.overflow='';}
+document.getElementById('overlay').addEventListener('click',closeSidebar);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSidebar();closeProfile();closeLightbox();}});
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('notifDropdown');
+  if(dd&&dd.classList.contains('open')&&!document.getElementById('notifBtn').contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
+});
+
+/* ═══════════════════════════════════════
+   PERSIAN DATE PICKER (JDP_S)
+═══════════════════════════════════════ */
+var JDP_S=(function(){
+  var MONTHS=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+  var DAYS=["ش","ی","د","س","چ","پ","ج"];
+  function toJalali(gy,gm,gd){var msPerDay=86400000;var diff=Math.round((new Date(+gy,+gm-1,+gd).getTime()-new Date(1970,0,1).getTime())/msPerDay);var jy=1348,jm=10,jd=11;jd+=diff;while(jd>_jDays(jy,jm)){jd-=_jDays(jy,jm);jm++;if(jm>12){jm=1;jy++;}}while(jd<1){jm--;if(jm<1){jm=12;jy--;}jd+=_jDays(jy,jm);}return[jy,jm,jd];}
+  function _jDays(jy,jm){return jm<=6?31:jm<=11?30:29;}
+  function _firstCol(jy,jm){var g=toGregorian(jy,jm,1);return(new Date(g[0],g[1]-1,g[2]).getDay()+1)%7;}
+  function toGregorian(jy,jm,jd){var ry=1348,rm=10,rd=11,diff=0;while(ry<jy||(ry===jy&&rm<jm)||(ry===jy&&rm===jm&&rd<jd)){rd++;if(rd>_jDays(ry,rm)){rd=1;rm++;if(rm>12){rm=1;ry++;}}diff++;}while(ry>jy||(ry===jy&&rm>jm)||(ry===jy&&rm===jm&&rd>jd)){rd--;if(rd<1){rm--;if(rm<1){rm=12;ry--;}rd=_jDays(ry,rm);}diff--;}var g=new Date(1970,0,1+diff);return[g.getFullYear(),g.getMonth()+1,g.getDate()];}
+  function _today(){var n=new Date();return toJalali(n.getFullYear(),n.getMonth()+1,n.getDate());}
+  function _fa(n){return String(n).replace(/\d/g,function(d){return"۰۱۲۳۴۵۶۷۸۹"[d];});}
+  var vY,vM,selY=null,selM=null,selD=null;
+  var mode="day",yrStart,activeInput=null;
+  var PID="jdp_s_popup",OID="jdp_s_overlay";
+  function _boot(){
+    if(document.getElementById(PID))return;
+    var ov=document.createElement("div");ov.id=OID;ov.style.cssText="display:none;position:fixed;inset:0;z-index:99990;";ov.onclick=_close;document.body.appendChild(ov);
+    var p=document.createElement("div");p.id=PID;
+    p.style.cssText="display:none;position:fixed;z-index:99991;width:310px;background:linear-gradient(145deg,#0f1c3f,#162850);border:1px solid rgba(100,160,255,0.25);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6);direction:rtl;font-family:Vazirmatn,Tahoma,sans-serif;overflow:hidden;user-select:none;";
+    p.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.07)"><button id="jdp_s_prev" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">&#8249;</button><span id="jdp_s_hdr" style="color:#e0eeff;font-size:15px;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:8px"></span><button id="jdp_s_next" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">&#8250;</button></div><div id="jdp_s_body" style="padding:12px 14px;min-height:180px"></div><div style="display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid rgba(255,255,255,0.07)"><button id="jdp_s_today" style="flex:1;background:rgba(80,150,255,0.15);border:1px solid rgba(80,150,255,0.35);color:#7eb8ff;border-radius:8px;padding:8px;cursor:pointer;font-family:inherit;font-size:12px">امروز</button><button id="jdp_s_clear" style="flex:1;background:rgba(220,60,60,0.12);border:1px solid rgba(220,60,60,0.3);color:#f08080;border-radius:8px;padding:8px;cursor:pointer;font-family:inherit;font-size:12px">پاک کردن</button></div>';
+    document.body.appendChild(p);
+    document.getElementById("jdp_s_prev").onclick=function(){_nav(-1);};
+    document.getElementById("jdp_s_next").onclick=function(){_nav(+1);};
+    document.getElementById("jdp_s_hdr").onclick=_toggleMode;
+    document.getElementById("jdp_s_today").onclick=_goToday;
+    document.getElementById("jdp_s_clear").onclick=_goClear;
+  }
+  function _renderDays(){var t=_today(),fc=_firstCol(vY,vM),dm=_jDays(vY,vM),html=[];html.push('<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px">');DAYS.forEach(function(d){html.push('<div style="text-align:center;font-size:11px;color:rgba(180,200,255,0.5);padding:3px 0">'+d+'</div>');});html.push('</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">');for(var i=0;i<fc;i++)html.push('<div></div>');for(var d=1;d<=dm;d++){var isToday=(vY===t[0]&&vM===t[1]&&d===t[2]);var isSel=(selY===vY&&selM===vM&&selD===d);var bg=isSel?"linear-gradient(135deg,#3d8bff,#1a5fd4)":isToday?"rgba(80,150,255,0.12)":"rgba(255,255,255,0.03)";var border=isSel?"none":isToday?"1px solid rgba(80,150,255,0.5)":"1px solid transparent";var color=isSel?"#fff":isToday?"#7eb8ff":"#c8d8f0";html.push('<div onclick="JDP_S._pick('+d+')" style="text-align:center;padding:7px 2px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:'+bg+';border:'+border+';color:'+color+'">'+_fa(d)+'</div>');}html.push('</div>');document.getElementById("jdp_s_body").innerHTML=html.join("");}
+  function _renderMonths(){var html=['<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'];MONTHS.forEach(function(name,i){var active=(i+1===vM);html.push('<div onclick="JDP_S._pickM('+(i+1)+')" style="text-align:center;padding:10px 4px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;'+(active?'background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;':'background:rgba(255,255,255,0.05);color:#a0c0f0;border:1px solid rgba(255,255,255,0.07);')+'">'+name+'</div>');});html.push('</div>');document.getElementById("jdp_s_body").innerHTML=html.join("");}
+  function _renderYears(){var html=['<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><button onclick="JDP_S._yNav(-12)" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px">&#8249;</button><span style="color:rgba(180,200,255,0.6);font-size:12px">'+_fa(yrStart)+' - '+_fa(yrStart+11)+'</span><button onclick="JDP_S._yNav(+12)" style="background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px">&#8250;</button></div>','<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'];for(var y=yrStart;y<yrStart+12;y++){var active=(y===vY);html.push('<div onclick="JDP_S._pickY('+y+')" style="text-align:center;padding:10px 4px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;'+(active?'background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;':'background:rgba(255,255,255,0.05);color:#a0c0f0;border:1px solid rgba(255,255,255,0.07);')+'">'+_fa(y)+'</div>');}html.push('</div>');document.getElementById("jdp_s_body").innerHTML=html.join("");}
+  function _render(){var hdr=document.getElementById("jdp_s_hdr");if(!hdr)return;if(mode==="day"){hdr.textContent=MONTHS[vM-1]+"  "+_fa(vY);_renderDays();}else if(mode==="month"){hdr.textContent=_fa(vY);_renderMonths();}else{hdr.textContent=_fa(yrStart)+" - "+_fa(yrStart+11);_renderYears();}}
+  function _nav(dir){if(mode==="day"){vM+=dir;if(vM>12){vM=1;vY++;}if(vM<1){vM=12;vY--;}}else if(mode==="month"){vY+=dir;}else{yrStart+=dir*12;}_render();}
+  function _toggleMode(){if(mode==="day")mode="month";else if(mode==="month"){mode="year";yrStart=Math.floor(vY/12)*12;}else mode="day";_render();}
+  function _position(input){var p=document.getElementById(PID);var r=input.getBoundingClientRect();var pw=310,ph=380,vw=window.innerWidth,vh=window.innerHeight;var top=r.bottom+8,left=r.right-pw;if(left<8)left=8;if(left+pw>vw-8)left=vw-pw-8;if(top+ph>vh-8)top=r.top-ph-8;if(top<8)top=8;p.style.top=top+"px";p.style.left=left+"px";}
+  function _open(input){_boot();activeInput=input;var val=input.value.trim();val=val.replace(/[۰-۹]/g,function(c){return String("۰۱۲۳۴۵۶۷۸۹".indexOf(c));});if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(val)){var parts=val.split("/").map(Number);selY=vY=parts[0];selM=vM=parts[1];selD=parts[2];}else{selY=selM=selD=null;var t=_today();vY=t[0];vM=t[1];}mode="day";_render();_position(input);document.getElementById(OID).style.display="block";document.getElementById(PID).style.display="block";}
+  function _close(){var p=document.getElementById(PID),o=document.getElementById(OID);if(p)p.style.display="none";if(o)o.style.display="none";activeInput=null;}
+  function _commit(jy,jm,jd){selY=jy;selM=jm;selD=jd;if(activeInput){var y=_fa(jy);var m=_fa(String(jm).padStart(2,"0"));var d=_fa(String(jd).padStart(2,"0"));activeInput.value=y+"/"+m+"/"+d;activeInput.dispatchEvent(new Event("input",{bubbles:true}));}_render();setTimeout(_close,150);}
+  function _goToday(){var t=_today();vY=t[0];vM=t[1];mode="day";_render();_commit(t[0],t[1],t[2]);}
+  function _goClear(){selY=selM=selD=null;if(activeInput){activeInput.value="";activeInput.dispatchEvent(new Event("input",{bubbles:true}));}_close();}
+  return{open:_open,close:_close,_pick:function(d){_commit(vY,vM,d);},_pickM:function(m){vM=m;mode="day";_render();},_pickY:function(y){vY=y;mode="month";_render();},_yNav:function(n){yrStart+=n;_render();}};
+})();
+
+/* ─── INIT ─── */
+updateClassFilter();
+renderNotifs();
+applyFilters();
+</script>
+</body>
+</html>

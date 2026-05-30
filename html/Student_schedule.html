@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور - برنامه هفتگی</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-main:    #202b59;
+  --bg-card:    #1f285a;
+  --bg-card2:   #1e2957;
+  --bg-sidebar: #172047;
+  --accent:     #3498db;
+  --accent2:    #9b59b6;
+  --accent3:    #06d6a0;
+  --accent4:    #f39c12;
+  --accent5:    #e74c3c;
+  --text:       #ffffff;
+  --text-muted: rgba(255,255,255,.58);
+  --border:     rgba(255,255,255,.09);
+  --glow:       0 0 30px rgba(52,152,219,.15);
+  --sidebar-w:  260px;
+  --radius:     14px;
+
+  /* درس‌ها */
+  --c-math:  #4f8ef7; --c-math-bg:  rgba(79,142,247,.14);
+  --c-phys:  #ef4444; --c-phys-bg:  rgba(239,68,68,.14);
+  --c-chem:  #06d6a0; --c-chem-bg:  rgba(6,214,160,.14);
+  --c-lit:   #f59e0b; --c-lit-bg:   rgba(245,158,11,.14);
+  --c-lang:  #7c3aed; --c-lang-bg:  rgba(124,58,237,.14);
+  --c-rel:   #ec4899; --c-rel-bg:   rgba(236,72,153,.14);
+  --c-sport: #14b8a6; --c-sport-bg: rgba(20,184,166,.14);
+  --c-art:   #f97316; --c-art-bg:   rgba(249,115,22,.14);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(79,142,247,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 90%,rgba(124,58,237,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:28px 16px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .3s ease;}
+.logo{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:40px;}
+.nav-item{margin-bottom:6px;}
+.nav-item a{color:rgba(255,255,255,.72);text-decoration:none;padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:10px;font-size:14px;transition:all .25s;}
+.nav-item a i{font-size:15px;width:20px;text-align:center;}
+.nav-item a:hover,.nav-item.active a{background:var(--bg-main);color:#fff;}
+.nav-item.active a{font-weight:600;}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+
+/* ══ MAIN ══ */
+.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:28px 24px;position:relative;z-index:1;}
+
+/* ══ TOP BAR ══ */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;}
+.greeting-block h1{font-size:20px;font-weight:700;}
+.greeting-block h1 span{color:var(--accent);}
+.greeting-block p{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.top-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.notif-btn{position:relative;width:38px;height:38px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
+.notif-btn:hover{color:var(--text);background:var(--bg-card2);}
+.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.profile-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;}
+
+/* ══ SECTION HEADER ══ */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.section-title i{color:var(--accent);}
+.section-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;}
+
+/* ══ SUMMARY STRIP ══ */
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.sum-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
+.sum-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.sum-card.blue::before  {background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.sum-card.green::before {background:linear-gradient(90deg,var(--accent3),#0bc87c);}
+.sum-card.yellow::before{background:linear-gradient(90deg,var(--accent4),#fbbf24);}
+.sum-card.red::before   {background:linear-gradient(90deg,var(--accent5),#f97316);}
+.sum-card:hover{transform:translateY(-4px);border-color:rgba(79,142,247,.22);box-shadow:var(--glow);}
+.sum-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
+.blue   .sum-icon{background:rgba(79,142,247,.15);color:var(--accent);}
+.green  .sum-icon{background:rgba(6,214,160,.15); color:var(--accent3);}
+.yellow .sum-icon{background:rgba(245,158,11,.15);color:var(--accent4);}
+.red    .sum-icon{background:rgba(239,68,68,.15); color:var(--accent5);}
+.sum-value{font-size:26px;font-weight:800;line-height:1;margin-bottom:4px;}
+.sum-label{font-size:11px;color:var(--text-muted);}
+.sum-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
+.badge-blue  {background:rgba(79,142,247,.15);color:var(--accent);}
+.badge-green {background:rgba(6,214,160,.15); color:var(--accent3);}
+.badge-yel   {background:rgba(245,158,11,.15);color:var(--accent4);}
+.badge-red   {background:rgba(239,68,68,.15); color:var(--accent5);}
+
+/* ══ TODAY HIGHLIGHT ══ */
+.today-strip{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.today-strip::after{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:linear-gradient(180deg,var(--accent),var(--accent2));}
+
+.today-classes{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.today-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:30px;border:1px solid var(--border);background:var(--bg-card2);font-size:12px;font-weight:600;transition:all .2s;cursor:default;position:relative;}
+.today-pill:hover{transform:translateY(-2px);box-shadow:var(--glow);}
+.today-pill .pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.today-pill .pill-time{font-size:10px;color:var(--text-muted);font-weight:400;}
+.today-pill.now-class{border-color:rgba(79,142,247,.5);background:rgba(79,142,247,.1);box-shadow:0 0 14px rgba(79,142,247,.15);}
+.now-badge{position:absolute;top:-5px;left:8px;background:var(--accent);color:#fff;font-size:8px;font-weight:800;padding:1px 6px;border-radius:20px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ══ WEEK TABLE WRAPPER ══ */
+.table-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;overflow-x:auto;}
+
+/* ══ WEEK TABLE ══ */
+.week-table{width:100%;border-collapse:separate;border-spacing:0;min-width:680px;}
+
+/* time column */
+.week-table .time-col{width:72px;}
+.week-table .day-col {width:calc((100% - 72px)/5);}
+
+/* header row */
+.week-table thead th{padding:0 6px 14px;font-size:12px;font-weight:700;text-align:center;color:var(--text-muted);}
+.week-table thead th.day-header{position:relative;}
+.week-table thead th.day-header.today-col{color:var(--text);}
+.today-col-bar{position:absolute;bottom:0;right:50%;transform:translateX(50%);width:36px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.day-date{display:block;font-size:10px;color:var(--text-muted);margin-top:2px;font-weight:400;}
+.today-col .day-date{color:var(--accent);}
+
+/* time cell */
+.time-cell{text-align:center;padding:4px 6px;vertical-align:middle;}
+.time-inner{display:inline-flex;flex-direction:column;align-items:center;gap:1px;}
+.time-start{font-size:11px;font-weight:700;color:var(--text);}
+.time-end  {font-size:9px; color:var(--text-muted);}
+.time-sep  {width:1px;height:14px;background:var(--border);}
+
+/* break row */
+.break-row td{padding:4px 6px;text-align:center;}
+.break-label{font-size:9px;color:var(--text-muted);background:rgba(255,255,255,.03);border-radius:6px;padding:2px 10px;display:inline-block;}
+
+/* class cell */
+.class-cell{padding:4px 6px;vertical-align:top;}
+.class-block{border-radius:10px;padding:10px 11px;height:100%;min-height:72px;display:flex;flex-direction:column;gap:4px;border:1px solid transparent;transition:transform .2s,box-shadow .2s;cursor:default;position:relative;}
+.class-block:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
+
+.class-block .cb-subject{font-size:12px;font-weight:800;line-height:1.2;}
+.class-block .cb-teacher{font-size:10px;font-weight:500;opacity:.75;margin-top:1px;}
+.class-block .cb-room   {font-size:9px; opacity:.6;}
+.class-block .cb-icon   {position:absolute;bottom:8px;left:10px;font-size:13px;opacity:.45;}
+
+/* empty cell */
+.empty-block{border-radius:10px;height:72px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.06);}
+
+/* free / holiday */
+.free-block{border-radius:10px;height:72px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.04);}
+.free-block span{font-size:10px;color:rgba(255,255,255,.18);}
+
+/* today column highlight */
+.today-col-cell .class-block{border-color:rgba(79,142,247,.2)!important;}
+.today-col-cell .empty-block{border-color:rgba(79,142,247,.12)!important;}
+
+/* ══ BOTTOM ROW ══ */
+.bot-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* ══ TEACHER LIST ══ */
+.teacher-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.teacher-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);transition:transform .2s;cursor:default;}
+.teacher-item:last-child{border-bottom:none;}
+.teacher-item:hover{transform:translateX(3px);}
+.teacher-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.teacher-info{flex:1;min-width:0;}
+.teacher-name{font-size:13px;font-weight:700;}
+.teacher-subject{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.teacher-hours{font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.teacher-contact{font-size:9px;color:var(--text-muted);margin-top:2px;}
+
+/* ══ SUBJECT HOURS ══ */
+.hours-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.hours-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.hours-item:last-child{border-bottom:none;}
+.hours-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.hours-name{font-size:12px;font-weight:700;flex:1;}
+.hours-bar-wrap{width:80px;height:5px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;flex-shrink:0;}
+.hours-bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.hours-count{font-size:12px;font-weight:700;min-width:28px;text-align:left;flex-shrink:0;}
+
+/* ══ UPCOMING ══ */
+.upcoming-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.upcoming-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:default;transition:transform .2s;}
+.upcoming-item:last-child{border-bottom:none;}
+.upcoming-item:hover{transform:translateX(3px);}
+.upcoming-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.upcoming-body{flex:1;min-width:0;}
+.upcoming-title{font-size:12px;font-weight:700;margin-bottom:2px;}
+.upcoming-meta{font-size:10px;color:var(--text-muted);}
+.upcoming-when{font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+
+/* ══ VIEW TOGGLE ══ */
+.view-toggle{display:flex;gap:6px;}
+.view-btn{font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.view-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+.view-btn.active{background:rgba(52,152,219,.2);border-color:var(--accent);color:var(--accent);}
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.sum-card,.today-strip,.table-card,
+.teacher-card,.hours-card,.upcoming-card{animation:fadeUp .5s ease both;}
+.sum-card:nth-child(1){animation-delay:.04s;}.sum-card:nth-child(2){animation-delay:.08s;}
+.sum-card:nth-child(3){animation-delay:.12s;}.sum-card:nth-child(4){animation-delay:.16s;}
+.today-strip{animation-delay:.18s;}.table-card{animation-delay:.22s;}
+.teacher-card{animation-delay:.28s;}.hours-card{animation-delay:.32s;}.upcoming-card{animation-delay:.36s;}
+
+/* ══ HAMBURGER ══ */
+.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;}
+.sidebar-overlay.active{display:block;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1280px){:root{--sidebar-w:240px;}}
+@media(max-width:1024px){
+  :root{--sidebar-w:220px;}
+  .main-content{padding:22px 18px;}
+  .summary-strip{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .bot-row{grid-template-columns:1fr 1fr;gap:12px;}
+  .upcoming-card{grid-column:1/-1;}
+}
+@media(max-width:768px){
+  .menu-toggle{display:flex;}
+  .sidebar{transform:translateX(110%);box-shadow:-5px 0 20px rgba(0,0,0,.4);}
+  .sidebar.active{transform:translateX(0);}
+  .main-content{margin-right:0;padding:70px 16px 20px;}
+  .summary-strip{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .bot-row{grid-template-columns:1fr;gap:12px;}
+  .upcoming-card{grid-column:auto;}
+  .today-classes{gap:7px;}
+  .today-pill{font-size:11px;padding:7px 11px;}
+}
+@media(max-width:480px){
+  .main-content{padding:66px 12px 16px;}
+  .sum-card{padding:14px 12px;}.sum-value{font-size:22px;}
+  .sum-icon{width:36px;height:36px;font-size:14px;margin-bottom:10px;}
+  .table-card{padding:16px 10px;}
+  .class-block{min-height:60px;padding:8px 9px;}
+  .class-block .cb-subject{font-size:11px;}
+  .class-block .cb-teacher{display:none;}
+  .class-block .cb-room{display:none;}
+  .class-block .cb-icon{display:none;}
+  .empty-block,.free-block{height:60px;}
+  .time-start{font-size:10px;}.time-end{font-size:8px;}
+  .today-pill .pill-time{display:none;}
+}
+@media(max-width:360px){
+  .summary-strip{gap:7px;}.sum-value{font-size:20px;}
+  .class-block .cb-subject{font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بوربور</div>
+  <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item active"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1>برنامه هفتگی — <span>علی مختاری</span></h1>
+      <p>سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی | نیم‌سال دوم</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-avatar">ع</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-strip">
+    <div class="sum-card blue">
+      <div class="sum-badge badge-blue">هفتگی</div>
+      <div class="sum-icon"><i class="fas fa-book-open"></i></div>
+      <div class="sum-value">۲۵</div>
+      <div class="sum-label">ساعت کلاس در هفته</div>
+    </div>
+    <div class="sum-card green">
+      <div class="sum-badge badge-green">امروز</div>
+      <div class="sum-icon"><i class="fas fa-calendar-day"></i></div>
+      <div class="sum-value">۵</div>
+      <div class="sum-label">کلاس امروز</div>
+    </div>
+    <div class="sum-card yellow">
+      <div class="sum-badge badge-yel">درس</div>
+      <div class="sum-icon"><i class="fas fa-layer-group"></i></div>
+      <div class="sum-value">۸</div>
+      <div class="sum-label">درس در برنامه</div>
+    </div>
+    <div class="sum-card red">
+      <div class="sum-badge badge-red">بعدی</div>
+      <div class="sum-icon"><i class="fas fa-hourglass-half"></i></div>
+      <div class="sum-value">۱۲</div>
+      <div class="sum-label">دقیقه تا کلاس بعد</div>
+    </div>
+  </div>
+
+  <!-- TODAY HIGHLIGHT -->
+  <div class="today-strip">
+    <div class="section-header" style="margin-bottom:12px">
+      <div class="section-title"><i class="fas fa-sun"></i> امروز — سه‌شنبه ۲۶ اردیبهشت</div>
+    </div>
+    <div class="today-classes" id="todayClasses"></div>
+  </div>
+
+  <!-- WEEKLY TABLE -->
+  <div class="table-card">
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-table"></i> جدول هفتگی</div>
+      <div class="view-toggle">
+        <button class="view-btn active" onclick="setView('full',this)"><i class="fas fa-table"></i> کامل</button>
+        <button class="view-btn" onclick="setView('compact',this)"><i class="fas fa-list"></i> فشرده</button>
+      </div>
+    </div>
+    <table class="week-table" id="weekTable"></table>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bot-row">
+
+    <div class="teacher-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chalkboard-teacher"></i> معلمان</div>
+      </div>
+      <div id="teacherList"></div>
+    </div>
+
+    <div class="hours-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chart-bar"></i> ساعت هر درس در هفته</div>
+      </div>
+      <div id="hoursList"></div>
+    </div>
+
+    <div class="upcoming-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-bell"></i> رویدادهای پیش‌رو</div>
+        <a class="section-link">همه</a>
+      </div>
+      <div id="upcomingList"></div>
+    </div>
+
+  </div>
+</div><!-- /main-content -->
+
+<script>
+/* ══════════════════════════════
+   DATA
+══════════════════════════════ */
+const SUBJECTS = {
+  math:  { name:'ریاضی',     icon:'fa-calculator', color:'var(--c-math)',  bg:'var(--c-math-bg)',  teacher:'آقای احمدی',  room:'کلاس ۲۰۱' },
+  phys:  { name:'فیزیک',    icon:'fa-atom',       color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  teacher:'خانم رضایی', room:'آزمایشگاه ۱' },
+  chem:  { name:'شیمی',     icon:'fa-flask',      color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  teacher:'آقای صادقی',  room:'آزمایشگاه ۲' },
+  lit:   { name:'ادبیات',   icon:'fa-book',       color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   teacher:'آقای موسوی',  room:'کلاس ۱۰۵' },
+  lang:  { name:'زبان',     icon:'fa-language',   color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  teacher:'خانم کریمی', room:'کلاس ۳۰۲' },
+  rel:   { name:'دین',      icon:'fa-star',       color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   teacher:'آقای جوادی',  room:'کلاس ۱۰۲' },
+  sport: { name:'ورزش',     icon:'fa-running',    color:'var(--c-sport)', bg:'var(--c-sport-bg)', teacher:'آقای نوری',   room:'سالن ورزش' },
+  art:   { name:'هنر',      icon:'fa-palette',    color:'var(--c-art)',   bg:'var(--c-art-bg)',   teacher:'خانم امیری', room:'کارگاه هنر' },
+};
+
+// slots = زنگ‌ها
+const SLOTS = [
+  { start:'۷:۳۰', end:'۸:۱۵' },
+  { start:'۸:۲۰', end:'۹:۰۵' },
+  { start:'۹:۱۵', end:'۱۰:۰۰' },
+  { start:'۱۰:۱۵', end:'۱۱:۰۰' },
+  { start:'۱۱:۰۵', end:'۱۱:۵۰' },
+];
+
+const BREAKS = [
+  null,            // after slot 0 → no break label (normal 5min)
+  { label:'زنگ تفریح ۱۰ دقیقه' },   // after slot 1
+  null,
+  { label:'زنگ تفریح ۱۵ دقیقه' },   // after slot 3
+  null,
+];
+
+// DAYS: شنبه=0..چهارشنبه=4  (جمعه تعطیل)
+const DAY_NAMES  = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه'];
+const DAY_DATES  = ['۲۴ اردیبهشت','۲۵ اردیبهشت','۲۶ اردیبهشت','۲۷ اردیبهشت','۲۸ اردیبهشت'];
+const TODAY_COL  = 2; // دوشنبه = index 2  (سه‌شنبه بر اساس داده‌های داشبورد)
+
+// grid[slot][day] = subjectKey | null
+const GRID = [
+  // slot 0: ۷:۳۰–۸:۱۵
+  ['math',  'lit',  'math', 'phys', 'art'],
+  // slot 1: ۸:۲۰–۹:۰۵
+  ['phys',  'math', 'phys', 'lit',  'math'],
+  // slot 2: ۹:۱۵–۱۰:۰۰
+  ['lit',   'lang', 'chem', 'math', 'lang'],
+  // slot 3: ۱۰:۱۵–۱۱:۰۰
+  ['lang',  'phys', 'lang', 'chem', 'phys'],
+  // slot 4: ۱۱:۰۵–۱۱:۵۰
+  ['sport', 'rel',  'sport','lang', 'rel'],
+];
+
+/* TODAY classes = column TODAY_COL */
+const todayKeys = GRID.map(row => row[TODAY_COL]);
+const NOW_SLOT  = 1; // فیزیک الان
+
+/* ══════════════════════════════
+   TODAY PILLS
+══════════════════════════════ */
+const todayClasses = document.getElementById('todayClasses');
+todayKeys.forEach((key, si) => {
+  if(!key) return;
+  const s  = SUBJECTS[key];
+  const sl = SLOTS[si];
+  const isNow = si === NOW_SLOT;
+  const el = document.createElement('div');
+  el.className = 'today-pill' + (isNow ? ' now-class' : '');
+  el.innerHTML = `
+    ${isNow ? '<span class="now-badge">الان</span>' : ''}
+    <div class="pill-dot" style="background:${s.color}"></div>
+    <span>${s.name}</span>
+    <span class="pill-time">${sl.start}</span>`;
+  todayClasses.appendChild(el);
+});
+
+/* ══════════════════════════════
+   WEEK TABLE
+══════════════════════════════ */
+let currentView = 'full';
+
+function buildTable(view) {
+  const tbl = document.getElementById('weekTable');
+  tbl.innerHTML = '';
+
+  // THEAD
+  const thead = tbl.createTHead();
+  const hr = thead.insertRow();
+  // time header
+  const th0 = document.createElement('th');
+  th0.className = 'time-col';
+  th0.innerHTML = `<span style="font-size:10px;color:var(--text-muted)">ساعت</span>`;
+  hr.appendChild(th0);
+
+  DAY_NAMES.forEach((d, di) => {
+    const th = document.createElement('th');
+    th.className = 'day-col day-header' + (di === TODAY_COL ? ' today-col' : '');
+    th.innerHTML = `${d}<span class="day-date">${DAY_DATES[di]}</span>${di === TODAY_COL ? '<div class="today-col-bar"></div>' : ''}`;
+    hr.appendChild(th);
+  });
+
+  // TBODY
+  const tbody = tbl.createTBody();
+
+  SLOTS.forEach((slot, si) => {
+    const tr = tbody.insertRow();
+
+    // time cell
+    const tc = tr.insertCell();
+    tc.className = 'time-cell';
+    tc.innerHTML = `<div class="time-inner"><span class="time-start">${slot.start}</span><div class="time-sep"></div><span class="time-end">${slot.end}</span></div>`;
+
+    // class cells
+    GRID[si].forEach((key, di) => {
+      const td = tr.insertCell();
+      td.className = 'class-cell' + (di === TODAY_COL ? ' today-col-cell' : '');
+      if(!key) {
+        td.innerHTML = `<div class="empty-block"></div>`;
+      } else {
+        const s = SUBJECTS[key];
+        const isNow = (si === NOW_SLOT && di === TODAY_COL);
+        td.innerHTML = `
+          <div class="class-block" style="background:${s.bg};border-color:${s.color}22;${isNow?'box-shadow:0 0 18px '+s.color+'40;border-color:'+s.color+'66!important;':''}" title="${s.name} — ${s.teacher} — ${s.room}">
+            <span class="cb-subject" style="color:${s.color}">${s.name}</span>
+            ${view==='full' ? `<span class="cb-teacher">${s.teacher}</span><span class="cb-room">${s.room}</span>` : ''}
+            <i class="fas ${s.icon} cb-icon" style="color:${s.color}"></i>
+            ${isNow ? '<span style="position:absolute;top:6px;left:8px;font-size:8px;font-weight:800;background:'+s.color+';color:#fff;padding:1px 6px;border-radius:20px;animation:pulse 2s infinite">الان</span>' : ''}
+          </div>`;
+      }
+    });
+
+    // break row
+    if(BREAKS[si]) {
+      const br = tbody.insertRow();
+      const btd = br.insertCell();
+      btd.colSpan = 6;
+      btd.className = 'break-row';
+      btd.innerHTML = `<span class="break-label"><i class="fas fa-coffee" style="margin-left:5px;opacity:.6"></i>${BREAKS[si].label}</span>`;
+    }
+  });
+}
+
+buildTable('full');
+
+function setView(v, btn) {
+  currentView = v;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildTable(v);
+}
+
+/* ══════════════════════════════
+   TEACHER LIST
+══════════════════════════════ */
+const teachers = [
+  { name:'آقای احمدی',  subject:'ریاضی',   color:'var(--c-math)',  bg:'var(--c-math-bg)',  hours:6, contact:'داخلی ۲۰۱' },
+  { name:'خانم رضایی', subject:'فیزیک',   color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  hours:5, contact:'داخلی ۱۰۱' },
+  { name:'آقای صادقی',  subject:'شیمی',    color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  hours:4, contact:'داخلی ۱۰۳' },
+  { name:'آقای موسوی',  subject:'ادبیات',  color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   hours:4, contact:'داخلی ۱۰۵' },
+  { name:'خانم کریمی', subject:'زبان',    color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  hours:4, contact:'داخلی ۳۰۲' },
+  { name:'آقای جوادی',  subject:'دین',     color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   hours:2, contact:'داخلی ۱۰۲' },
+];
+const teacherList = document.getElementById('teacherList');
+teachers.forEach(t => {
+  const initials = t.name.split(' ').map(w=>w[0]).join('');
+  const el = document.createElement('div');
+  el.className = 'teacher-item';
+  el.innerHTML = `
+    <div class="teacher-avatar" style="background:${t.bg};color:${t.color}">${initials}</div>
+    <div class="teacher-info">
+      <div class="teacher-name">${t.name}</div>
+      <div class="teacher-subject">${t.subject}</div>
+      <div class="teacher-contact"><i class="fas fa-phone-alt" style="font-size:8px;margin-left:3px"></i>${t.contact}</div>
+    </div>
+    <div class="teacher-hours" style="color:${t.color}">${toF(t.hours)} ساعت</div>`;
+  teacherList.appendChild(el);
+});
+
+/* ══════════════════════════════
+   HOURS PER SUBJECT
+══════════════════════════════ */
+const hoursData = [
+  { key:'math',  hours:6 },
+  { key:'phys',  hours:5 },
+  { key:'chem',  hours:4 },
+  { key:'lit',   hours:4 },
+  { key:'lang',  hours:4 },
+  { key:'sport', hours:2 },
+  { key:'rel',   hours:2 },
+  { key:'art',   hours:1 },
+];
+const maxH = Math.max(...hoursData.map(h=>h.hours));
+const hoursList = document.getElementById('hoursList');
+hoursData.forEach(h => {
+  const s = SUBJECTS[h.key];
+  const el = document.createElement('div');
+  el.className = 'hours-item';
+  el.innerHTML = `
+    <div class="hours-icon" style="background:${s.bg};color:${s.color}"><i class="fas ${s.icon}"></i></div>
+    <div class="hours-name">${s.name}</div>
+    <div class="hours-bar-wrap"><div class="hours-bar-fill" style="background:${s.color};width:0%" data-w="${h.hours/maxH*100}"></div></div>
+    <div class="hours-count" style="color:${s.color}">${toF(h.hours)}h</div>`;
+  hoursList.appendChild(el);
+});
+setTimeout(() => {
+  document.querySelectorAll('.hours-bar-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
+}, 400);
+
+/* ══════════════════════════════
+   UPCOMING EVENTS
+══════════════════════════════ */
+const upcoming = [
+  { title:'امتحان ریاضی', meta:'فصل سوم — کلاس ۲۰۱', when:'فردا ۸:۰۰', color:'var(--c-math)' },
+  { title:'تغییر ساعت فیزیک', meta:'کلاس پنجشنبه به ۱۰:۰۰ منتقل شد', when:'پنجشنبه', color:'var(--c-phys)' },
+  { title:'پروژه شیمی', meta:'تحویل گزارش آزمایشگاه', when:'هفته بعد', color:'var(--c-chem)' },
+  { title:'کلاس جبرانی زبان', meta:'خانم کریمی — کلاس ۳۰۲', when:'جمعه ۱۰:۰۰', color:'var(--c-lang)' },
+  { title:'اردوی علمی', meta:'بازدید از دانشگاه صنعتی', when:'۲ هفته دیگر', color:'var(--c-chem)' },
+];
+const upcomingList = document.getElementById('upcomingList');
+upcoming.forEach(u => {
+  const el = document.createElement('div');
+  el.className = 'upcoming-item';
+  el.innerHTML = `
+    <div class="upcoming-dot" style="background:${u.color}"></div>
+    <div class="upcoming-body">
+      <div class="upcoming-title">${u.title}</div>
+      <div class="upcoming-meta">${u.meta}</div>
+    </div>
+    <div class="upcoming-when" style="color:${u.color}">${u.when}</div>`;
+  upcomingList.appendChild(el);
+});
+
+/* ══════════════════════════════
+   HELPERS
+══════════════════════════════ */
+function toF(n) {
+  return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+/* ══════════════════════════════
+   HAMBURGER
+══════════════════════════════ */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+});
+</script>
+</body>
+</html>

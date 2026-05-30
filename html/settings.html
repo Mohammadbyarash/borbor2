@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تنظیمات - مدرسه بوربور</title>
+    <link rel="stylesheet" href="../style/settings.css" />
+
+    <link rel="icon" href="../image/iconB.png" id="favicon-link" />
+       <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="../date/dist/jalalidatepicker.min.css" />
+    <script src="../date/dist/jalalidatepicker.min.js"></script>
+      <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+  <body dir="rtl">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <!-- داشبورد -->
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+<!-- مدیریت کاربران (با زیرمنو) -->
+<div class="menu-item has-submenu">
+  <a href="#" class="menu-link">
+    <i class="fas fa-users"></i>
+    مدیریت کاربران
+    <i class="fas fa-chevron-down submenu-arrow"></i>
+  </a>
+  <div class="submenu">
+    <a href="../html/Assistant_management" class="submenu-item">
+      <i class="fas fa-user-tie"></i>
+      مدیریت معاونان
+    </a>
+    <a href="../html/Teacher_management" class="submenu-item">
+      <i class="fas fa-chalkboard-teacher"></i>
+      مدیریت معلمین
+    </a>
+    <a href="../html/student" class="submenu-item">
+      <i class="fas fa-user-graduate"></i>
+      مدیریت دانش‌آموزان
+    </a>
+    <a href="../html/Parents" class="submenu-item">
+      <i class="fas fa-users"></i>
+      مدیریت اولیا
+    </a>
+  </div>
+</div>
+
+<!-- مدیریت کلاس‌ها (با زیرمنو) -->
+<div class="menu-item has-submenu">
+  <a href="#" class="menu-link">
+    <i class="fas fa-chalkboard-teacher"></i>
+    مدیریت کلاس ها
+    <i class="fas fa-chevron-down submenu-arrow"></i>
+  </a>
+  <div class="submenu">
+    <a href="../html/courses.html" class="submenu-item">
+      <i class="fas fa-book"></i>
+      مدیریت دروس
+    </a>
+    <a href="../html/schedule.html" class="submenu-item">
+      <i class="fas fa-calendar-alt"></i>
+      برنامه و لیست کلاسی
+    </a>
+    <a href="../html/attendance.html" class="submenu-item">
+      <i class="fas fa-clipboard-check"></i>
+      حضور و غیاب
+    </a>
+    <a href="../html/grades.html" class="submenu-item">
+      <i class="fas fa-star"></i>
+      نمرات
+    </a>
+  </div>
+</div>
+
+        <!-- پیش ثبت نام ها -->
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <!-- گزارش ها -->
+        <div class="menu-item">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <!-- اطلاعیه ها -->
+        <div class="menu-item">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+
+         <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+
+        
+
+        <!-- تنظیمات -->
+        <div class="menu-item active">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <!-- خروج -->
+        <div class="menu-item">
+          <a href="#">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="top-header"><h1 class="page-title">تنظیمات</h1></div>
+        <div class="settings-container">
+          <section class="settings-section">
+            <h2 class="section-title">
+              <i class="fas fa-user-circle"></i> پروفایل مدیر
+            </h2>
+            <div class="profile-header">
+              <div class="profile-content">
+                <div class="profile-image-wrapper">
+                  <div
+                    class="profile-image-container"
+                    onclick="openImagePreview()"
+                  >
+                    <img
+                      src="../image/default-avatar.png"
+                      alt="عکس پروفایل"
+                      class="profile-image"
+                      id="profileImage"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-change-photo"
+                    onclick="
+                      document.getElementById('profileImageInput').click()
+                    "
+                  >
+                    <i class="fas fa-camera"></i> تغییر عکس پروفایل
+                  </button>
+                  <input
+                    type="file"
+                    id="profileImageInput"
+                    accept="image/*"
+                    style="display: none"
+                  />
+                </div>
+                <div class="profile-name-display" id="profileNameDisplay">
+                  آقای بیارش
+                </div>
+                <div class="profile-balance-display">
+                  <i class="fas fa-wallet"></i>
+                  موجودی: <span id="currentBalance">0</span> تومان
+                </div>
+              </div>
+            </div>
+            <form class="settings-form" id="profileForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">نام و نام خانوادگی</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="adminName"
+                    placeholder="نام مدیر"
+                    value="آقای بیارش"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">کد ملی</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="adminNationalCode"
+                    placeholder="کد ملی"
+                    maxlength="10"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    value=""
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">شماره تماس</label
+                  ><input
+                    type="tel"
+                    class="form-input"
+                    id="adminPhone"
+                    placeholder="شماره تماس"
+                    maxlength="11"
+                    value=""
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">تاریخ تولد</label
+                  ><input
+                    data-jdp
+                    type="text"
+                    class="form-input"
+                    id="adminBirthday"
+                    placeholder="تاریخ تولد"
+                    value=""
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">شماره موبایل برای شارژ</label
+                  ><input
+                    type="tel"
+                    class="form-input"
+                    id="adminChargePhone"
+                    placeholder="شماره موبایل برای شارژ"
+                    maxlength="11"
+                    inputmode="numeric"
+                    value=""
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">مبلغ شارژ (تومان)</label>
+                  <select class="form-select" id="chargeAmount" onchange="toggleCustomAmount()">
+                    <option value="">انتخاب مبلغ</option>
+                    <option value="50000">50,000 تومان</option>
+                    <option value="100000">100,000 تومان</option>
+                    <option value="200000">200,000 تومان</option>
+                    <option value="500000">500,000 تومان</option>
+                    <option value="1000000">1,000,000 تومان</option>
+                    <option value="custom">مبلغ دلخواه</option>
+                  </select>
+                </div>
+                <div class="form-group" id="customAmountGroup" style="display: none;">
+                  <label class="form-label">مبلغ دلخواه (تومان)</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="customAmount"
+                    placeholder="مبلغ مورد نظر را وارد کنید"
+                    inputmode="numeric"
+                  />
+                </div>
+              </div>
+              <div class="form-buttons-group">
+                <button type="button" class="btn-save" onclick="saveProfile()">
+                  <i class="fas fa-save"></i> ذخیره تغییرات پروفایل
+                </button>
+                <button type="button" class="btn-charge" onclick="processCharge()">
+                  <i class="fas fa-credit-card"></i> پرداخت و شارژ حساب
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="settings-section">
+            <h2 class="section-title">
+              <i class="fas fa-image"></i> تنظیمات لوگو و Favicon
+            </h2>
+            <form class="settings-form">
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label">نام مدرسه / لوگوی متنی</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="schoolName"
+                    placeholder="نام مدرسه"
+                    value="بوربور"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ متن لوگو</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('logoTextColor')"
+                  >
+                    <div class="color-preview" id="logoTextColorPreview"></div>
+                    <span id="logoTextColorValue">#ffffff</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">حالت نمایش لوگو</label
+                  ><select
+                    class="form-select"
+                    id="logoDisplayMode"
+                    onchange="updateLogoPreview()"
+                  >
+                    <option value="text">فقط متن</option>
+                    <option value="image">فقط تصویر</option>
+                    <option value="both">متن + تصویر</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">جهت چیدمان لوگو</label
+                  ><select
+                    class="form-select"
+                    id="logoDirection"
+                    onchange="updateLogoPreview()"
+                  >
+                    <option value="ltr">تصویر راست - متن چپ</option>
+                    <option value="rtl">متن راست - تصویر چپ</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">زبان سایت</label
+                  ><select class="form-select" id="siteLanguage">
+                    <option value="fa">فارسی</option>
+                    <option value="en">انگلیسی (English)</option>
+                    <option value="ar">عربی (العربية)</option>
+                    <option value="zh">چینی (中文)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">جهت چیدمان صفحه</label
+                  ><select
+                    class="form-select"
+                    id="pageDirection"
+                    onchange="updatePageDirection()"
+                  >
+                    <option value="rtl">راست به چپ (RTL)</option>
+                    <option value="ltr">چپ به راست (LTR)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">تصویر لوگو</label
+                  ><label class="upload-btn-custom" for="logoImageInput"
+                    ><i class="fas fa-upload"></i>
+                    <span id="logoImageName">آپلود تصویر</span
+                    ><input
+                      id="logoImageInput"
+                      type="file"
+                      accept="image/*"
+                      style="display: none"
+                  /></label>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">آیکون وب‌سایت (Favicon)</label>
+                  <div class="favicon-upload-wrapper">
+                    <label class="upload-btn-custom" for="faviconInput"
+                      ><i class="fas fa-upload"></i>
+                      <span id="faviconName">آپلود آیکون</span
+                      ><input
+                        id="faviconInput"
+                        type="file"
+                        accept="image/png,image/x-icon,image/jpeg"
+                        style="display: none"
+                    /></label>
+                    <div class="favicon-preview" id="faviconPreview"></div>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-save"
+                onclick="saveLogoSettings()"
+              >
+                <i class="fas fa-save"></i> ذخیره تنظیمات لوگو
+              </button>
+            </form>
+          </section>
+
+          <section class="settings-section">
+            <h2 class="section-title">
+              <i class="fas fa-palette"></i> تم‌های پیش‌فرض
+            </h2>
+            <div class="themes-grid">
+              <div
+                class="theme-card"
+                data-theme="blue"
+                onclick="applyTheme('blue')"
+              >
+                <div
+                  class="theme-preview"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #1e3a8a,
+                      #6d28d9,
+                      #06b6d4
+                    );
+                  "
+                >
+                  <div class="theme-text" style="color: #ffffff">
+                    آبی کلاسیک
+                  </div>
+                </div>
+                <div class="theme-name">تم آبی</div>
+              </div>
+              <div
+                class="theme-card"
+                data-theme="dark"
+                onclick="applyTheme('dark')"
+              >
+                <div
+                  class="theme-preview"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #1a1a2e,
+                      #16213e,
+                      #0f3460
+                    );
+                  "
+                >
+                  <div class="theme-text" style="color: #e0e0e0">شب تاریک</div>
+                </div>
+                <div class="theme-name">تم تیره</div>
+              </div>
+              <div
+                class="theme-card"
+                data-theme="green"
+                onclick="applyTheme('green')"
+              >
+                <div
+                  class="theme-preview"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #064e3b,
+                      #059669,
+                      #10b981
+                    );
+                  "
+                >
+                  <div class="theme-text" style="color: #ffffff">سبز طبیعت</div>
+                </div>
+                <div class="theme-name">تم سبز</div>
+              </div>
+              <div
+                class="theme-card"
+                data-theme="purple"
+                onclick="applyTheme('purple')"
+              >
+                <div
+                  class="theme-preview"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #f8f9fa,
+                      #e9ecef,
+                      #dee2e6
+                    );
+                  "
+                >
+                  <div class="theme-text" style="color: #6b21a8">
+                    بنفش سلطنتی
+                  </div>
+                </div>
+                <div class="theme-name">تم بنفش سلطنتی</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h2 class="section-title">
+              <i class="fas fa-sliders-h"></i> تنظیمات سفارشی
+            </h2>
+            <form class="settings-form" id="customSettingsForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">انتخاب فونت</label
+                  ><select
+                    class="form-select"
+                    id="fontSelect"
+                    onchange="updatePreview()"
+                  >
+                    <option value="Vazirmatn">وزیرمتن</option>
+                    <option value="Shabnam">شبنم</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Tahoma">Tahoma</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ پس‌زمینه</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('bgColor')"
+                  >
+                    <div class="color-preview" id="bgColorPreview"></div>
+                    <span id="bgColorValue">#202b59</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ Sidebar</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('sidebarColor')"
+                  >
+                    <div class="color-preview" id="sidebarColorPreview"></div>
+                    <span id="sidebarColorValue">#172047</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ متن</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('textColor')"
+                  >
+                    <div class="color-preview" id="textColorPreview"></div>
+                    <span id="textColorValue">#ffffff</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ Input ها</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('inputColor')"
+                  >
+                    <div class="color-preview" id="inputColorPreview"></div>
+                    <span id="inputColorValue">#1e2957</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ آیتم منوی فعال</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('activeMenuColor')"
+                  >
+                    <div
+                      class="color-preview"
+                      id="activeMenuColorPreview"
+                    ></div>
+                    <span id="activeMenuColorValue">#202b59</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ Hover</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('hoverColor')"
+                  >
+                    <div class="color-preview" id="hoverColorPreview"></div>
+                    <span id="hoverColorValue">#2a3f6b</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ دکمه‌ها</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('buttonColor')"
+                  >
+                    <div class="color-preview" id="buttonColorPreview"></div>
+                    <span id="buttonColorValue">#139781</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ دکمه‌های خطر</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('dangerButtonColor')"
+                  >
+                    <div
+                      class="color-preview"
+                      id="dangerButtonColorPreview"
+                    ></div>
+                    <span id="dangerButtonColorValue">#e74c3c</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رنگ اسکرول بار</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('scrollbarColor')"
+                  >
+                    <div class="color-preview" id="scrollbarColorPreview"></div>
+                    <span id="scrollbarColorValue">#3498db</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group full-width">
+                  <div class="checkbox-group">
+                    <input
+                      type="checkbox"
+                      id="enableShadow"
+                      checked
+                      onchange="toggleShadowInputs()"
+                    /><label for="enableShadow" class="form-label"
+                      >فعال‌سازی سایه دکمه‌ها</label
+                    >
+                  </div>
+                </div>
+                <div class="form-group" id="shadowColorGroup">
+                  <label class="form-label">رنگ سایه</label>
+                  <div
+                    class="color-display"
+                    onclick="openColorPicker('shadowColor')"
+                  >
+                    <div class="color-preview" id="shadowColorPreview"></div>
+                    <span id="shadowColorValue">#000000</span
+                    ><i class="fas fa-palette"></i>
+                  </div>
+                </div>
+                <div class="form-group" id="shadowOpacityGroup">
+                  <label class="form-label"
+                    >شفافیت سایه:
+                    <span id="shadowOpacityValue">30%</span></label
+                  ><input
+                    type="range"
+                    class="range-input"
+                    id="shadowOpacity"
+                    min="0"
+                    max="100"
+                    value="30"
+                    oninput="updateShadowOpacity()"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-save"
+                onclick="saveCustomSettings()"
+              >
+                <i class="fas fa-save"></i> اعمال تنظیمات سفارشی
+              </button>
+            </form>
+          </section>
+
+          <section class="settings-section">
+            <h2 class="section-title"><i class="fas fa-eye"></i> پیش‌نمایش</h2>
+            <div class="preview-container" id="previewContainer">
+              <div class="preview-sidebar" id="previewSidebar">
+                <div class="preview-logo" id="previewLogo">
+                  <img
+                    src=""
+                    alt=""
+                    class="logo-image"
+                    id="previewLogoImage"
+                    style="display: none"
+                  /><span class="logo-text" id="previewLogoText">بوربور</span>
+                </div>
+                <div class="preview-menu-item">
+                  <i class="fas fa-chart-line"></i><span>داشبورد</span>
+                </div>
+                <div class="preview-menu-item preview-menu-active">
+                  <i class="fas fa-users"></i><span>کاربران</span>
+                </div>
+              </div>
+              <div class="preview-content" id="previewContent">
+                <h3 id="previewTitle">عنوان نمونه</h3>
+                <p id="previewText">این یک پیش‌نمایش از تنظیمات شماست.</p>
+                <input
+                  type="text"
+                  class="preview-input"
+                  id="previewInput"
+                  placeholder="نمونه Input"
+                  readonly
+                />
+                <button class="preview-btn" id="previewButton">
+                  دکمه نمونه
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <button type="button" class="btn-reset" onclick="openResetModal()">
+              <i class="fas fa-undo"></i> بازگشت به تنظیمات پیش‌فرض
+            </button>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="colorPickerModal">
+      <div class="color-picker-modal-content">
+        <button class="close-btn" onclick="closeColorPicker()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">انتخاب رنگ</h2>
+        <div class="color-picker-body">
+          <input
+            type="color"
+            id="colorPickerInput"
+            class="color-picker-large"
+          />
+          <input
+            type="text"
+            id="colorPickerText"
+            class="color-text-input"
+            placeholder="#000000"
+          />
+        </div>
+        <div class="color-picker-buttons">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="confirmColorPicker()"
+          >
+            <i class="fas fa-check"></i> تایید
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeColorPicker()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="imagePreviewModal">
+      <div class="image-preview-modal-content">
+        <button class="close-btn" onclick="closeImagePreview()">
+          <i class="fas fa-times"></i>
+        </button>
+        <img src="" alt="پیش‌نمایش" id="previewImageLarge" />
+      </div>
+    </div>
+
+    <div class="modal" id="resetModal">
+      <div class="reset-modal-content">
+        <div class="reset-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2 class="modal-title">بازگشت به تنظیمات پیش‌فرض</h2>
+        <p class="reset-modal-text">
+          آیا مطمئن هستید که می‌خواهید به تنظیمات پیش‌فرض بازگردید؟<br /><strong
+            >تمام تنظیمات سفارشی شما حذف خواهد شد.</strong
+          >
+        </p>
+        <div class="reset-modal-buttons">
+          <button class="modal-btn modal-btn-confirm" onclick="confirmReset()">
+            <i class="fas fa-undo"></i> بازگشت به پیش‌فرض
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeResetModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charge Confirmation Modal -->
+    <div class="modal" id="chargeModal">
+      <div class="charge-modal-content">
+        <div class="charge-icon">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <h2 class="modal-title">تایید شارژ حساب</h2>
+        <div class="charge-details">
+          <div class="charge-detail-item">
+            <span class="charge-detail-label">شماره موبایل:</span>
+            <span class="charge-detail-value" id="chargeAccountDisplay">-</span>
+          </div>
+          <div class="charge-detail-item">
+            <span class="charge-detail-label">مبلغ شارژ:</span>
+            <span class="charge-detail-value" id="chargeAmountDisplay">-</span>
+          </div>
+        </div>
+        <p class="charge-modal-text">
+          آیا از پرداخت این مبلغ مطمئن هستید؟
+        </p>
+        <div class="charge-modal-buttons">
+          <button class="modal-btn modal-btn-confirm" onclick="confirmCharge()">
+            <i class="fas fa-check"></i> پرداخت و تایید
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeChargeModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Size Error Modal -->
+    <div class="modal" id="fileSizeModal">
+      <div class="file-size-modal-content">
+        <div class="file-size-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h2 class="modal-title">حجم فایل زیاد است!</h2>
+        <p class="file-size-text">حجم فایل انتخابی شما بیشتر از حد مجاز است.</p>
+        <div class="file-size-details">
+          <div class="file-detail-item">
+            <span class="file-detail-label">حجم فایل شما:</span>
+            <span class="file-detail-value" id="currentFileSize">-</span>
+          </div>
+          <div class="file-detail-item">
+            <span class="file-detail-label">حداکثر مجاز:</span>
+            <span class="file-detail-value">1 مگابایت</span>
+          </div>
+        </div>
+        <button
+          class="modal-btn modal-btn-single"
+          onclick="closeFileSizeModal()"
+        >
+          <i class="fas fa-check"></i> متوجه شدم
+        </button>
+      </div>
+    </div>
+
+    <script src="../javaScript/settings.js"></script>
+
+  </body>
+</html>

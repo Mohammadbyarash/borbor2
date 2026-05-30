@@ -1,0 +1,4444 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — مدیریت حضور و غیاب</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+       <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap");
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --late: #f39c12;
+        --leave: #8e5fd4;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+        --sidebar-transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 45% 45% at 55% 45%,
+            rgba(6, 214, 160, 0.04) 0%,
+            transparent 65%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: var(--sidebar-transition);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+      .sb-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .logo {
+        font-size: 26px;
+        font-weight: 900;
+        color: #fff;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .sb-close {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .sb-close:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+      }
+      .logo-sub {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .deputy-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .deputy-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .deputy-name {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .deputy-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .deputy-badge {
+        margin-top: 6px;
+        display: inline-block;
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(243, 156, 18, 0.22);
+      }
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .nav-item {
+        margin-bottom: 2px;
+      }
+      .nav-item a {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .nav-item a i {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .nav-item a:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .nav-item.active a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .nav-item.active a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .nav-item.active a i {
+        opacity: 1;
+        color: var(--accent);
+      }
+      .nav-badge {
+        margin-right: auto;
+        background: var(--accent5);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* OVERLAY */
+      .sb-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.68);
+        z-index: 399;
+        backdrop-filter: blur(3px);
+      }
+      .sb-overlay.on {
+        display: block;
+      }
+
+      /* HAMBURGER */
+      .hamburger {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .hamburger:hover {
+        border-color: var(--border-hover);
+      }
+      .hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text-muted);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger:hover span {
+        background: var(--text);
+      }
+
+      /* MAIN */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 14px;
+      }
+      .greeting h1 {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .greeting h1 span {
+        color: var(--accent);
+      }
+      .greeting p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        flex-shrink: 0;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
+        }
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .action-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 15px;
+        transition: all 0.2s;
+      }
+      .action-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .notif-dot {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 7px;
+        height: 7px;
+        background: var(--accent5);
+        border-radius: 50%;
+        border: 2px solid var(--bg-main);
+      }
+
+      /* NOTIFICATION DROPDOWN */
+      .notif-wrap {
+        position: relative;
+      }
+      .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        width: 340px;
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius);
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(255, 255, 255, 0.04);
+        z-index: 500;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s ease;
+        overflow: hidden;
+      }
+      .notif-dropdown.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
+      .notif-dropdown::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 11px;
+        height: 11px;
+        background: var(--bg-card);
+        border-top: 1px solid rgba(74, 144, 217, 0.2);
+        border-right: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .nd-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .nd-title {
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nd-title i {
+        color: var(--accent);
+      }
+      .nd-badge-count {
+        background: var(--accent5);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .nd-mark-all {
+        font-size: 10.5px;
+        color: var(--accent);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+        transition: opacity 0.2s;
+        padding: 0;
+      }
+      .nd-mark-all:hover {
+        opacity: 0.7;
+      }
+      .nd-list {
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .nd-list::-webkit-scrollbar {
+        width: 3px;
+      }
+      .nd-list::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 3px;
+      }
+      .nd-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.15s;
+        position: relative;
+      }
+      .nd-item:last-child {
+        border-bottom: none;
+      }
+      .nd-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .nd-item.unread {
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .nd-item.unread::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        background: var(--accent);
+        border-radius: 0 3px 3px 0;
+      }
+      .nd-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .nd-icon.red {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+      }
+      .nd-icon.blue {
+        background: rgba(74, 144, 217, 0.15);
+        color: var(--accent);
+      }
+      .nd-icon.green {
+        background: rgba(46, 204, 113, 0.15);
+        color: var(--present);
+      }
+      .nd-icon.orange {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .nd-icon.purple {
+        background: rgba(142, 95, 212, 0.15);
+        color: var(--accent2);
+      }
+      .nd-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .nd-item-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+        line-height: 1.4;
+      }
+      .nd-item-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .nd-item-time {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nd-item-time i {
+        font-size: 9px;
+      }
+      .nd-unread-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .nd-footer {
+        padding: 11px 16px;
+        border-top: 1px solid var(--border);
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .nd-footer a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+      .nd-footer a:hover {
+        opacity: 0.75;
+      }
+
+      /* TABS */
+      .tabs-wrapper {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 6px;
+        display: flex;
+        gap: 4px;
+        margin-bottom: 20px;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 11px 12px;
+        border: none;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .tab-btn i {
+        font-size: 13px;
+      }
+      .tab-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+      .tab-btn.active {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.22),
+          rgba(74, 144, 217, 0.08)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.3);
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.12);
+      }
+      .tab-btn.active i {
+        color: var(--accent);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+        animation: fadeUp 0.35s ease both;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* CARD */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+      }
+      .card + .card {
+        margin-top: 16px;
+      }
+      .sec-hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .sec-title {
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .sec-title i {
+        color: var(--accent);
+      }
+      .export-btns {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .export-btn {
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 6px 14px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        border: none;
+        font-family: inherit;
+      }
+      .export-btn-excel {
+        background: rgba(33, 115, 70, 0.18);
+        color: #4ade80;
+        border: 1px solid rgba(33, 115, 70, 0.35);
+      }
+      .export-btn-excel:hover {
+        background: rgba(33, 115, 70, 0.32);
+      }
+      .export-btn-pdf {
+        background: rgba(231, 76, 60, 0.14);
+        color: #f87171;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+      }
+      .export-btn-pdf:hover {
+        background: rgba(231, 76, 60, 0.25);
+      }
+
+      /* TAB 1: CLASSES GRID */
+      .filter-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .filter-select {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 9px 14px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: border-color 0.2s;
+        outline: none;
+      }
+      .filter-select:focus {
+        border-color: var(--border-hover);
+      }
+      .classes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 13px;
+      }
+      .class-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        transition: all 0.25s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .class-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      }
+      .class-card.grade-10::before {
+        background: linear-gradient(90deg, #4a90d9, #8e5fd4);
+      }
+      .class-card.grade-11::before {
+        background: linear-gradient(90deg, #06d6a0, #2ecc71);
+      }
+      .class-card.grade-12::before {
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+      }
+      .class-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+      .cc-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+      .cc-name {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .cc-meta {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+      .cc-status-badge {
+        font-size: 9px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        flex-shrink: 0;
+      }
+      .badge-active {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        animation: blink 2.5s infinite;
+      }
+      .badge-done {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .badge-pending {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-muted);
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.55;
+        }
+      }
+      .cc-stats {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .cc-stat {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 8px;
+        padding: 8px 6px;
+        text-align: center;
+      }
+      .cc-stat-val {
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .cc-stat-lbl {
+        font-size: 9px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+      .cc-bar {
+        height: 5px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        gap: 2px;
+      }
+      .cc-bar-p {
+        background: var(--present);
+        height: 100%;
+        border-radius: 4px;
+      }
+      .cc-bar-a {
+        background: var(--absent);
+        height: 100%;
+        border-radius: 4px;
+      }
+      .cc-bar-l {
+        background: var(--late);
+        height: 100%;
+        border-radius: 4px;
+      }
+      .cc-teacher {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 11px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .cc-teacher-av {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .cc-teacher-name {
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .cc-teacher-sub {
+        font-size: 9.5px;
+        color: var(--text-muted);
+      }
+
+      /* STUDENTS PANEL */
+      .students-panel {
+        margin-top: 16px;
+        display: none;
+        animation: fadeUp 0.3s ease both;
+      }
+      .students-panel.show {
+        display: block;
+      }
+      .sp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .sp-title {
+        font-size: 14px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sp-back {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11.5px;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 6px 12px;
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        border-radius: var(--radius-sm);
+        transition: all 0.2s;
+        background: rgba(74, 144, 217, 0.08);
+      }
+      .sp-back:hover {
+        background: rgba(74, 144, 217, 0.18);
+      }
+      .sp-stats-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .sp-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+      }
+      .sp-stat-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .sp-stat-val {
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .sp-stat-lbl {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .stu-table-wrap {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .stu-table-head {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 2fr;
+        gap: 8px;
+        padding: 10px 16px;
+        background: rgba(74, 144, 217, 0.08);
+        border-bottom: 1px solid var(--border);
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .stu-att-row {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 2fr;
+        gap: 8px;
+        padding: 11px 16px;
+        border-bottom: 1px solid var(--border);
+        align-items: center;
+        transition: background 0.2s;
+      }
+      .stu-att-row:last-child {
+        border-bottom: none;
+      }
+      .stu-att-row:hover {
+        background: rgba(255, 255, 255, 0.025);
+      }
+      .stu-name {
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text);
+        transition: color 0.2s;
+      }
+      .stu-name:hover {
+        color: var(--accent);
+      }
+      .stu-num {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .att-radio-group {
+        display: flex;
+        gap: 5px;
+      }
+      .att-radio {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 700;
+      }
+      .att-radio:hover {
+        border-color: var(--border-hover);
+      }
+      .att-radio.sel-p {
+        background: rgba(46, 204, 113, 0.2);
+        border-color: var(--present);
+        color: var(--present);
+      }
+      .att-radio.sel-a {
+        background: rgba(231, 76, 60, 0.2);
+        border-color: var(--absent);
+        color: var(--absent);
+      }
+      .att-radio.sel-l {
+        background: rgba(243, 156, 18, 0.2);
+        border-color: var(--late);
+        color: var(--late);
+      }
+      .att-radio.sel-v {
+        background: rgba(142, 95, 212, 0.2);
+        border-color: var(--leave);
+        color: var(--leave);
+      }
+      .att-note-input {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 11px;
+        padding: 6px 10px;
+        border-radius: 7px;
+        width: 100%;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .att-note-input:focus {
+        border-color: var(--border-hover);
+      }
+      .att-note-input::placeholder {
+        color: rgba(180, 200, 255, 0.25);
+      }
+      .sp-submit-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        background: rgba(74, 144, 217, 0.06);
+        border-top: 1px solid var(--border);
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .sp-submit-stats {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .ss-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+      }
+      .ss-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .sp-bulk-btns {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .bulk-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .bulk-btn:hover {
+        transform: translateY(-1px);
+      }
+      .bulk-btn-p {
+        border-color: rgba(46, 204, 113, 0.35);
+        color: var(--present);
+        background: rgba(46, 204, 113, 0.08);
+      }
+      .bulk-btn-p:hover {
+        background: rgba(46, 204, 113, 0.18);
+      }
+      .bulk-btn-a {
+        border-color: rgba(231, 76, 60, 0.35);
+        color: var(--absent);
+        background: rgba(231, 76, 60, 0.08);
+      }
+      .bulk-btn-a:hover {
+        background: rgba(231, 76, 60, 0.18);
+      }
+      .bulk-btn-l {
+        border-color: rgba(243, 156, 18, 0.35);
+        color: var(--late);
+        background: rgba(243, 156, 18, 0.08);
+      }
+      .bulk-btn-l:hover {
+        background: rgba(243, 156, 18, 0.18);
+      }
+      .bulk-btn-v {
+        border-color: rgba(142, 95, 212, 0.35);
+        color: var(--leave);
+        background: rgba(142, 95, 212, 0.08);
+      }
+      .bulk-btn-v:hover {
+        background: rgba(142, 95, 212, 0.18);
+      }
+      .submit-btn {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(74, 144, 217, 0.4);
+      }
+      .submit-btn.done {
+        background: linear-gradient(135deg, var(--present), #27ae60);
+      }
+
+      /* TAB 2 (Reports) */
+      .report-top {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .rep-stat {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px 14px;
+        text-align: center;
+      }
+      .rep-stat-val {
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+      .rep-stat-lbl {
+        font-size: 10.5px;
+        color: var(--text-muted);
+      }
+      .severity-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .sev-btn {
+        padding: 7px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .sev-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .sev-btn.active-sev {
+        color: #fff;
+      }
+      .sev-btn.sev-all.active-sev {
+        background: rgba(74, 144, 217, 0.2);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .sev-btn.sev-high.active-sev {
+        background: rgba(231, 76, 60, 0.15);
+        border-color: var(--absent);
+        color: var(--absent);
+      }
+      .sev-btn.sev-med.active-sev {
+        background: rgba(243, 156, 18, 0.15);
+        border-color: var(--late);
+        color: var(--late);
+      }
+      .sev-btn.sev-low.active-sev {
+        background: rgba(46, 204, 113, 0.12);
+        border-color: var(--present);
+        color: var(--present);
+      }
+      .rep-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .rep-table th {
+        text-align: right;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        padding: 10px 14px;
+        background: rgba(74, 144, 217, 0.06);
+        border-bottom: 1px solid var(--border);
+      }
+      .rep-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        vertical-align: middle;
+      }
+      .rep-table tr:last-child td {
+        border-bottom: none;
+      }
+      .rep-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .stu-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .stu-av {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .stu-name2 {
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .stu-cls {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .abs-count {
+        font-size: 18px;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+      }
+      .abs-high {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+      }
+      .abs-med {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--late);
+      }
+      .abs-low {
+        background: rgba(6, 214, 160, 0.12);
+        color: var(--accent3);
+      }
+      .trend-bar {
+        display: flex;
+        gap: 2px;
+        align-items: flex-end;
+        height: 22px;
+      }
+      .trend-bar span {
+        width: 7px;
+        border-radius: 2px;
+        background: rgba(74, 144, 217, 0.3);
+      }
+      .trend-bar span.high {
+        background: var(--absent);
+      }
+      .trend-bar span.med {
+        background: var(--late);
+      }
+      .trend-bar span.low {
+        background: var(--present);
+      }
+      .action-mini-btn {
+        padding: 5px 12px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .action-mini-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .action-mini-btn.warn-btn {
+        border-color: rgba(231, 76, 60, 0.25);
+        color: var(--absent);
+        background: rgba(231, 76, 60, 0.07);
+      }
+      .action-mini-btn.warn-btn:hover {
+        background: rgba(231, 76, 60, 0.15);
+      }
+      .action-mini-btn.detail-btn {
+        border-color: rgba(74, 144, 217, 0.25);
+        color: var(--accent);
+        background: rgba(74, 144, 217, 0.07);
+      }
+      .action-mini-btn.detail-btn:hover {
+        background: rgba(74, 144, 217, 0.15);
+      }
+
+      /* TAB 3: SMS */
+      .sms-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 16px;
+      }
+      .recipient-list {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        max-height: 420px;
+        overflow-y: auto;
+      }
+      .recipient-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .recipient-list::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+      .rl-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        background: rgba(74, 144, 217, 0.08);
+        border-bottom: 1px solid var(--border);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .rl-check-all {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        cursor: pointer;
+      }
+      .rl-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s;
+        cursor: pointer;
+      }
+      .rl-item:last-child {
+        border-bottom: none;
+      }
+      .rl-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .rl-item.selected {
+        background: rgba(74, 144, 217, 0.07);
+      }
+      .custom-check {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        font-size: 9px;
+      }
+      .custom-check.checked {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .rl-av {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+      }
+      .rl-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .rl-name {
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .rl-detail {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+      .rl-phone {
+        font-size: 10px;
+        color: var(--text-muted);
+        direction: ltr;
+        text-align: left;
+      }
+      .sms-compose {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .template-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .tmpl-btn {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 11px 12px;
+        text-align: right;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .tmpl-btn:hover {
+        border-color: var(--border-hover);
+      }
+      .tmpl-btn.selected-tmpl {
+        border-color: rgba(74, 144, 217, 0.4);
+        background: rgba(74, 144, 217, 0.08);
+      }
+      .tmpl-icon {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+      .tmpl-title {
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .tmpl-preview {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        line-height: 1.6;
+      }
+      .sms-textarea {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12.5px;
+        line-height: 1.8;
+        padding: 14px;
+        border-radius: var(--radius-sm);
+        resize: vertical;
+        min-height: 120px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+      }
+      .sms-textarea:focus {
+        border-color: var(--border-hover);
+      }
+      .sms-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .char-count {
+        transition: color 0.2s;
+      }
+      .char-over {
+        color: var(--absent);
+      }
+      .sms-send-bar {
+        background: rgba(74, 144, 217, 0.06);
+        border: 1px solid rgba(74, 144, 217, 0.12);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .sms-info {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .sms-info strong {
+        color: var(--text);
+        font-size: 13px;
+      }
+      .send-btn {
+        background: linear-gradient(135deg, var(--accent3), #2ecc71);
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(6, 214, 160, 0.25);
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .send-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(6, 214, 160, 0.35);
+      }
+      .send-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 13px 22px;
+        font-size: 12.5px;
+        font-weight: 600;
+        z-index: 9000;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.35s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-color: rgba(46, 204, 113, 0.3);
+      }
+      .toast.success i {
+        color: var(--present);
+      }
+      .toast.warning {
+        border-color: rgba(243, 156, 18, 0.3);
+      }
+      .toast.warning i {
+        color: var(--late);
+      }
+      .toast.error {
+        border-color: rgba(231, 76, 60, 0.3);
+      }
+      .toast.error i {
+        color: var(--absent);
+      }
+      .toast.info {
+        border-color: rgba(74, 144, 217, 0.3);
+      }
+      .toast.info i {
+        color: var(--accent);
+      }
+
+      /* STUDENT MODAL */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 4000;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 24px;
+        overflow-y: auto;
+        backdrop-filter: blur(4px);
+      }
+      .modal-backdrop.open {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        border-radius: var(--radius);
+        width: 100%;
+        max-width: 680px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+        animation: fadeUp 0.3s ease both;
+        margin: auto;
+      }
+      .modal-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg-card);
+        z-index: 10;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .modal-hdr-title {
+        font-size: 14px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-hdr-title i {
+        color: var(--accent);
+      }
+      .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .modal-close-btn:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+      }
+      .modal-body {
+        padding: 20px 22px;
+      }
+      .modal-ftr {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .modal-save-btn {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+      }
+      .modal-save-btn:hover {
+        transform: translateY(-2px);
+      }
+      .modal-cancel-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .modal-cancel-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .mf-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .mf-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .mf-input {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+      }
+      .mf-input:focus {
+        border-color: var(--border-hover);
+      }
+      .modal-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      /* JALALI DATE PICKER */
+      .jp-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        display: none;
+      }
+      .jp-overlay.open {
+        display: block;
+      }
+      .jp-picker {
+        position: fixed;
+        z-index: 3001;
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.3);
+        border-radius: var(--radius);
+        padding: 0;
+        width: 290px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        animation: fadeUp 0.2s ease both;
+        display: none;
+      }
+      .jp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .jp-nav-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .jp-nav-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .jp-title {
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .jp-body {
+        padding: 12px;
+      }
+      .jp-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        margin-bottom: 6px;
+      }
+      .jp-weekday {
+        text-align: center;
+        font-size: 9.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        padding: 4px 0;
+      }
+      .jp-days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+      }
+      .jp-day {
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11.5px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+      .jp-day:hover {
+        background: rgba(74, 144, 217, 0.12);
+        border-color: rgba(74, 144, 217, 0.2);
+      }
+      .jp-day.empty {
+        cursor: default;
+        pointer-events: none;
+      }
+      .jp-day.today {
+        border-color: rgba(74, 144, 217, 0.35);
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .jp-day.selected {
+        background: var(--accent);
+        color: #fff;
+        font-weight: 700;
+        border-color: var(--accent);
+      }
+      .jp-footer {
+        padding: 10px 12px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .jp-today-btn {
+        font-size: 11px;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        background: rgba(74, 144, 217, 0.08);
+        font-family: inherit;
+        transition: background 0.2s;
+      }
+      .jp-today-btn:hover {
+        background: rgba(74, 144, 217, 0.18);
+      }
+      .jp-close-btn {
+        font-size: 11px;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+      .jp-close-btn:hover {
+        color: var(--text);
+        border-color: var(--border-hover);
+      }
+      .jp-year-select,
+      .jp-month-select {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      /* SPINNER */
+      .export-spinner {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .sms-grid {
+          grid-template-columns: 1fr;
+        }
+        .report-top {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .classes-grid {
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+        .stu-table-head,
+        .stu-att-row {
+          grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr;
+        }
+      }
+      @media (max-width: 600px) {
+        .tabs-wrapper {
+          flex-wrap: wrap;
+        }
+        .tab-btn {
+          font-size: 11px;
+          padding: 9px 8px;
+        }
+        .report-top {
+          grid-template-columns: 1fr 1fr;
+        }
+        .template-grid {
+          grid-template-columns: 1fr;
+        }
+        .modal-grid {
+          grid-template-columns: 1fr;
+        }
+        .stu-table-head,
+        .stu-att-row {
+          grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+        }
+        .stu-att-row > div:last-child {
+          display: none;
+        }
+        .stu-table-head > span:last-child {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sb-overlay" id="overlay"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-top">
+        <div class="logo">بور<span>بور</span></div>
+        <button class="sb-close" onclick="closeSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="deputy-block">
+        <div class="deputy-avatar">ا</div>
+        <div>
+          <div class="deputy-name">احمد کریمی</div>
+          <div class="deputy-role">معاون آموزشی</div>
+          <div class="deputy-badge">هنرستان شهید بوربور</div>
+        </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="nav-item">
+        <a href="../html/assistant_dashboard.html"><i class="fas fa-th-large"></i> داشبورد</a>
+      </div>
+      <div class="nav-item active">
+        <a href="../html/assistant_attendance.html"
+          ><i class="fas fa-clipboard-check"></i> مدیریت حضور و غیاب
+          <span class="nav-badge">۳</span></a
+        >
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_students.html"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_teachers_management.html"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_grades_management.html"><i class="fas fa-star"></i> نمرات</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">گزارش‌ها و پیام‌ها</div>
+      <div class="nav-item">
+        <a href="../html/assistant_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_notifications.html"
+          ><i class="fas fa-bell"></i> اطلاعیه‌ها
+          <span class="nav-badge">۵</span></a
+        >
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item">
+        <a href="../html/assistant_profile.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="greeting">
+          <h1>مدیریت <span>حضور و غیاب</span></h1>
+          <p>
+            <span class="live-dot"></span> سه‌شنبه، ۲۶ اردیبهشت ۱۴۰۴ — وضعیت
+            زنده مدرسه
+          </p>
+        </div>
+        <div class="top-actions">
+          <div class="notif-wrap">
+            <div class="action-btn" id="notifBtn" onclick="toggleNotif(event)">
+              <i class="fas fa-bell"></i>
+              <div class="notif-dot" id="notifDot"></div>
+            </div>
+            <div class="notif-dropdown" id="notifDropdown">
+              <div class="nd-head">
+                <div class="nd-title">
+                  <i class="fas fa-bell"></i> اطلاعیه‌ها
+                  <span class="nd-badge-count" id="ndCount">۵</span>
+                </div>
+                <button class="nd-mark-all" onclick="markAllRead()">
+                  <i
+                    class="fas fa-check-double"
+                    style="margin-left: 4px; font-size: 10px"
+                  ></i
+                  >همه خوانده شد
+                </button>
+              </div>
+              <div class="nd-list" id="ndList"></div>
+              <div class="nd-footer">
+                <a href="#"
+                  ><i class="fas fa-list"></i> مشاهده تمام اطلاعیه‌ها<i
+                    class="fas fa-chevron-left"
+                    style="font-size: 10px; margin-right: auto"
+                  ></i
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="action-btn"
+            style="
+              background: linear-gradient(
+                135deg,
+                var(--accent),
+                var(--accent2)
+              );
+              border: none;
+              color: #fff;
+              font-weight: 800;
+              font-size: 14px;
+            "
+          >
+            ا
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 TABS only -->
+      <div class="tabs-wrapper">
+        <button class="tab-btn active" onclick="switchTab('t1', this)">
+          <i class="fas fa-school"></i> حضور همه کلاس‌ها
+        </button>
+        <button class="tab-btn" onclick="switchTab('t2', this)">
+          <i class="fas fa-chart-line"></i> گزارش غیبت‌های مکرر
+        </button>
+        <button class="tab-btn" onclick="switchTab('t3', this)">
+          <i class="fas fa-sms"></i> پیامک گروهی والدین
+        </button>
+      </div>
+
+      <!-- TAB 1 -->
+      <div id="t1" class="tab-panel active">
+        <div class="card" id="classListCard">
+          <div class="sec-hdr">
+            <div class="sec-title">
+              <i class="fas fa-school"></i> وضعیت حضور تمام کلاس‌ها — امروز
+            </div>
+            <div class="export-btns">
+              <button
+                class="export-btn export-btn-excel"
+                id="excelBtn1"
+                onclick="exportClassesExcel()"
+              >
+                <i class="fas fa-file-excel"></i> خروجی Excel
+              </button>
+              <button
+                class="export-btn export-btn-pdf"
+                id="pdfBtn1"
+                onclick="exportClassesPDF()"
+              >
+                <i class="fas fa-file-pdf"></i> خروجی PDF
+              </button>
+            </div>
+          </div>
+          <div class="filter-bar">
+            <select
+              class="filter-select"
+              id="gradeFilter"
+              onchange="filterClasses()"
+            >
+              <option value="all">همه پایه‌ها</option>
+              <option value="10">دهم</option>
+              <option value="11">یازدهم</option>
+              <option value="12">دوازدهم</option>
+            </select>
+            <select
+              class="filter-select"
+              id="statusFilter"
+              onchange="filterClasses()"
+            >
+              <option value="all">همه وضعیت‌ها</option>
+              <option value="active">در حال برگزاری</option>
+              <option value="done">پایان یافته</option>
+              <option value="pending">در انتظار</option>
+            </select>
+          </div>
+          <div class="classes-grid" id="classesGrid"></div>
+        </div>
+        <div class="students-panel card" id="studentsPanel">
+          <div class="sp-header">
+            <div class="sp-title">
+              <i class="fas fa-users" style="color: var(--accent)"></i
+              ><span id="spClassName">کلاس ۱۰۱</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+              "
+            >
+              <div class="sp-bulk-btns" style="margin-bottom: 0">
+                <button class="bulk-btn bulk-btn-p" onclick="spMarkAll('p')">
+                  <i class="fas fa-check"></i> همه حاضر
+                </button>
+                <button class="bulk-btn bulk-btn-a" onclick="spMarkAll('a')">
+                  <i class="fas fa-times"></i> همه غایب
+                </button>
+                <button class="bulk-btn bulk-btn-l" onclick="spMarkAll('l')">
+                  <i class="fas fa-clock"></i> همه تأخیر
+                </button>
+                <button class="bulk-btn bulk-btn-v" onclick="spMarkAll('v')">
+                  <i class="fas fa-umbrella-beach"></i> همه مرخصی
+                </button>
+              </div>
+              <div class="sp-back" onclick="hideStudentsPanel()">
+                <i class="fas fa-arrow-right"></i> بازگشت به لیست کلاس‌ها
+              </div>
+            </div>
+          </div>
+          <div class="sp-stats-bar" id="spStatsBar">
+            <div class="sp-stat">
+              <span
+                class="sp-stat-dot"
+                style="background: var(--present)"
+              ></span>
+              <div>
+                <div
+                  class="sp-stat-val"
+                  id="spCountP"
+                  style="color: var(--present)"
+                >
+                  ۰
+                </div>
+                <div class="sp-stat-lbl">حاضر</div>
+              </div>
+            </div>
+            <div class="sp-stat">
+              <span
+                class="sp-stat-dot"
+                style="background: var(--absent)"
+              ></span>
+              <div>
+                <div
+                  class="sp-stat-val"
+                  id="spCountA"
+                  style="color: var(--absent)"
+                >
+                  ۰
+                </div>
+                <div class="sp-stat-lbl">غایب</div>
+              </div>
+            </div>
+            <div class="sp-stat">
+              <span class="sp-stat-dot" style="background: var(--late)"></span>
+              <div>
+                <div
+                  class="sp-stat-val"
+                  id="spCountL"
+                  style="color: var(--late)"
+                >
+                  ۰
+                </div>
+                <div class="sp-stat-lbl">تأخیر</div>
+              </div>
+            </div>
+            <div class="sp-stat">
+              <span class="sp-stat-dot" style="background: var(--leave)"></span>
+              <div>
+                <div
+                  class="sp-stat-val"
+                  id="spCountV"
+                  style="color: var(--leave)"
+                >
+                  ۰
+                </div>
+                <div class="sp-stat-lbl">مرخصی</div>
+              </div>
+            </div>
+          </div>
+          <div class="stu-table-wrap">
+            <div class="stu-table-head">
+              <span>دانش‌آموز</span>
+              <span style="text-align: center">حاضر</span>
+              <span style="text-align: center">غایب</span>
+              <span style="text-align: center">تأخیر</span>
+              <span style="text-align: center">مرخصی</span>
+              <span>یادداشت</span>
+            </div>
+            <div id="spTableBody"></div>
+            <div class="sp-submit-bar">
+              <div class="sp-submit-stats">
+                <div class="ss-item">
+                  <span class="ss-dot" style="background: var(--present)"></span
+                  ><span id="spStatP">۰</span> حاضر
+                </div>
+                <div class="ss-item">
+                  <span class="ss-dot" style="background: var(--absent)"></span
+                  ><span id="spStatA">۰</span> غایب
+                </div>
+                <div class="ss-item">
+                  <span class="ss-dot" style="background: var(--late)"></span
+                  ><span id="spStatL">۰</span> تأخیر
+                </div>
+                <div class="ss-item">
+                  <span class="ss-dot" style="background: var(--leave)"></span
+                  ><span id="spStatV">۰</span> مرخصی
+                </div>
+              </div>
+              <button class="submit-btn" id="spSubmitBtn" onclick="spSubmit()">
+                <i class="fas fa-save"></i> ثبت حضور
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Reports -->
+      <div id="t2" class="tab-panel">
+        <div class="card">
+          <div class="report-top">
+            <div class="rep-stat">
+              <div class="rep-stat-val" style="color: var(--absent)">۸</div>
+              <div class="rep-stat-lbl">غیبت بحرانی (۵+)</div>
+            </div>
+            <div class="rep-stat">
+              <div class="rep-stat-val" style="color: var(--late)">۱۴</div>
+              <div class="rep-stat-lbl">غیبت متوسط (۳–۴)</div>
+            </div>
+            <div class="rep-stat">
+              <div class="rep-stat-val" style="color: var(--accent3)">۲۱</div>
+              <div class="rep-stat-lbl">غیبت کم (۱–۲)</div>
+            </div>
+            <div class="rep-stat">
+              <div class="rep-stat-val" style="color: var(--text-muted)">
+                ۳۴۳
+              </div>
+              <div class="rep-stat-lbl">بدون غیبت</div>
+            </div>
+          </div>
+          <div class="sec-hdr">
+            <div class="sec-title">
+              <i class="fas fa-chart-line"></i> لیست دانش‌آموزان با غیبت مکرر
+            </div>
+            <div class="export-btns">
+              <button
+                class="export-btn export-btn-excel"
+                id="excelBtn2"
+                onclick="exportReportExcel()"
+              >
+                <i class="fas fa-file-excel"></i> خروجی Excel
+              </button>
+              <button
+                class="export-btn export-btn-pdf"
+                id="pdfBtn2"
+                onclick="exportReportPDF()"
+              >
+                <i class="fas fa-file-pdf"></i> خروجی PDF
+              </button>
+            </div>
+          </div>
+          <div class="severity-tabs">
+            <button
+              class="sev-btn sev-all active-sev"
+              onclick="filterReport('all', this)"
+            >
+              همه (۴۳)
+            </button>
+            <button
+              class="sev-btn sev-high"
+              onclick="filterReport('high', this)"
+            >
+              بحرانی ۵+ (۸)
+            </button>
+            <button class="sev-btn sev-med" onclick="filterReport('med', this)">
+              متوسط ۳–۴ (۱۴)
+            </button>
+            <button class="sev-btn sev-low" onclick="filterReport('low', this)">
+              کم ۱–۲ (۲۱)
+            </button>
+          </div>
+          <div style="overflow-x: auto">
+            <table class="rep-table" id="reportTable">
+              <thead>
+                <tr>
+                  <th>دانش‌آموز</th>
+                  <th>تعداد غیبت</th>
+                  <th>کلاس</th>
+                  <th>آخرین غیبت</th>
+                  <th>روند</th>
+                  <th>وضعیت</th>
+                  <th>اقدام</th>
+                </tr>
+              </thead>
+              <tbody id="reportTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: SMS -->
+      <div id="t3" class="tab-panel">
+        <div class="sms-grid">
+          <div class="card">
+            <div class="sec-hdr">
+              <div class="sec-title">
+                <i class="fas fa-users"></i> انتخاب گیرندگان
+              </div>
+              <span class="sec-link" id="selectedCount">۰ نفر انتخاب</span>
+            </div>
+            <div class="filter-bar" style="margin-bottom: 14px">
+              <select
+                class="filter-select"
+                onchange="filterRecipients(this.value)"
+              >
+                <option value="all">همه والدین غیبت‌دار</option>
+                <option value="high">غیبت بحرانی</option>
+                <option value="med">غیبت متوسط</option>
+                <option value="today">غیبت امروز</option>
+              </select>
+            </div>
+            <div class="recipient-list">
+              <div class="rl-head">
+                <label class="rl-check-all" onclick="toggleAllRecipients()">
+                  <div class="custom-check" id="checkAll">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <span>انتخاب همه</span>
+                </label>
+                <span
+                  style="color: var(--text-muted); font-weight: 400"
+                  id="rlCount"
+                  >۰ از ۱۲</span
+                >
+              </div>
+              <div id="recipientList"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-hdr">
+              <div class="sec-title">
+                <i class="fas fa-pen"></i> نوشتن پیامک
+              </div>
+            </div>
+            <div class="sms-compose">
+              <div>
+                <label
+                  class="form-label"
+                  style="
+                    font-size: 11.5px;
+                    font-weight: 700;
+                    color: var(--text-muted);
+                    margin-bottom: 7px;
+                    display: block;
+                  "
+                  >قالب‌های آماده</label
+                >
+                <div class="template-grid" id="templateGrid"></div>
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  style="
+                    font-size: 11.5px;
+                    font-weight: 700;
+                    color: var(--text-muted);
+                    margin-bottom: 7px;
+                    display: block;
+                  "
+                  >متن پیامک</label
+                >
+                <textarea
+                  class="sms-textarea"
+                  id="smsText"
+                  oninput="updateCharCount()"
+                  placeholder="متن پیامک را اینجا بنویسید..."
+                ></textarea>
+                <div class="sms-meta">
+                  <span>حداکثر ۱۶۰ کاراکتر برای یک پیامک</span>
+                  <span class="char-count" id="charCount">۰ / ۱۶۰</span>
+                </div>
+              </div>
+              <div class="sms-send-bar">
+                <div class="sms-info">
+                  ارسال به <strong id="sendCount">۰</strong> والد
+                  <span style="margin: 0 8px; color: var(--border)">|</span>
+                  تخمین هزینه: <strong id="smsCost">۰</strong> تومان
+                </div>
+                <button
+                  class="send-btn"
+                  onclick="sendSMS()"
+                  id="sendBtn"
+                  disabled
+                >
+                  <i class="fas fa-paper-plane"></i> ارسال پیامک
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i><span id="toastMsg"></span>
+    </div>
+
+    <!-- DATE PICKER -->
+    <div class="jp-overlay" id="jpOverlay" onclick="closeDatePicker()"></div>
+    <div class="jp-picker" id="jpPicker">
+      <div class="jp-header">
+        <button class="jp-nav-btn" onclick="jpNav(-1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="jp-title">
+          <select
+            class="jp-month-select"
+            id="jpMonthSel"
+            onchange="jpMonthChange()"
+          ></select>
+          <select
+            class="jp-year-select"
+            id="jpYearSel"
+            onchange="jpYearChange()"
+          ></select>
+        </div>
+        <button class="jp-nav-btn" onclick="jpNav(1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </div>
+      <div class="jp-body">
+        <div class="jp-weekdays">
+          <div class="jp-weekday">ش</div>
+          <div class="jp-weekday">ی</div>
+          <div class="jp-weekday">د</div>
+          <div class="jp-weekday">س</div>
+          <div class="jp-weekday">چ</div>
+          <div class="jp-weekday">پ</div>
+          <div class="jp-weekday">ج</div>
+        </div>
+        <div class="jp-days-grid" id="jpDaysGrid"></div>
+      </div>
+      <div class="jp-footer">
+        <button class="jp-today-btn" onclick="jpSelectToday()">امروز</button>
+        <button class="jp-close-btn" onclick="closeDatePicker()">بستن</button>
+      </div>
+    </div>
+
+    <!-- STUDENT MODAL -->
+    <div
+      class="modal-backdrop"
+      id="studentModal"
+      onclick="if (event.target === this) closeStudentModal();"
+    >
+      <div class="modal-box">
+        <div class="modal-hdr">
+          <div class="modal-hdr-title">
+            <i class="fas fa-id-card"></i>
+            <span id="modalStudentName">پرونده دانش‌آموز</span>
+          </div>
+          <button class="modal-close-btn" onclick="closeStudentModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-grid">
+            <div class="mf-group">
+              <label class="mf-label">نام</label
+              ><input type="text" class="mf-input" id="mf_fname" />
+            </div>
+            <div class="mf-group">
+              <label class="mf-label">نام خانوادگی</label
+              ><input type="text" class="mf-input" id="mf_lname" />
+            </div>
+            <div class="mf-group">
+              <label class="mf-label">کلاس</label
+              ><input type="text" class="mf-input" id="mf_class" readonly />
+            </div>
+            <div class="mf-group">
+              <label class="mf-label">شماره دانش‌آموزی</label
+              ><input type="text" class="mf-input" id="mf_stunum" dir="ltr" />
+            </div>
+            <div class="mf-group">
+              <label class="mf-label">کد ملی</label
+              ><input type="text" class="mf-input" id="mf_national" dir="ltr" />
+            </div>
+            <div class="mf-group">
+              <label class="mf-label">تلفن والدین</label
+              ><input type="text" class="mf-input" id="mf_phone" dir="ltr" />
+            </div>
+          </div>
+          <div class="mf-group" style="margin-top: 8px">
+            <label class="mf-label">آدرس</label
+            ><input
+              type="text"
+              class="mf-input"
+              id="mf_address"
+              placeholder="آدرس منزل..."
+            />
+          </div>
+        </div>
+        <div class="modal-ftr">
+          <button class="modal-cancel-btn" onclick="closeStudentModal()">
+            بستن
+          </button>
+          <button class="modal-save-btn" onclick="saveStudentModal()">
+            <i class="fas fa-save" style="margin-left: 6px"></i> ذخیره
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ─── Helpers ───────────────────────────────────────────────────────────────
+      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      const en = (s) =>
+        String(s).replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+
+      // ─── Toast ─────────────────────────────────────────────────────────────────
+      function showToast(msg, type = "success") {
+        const t = document.getElementById("toast"),
+          i = t.querySelector("i");
+        document.getElementById("toastMsg").textContent = msg;
+        t.className = "toast " + type + " show";
+        i.className =
+          type === "success"
+            ? "fas fa-check-circle"
+            : type === "error"
+              ? "fas fa-times-circle"
+              : type === "warning"
+                ? "fas fa-exclamation-circle"
+                : "fas fa-info-circle";
+        clearTimeout(t._tid);
+        t._tid = setTimeout(() => {
+          t.className = "toast " + type;
+        }, 3200);
+      }
+
+      // ─── Sidebar ───────────────────────────────────────────────────────────────
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.contains("open")
+          ? closeSidebar()
+          : openSidebar();
+      }
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("overlay").classList.add("on");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("on");
+        document.body.style.overflow = "";
+      }
+      document
+        .getElementById("overlay")
+        .addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeSidebar();
+          closeDatePicker();
+        }
+      });
+
+      // ─── Tabs ──────────────────────────────────────────────────────────────────
+      function switchTab(id, btn) {
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        btn.classList.add("active");
+      }
+
+      // ─── Notifications ─────────────────────────────────────────────────────────
+      const NOTIFS = [
+        {
+          id: 1,
+          icon: "fas fa-user-times",
+          iconCls: "red",
+          title: "غیبت مکرر دانش‌آموز",
+          desc: "رامتین آذری ۷ روز غیبت — نیاز به پیگیری",
+          time: "۵ دقیقه پیش",
+          unread: true,
+        },
+        {
+          id: 2,
+          icon: "fas fa-graduation-cap",
+          iconCls: "orange",
+          title: "افت تحصیلی",
+          desc: "معدل ۳ دانش‌آموز کمتر از ۱۰ شده است",
+          time: "۲ ساعت پیش",
+          unread: true,
+        },
+        {
+          id: 3,
+          icon: "fas fa-calendar-check",
+          iconCls: "blue",
+          title: "برنامه هفتگی به‌روز شد",
+          desc: "برنامه درسی ترم دوم بارگذاری شد",
+          time: "دیروز",
+          unread: true,
+        },
+        {
+          id: 4,
+          icon: "fas fa-star",
+          iconCls: "purple",
+          title: "یادآوری ثبت نمرات",
+          desc: "مهلت ثبت نمرات میان‌ترم سه روز دیگر است",
+          time: "۲ روز پیش",
+          unread: true,
+        },
+        {
+          id: 5,
+          icon: "fas fa-check-circle",
+          iconCls: "green",
+          title: "گزارش ماهانه آماده شد",
+          desc: "گزارش فروردین ۱۴۰۴ قابل مشاهده است",
+          time: "۳ روز پیش",
+          unread: false,
+        },
+      ];
+      let notifData = NOTIFS.map((n) => ({ ...n }));
+      function renderNotifs() {
+        const list = document.getElementById("ndList");
+        const unread = notifData.filter((n) => n.unread).length;
+        document.getElementById("ndCount").textContent = fa(unread);
+        document.getElementById("ndCount").style.display = unread
+          ? "inline-block"
+          : "none";
+        document.getElementById("notifDot").style.display = unread
+          ? "block"
+          : "none";
+        if (!notifData.length) {
+          list.innerHTML = `<div style="padding:28px 16px;text-align:center;color:var(--text-muted);font-size:12px;"><i class="fas fa-bell-slash" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>اطلاعیه‌ای وجود ندارد</div>`;
+          return;
+        }
+        list.innerHTML = notifData
+          .map(
+            (n) =>
+              `<div class="nd-item${n.unread ? " unread" : ""}" onclick="readNotif(${n.id})"><div class="nd-icon ${n.iconCls}"><i class="${n.icon}"></i></div><div class="nd-body"><div class="nd-item-title">${n.title}</div><div class="nd-item-desc">${n.desc}</div><div class="nd-item-time"><i class="fas fa-clock"></i>${n.time}</div></div>${n.unread ? '<div class="nd-unread-dot"></div>' : ""}</div>`,
+          )
+          .join("");
+      }
+      function toggleNotif(e) {
+        e.stopPropagation();
+        document.getElementById("notifDropdown").classList.toggle("open");
+      }
+      function readNotif(id) {
+        const n = notifData.find((x) => x.id === id);
+        if (n && n.unread) {
+          n.unread = false;
+          renderNotifs();
+        }
+      }
+      function markAllRead() {
+        notifData.forEach((n) => {
+          n.unread = false;
+        });
+        renderNotifs();
+        showToast("همه اطلاعیه‌ها خوانده شد", "info");
+      }
+      document.addEventListener("click", (e) => {
+        const dd = document.getElementById("notifDropdown");
+        if (
+          dd &&
+          dd.classList.contains("open") &&
+          !document.getElementById("notifBtn").contains(e.target) &&
+          !dd.contains(e.target)
+        ) {
+          dd.classList.remove("open");
+        }
+      });
+      renderNotifs();
+
+      // ─── Classes Data ──────────────────────────────────────────────────────────
+      const classesData = [
+        {
+          id: "101",
+          name: "کلاس ۱۰۱",
+          grade: 10,
+          teacher: "علی محمدی",
+          subject: "ریاضی",
+          total: 32,
+          present: 30,
+          absent: 1,
+          late: 1,
+          status: "done",
+        },
+        {
+          id: "102",
+          name: "کلاس ۱۰۲",
+          grade: 10,
+          teacher: "مریم رضایی",
+          subject: "فیزیک",
+          total: 28,
+          present: 28,
+          absent: 0,
+          late: 0,
+          status: "done",
+        },
+        {
+          id: "103",
+          name: "کلاس ۱۰۳",
+          grade: 10,
+          teacher: "رضا صادقی",
+          subject: "شیمی",
+          total: 30,
+          present: 28,
+          absent: 2,
+          late: 0,
+          status: "active",
+        },
+        {
+          id: "104",
+          name: "کلاس ۱۰۴",
+          grade: 10,
+          teacher: "زهرا حسینی",
+          subject: "ادبیات",
+          total: 26,
+          present: 25,
+          absent: 1,
+          late: 0,
+          status: "pending",
+        },
+        {
+          id: "201",
+          name: "کلاس ۲۰۱",
+          grade: 11,
+          teacher: "مریم رضایی",
+          subject: "فیزیک ۲",
+          total: 30,
+          present: 27,
+          absent: 2,
+          late: 1,
+          status: "active",
+        },
+        {
+          id: "202",
+          name: "کلاس ۲۰۲",
+          grade: 11,
+          teacher: "رضا صادقی",
+          subject: "شیمی ۲",
+          total: 28,
+          present: 26,
+          absent: 1,
+          late: 1,
+          status: "pending",
+        },
+        {
+          id: "203",
+          name: "کلاس ۲۰۳",
+          grade: 11,
+          teacher: "فاطمه نوری",
+          subject: "زیست‌شناسی",
+          total: 28,
+          present: 25,
+          absent: 3,
+          late: 0,
+          status: "pending",
+        },
+        {
+          id: "204",
+          name: "کلاس ۲۰۴",
+          grade: 11,
+          teacher: "علی محمدی",
+          subject: "ریاضی ۲",
+          total: 30,
+          present: 28,
+          absent: 1,
+          late: 1,
+          status: "done",
+        },
+        {
+          id: "301",
+          name: "کلاس ۳۰۱",
+          grade: 12,
+          teacher: "زهرا حسینی",
+          subject: "ادبیات",
+          total: 26,
+          present: 24,
+          absent: 2,
+          late: 0,
+          status: "active",
+        },
+        {
+          id: "302",
+          name: "کلاس ۳۰۲",
+          grade: 12,
+          teacher: "مریم رضایی",
+          subject: "فیزیک ۳",
+          total: 24,
+          present: 22,
+          absent: 2,
+          late: 0,
+          status: "pending",
+        },
+        {
+          id: "303",
+          name: "کلاس ۳۰۳",
+          grade: 12,
+          teacher: "علی محمدی",
+          subject: "حساب دیفرانسیل",
+          total: 26,
+          present: 25,
+          absent: 1,
+          late: 0,
+          status: "done",
+        },
+        {
+          id: "304",
+          name: "کلاس ۳۰۴",
+          grade: 12,
+          teacher: "رضا صادقی",
+          subject: "شیمی آلی",
+          total: 24,
+          present: 23,
+          absent: 1,
+          late: 0,
+          status: "pending",
+        },
+        {
+          id: "305",
+          name: "کلاس ۳۰۵",
+          grade: 12,
+          teacher: "حمید یوسفی",
+          subject: "الکترونیک",
+          total: 22,
+          present: 20,
+          absent: 2,
+          late: 0,
+          status: "active",
+        },
+      ];
+
+      const studentPool = [
+        [
+          "سارا احمدی",
+          "نیلوفر میرزایی",
+          "محمد علوی",
+          "رضا پورمحمد",
+          "فاطمه کاظمی",
+          "آرین صفایی",
+          "گلناز شکوهی",
+          "دانیار نوروزی",
+          "هانیه قدیری",
+          "سینا موسوی",
+          "لیلا ابراهیمی",
+          "کیان رستمی",
+          "مهسا جعفری",
+          "پارسا حیدری",
+          "ستاره احمدزاده",
+          "آرمان یوسفی",
+          "نازنین طاهری",
+          "بهزاد کریمی",
+          "مروارید سلیمانی",
+          "میثم احمدی",
+          "شیوا رضاپور",
+          "الیاس محمودی",
+          "سیمین صادقی",
+          "پرهام غلامی",
+          "مهدی حسن‌پور",
+          "ریحانه نوری",
+          "آرش وطنی",
+          "نسرین پیرزاده",
+          "سهیل مرادی",
+          "زینب قاسمی",
+          "کامران اسدی",
+          "ندا رحیمی",
+        ],
+        [
+          "علیرضا نجفی",
+          "مهناز کریمی",
+          "سامان علوی",
+          "فروغ حسینی",
+          "نوید صادقی",
+          "آیدا محمدی",
+          "شهاب رضایی",
+          "بنفشه جعفری",
+          "ارشیا کمالی",
+          "پریا نادری",
+          "کیارش فلاح",
+          "رومینا آذر",
+          "رامتین صفایی",
+          "آناهیتا میرزا",
+          "دماوند وطنی",
+          "سپیده احمدی",
+          "فردین قاسمی",
+          "الناز رستمی",
+          "نیما سلیمانی",
+          "آرزو نوری",
+          "بابک ابراهیمی",
+          "شادی یوسفی",
+          "وحید طاهری",
+          "مژگان کاظمی",
+          "تارا موسوی",
+          "داریوش مرادی",
+          "روشنک حیدری",
+          "صادق غلامی",
+          "فائزه پیرزاده",
+          "یاسین اسدی",
+          "پویا رحیمی",
+          "منیره شکوهی",
+        ],
+        [
+          "امین نوروزی",
+          "ترانه قدیری",
+          "فریدون احمدی",
+          "مریم علوی",
+          "دیاکو صادقی",
+          "شبنم محمدی",
+          "کوروش رضایی",
+          "بهاره جعفری",
+          "ایمان کمالی",
+          "سولماز نادری",
+          "صبا فلاح",
+          "هوشنگ آذر",
+          "بیتا صفایی",
+          "اردشیر میرزا",
+          "روژان وطنی",
+          "مسعود احمدی",
+          "گیتی قاسمی",
+          "فاروق رستمی",
+          "نگین سلیمانی",
+          "زانیار نوری",
+          "گلاره ابراهیمی",
+          "سیاوش یوسفی",
+          "یلدا طاهری",
+          "رضوان کاظمی",
+          "سودابه موسوی",
+          "فرشید مرادی",
+          "دینا حیدری",
+          "محسن غلامی",
+          "سنا پیرزاده",
+          "مبینا اسدی",
+          "پیمان رحیمی",
+          "نگار شکوهی",
+        ],
+      ];
+
+      const statusLabel = {
+        active: "در حال برگزاری",
+        done: "پایان یافت",
+        pending: "در انتظار",
+      };
+      const statusClass = {
+        active: "badge-active",
+        done: "badge-done",
+        pending: "badge-pending",
+      };
+      const gradeLabel = { 10: "دهم", 11: "یازدهم", 12: "دوازدهم" };
+
+      // ─── Render Classes ─────────────────────────────────────────────────────────
+      function filterClasses() {
+        renderClasses();
+      }
+      function getFilteredClasses() {
+        const grade = document.getElementById("gradeFilter").value;
+        const status = document.getElementById("statusFilter").value;
+        return classesData.filter((c) => {
+          if (grade !== "all" && c.grade != grade) return false;
+          if (status !== "all" && c.status !== status) return false;
+          return true;
+        });
+      }
+      function renderClasses() {
+        const grid = document.getElementById("classesGrid");
+        grid.innerHTML = "";
+        const filtered = getFilteredClasses();
+        if (!filtered.length) {
+          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);font-size:13px;"><i class="fas fa-search" style="font-size:30px;margin-bottom:12px;display:block;opacity:.3"></i>هیچ کلاسی یافت نشد</div>`;
+          return;
+        }
+        filtered.forEach((c) => {
+          const pct = Math.round((c.present / c.total) * 100);
+          const el = document.createElement("div");
+          el.className = `class-card grade-${c.grade}`;
+          el.innerHTML = `
+      <div class="cc-head">
+        <div><div class="cc-name">${c.name}</div><div class="cc-meta">پایه ${gradeLabel[c.grade]} &nbsp;|&nbsp; ${fa(c.total)} نفر</div></div>
+        <span class="cc-status-badge ${statusClass[c.status]}">${statusLabel[c.status]}</span>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="cc-stat-val" style="color:var(--present)">${fa(c.present)}</div><div class="cc-stat-lbl">حاضر</div></div>
+        <div class="cc-stat"><div class="cc-stat-val" style="color:var(--absent)">${fa(c.absent)}</div><div class="cc-stat-lbl">غایب</div></div>
+        <div class="cc-stat"><div class="cc-stat-val" style="color:var(--late)">${fa(c.late)}</div><div class="cc-stat-lbl">تأخیر</div></div>
+        <div class="cc-stat"><div class="cc-stat-val" style="color:${pct >= 95 ? "var(--present)" : pct >= 88 ? "var(--late)" : "var(--absent)"}">${fa(pct)}٪</div><div class="cc-stat-lbl">حضور</div></div>
+      </div>
+      <div class="cc-bar">
+        <div class="cc-bar-p" style="width:${Math.round((c.present / c.total) * 100)}%"></div>
+        <div class="cc-bar-a" style="width:${Math.round((c.absent / c.total) * 100)}%"></div>
+        <div class="cc-bar-l" style="width:${Math.round((c.late / c.total) * 100)}%"></div>
+      </div>
+      <div class="cc-teacher">
+        <div class="cc-teacher-av" style="background:rgba(74,144,217,.18);color:var(--accent)">${c.teacher[0]}</div>
+        <div><div class="cc-teacher-name">${c.teacher}</div><div class="cc-teacher-sub">${c.subject}</div></div>
+        <span style="margin-right:auto;font-size:10px;color:var(--accent);display:flex;align-items:center;gap:4px;"><i class="fas fa-eye" style="font-size:9px;"></i> مشاهده دانش‌آموزان</span>
+      </div>`;
+          el.addEventListener("click", () => openStudentsPanel(c.id));
+          grid.appendChild(el);
+        });
+      }
+      renderClasses();
+
+      // ─── Students Panel ─────────────────────────────────────────────────────────
+      let spState = {},
+        currentClassId = null;
+
+      function getClassStudents(classId) {
+        const cls = classesData.find((c) => c.id === classId);
+        if (!cls) return [];
+        const poolIdx = classId.startsWith("1")
+          ? 0
+          : classId.startsWith("2")
+            ? 1
+            : 2;
+        return studentPool[poolIdx].slice(0, cls.total);
+      }
+
+      function openStudentsPanel(classId) {
+        currentClassId = classId;
+        const cls = classesData.find((c) => c.id === classId);
+        const students = getClassStudents(classId);
+        spState = {};
+        document.getElementById("spClassName").textContent =
+          `${cls.name} — ${cls.subject} (${cls.teacher})`;
+        const body = document.getElementById("spTableBody");
+        body.innerHTML = "";
+        students.forEach((name, i) => {
+          spState[i] = "p";
+          const row = document.createElement("div");
+          row.className = "stu-att-row";
+          row.id = "spr" + i;
+          row.innerHTML = `
+      <div><div class="stu-name" onclick="openStudentModal('${name}','${cls.name}')">${name}</div><div class="stu-num">${fa(i + 1)}</div></div>
+      <div style="text-align:center"><div class="att-radio sel-p" id="sprp${i}" onclick="spSetAtt(${i},'p')"><i class="fas fa-check"></i></div></div>
+      <div style="text-align:center"><div class="att-radio" id="spra${i}" onclick="spSetAtt(${i},'a')"><i class="fas fa-times"></i></div></div>
+      <div style="text-align:center"><div class="att-radio" id="sprl${i}" onclick="spSetAtt(${i},'l')"><i class="fas fa-clock"></i></div></div>
+      <div style="text-align:center"><div class="att-radio" id="sprv${i}" onclick="spSetAtt(${i},'v')"><i class="fas fa-umbrella-beach"></i></div></div>
+      <div><input type="text" class="att-note-input" id="spnote${i}" placeholder="یادداشت..."></div>`;
+          body.appendChild(row);
+        });
+        spUpdateCounts();
+        const panel = document.getElementById("studentsPanel");
+        panel.classList.add("show");
+        setTimeout(
+          () => panel.scrollIntoView({ behavior: "smooth", block: "start" }),
+          50,
+        );
+      }
+
+      function hideStudentsPanel() {
+        document.getElementById("studentsPanel").classList.remove("show");
+        currentClassId = null;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function spSetAtt(i, type) {
+        spState[i] = type;
+        ["p", "a", "l", "v"].forEach((t) => {
+          const el = document.getElementById("spr" + t + i);
+          if (el) el.className = "att-radio" + (type === t ? " sel-" + t : "");
+        });
+        spUpdateCounts();
+      }
+
+      function spMarkAll(type) {
+        const labels = {
+          p: "همه حاضر",
+          a: "همه غایب",
+          l: "همه تأخیر",
+          v: "همه مرخصی",
+        };
+        Object.keys(spState).forEach((i) => spSetAtt(+i, type));
+        showToast("وضعیت " + labels[type] + " اعمال شد");
+      }
+
+      function spUpdateCounts() {
+        const vals = Object.values(spState);
+        const cp = vals.filter((v) => v === "p").length,
+          ca = vals.filter((v) => v === "a").length,
+          cl = vals.filter((v) => v === "l").length,
+          cv = vals.filter((v) => v === "v").length;
+        document.getElementById("spCountP").textContent = fa(cp);
+        document.getElementById("spCountA").textContent = fa(ca);
+        document.getElementById("spCountL").textContent = fa(cl);
+        document.getElementById("spCountV").textContent = fa(cv);
+        document.getElementById("spStatP").textContent = fa(cp);
+        document.getElementById("spStatA").textContent = fa(ca);
+        document.getElementById("spStatL").textContent = fa(cl);
+        document.getElementById("spStatV").textContent = fa(cv);
+      }
+
+      function spSubmit() {
+        const btn = document.getElementById("spSubmitBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ثبت...';
+        setTimeout(() => {
+          btn.classList.add("done");
+          btn.innerHTML = '<i class="fas fa-check"></i> ثبت شد';
+          showToast("حضور و غیاب با موفقیت ثبت شد");
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.classList.remove("done");
+            btn.innerHTML = '<i class="fas fa-save"></i> ثبت حضور';
+          }, 3000);
+        }, 900);
+      }
+
+      // ─── EXCEL EXPORT: CLASSES ─────────────────────────────────────────────────
+      function exportClassesExcel() {
+        const btn = document.getElementById("excelBtn1");
+        btn.innerHTML = '<span class="export-spinner"></span> در حال ساخت...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const wb = XLSX.utils.book_new();
+
+          // Sheet 1: Summary
+          const summaryData = [
+            ["هنرستان شهید بوربور — گزارش حضور و غیاب"],
+            ["تاریخ: ۱۴۰۴/۰۲/۲۶", "", "", "", "", "", ""],
+            [""],
+            [
+              "کلاس",
+              "پایه",
+              "معلم",
+              "درس",
+              "کل دانش‌آموزان",
+              "حاضر",
+              "غایب",
+              "تأخیر",
+              "درصد حضور",
+              "وضعیت",
+            ],
+          ];
+          classesData.forEach((c) => {
+            const pct = Math.round((c.present / c.total) * 100);
+            summaryData.push([
+              c.name,
+              gradeLabel[c.grade],
+              c.teacher,
+              c.subject,
+              c.total,
+              c.present,
+              c.absent,
+              c.late,
+              pct + "%",
+              statusLabel[c.status],
+            ]);
+          });
+
+          // totals row
+          const totP = classesData.reduce((s, c) => s + c.present, 0);
+          const totA = classesData.reduce((s, c) => s + c.absent, 0);
+          const totL = classesData.reduce((s, c) => s + c.late, 0);
+          const totT = classesData.reduce((s, c) => s + c.total, 0);
+          summaryData.push([
+            "",
+            "",
+            "",
+            "",
+            "جمع کل",
+            totP,
+            totA,
+            totL,
+            Math.round((totP / totT) * 100) + "%",
+            "",
+          ]);
+
+          const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+
+          // Column widths
+          ws1["!cols"] = [
+            { wch: 14 },
+            { wch: 10 },
+            { wch: 16 },
+            { wch: 20 },
+            { wch: 16 },
+            { wch: 8 },
+            { wch: 8 },
+            { wch: 8 },
+            { wch: 12 },
+            { wch: 18 },
+          ];
+
+          // Style title row
+          ws1["A1"] = { v: "هنرستان شهید بوربور — گزارش حضور و غیاب", t: "s" };
+          ws1["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }];
+
+          XLSX.utils.book_append_sheet(wb, ws1, "خلاصه کلاس‌ها");
+
+          // Sheet 2: Per-class student detail (all classes)
+          classesData.forEach((c) => {
+            const poolIdx = c.id.startsWith("1")
+              ? 0
+              : c.id.startsWith("2")
+                ? 1
+                : 2;
+            const students = studentPool[poolIdx].slice(0, c.total);
+            const sheetData = [
+              [c.name + " — " + c.subject + " (" + c.teacher + ")"],
+              ["تاریخ: ۱۴۰۴/۰۲/۲۶", "پایه: " + gradeLabel[c.grade], "", "", ""],
+              [""],
+              ["ردیف", "نام دانش‌آموز", "وضعیت", "یادداشت"],
+            ];
+            students.forEach((name, i) => {
+              sheetData.push([i + 1, name, "حاضر", ""]);
+            });
+            const ws = XLSX.utils.aoa_to_sheet(sheetData);
+            ws["!cols"] = [{ wch: 7 }, { wch: 22 }, { wch: 12 }, { wch: 30 }];
+            ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+            // Safe sheet name (max 31 chars, no special chars)
+            const sheetName =
+              c.id +
+              "-" +
+              c.subject.replace(/[\/\[\]\*\?:]/g, "").substring(0, 20);
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+          });
+
+          XLSX.writeFile(wb, "bourbour_حضور_" + new Date().getTime() + ".xlsx");
+          btn.innerHTML = '<i class="fas fa-file-excel"></i> خروجی Excel';
+          btn.disabled = false;
+          showToast("فایل Excel با " + classesData.length + " شیت ساخته شد");
+        }, 200);
+      }
+
+      // ─── PDF EXPORT: CLASSES ───────────────────────────────────────────────────
+      function exportClassesPDF() {
+        const btn = document.getElementById("pdfBtn1");
+        btn.innerHTML = '<span class="export-spinner"></span> در حال ساخت...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({
+            orientation: "landscape",
+            unit: "mm",
+            format: "a4",
+          });
+
+          // Header bar
+          doc.setFillColor(22, 32, 64);
+          doc.rect(0, 0, 297, 297, "F");
+          doc.setFillColor(15, 22, 41);
+          doc.rect(0, 0, 297, 297, "F");
+
+          // Title block
+          doc.setFillColor(26, 38, 80);
+          doc.roundedRect(10, 8, 277, 22, 3, 3, "F");
+          doc.setFontSize(14);
+          doc.setTextColor(232, 240, 255);
+          doc.text("Attendance Report", 148, 17, { align: "center" });
+          doc.setFontSize(9);
+          doc.setTextColor(180, 200, 255, 120);
+          doc.text("Bourbour School Management | 1404/02/26", 148, 24, {
+            align: "center",
+          });
+
+          // Stats strip
+          const stats = [
+            {
+              label: "Total Classes",
+              val: classesData.length,
+              color: [74, 144, 217],
+            },
+            {
+              label: "Total Students",
+              val: classesData.reduce((s, c) => s + c.total, 0),
+              color: [46, 204, 113],
+            },
+            {
+              label: "Present",
+              val: classesData.reduce((s, c) => s + c.present, 0),
+              color: [46, 204, 113],
+            },
+            {
+              label: "Absent",
+              val: classesData.reduce((s, c) => s + c.absent, 0),
+              color: [231, 76, 60],
+            },
+            {
+              label: "Late",
+              val: classesData.reduce((s, c) => s + c.late, 0),
+              color: [243, 156, 18],
+            },
+          ];
+          stats.forEach((s, i) => {
+            const x = 10 + i * 55.4;
+            doc.setFillColor(s.color[0], s.color[1], s.color[2], 30);
+            doc.roundedRect(x, 34, 53, 14, 2, 2, "F");
+            doc.setDrawColor(s.color[0], s.color[1], s.color[2]);
+            doc.setLineWidth(0.4);
+            doc.roundedRect(x, 34, 53, 14, 2, 2, "S");
+            doc.setFontSize(16);
+            doc.setTextColor(s.color[0], s.color[1], s.color[2]);
+            doc.text(String(s.val), x + 26.5, 43, { align: "center" });
+            doc.setFontSize(7);
+            doc.setTextColor(180, 200, 255, 150);
+            doc.text(s.label, x + 26.5, 49, { align: "center" });
+          });
+
+          // Table
+          const tableData = classesData.map((c) => {
+            const pct = Math.round((c.present / c.total) * 100);
+            return [
+              c.name,
+              gradeLabel[c.grade],
+              c.teacher,
+              c.subject,
+              c.total,
+              c.present,
+              c.absent,
+              c.late,
+              pct + "%",
+              statusLabel[c.status],
+            ];
+          });
+
+          doc.autoTable({
+            startY: 52,
+            head: [
+              [
+                "Class",
+                "Grade",
+                "Teacher",
+                "Subject",
+                "Total",
+                "Present",
+                "Absent",
+                "Late",
+                "Rate",
+                "Status",
+              ],
+            ],
+            body: tableData,
+            theme: "plain",
+            styles: {
+              font: "helvetica",
+              fontSize: 8,
+              cellPadding: 3,
+              textColor: [232, 240, 255],
+              lineColor: [255, 255, 255, 20],
+              lineWidth: 0.1,
+            },
+            headStyles: {
+              fillColor: [74, 144, 217, 60],
+              textColor: [232, 240, 255],
+              fontStyle: "bold",
+              fontSize: 8.5,
+            },
+            alternateRowStyles: { fillColor: [26, 38, 80] },
+            rowStyles: { fillColor: [22, 32, 64] },
+            columnStyles: {
+              4: { halign: "center" },
+              5: { halign: "center", textColor: [46, 204, 113] },
+              6: { halign: "center", textColor: [231, 76, 60] },
+              7: { halign: "center", textColor: [243, 156, 18] },
+              8: { halign: "center" },
+            },
+            margin: { left: 10, right: 10 },
+            didDrawPage: (data) => {
+              // Footer
+              doc.setFontSize(7);
+              doc.setTextColor(180, 200, 255, 80);
+              doc.text(
+                "Bourbour v1.0 | Generated: " +
+                  new Date().toLocaleDateString("fa-IR"),
+                148,
+                208,
+                { align: "center" },
+              );
+              doc.text("Page " + data.pageNumber, 287, 208, { align: "right" });
+            },
+          });
+
+          doc.save("bourbour_classes_" + new Date().getTime() + ".pdf");
+          btn.innerHTML = '<i class="fas fa-file-pdf"></i> خروجی PDF';
+          btn.disabled = false;
+          showToast("فایل PDF کلاس‌ها با موفقیت ساخته شد");
+        }, 200);
+      }
+
+      // ─── REPORT DATA ───────────────────────────────────────────────────────────
+      const reportData = [
+        {
+          name: "رامتین آذری",
+          grade: "کلاس ۳۰۲",
+          count: 7,
+          lastDate: "امروز",
+          severity: "high",
+          notified: false,
+          trend: [1, 2, 3, 4, 5, 6, 7],
+        },
+        {
+          name: "نیکا وطنی",
+          grade: "کلاس ۳۰۲",
+          count: 6,
+          lastDate: "امروز",
+          severity: "high",
+          notified: true,
+          trend: [1, 2, 2, 4, 5, 6, 6],
+        },
+        {
+          name: "دامون پیروزی",
+          grade: "کلاس ۳۰۲",
+          count: 6,
+          lastDate: "امروز",
+          severity: "high",
+          notified: false,
+          trend: [2, 2, 3, 4, 4, 6, 6],
+        },
+        {
+          name: "سارا احمدی",
+          grade: "کلاس ۲۰۲",
+          count: 5,
+          lastDate: "دیروز",
+          severity: "high",
+          notified: true,
+          trend: [1, 1, 2, 3, 4, 5, 5],
+        },
+        {
+          name: "علی رضوانی",
+          grade: "کلاس ۱۰۱",
+          count: 5,
+          lastDate: "۲ روز پیش",
+          severity: "high",
+          notified: false,
+          trend: [1, 2, 2, 3, 4, 5, 5],
+        },
+        {
+          name: "مهسا ولی‌پور",
+          grade: "کلاس ۲۰۱",
+          count: 4,
+          lastDate: "دیروز",
+          severity: "med",
+          notified: true,
+          trend: [1, 1, 2, 3, 3, 4, 4],
+        },
+        {
+          name: "ارشیا کمالی",
+          grade: "کلاس ۱۰۲",
+          count: 4,
+          lastDate: "۳ روز پیش",
+          severity: "med",
+          notified: false,
+          trend: [1, 2, 2, 2, 3, 4, 4],
+        },
+        {
+          name: "پریا نادری",
+          grade: "کلاس ۳۰۱",
+          count: 3,
+          lastDate: "دیروز",
+          severity: "med",
+          notified: false,
+          trend: [1, 1, 1, 2, 2, 3, 3],
+        },
+        {
+          name: "کیارش فلاح",
+          grade: "کلاس ۱۰۳",
+          count: 3,
+          lastDate: "امروز",
+          severity: "med",
+          notified: true,
+          trend: [1, 1, 2, 2, 2, 3, 3],
+        },
+        {
+          name: "شیوا رضاپور",
+          grade: "کلاس ۲۰۳",
+          count: 2,
+          lastDate: "۴ روز پیش",
+          severity: "low",
+          notified: false,
+          trend: [1, 1, 1, 1, 2, 2, 2],
+        },
+        {
+          name: "بهزاد کریمی",
+          grade: "کلاس ۳۰۳",
+          count: 2,
+          lastDate: "۲ روز پیش",
+          severity: "low",
+          notified: false,
+          trend: [0, 0, 1, 1, 2, 2, 2],
+        },
+        {
+          name: "مروارید سلیمانی",
+          grade: "کلاس ۱۰۱",
+          count: 1,
+          lastDate: "امروز",
+          severity: "low",
+          notified: false,
+          trend: [0, 0, 0, 0, 0, 1, 1],
+        },
+      ];
+
+      let currentSev = "all";
+      function filterReport(sev, btn) {
+        currentSev = sev;
+        document
+          .querySelectorAll(".sev-btn")
+          .forEach((b) => b.classList.remove("active-sev"));
+        btn.classList.add("active-sev");
+        renderReport();
+      }
+      function getFilteredReport() {
+        return currentSev === "all"
+          ? reportData
+          : reportData.filter((r) => r.severity === currentSev);
+      }
+
+      function renderReport() {
+        const tbody = document.getElementById("reportTbody");
+        tbody.innerHTML = "";
+        getFilteredReport().forEach((r) => {
+          const absClass =
+            r.severity === "high"
+              ? "abs-high"
+              : r.severity === "med"
+                ? "abs-med"
+                : "abs-low";
+          const trendH = r.trend
+            .map(
+              (v) =>
+                `<span style="height:${Math.max(3, v * 3)}px" class="${v >= 5 ? "high" : v >= 3 ? "med" : "low"}"></span>`,
+            )
+            .join("");
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td><div class="stu-cell">
+        <div class="stu-av" style="background:rgba(${r.severity === "high" ? "231,76,60" : r.severity === "med" ? "243,156,18" : "6,214,160"},.18);color:${r.severity === "high" ? "var(--absent)" : r.severity === "med" ? "var(--late)" : "var(--accent3)"}">${r.name[0]}</div>
+        <div><div class="stu-name2">${r.name}</div><div class="stu-cls">${r.grade}</div></div>
+      </div></td>
+      <td><span class="abs-count ${absClass}">${fa(r.count)}</span></td>
+      <td style="color:var(--text-muted);font-size:11px">${r.grade}</td>
+      <td style="font-size:11px;color:var(--text-muted)">${r.lastDate}</td>
+      <td><div class="trend-bar">${trendH}</div></td>
+      <td>${r.notified ? `<span style="font-size:10px;color:var(--accent3)"><i class="fas fa-check-circle"></i> اطلاع‌رسانی شد</span>` : `<span style="font-size:10px;color:var(--text-muted)">ثبت نشده</span>`}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap;">
+        <button class="action-mini-btn warn-btn" onclick="sendWarn('${r.name}')"><i class="fas fa-sms"></i> پیامک</button>
+        <button class="action-mini-btn detail-btn" onclick="openStudentModal('${r.name}','${r.grade}')"><i class="fas fa-eye"></i> جزئیات</button>
+      </td>`;
+          tbody.appendChild(tr);
+        });
+      }
+      function sendWarn(name) {
+        switchTab("t3", document.querySelectorAll(".tab-btn")[2]);
+        showToast(`والد «${name}» برای ارسال پیامک انتخاب شد`);
+      }
+      renderReport();
+
+      // ─── EXCEL EXPORT: REPORT ─────────────────────────────────────────────────
+      function exportReportExcel() {
+        const btn = document.getElementById("excelBtn2");
+        btn.innerHTML = '<span class="export-spinner"></span> در حال ساخت...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const wb = XLSX.utils.book_new();
+          const sevLabel = {
+            high: "بحرانی ۵+",
+            med: "متوسط ۳–۴",
+            low: "کم ۱–۲",
+          };
+
+          // Sheet 1: Summary stats
+          const ws1 = XLSX.utils.aoa_to_sheet([
+            ["هنرستان شهید بوربور — گزارش غیبت‌های مکرر"],
+            ["تاریخ گزارش: ۱۴۰۴/۰۲/۲۶"],
+            [""],
+            ["دسته‌بندی", "تعداد دانش‌آموز", "توضیح"],
+            [
+              "بحرانی ۵+",
+              reportData.filter((r) => r.severity === "high").length,
+              "نیاز به پیگیری فوری",
+            ],
+            [
+              "متوسط ۳–۴",
+              reportData.filter((r) => r.severity === "med").length,
+              "نیاز به هشدار",
+            ],
+            [
+              "کم ۱–۲",
+              reportData.filter((r) => r.severity === "low").length,
+              "پایش",
+            ],
+            ["بدون غیبت", 343, "وضعیت مطلوب"],
+            [""],
+            ["جمع دانش‌آموزان غیبت‌دار", reportData.length, ""],
+          ]);
+          ws1["!cols"] = [{ wch: 18 }, { wch: 18 }, { wch: 24 }];
+          ws1["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }];
+          XLSX.utils.book_append_sheet(wb, ws1, "آمار کلی");
+
+          // Sheet 2: Full list
+          const rows = [
+            ["هنرستان شهید بوربور — لیست کامل دانش‌آموزان غیبت‌دار"],
+            [""],
+            [
+              "ردیف",
+              "نام دانش‌آموز",
+              "کلاس",
+              "تعداد غیبت",
+              "آخرین غیبت",
+              "سطح",
+              "اطلاع‌رسانی",
+              "روند (۷ روز)",
+            ],
+          ];
+          reportData.forEach((r, i) => {
+            rows.push([
+              i + 1,
+              r.name,
+              r.grade,
+              r.count,
+              r.lastDate,
+              sevLabel[r.severity],
+              r.notified ? "بله" : "خیر",
+              r.trend.join(" - "),
+            ]);
+          });
+          const ws2 = XLSX.utils.aoa_to_sheet(rows);
+          ws2["!cols"] = [
+            { wch: 7 },
+            { wch: 20 },
+            { wch: 14 },
+            { wch: 12 },
+            { wch: 14 },
+            { wch: 14 },
+            { wch: 14 },
+            { wch: 22 },
+          ];
+          ws2["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
+          XLSX.utils.book_append_sheet(wb, ws2, "لیست غیبت‌دارها");
+
+          // Sheet 3: Critical only
+          const critRows = [
+            ["فهرست دانش‌آموزان بحرانی — نیاز به پیگیری فوری"],
+            [""],
+            ["نام", "کلاس", "تعداد غیبت", "آخرین غیبت", "اطلاع‌رسانی"],
+          ];
+          reportData
+            .filter((r) => r.severity === "high")
+            .forEach((r) => {
+              critRows.push([
+                r.name,
+                r.grade,
+                r.count,
+                r.lastDate,
+                r.notified ? "انجام شد" : "انجام نشده",
+              ]);
+            });
+          const ws3 = XLSX.utils.aoa_to_sheet(critRows);
+          ws3["!cols"] = [
+            { wch: 20 },
+            { wch: 14 },
+            { wch: 14 },
+            { wch: 14 },
+            { wch: 18 },
+          ];
+          ws3["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+          XLSX.utils.book_append_sheet(wb, ws3, "موارد بحرانی");
+
+          XLSX.writeFile(wb, "bourbour_غیبت_" + new Date().getTime() + ".xlsx");
+          btn.innerHTML = '<i class="fas fa-file-excel"></i> خروجی Excel';
+          btn.disabled = false;
+          showToast("فایل Excel با ۳ شیت ساخته شد");
+        }, 200);
+      }
+
+      // ─── PDF EXPORT: REPORT ────────────────────────────────────────────────────
+      function exportReportPDF() {
+        const btn = document.getElementById("pdfBtn2");
+        btn.innerHTML = '<span class="export-spinner"></span> در حال ساخت...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+          });
+          const sevLabel = {
+            high: "Critical 5+",
+            med: "Medium 3-4",
+            low: "Low 1-2",
+          };
+          const sevColor = {
+            high: [231, 76, 60],
+            med: [243, 156, 18],
+            low: [46, 204, 113],
+          };
+
+          // Dark background
+          doc.setFillColor(15, 22, 41);
+          doc.rect(0, 0, 210, 297, "F");
+
+          // Header
+          doc.setFillColor(26, 38, 80);
+          doc.roundedRect(8, 8, 194, 24, 3, 3, "F");
+          doc.setFillColor(231, 76, 60);
+          doc.roundedRect(8, 8, 4, 24, 2, 2, "F");
+
+          doc.setFontSize(13);
+          doc.setTextColor(232, 240, 255);
+          doc.text("Absence Report", 105, 18, { align: "center" });
+          doc.setFontSize(8);
+          doc.setTextColor(180, 200, 255, 150);
+          doc.text(
+            "Bourbour School | 1404/02/26 | Repeated Absences",
+            105,
+            25,
+            { align: "center" },
+          );
+
+          // Stats boxes
+          const statItems = [
+            {
+              label: "Critical",
+              val: reportData.filter((r) => r.severity === "high").length,
+              c: [231, 76, 60],
+            },
+            {
+              label: "Medium",
+              val: reportData.filter((r) => r.severity === "med").length,
+              c: [243, 156, 18],
+            },
+            {
+              label: "Low",
+              val: reportData.filter((r) => r.severity === "low").length,
+              c: [46, 204, 113],
+            },
+            { label: "No Absence", val: 343, c: [74, 144, 217] },
+          ];
+          statItems.forEach((s, i) => {
+            const x = 8 + i * 48.5;
+            doc.setFillColor(s.c[0], s.c[1], s.c[2], 25);
+            doc.roundedRect(x, 36, 46, 16, 2, 2, "F");
+            doc.setDrawColor(s.c[0], s.c[1], s.c[2]);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(x, 36, 46, 16, 2, 2, "S");
+            doc.setFontSize(18);
+            doc.setTextColor(s.c[0], s.c[1], s.c[2]);
+            doc.text(String(s.val), x + 23, 46, { align: "center" });
+            doc.setFontSize(7);
+            doc.setTextColor(180, 200, 255, 140);
+            doc.text(s.label, x + 23, 51, { align: "center" });
+          });
+
+          // Table
+          const tableRows = reportData.map((r, i) => [
+            i + 1,
+            r.name,
+            r.grade,
+            r.count,
+            r.lastDate,
+            sevLabel[r.severity],
+            r.notified ? "Yes" : "No",
+          ]);
+
+          doc.autoTable({
+            startY: 58,
+            head: [
+              [
+                "#",
+                "Student Name",
+                "Class",
+                "Absences",
+                "Last Date",
+                "Level",
+                "Notified",
+              ],
+            ],
+            body: tableRows,
+            theme: "plain",
+            styles: {
+              font: "helvetica",
+              fontSize: 8,
+              cellPadding: 3,
+              textColor: [232, 240, 255],
+              lineColor: [255, 255, 255, 10],
+              lineWidth: 0.1,
+            },
+            headStyles: {
+              fillColor: [74, 144, 217, 50],
+              textColor: [232, 240, 255],
+              fontStyle: "bold",
+            },
+            alternateRowStyles: { fillColor: [26, 38, 80] },
+            rowStyles: { fillColor: [22, 32, 64] },
+            columnStyles: {
+              0: { halign: "center", cellWidth: 10 },
+              3: { halign: "center", textColor: [231, 76, 60] },
+              6: { halign: "center" },
+            },
+            margin: { left: 8, right: 8 },
+            didParseCell: (data) => {
+              if (data.column.index === 5 && data.section === "body") {
+                const sev = reportData[data.row.index]?.severity;
+                if (sev) data.cell.styles.textColor = sevColor[sev];
+              }
+            },
+            didDrawPage: (data) => {
+              doc.setFontSize(7);
+              doc.setTextColor(180, 200, 255, 70);
+              doc.text("Bourbour v1.0 | Confidential", 105, 292, {
+                align: "center",
+              });
+              doc.text("Page " + data.pageNumber, 202, 292, { align: "right" });
+            },
+          });
+
+          doc.save("bourbour_absence_report_" + new Date().getTime() + ".pdf");
+          btn.innerHTML = '<i class="fas fa-file-pdf"></i> خروجی PDF';
+          btn.disabled = false;
+          showToast("فایل PDF گزارش غیبت‌ها ساخته شد");
+        }, 200);
+      }
+
+      // ─── SMS ───────────────────────────────────────────────────────────────────
+      const recipientData = [
+        {
+          name: "سارا احمدی",
+          grade: "کلاس ۲۰۲",
+          phone: "09121234567",
+          absCount: 5,
+          sev: "high",
+        },
+        {
+          name: "رامتین آذری",
+          grade: "کلاس ۳۰۲",
+          phone: "09131234568",
+          absCount: 7,
+          sev: "high",
+        },
+        {
+          name: "نیکا وطنی",
+          grade: "کلاس ۳۰۲",
+          phone: "09141234569",
+          absCount: 6,
+          sev: "high",
+        },
+        {
+          name: "دامون پیروزی",
+          grade: "کلاس ۳۰۲",
+          phone: "09151234570",
+          absCount: 6,
+          sev: "high",
+        },
+        {
+          name: "گلناز شکوهی",
+          grade: "کلاس ۲۰۱",
+          phone: "09161234571",
+          absCount: 4,
+          sev: "med",
+        },
+        {
+          name: "محمد علوی",
+          grade: "کلاس ۱۰۱",
+          phone: "09171234572",
+          absCount: 3,
+          sev: "med",
+        },
+        {
+          name: "مهسا ولی‌پور",
+          grade: "کلاس ۲۰۱",
+          phone: "09181234573",
+          absCount: 4,
+          sev: "med",
+        },
+        {
+          name: "ارشیا کمالی",
+          grade: "کلاس ۱۰۲",
+          phone: "09191234574",
+          absCount: 4,
+          sev: "med",
+        },
+        {
+          name: "پریا نادری",
+          grade: "کلاس ۳۰۱",
+          phone: "09201234575",
+          absCount: 3,
+          sev: "med",
+        },
+        {
+          name: "شیوا رضاپور",
+          grade: "کلاس ۲۰۳",
+          phone: "09211234576",
+          absCount: 2,
+          sev: "low",
+        },
+        {
+          name: "بهزاد کریمی",
+          grade: "کلاس ۳۰۳",
+          phone: "09221234577",
+          absCount: 2,
+          sev: "low",
+        },
+        {
+          name: "مروارید سلیمانی",
+          grade: "کلاس ۱۰۱",
+          phone: "09231234578",
+          absCount: 1,
+          sev: "low",
+        },
+      ];
+      let selectedRecipients = new Set(),
+        filteredRecipients = [...recipientData];
+      const templates = [
+        {
+          icon: "⚠️",
+          title: "غیبت مکرر",
+          text: "دانش‌آموز گرامی، فرزند شما در چند جلسه غیبت داشته است. لطفاً هرچه سریع‌تر با مدرسه تماس بگیرید.",
+        },
+        {
+          icon: "📅",
+          title: "غیبت امروز",
+          text: "اطلاعیه: فرزند شما امروز در کلاس غیبت داشته است. لطفاً پیگیری فرمایید.",
+        },
+        {
+          icon: "📞",
+          title: "درخواست مراجعه",
+          text: "والدین محترم، خواهشمند است در اسرع وقت برای بررسی وضعیت تحصیلی فرزندتان به مدرسه مراجعه فرمایید.",
+        },
+        {
+          icon: "🔔",
+          title: "هشدار نهایی",
+          text: "این آخرین هشدار در خصوص غیبت‌های مکرر فرزند شما می‌باشد. عدم رسیدگی منجر به مشکل آموزشی می‌گردد.",
+        },
+      ];
+      function renderTemplates() {
+        const grid = document.getElementById("templateGrid");
+        grid.innerHTML = "";
+        templates.forEach((t) => {
+          const btn = document.createElement("div");
+          btn.className = "tmpl-btn";
+          btn.innerHTML = `<div class="tmpl-icon">${t.icon}</div><div class="tmpl-title">${t.title}</div><div class="tmpl-preview">${t.text.slice(0, 50)}...</div>`;
+          btn.onclick = () => {
+            document
+              .querySelectorAll(".tmpl-btn")
+              .forEach((b) => b.classList.remove("selected-tmpl"));
+            btn.classList.add("selected-tmpl");
+            document.getElementById("smsText").value = t.text;
+            updateCharCount();
+          };
+          grid.appendChild(btn);
+        });
+      }
+      renderTemplates();
+      function renderRecipients() {
+        const list = document.getElementById("recipientList");
+        list.innerHTML = "";
+        filteredRecipients.forEach((r) => {
+          const isSel = selectedRecipients.has(r.phone);
+          const item = document.createElement("div");
+          item.className = "rl-item" + (isSel ? " selected" : "");
+          item.innerHTML = `<div class="custom-check ${isSel ? "checked" : ""}"><i class="fas fa-check"></i></div><div class="rl-av">${r.name[0]}</div><div class="rl-info"><div class="rl-name">${r.name}</div><div class="rl-detail">${r.grade} — ${fa(r.absCount)} غیبت</div></div><div class="rl-phone">${r.phone}</div>`;
+          item.onclick = () => toggleRecipient(r.phone);
+          list.appendChild(item);
+        });
+        updateSmsInfo();
+      }
+      function toggleRecipient(phone) {
+        if (selectedRecipients.has(phone)) selectedRecipients.delete(phone);
+        else selectedRecipients.add(phone);
+        renderRecipients();
+      }
+      function toggleAllRecipients() {
+        if (selectedRecipients.size === filteredRecipients.length) {
+          filteredRecipients.forEach((r) => selectedRecipients.delete(r.phone));
+          document.getElementById("checkAll").classList.remove("checked");
+        } else {
+          filteredRecipients.forEach((r) => selectedRecipients.add(r.phone));
+          document.getElementById("checkAll").classList.add("checked");
+        }
+        renderRecipients();
+      }
+      function filterRecipients(type) {
+        if (type === "all") filteredRecipients = [...recipientData];
+        else if (type === "today")
+          filteredRecipients = recipientData.filter((r) => r.absCount >= 1);
+        else filteredRecipients = recipientData.filter((r) => r.sev === type);
+        selectedRecipients.clear();
+        document.getElementById("checkAll").classList.remove("checked");
+        renderRecipients();
+      }
+      function updateSmsInfo() {
+        const n = selectedRecipients.size;
+        document.getElementById("selectedCount").textContent =
+          fa(n) + " نفر انتخاب";
+        document.getElementById("sendCount").textContent = fa(n);
+        document.getElementById("smsCost").textContent = fa(n * 350);
+        document.getElementById("rlCount").textContent =
+          fa(n) + " از " + fa(filteredRecipients.length);
+        const hasTxt =
+          document.getElementById("smsText").value.trim().length > 0;
+        document.getElementById("sendBtn").disabled = n === 0 || !hasTxt;
+      }
+      function updateCharCount() {
+        const txt = document.getElementById("smsText").value;
+        const el = document.getElementById("charCount");
+        el.textContent = fa(txt.length) + " / ۱۶۰";
+        el.className = "char-count" + (txt.length > 160 ? " char-over" : "");
+        updateSmsInfo();
+      }
+      function sendSMS() {
+        const n = selectedRecipients.size;
+        if (n === 0) {
+          showToast("لطفاً گیرندگان را انتخاب کنید", "warning");
+          return;
+        }
+        if (!document.getElementById("smsText").value.trim()) {
+          showToast("لطفاً متن پیامک را بنویسید", "warning");
+          return;
+        }
+        showToast(`پیامک با موفقیت به ${fa(n)} والد ارسال شد`);
+        selectedRecipients.clear();
+        document.getElementById("smsText").value = "";
+        document
+          .querySelectorAll(".tmpl-btn")
+          .forEach((b) => b.classList.remove("selected-tmpl"));
+        updateCharCount();
+        renderRecipients();
+      }
+      renderRecipients();
+
+      // ─── Student Modal ─────────────────────────────────────────────────────────
+      function openStudentModal(name, grade) {
+        const parts = name.split(" ");
+        document.getElementById("modalStudentName").textContent = name;
+        document.getElementById("mf_fname").value = parts[0] || "";
+        document.getElementById("mf_lname").value =
+          parts.slice(1).join(" ") || "";
+        document.getElementById("mf_class").value = grade || "";
+        document.getElementById("mf_stunum").value = "";
+        document.getElementById("mf_national").value = "";
+        document.getElementById("mf_phone").value = "";
+        document.getElementById("mf_address").value = "";
+        document.getElementById("studentModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeStudentModal() {
+        document.getElementById("studentModal").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function saveStudentModal() {
+        showToast("اطلاعات دانش‌آموز ذخیره شد");
+        closeStudentModal();
+      }
+
+      // ─── Jalali Date Picker ────────────────────────────────────────────────────
+      const JP_MONTHS = [
+        "فروردین",
+        "اردیبهشت",
+        "خرداد",
+        "تیر",
+        "مرداد",
+        "شهریور",
+        "مهر",
+        "آبان",
+        "آذر",
+        "دی",
+        "بهمن",
+        "اسفند",
+      ];
+      let jpYear = 1404,
+        jpMonth = 2,
+        jpTargetId = null,
+        jpMinYear = 1380,
+        jpMaxYear = 1410,
+        jpSelectedDate = null;
+      function gToJ(gy, gm, gd) {
+        var jy = gy <= 1600 ? 0 : 979;
+        gy -= gy <= 1600 ? 621 : 1600;
+        var gy2 = gm > 2 ? gy + 1 : gy;
+        var days =
+          365 * gy +
+          Math.floor((gy2 + 3) / 4) -
+          Math.floor((gy2 + 99) / 100) +
+          Math.floor((gy2 + 399) / 400) -
+          80 +
+          gd +
+          [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334][gm - 1];
+        jy += 33 * Math.floor(days / 12053);
+        days %= 12053;
+        jy += 4 * Math.floor(days / 1461);
+        days %= 1461;
+        if (days > 365) {
+          jy += Math.floor((days - 1) / 365);
+          days = (days - 1) % 365;
+        }
+        var jm =
+          days < 186
+            ? 1 + Math.floor(days / 31)
+            : 7 + Math.floor((days - 186) / 30);
+        var jd = 1 + (days < 186 ? days % 31 : (days - 186) % 30);
+        return [jy, jm, jd];
+      }
+      function jToG(jy, jm, jd) {
+        jy -= 979;
+        jm--;
+        var j_d =
+          365 * jy + Math.floor(jy / 33) * 8 + Math.floor(((jy % 33) + 3) / 4);
+        for (var i = 0; i < jm; i++)
+          j_d += [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29][i];
+        j_d += jd - 1;
+        var g_d = j_d + 79;
+        var gy = 1600 + 400 * Math.floor(g_d / 146097);
+        g_d %= 146097;
+        var leap = true;
+        if (g_d >= 36525) {
+          g_d--;
+          gy += 100 * Math.floor(g_d / 36524);
+          g_d %= 36524;
+          if (g_d >= 365) g_d++;
+          else leap = false;
+        }
+        gy += 4 * Math.floor(g_d / 1461);
+        g_d %= 1461;
+        if (g_d >= 366) {
+          leap = false;
+          g_d--;
+          gy += Math.floor(g_d / 365);
+          g_d %= 365;
+        }
+        var gmo,
+          gd2,
+          gm2 = [
+            31,
+            29 * +leap + 28 * (!+leap ? 1 : 0),
+            31,
+            30,
+            31,
+            30,
+            31,
+            31,
+            30,
+            31,
+            30,
+            31,
+          ];
+        for (var i = 0; i < 12; i++) {
+          if (g_d < gm2[i]) {
+            gmo = i + 1;
+            break;
+          }
+          g_d -= gm2[i];
+        }
+        gd2 = g_d + 1;
+        return [gy, gmo, gd2];
+      }
+      function isJLeap(jy) {
+        return [1, 5, 9, 13, 17, 22, 26, 30].indexOf(jy % 33) >= 0;
+      }
+      function jMonthLen(jy, jm) {
+        if (jm <= 6) return 31;
+        if (jm <= 11) return 30;
+        return isJLeap(jy) ? 30 : 29;
+      }
+      function jDayOfWeek(jy, jm, jd) {
+        var [gy, gm, gd] = jToG(jy, jm, jd);
+        var d = new Date(gy, gm - 1, gd).getDay();
+        return (d + 1) % 7;
+      }
+      function openDatePicker(inputEl, targetId) {
+        jpTargetId = targetId || inputEl.id;
+        var val = en(inputEl.value || ""),
+          parts = val.split("/");
+        if (parts.length === 3 && !isNaN(parts[0])) {
+          jpYear = +parts[0];
+          jpMonth = +parts[1];
+          jpSelectedDate = { y: +parts[0], m: +parts[1], d: +parts[2] };
+        } else {
+          var td = new Date();
+          var [jy, jm, jd] = gToJ(
+            td.getFullYear(),
+            td.getMonth() + 1,
+            td.getDate(),
+          );
+          jpYear = jy;
+          jpMonth = jm;
+          jpSelectedDate = null;
+        }
+        buildPickerSelects();
+        renderJPDays();
+        var picker = document.getElementById("jpPicker");
+        var rect = inputEl.getBoundingClientRect();
+        var top = rect.bottom + window.scrollY + 4;
+        var right = Math.max(8, document.body.offsetWidth - rect.right);
+        picker.style.top = top + "px";
+        picker.style.right = right + "px";
+        picker.style.display = "block";
+        document.getElementById("jpOverlay").classList.add("open");
+      }
+      function buildPickerSelects() {
+        var ms = document.getElementById("jpMonthSel"),
+          ys = document.getElementById("jpYearSel");
+        ms.innerHTML = "";
+        JP_MONTHS.forEach((m, i) => {
+          var o = document.createElement("option");
+          o.value = i + 1;
+          o.textContent = m;
+          o.selected = i + 1 === jpMonth;
+          ms.appendChild(o);
+        });
+        ys.innerHTML = "";
+        for (var y = jpMaxYear; y >= jpMinYear; y--) {
+          var o = document.createElement("option");
+          o.value = y;
+          o.textContent = fa(y);
+          o.selected = y === jpYear;
+          ys.appendChild(o);
+        }
+      }
+      function renderJPDays() {
+        var grid = document.getElementById("jpDaysGrid");
+        grid.innerHTML = "";
+        var len = jMonthLen(jpYear, jpMonth),
+          firstDow = jDayOfWeek(jpYear, jpMonth, 1);
+        var td = new Date();
+        var [tjy, tjm, tjd] = gToJ(
+          td.getFullYear(),
+          td.getMonth() + 1,
+          td.getDate(),
+        );
+        for (var i = 0; i < firstDow; i++) {
+          var e = document.createElement("div");
+          e.className = "jp-day empty";
+          grid.appendChild(e);
+        }
+        for (var d = 1; d <= len; d++) {
+          var e = document.createElement("div");
+          e.className = "jp-day";
+          e.textContent = fa(d);
+          var dd = d;
+          if (jpYear === tjy && jpMonth === tjm && d === tjd)
+            e.classList.add("today");
+          if (
+            jpSelectedDate &&
+            jpSelectedDate.y === jpYear &&
+            jpSelectedDate.m === jpMonth &&
+            jpSelectedDate.d === d
+          )
+            e.classList.add("selected");
+          e.onclick = (function (day) {
+            return function () {
+              jpSelectDay(day);
+            };
+          })(dd);
+          grid.appendChild(e);
+        }
+      }
+      function jpNav(dir) {
+        jpMonth += dir;
+        if (jpMonth > 12) {
+          jpMonth = 1;
+          jpYear++;
+        }
+        if (jpMonth < 1) {
+          jpMonth = 12;
+          jpYear--;
+        }
+        buildPickerSelects();
+        renderJPDays();
+      }
+      function jpMonthChange() {
+        jpMonth = +document.getElementById("jpMonthSel").value;
+        renderJPDays();
+      }
+      function jpYearChange() {
+        jpYear = +document.getElementById("jpYearSel").value;
+        renderJPDays();
+      }
+      function jpSelectDay(d) {
+        jpSelectedDate = { y: jpYear, m: jpMonth, d: d };
+        renderJPDays();
+        var val =
+          fa(jpYear) +
+          "/" +
+          fa(String(jpMonth).padStart(2, "0")) +
+          "/" +
+          fa(String(d).padStart(2, "0"));
+        if (jpTargetId) {
+          var el = document.getElementById(jpTargetId);
+          if (el) el.value = val;
+        }
+        setTimeout(closeDatePicker, 180);
+      }
+      function jpSelectToday() {
+        var td = new Date();
+        var [jy, jm, jd] = gToJ(
+          td.getFullYear(),
+          td.getMonth() + 1,
+          td.getDate(),
+        );
+        jpYear = jy;
+        jpMonth = jm;
+        buildPickerSelects();
+        jpSelectDay(jd);
+      }
+      function closeDatePicker() {
+        document.getElementById("jpPicker").style.display = "none";
+        document.getElementById("jpOverlay").classList.remove("open");
+      }
+    </script>
+  </body>
+</html>

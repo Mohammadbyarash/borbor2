@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - اطلاعیه‌ها</title>
+    <link rel="icon" href="../image/iconB.png">
+  <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="../style/notife.css">
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+    <script src="../javaScript/auth.js"></script>
+    <script src="../javaScript/permission-guard.js"></script>
+    <script src="../javaScript/sidebar-permissions.js"></script>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">بوربور</div>
+
+        <!-- داشبورد -->
+        <div class="menu-item">
+          <a href="../html/dashbord.html">
+            <i class="fas fa-chart-line"></i>
+            داشبورد
+          </a>
+        </div>
+
+        <!-- مدیریت کاربران (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="#" class="menu-link">
+            <i class="fas fa-users"></i>
+            مدیریت کاربران
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Assistant_management.html" class="submenu-item">
+              <i class="fas fa-user-tie"></i>
+              مدیریت معاونان
+            </a>
+            <a href="../html/Teacher_management.html" class="submenu-item">
+              <i class="fas fa-chalkboard-teacher"></i>
+              مدیریت معلمین
+            </a>
+            <a href="../html/student.html" class="submenu-item">
+              <i class="fas fa-user-graduate"></i>
+              مدیریت دانش‌آموزان
+            </a>
+            <a href="../html/Parents.html" class="submenu-item">
+              <i class="fas fa-users"></i>
+              مدیریت اولیا
+            </a>
+          </div>
+        </div>
+
+        <!-- مدیریت کلاس‌ها (با زیرمنو) -->
+        <div class="menu-item has-submenu">
+          <a href="" class="menu-link">
+            <i class="fas fa-chalkboard-teacher"></i>
+            مدیریت کلاس ها
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+          <div class="submenu">
+            <a href="../html/Courses.html" class="submenu-item">
+              <i class="fas fa-list"></i>
+                          مدیریت دروس
+
+            </a>
+            <a href="../html/Class-schedule.html" class="submenu-item">
+              <i class="fas fa-calendar-alt"></i>
+              برنامه و لیست کلاسی
+            </a>
+            <a href="../html/Attendance.html" class="submenu-item">
+              <i class="fas fa-clipboard-check"></i>
+              حضور و غیاب
+            </a>
+            <a href="../html/grades.html" class="submenu-item">
+              <i class="fas fa-star"></i>
+              نمرات
+            </a>
+          </div>
+        </div>
+
+        <!-- پیش ثبت نام ها -->
+        <div class="menu-item">
+          <a href="../html/Pre-registration.html">
+            <i class="fas fa-clipboard-list"></i>
+            پیش ثبت نام ها
+          </a>
+        </div>
+
+        <!-- گزارش ها -->
+        <div class="menu-item">
+          <a href="../html/reports.html">
+            <i class="fas fa-file-alt"></i>
+            گزارش ها
+          </a>
+        </div>
+
+        <!-- اطلاعیه ها -->
+        <div class="menu-item active">
+          <a href="../html/notife.html">
+            <i class="fas fa-bell"></i>
+            اطلاعیه ها
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a href="../html/archive.html">
+            <i class="fas fa-archive"></i>
+            ارشیو
+          </a>
+        </div>
+
+
+         <div class="menu-item">
+          <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+
+        
+
+        <!-- تنظیمات -->
+        <div class="menu-item">
+          <a href="../html/settings.html">
+            <i class="fas fa-cog"></i>
+            تنظیمات
+          </a>
+        </div>
+
+        <!-- خروج -->
+        <div class="menu-item">
+          <a href="#">
+            <i class="fas fa-sign-out-alt"></i>
+            خروج
+          </a>
+        </div>
+      </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <div class="top-header">
+                <h1 class="page-title">
+                    <i class="fas fa-bullhorn"></i>
+                    اطلاعیه‌ها
+                </h1>
+                <div class="admin-info">
+                    <div class="notification-badge" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-count">5</span>
+                    </div>
+                    <span>مدیر: علی احمدی</span>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">کل اطلاعیه‌ها</div>
+                    <div class="stat-value">127</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">اطلاعیه‌های فعال</div>
+                    <div class="stat-value">45</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-thumbtack"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">پین شده</div>
+                    <div class="stat-value">8</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">میانگین بازدید</div>
+                    <div class="stat-value">156</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-label">فوری امروز</div>
+                    <div class="stat-value">3</div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <h2 class="filter-title">
+                        <i class="fas fa-filter"></i>
+                        فیلترها و جستجو
+                    </h2>
+                    <button class="add-announcement-btn" onclick="openCreateModal()">
+                        <i class="fas fa-plus"></i>
+                        افزودن اطلاعیه جدید
+                    </button>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="filter-input" id="searchInput" placeholder="جستجو در اطلاعیه‌ها...">
+                    </div>
+                </div>
+
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">دسته‌بندی</label>
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="all">همه دسته‌ها</option>
+                            <option value="general">عمومی</option>
+                            <option value="educational">آموزشی</option>
+                            <option value="financial">مالی</option>
+                            <option value="event">رویدادها</option>
+                            <option value="urgent">فوری</option>
+                            <option value="administrative">اداری</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">مخاطب</label>
+                        <select class="filter-select" id="audienceFilter">
+                            <option value="all">همه مخاطبان</option>
+                            <option value="students">دانش‌آموزان</option>
+                            <option value="teachers">معلمان</option>
+                            <option value="parents">اولیاء</option>
+                            <option value="staff">کارکنان</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">وضعیت</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="all">همه</option>
+                            <option value="active">فعال</option>
+                            <option value="inactive">غیرفعال</option>
+                            <option value="expired">منقضی شده</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">پایه تحصیلی</label>
+                        <select class="filter-select" id="gradeFilter">
+                            <option value="all">همه پایه‌ها</option>
+                            <option value="10">دهم</option>
+                            <option value="11">یازدهم</option>
+                            <option value="12">دوازدهم</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">اولویت</label>
+                        <select class="filter-select" id="priorityFilter">
+                            <option value="all">همه</option>
+                            <option value="high">فوری</option>
+                            <option value="medium">متوسط</option>
+                            <option value="low">عادی</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-tags">
+                    <div class="filter-tag active" data-filter="all">
+                        <i class="fas fa-th"></i> همه
+                    </div>
+                    <div class="filter-tag" data-filter="pinned">
+                        <i class="fas fa-thumbtack"></i> پین شده
+                    </div>
+                    <div class="filter-tag" data-filter="unread">
+                        <i class="fas fa-envelope"></i> خوانده نشده
+                    </div>
+                    <div class="filter-tag" data-filter="bookmarked">
+                        <i class="fas fa-bookmark"></i> نشانک شده
+                    </div>
+                    <div class="filter-tag" data-filter="today">
+                        <i class="fas fa-calendar-day"></i> امروز
+                    </div>
+                    <div class="filter-tag" data-filter="week">
+                        <i class="fas fa-calendar-week"></i> این هفته
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <h2 class="export-title">
+                    <i class="fas fa-download"></i>
+                    خروجی گزارش
+                </h2>
+                <div class="export-buttons">
+                    <button class="export-btn excel" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i>
+                        خروجی Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pinned Announcements -->
+            <div class="pinned-section" id="pinnedSection">
+                <h2 class="section-title">
+                    <i class="fas fa-thumbtack" style="color: #F1C40F;"></i>
+                    اطلاعیه‌های پین شده
+                </h2>
+                <div class="pinned-grid" id="pinnedGrid">
+                    <!-- Pinned announcements will be inserted here -->
+                </div>
+            </div>
+
+            <!-- All Announcements -->
+            <div class="announcements-section">
+                <h2 class="section-title">
+                    <i class="fas fa-list"></i>
+                    همه اطلاعیه‌ها
+                </h2>
+                <div class="announcements-grid" id="announcementsGrid">
+                    <!-- Announcements will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be inserted here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="viewModalTitle">
+                    <i class="fas fa-file-alt"></i>
+                    جزئیات اطلاعیه
+                </h3>
+                <button class="close-btn" onclick="closeViewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="announcement-detail" id="announcementDetail">
+                    <!-- Details will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeViewModal()">
+                    <i class="fas fa-times"></i>
+                    بستن
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="formModalTitle">
+                    <i class="fas fa-plus"></i>
+                    افزودن اطلاعیه جدید
+                </h3>
+                <button class="close-btn" onclick="closeFormModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="announcementForm">
+                    <div class="form-group">
+                        <label class="form-label required">عنوان اطلاعیه</label>
+                        <input type="text" class="form-input" id="titleInput" placeholder="عنوان اطلاعیه را وارد کنید..." required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">دسته‌بندی</label>
+                            <select class="form-select" id="categoryInput" required>
+                                <option value="">انتخاب کنید</option>
+                                <option value="general">عمومی</option>
+                                <option value="educational">آموزشی</option>
+                                <option value="financial">مالی</option>
+                                <option value="event">رویدادها</option>
+                                <option value="urgent">فوری</option>
+                                <option value="administrative">اداری</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">اولویت</label>
+                            <select class="form-select" id="priorityInput" required>
+                                <option value="low">عادی</option>
+                                <option value="medium">متوسط</option>
+                                <option value="high">فوری</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">مخاطبان</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="targetStudents" value="students" checked>
+                                <label for="targetStudents">دانش‌آموزان</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="targetTeachers" value="teachers">
+                                <label for="targetTeachers">معلمان</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="targetParents" value="parents">
+                                <label for="targetParents">اولیاء</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="targetStaff" value="staff">
+                                <label for="targetStaff">کارکنان</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">پایه تحصیلی</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="grade10" value="10" checked>
+                                <label for="grade10">دهم</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="grade11" value="11" checked>
+                                <label for="grade11">یازدهم</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="grade12" value="12" checked>
+                                <label for="grade12">دوازدهم</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">متن اطلاعیه</label>
+                        <textarea class="form-textarea" id="contentInput" placeholder="متن کامل اطلاعیه را وارد کنید..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">تاریخ شروع</label>
+                            <input type="date" class="form-input" id="startDateInput">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">تاریخ پایان</label>
+                            <input type="date" class="form-input" id="endDateInput">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">پیوست‌ها</label>
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                            <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="upload-text">
+                                فایل‌ها را اینجا بکشید یا کلیک کنید
+                            </div>
+                        </div>
+                        <div class="uploaded-files" id="uploadedFiles"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pinCheckbox">
+                                <label for="pinCheckbox">پین کردن این اطلاعیه</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="notifyCheckbox">
+                                <label for="notifyCheckbox">ارسال نوتیفیکیشن</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="smsCheckbox">
+                                <label for="smsCheckbox">ارسال پیامک</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="saveAnnouncement()">
+                    <i class="fas fa-save"></i>
+                    ذخیره اطلاعیه
+                </button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeFormModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-modal-content">
+            <div class="modal-body">
+                <div id="confirmIcon" class="confirm-icon"></div>
+                <h3 class="modal-title" id="confirmTitle"></h3>
+                <p class="confirm-text" id="confirmMessage"></p>
+                <div class="confirm-buttons">
+                    <button class="modal-btn modal-btn-primary" id="confirmYes">
+                        <i class="fas fa-check"></i>
+                        تایید
+                    </button>
+                    <button class="modal-btn modal-btn-secondary" id="confirmNo">
+                        <i class="fas fa-times"></i>
+                        انصراف
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../javaScript/notife.js"></script>
+    <script src="../javaScript/menu.js"></script>
+</body>
+</html>

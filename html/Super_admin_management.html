@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>بوربور — مدیریت ادمین‌ها</title>
+    <link rel="icon" href="../image/iconB.png">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap');
+:root{
+  --bg-main:#0f1629;--bg-card:#162040;--bg-card2:#1a2650;--bg-sidebar:#0b1120;
+  --accent:#4a90d9;--accent2:#8e5fd4;--accent3:#06d6a0;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#2ecc71;--absent:#e74c3c;
+  --text:#e8f0ff;--text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(74,144,217,0.35);
+  --sidebar-w:258px;--radius:18px;--radius-sm:11px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:"Vazirmatn",Tahoma,sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 5%,rgba(74,144,217,0.13) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(142,95,212,0.1) 0%,transparent 55%);pointer-events:none;z-index:0;}
+body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(74,144,217,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:26px 14px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:400;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.5);}
+.sidebar.open{transform:translateX(0);}
+.sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(74,144,217,.2);border-radius:4px;}
+.sb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.logo{font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;}.logo span{color:var(--accent);}
+.sb-close{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;font-family:inherit;}
+.sb-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.logo-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-bottom:22px;letter-spacing:1px;text-transform:uppercase;}
+.admin-block{background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.1));border:1px solid rgba(74,144,217,.2);border-radius:var(--radius-sm);padding:15px 13px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.admin-avatar-sm{width:46px;height:46px;background:linear-gradient(135deg,var(--accent4),#e67e22);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(243,156,18,.35);}
+.admin-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.admin-role{font-size:10px;color:var(--text-muted);}
+.admin-badge-lbl{margin-top:7px;display:inline-block;background:rgba(243,156,18,.14);color:var(--accent4);font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid rgba(243,156,18,.22);}
+.nav-section-label{font-size:9px;font-weight:700;color:rgba(180,200,255,.28);letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;margin:14px 0 8px;}
+.nav-item{margin-bottom:2px;}
+.nav-item a{color:rgba(180,200,255,.58);text-decoration:none;padding:10px 14px;display:flex;align-items:center;gap:11px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:all .2s;position:relative;cursor:pointer;}
+.nav-item a i{font-size:14px;width:20px;text-align:center;flex-shrink:0;opacity:.75;}
+.nav-item a:hover{background:rgba(255,255,255,.05);color:#fff;}
+.nav-item.active a{background:linear-gradient(90deg,rgba(74,144,217,.22),rgba(74,144,217,.06));color:#fff;font-weight:700;border:1px solid rgba(74,144,217,.28);box-shadow:0 2px 16px rgba(74,144,217,.12);}
+.nav-item.active a::before{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:65%;background:var(--accent);border-radius:3px 0 0 3px;}
+.nav-item.active a i{opacity:1;color:var(--accent);}
+.nav-item.active a::after{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px rgba(6,214,160,.7);animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:translateY(-50%) scale(1);}50%{opacity:.6;transform:translateY(-50%) scale(1.3);}}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px;}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center;line-height:1.7;}
+
+/* OVERLAY + HAMBURGER */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199;}.sb-overlay.on{display:block;}
+.hamburger{position:fixed;top:16px;right:20px;z-index:300;width:44px;height:44px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.hamburger:hover{border-color:var(--border-hover);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text-muted);border-radius:2px;transition:all .3s;}
+.hamburger:hover span{background:var(--text);}
+
+/* MAIN */
+.main-content{min-height:100vh;padding:72px 24px 36px;position:relative;z-index:1;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:14px;flex-wrap:wrap;}
+.greeting h1{font-size:20px;font-weight:800;line-height:1.3;}
+.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:7px;}
+.top-actions{display:flex;align-items:center;gap:9px;}
+.profile-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--accent4),#e67e22);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;box-shadow:0 3px 10px rgba(243,156,18,.35);}
+.back-btn{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:12px;font-weight:700;padding:9px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.back-btn:hover{border-color:var(--border-hover);color:var(--text);}
+.add-admin-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.add-admin-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,144,217,.4);}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;transition:all .25s;position:relative;overflow:hidden;}
+.stat-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.stat-card::before{content:"";position:absolute;top:-30px;left:-20px;width:80px;height:80px;border-radius:50%;opacity:.06;pointer-events:none;}
+.sc-blue::before{background:var(--accent);}
+.sc-green::before{background:var(--present);}
+.sc-yellow::before{background:var(--accent4);}
+.sc-red::before{background:var(--absent);}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:rgba(74,144,217,.15);color:var(--accent);}
+.si-green{background:rgba(46,204,113,.15);color:var(--present);}
+.si-yellow{background:rgba(243,156,18,.15);color:var(--accent4);}
+.si-red{background:rgba(231,76,60,.15);color:var(--absent);}
+.stat-val{font-size:26px;font-weight:900;line-height:1;}
+.stat-lbl{font-size:10.5px;color:var(--text-muted);margin-top:3px;}
+
+/* TABS */
+.page-tabs{display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;overflow-x:auto;}
+.page-tab{flex:1;min-width:80px;padding:13px 10px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .25s;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;}
+.page-tab i{font-size:13px;}
+.page-tab.active{color:#fff;background:rgba(74,144,217,.12);}
+.page-tab.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.page-tab:hover:not(.active){background:rgba(255,255,255,.04);color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeUp .3s ease both;}
+
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.card-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:9px;}
+.card-title i{color:var(--accent);}
+.toolbar{display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap input{width:100%;background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;padding:10px 38px 10px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--border-hover);}
+.search-wrap input::placeholder{color:var(--text-muted);}
+.search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;}
+.filter-select{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;outline:none;transition:border-color .2s;}
+.filter-select:focus{border-color:var(--border-hover);}
+.filter-select option{background:var(--bg-card2);}
+.export-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .22s;border:1px solid;}
+.export-btn.xlsx-btn{background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.3);color:var(--accent3);}
+.export-btn.xlsx-btn:hover{background:rgba(6,214,160,.16);transform:translateY(-1px);}
+.export-btn.word-btn{background:rgba(74,144,217,.08);border-color:rgba(74,144,217,.3);color:var(--accent);}
+.export-btn.word-btn:hover{background:rgba(74,144,217,.16);transform:translateY(-1px);}
+
+/* ADMIN TABLE */
+.admin-table-wrap{overflow-x:auto;}
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(74,144,217,.06);border-bottom:1px solid var(--border);white-space:nowrap;}
+.admin-table td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tbody tr{transition:background .15s;cursor:default;}
+.admin-table tbody tr:hover td{background:rgba(255,255,255,.025);}
+.a-cell{display:flex;align-items:center;gap:12px;}
+.a-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.3);}
+.a-name{font-size:12.5px;font-weight:700;margin-bottom:2px;}
+.a-email{font-size:10.5px;color:var(--text-muted);direction:ltr;}
+.role-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;}
+.role-superadmin{background:rgba(243,156,18,.15);color:var(--accent4);border:1px solid rgba(243,156,18,.25);}
+.role-schooladmin{background:rgba(74,144,217,.15);color:var(--accent);border:1px solid rgba(74,144,217,.25);}
+.role-operator{background:rgba(6,214,160,.13);color:var(--accent3);border:1px solid rgba(6,214,160,.22);}
+.role-viewer{background:rgba(180,200,255,.08);color:var(--text-muted);border:1px solid var(--border);}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.sb-active{background:rgba(46,204,113,.13);color:var(--present);border:1px solid rgba(46,204,113,.2);}
+.sb-blocked{background:rgba(231,76,60,.13);color:var(--absent);border:1px solid rgba(231,76,60,.2);}
+.sb-pending{background:rgba(243,156,18,.13);color:var(--accent4);border:1px solid rgba(243,156,18,.2);}
+.row-actions{display:flex;gap:5px;}
+.ra-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ra-btn.ra-edit:hover{border-color:rgba(6,214,160,.4);color:var(--accent3);background:rgba(6,214,160,.1);}
+.ra-btn.ra-pass:hover{border-color:rgba(74,144,217,.4);color:var(--accent);background:rgba(74,144,217,.1);}
+.ra-btn.ra-block:hover{border-color:rgba(243,156,18,.4);color:var(--accent4);background:rgba(243,156,18,.1);}
+.ra-btn.ra-del:hover{border-color:rgba(231,76,60,.4);color:var(--absent);background:rgba(231,76,60,.1);}
+.ra-btn.ra-log:hover{border-color:rgba(142,95,212,.4);color:var(--accent2);background:rgba(142,95,212,.1);}
+.ra-btn.ra-perm:hover{border-color:rgba(6,214,160,.4);color:var(--accent3);background:rgba(6,214,160,.1);}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text-muted);}
+.page-btns{display:flex;gap:5px;}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.pg-btn.active{background:rgba(74,144,217,.2);border-color:var(--accent);color:#fff;font-weight:700;}
+.pg-btn:hover:not(.active){background:rgba(255,255,255,.05);color:var(--text);}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ACTIVITY LOG */
+.log-table{width:100%;border-collapse:collapse;}
+.log-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(142,95,212,.06);border-bottom:1px solid var(--border);white-space:nowrap;}
+.log-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.log-table tr:last-child td{border-bottom:none;}
+.log-table tbody tr:hover td{background:rgba(255,255,255,.02);}
+.log-action{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.la-login{background:rgba(74,144,217,.13);color:var(--accent);border:1px solid rgba(74,144,217,.2);}
+.la-create{background:rgba(46,204,113,.13);color:var(--present);border:1px solid rgba(46,204,113,.2);}
+.la-edit{background:rgba(6,214,160,.13);color:var(--accent3);border:1px solid rgba(6,214,160,.2);}
+.la-delete{background:rgba(231,76,60,.13);color:var(--absent);border:1px solid rgba(231,76,60,.2);}
+.la-block{background:rgba(243,156,18,.13);color:var(--accent4);border:1px solid rgba(243,156,18,.2);}
+.la-pass{background:rgba(142,95,212,.13);color:var(--accent2);border:1px solid rgba(142,95,212,.2);}
+
+/* ══ PERMISSION MATRIX — NEW INDIVIDUAL DESIGN ══ */
+.perm-page-layout{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start;}
+.admin-perm-list{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:sticky;top:80px;}
+.apl-title{font-size:12px;font-weight:800;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:.5px;}
+.apl-title i{color:var(--accent2);}
+.apl-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .2s;margin-bottom:4px;border:1px solid transparent;}
+.apl-item:hover{background:rgba(255,255,255,.04);}
+.apl-item.selected{background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.06));border-color:rgba(74,144,217,.3);}
+.apl-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+.apl-info{flex:1;min-width:0;}
+.apl-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apl-role-label{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.apl-perm-count{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(74,144,217,.15);color:var(--accent);border:1px solid rgba(74,144,217,.2);white-space:nowrap;}
+
+/* Permission editor panel */
+.perm-editor{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.perm-editor-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.peh-info{display:flex;align-items:center;gap:14px;}
+.peh-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0;}
+.peh-name{font-size:15px;font-weight:800;}
+.peh-meta{font-size:11px;color:var(--text-muted);margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.peh-actions{display:flex;gap:8px;}
+.peh-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid;}
+.peh-reset{border-color:rgba(243,156,18,.3);color:var(--accent4);background:rgba(243,156,18,.06);}
+.peh-reset:hover{background:rgba(243,156,18,.14);}
+.peh-all-on{border-color:rgba(46,204,113,.3);color:var(--present);background:rgba(46,204,113,.06);}
+.peh-all-on:hover{background:rgba(46,204,113,.14);}
+.peh-all-off{border-color:rgba(231,76,60,.3);color:var(--absent);background:rgba(231,76,60,.06);}
+.peh-all-off:hover{background:rgba(231,76,60,.14);}
+
+/* Perm group */
+.perm-group{border-bottom:1px solid var(--border);}
+.perm-group:last-child{border-bottom:none;}
+.perm-group-hdr{padding:13px 22px;background:rgba(74,144,217,.04);display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;transition:background .15s;}
+.perm-group-hdr:hover{background:rgba(74,144,217,.08);}
+.perm-group-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.perm-group-label{font-size:12.5px;font-weight:800;flex:1;}
+.perm-group-count{font-size:10px;color:var(--text-muted);}
+.perm-group-arrow{font-size:10px;color:var(--text-muted);transition:transform .2s;}
+.perm-group-arrow.open{transform:rotate(180deg);}
+.perm-group-body{display:none;}
+.perm-group-body.open{display:block;}
+
+/* Individual perm row */
+.perm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 22px 12px 28px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;}
+.perm-row:last-child{border-bottom:none;}
+.perm-row:hover{background:rgba(255,255,255,.02);}
+.perm-row-info{flex:1;}
+.perm-row-name{font-size:12.5px;font-weight:700;}
+.perm-row-desc{font-size:10.5px;color:var(--text-muted);margin-top:2px;}
+.perm-row-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;margin-right:6px;}
+.badge-danger{background:rgba(231,76,60,.12);color:var(--absent);}
+.badge-warn{background:rgba(243,156,18,.12);color:var(--accent4);}
+
+/* Toggle switch */
+.toggle-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.toggle-label{font-size:10.5px;font-weight:700;min-width:36px;text-align:center;transition:color .2s;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.08);border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .25s;}
+.toggle input:checked~.toggle-track{background:rgba(46,204,113,.3);border-color:rgba(46,204,113,.5);}
+.toggle-thumb{position:absolute;top:3px;right:3px;width:16px;height:16px;background:rgba(180,200,255,.4);border-radius:50%;transition:all .25s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.toggle input:checked~.toggle-track .toggle-thumb{right:calc(100% - 19px);background:var(--present);box-shadow:0 1px 8px rgba(46,204,113,.5);}
+.toggle.disabled .toggle-track{opacity:.4;cursor:not-allowed;}
+
+/* Saved flash */
+@keyframes savedFlash{0%{opacity:0;transform:translateY(4px);}30%{opacity:1;transform:translateY(0);}70%{opacity:1;}100%{opacity:0;}}
+.saved-flash{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(46,204,113,.9);color:#fff;font-size:11.5px;font-weight:700;padding:8px 18px;border-radius:20px;display:none;animation:savedFlash 1.8s ease forwards;z-index:9999;pointer-events:none;backdrop-filter:blur(8px);}
+
+/* Legacy perm table (kept for reference) */
+.perm-table{width:100%;border-collapse:collapse;}
+.perm-table th{text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);padding:11px 14px;background:rgba(74,144,217,.06);border-bottom:1px solid var(--border);}
+.perm-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.perm-check{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;margin:auto;}
+.pc-yes{background:rgba(46,204,113,.14);color:var(--present);}
+.pc-no{background:rgba(231,76,60,.1);color:rgba(231,76,60,.4);}
+.pc-partial{background:rgba(243,156,18,.14);color:var(--accent4);}
+
+/* MODALS */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px);}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:var(--bg-card);border:1px solid rgba(74,144,217,.25);border-radius:var(--radius);width:100%;max-width:580px;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:fadeUp .3s ease both;margin:auto;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-hdr-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:10px;}
+.modal-hdr-title i{color:var(--accent);}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;}
+.modal-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-size:10.5px;font-weight:700;color:var(--text-muted);}
+.fg input,.fg select,.fg textarea{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:border-color .2s;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--border-hover);}
+.fg input::placeholder{color:rgba(180,200,255,.2);}
+.school-tags-wrap{background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:8px;min-height:44px;display:flex;flex-wrap:wrap;gap:6px;cursor:text;transition:border-color .2s;}
+.school-tags-wrap:focus-within{border-color:var(--border-hover);}
+.school-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(74,144,217,.18);color:var(--accent);font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(74,144,217,.25);}
+.school-tag button{background:none;border:none;color:rgba(74,144,217,.7);cursor:pointer;font-size:11px;display:flex;align-items:center;padding:0;line-height:1;}
+.school-tag button:hover{color:var(--absent);}
+.school-add-select{background:none;border:none;color:var(--text-muted);font-family:inherit;font-size:11.5px;outline:none;cursor:pointer;flex:1;min-width:80px;}
+.school-add-select option{background:var(--bg-card2);}
+.pass-strength-bar{height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:6px;}
+.pass-strength-fill{height:100%;border-radius:4px;transition:width .3s,background .3s;}
+.pass-hint{font-size:9.5px;margin-top:4px;}
+.modal-ftr{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--border);}
+.modal-save{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:10px 28px;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 4px 14px rgba(74,144,217,.3);transition:all .25s;}
+.modal-save:hover{transform:translateY(-2px);}
+.modal-cancel{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:inherit;font-size:12px;font-weight:600;padding:10px 22px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.modal-cancel:hover{border-color:var(--border-hover);color:var(--text);}
+.modal-danger{background:linear-gradient(135deg,var(--absent),#c0392b);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:10px 24px;border-radius:var(--radius-sm);cursor:pointer;transition:all .25s;}
+
+/* PROFILE DRAWER */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:4000;display:none;backdrop-filter:blur(3px);}
+.drawer-backdrop.open{display:block;}
+.drawer{position:fixed;left:0;top:0;height:100vh;width:380px;max-width:95vw;background:var(--bg-sidebar);border-right:1px solid var(--border);z-index:4100;transform:translateX(-110%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:8px 0 40px rgba(0,0,0,.5);}
+.drawer.open{transform:translateX(0);}
+.drawer-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+.drawer-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:9px;}
+.drawer-title i{color:var(--accent);}
+.drawer-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;}
+.drawer-close:hover{border-color:rgba(231,76,60,.4);color:var(--absent);}
+.drawer-body{padding:20px;}
+.drawer-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;margin:0 auto 12px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.drawer-name{text-align:center;font-size:16px;font-weight:900;margin-bottom:4px;}
+.drawer-email{text-align:center;font-size:11.5px;color:var(--text-muted);margin-bottom:6px;direction:ltr;}
+.drawer-role-wrap{text-align:center;margin-bottom:20px;}
+.drawer-info-section{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;}
+.drawer-info-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;}
+.drawer-info-row:last-child{border-bottom:none;}
+.dil{color:var(--text-muted);display:flex;align-items:center;gap:7px;}
+.dil i{width:14px;text-align:center;font-size:11px;color:var(--accent);}
+.div-val{font-weight:700;}
+.drawer-log-title{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.drawer-log-title i{color:var(--accent2);}
+.drawer-log-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.drawer-log-item:last-child{border-bottom:none;}
+.dlog-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.dlog-text{font-size:11.5px;font-weight:600;margin-bottom:2px;}
+.dlog-time{font-size:10px;color:var(--text-muted);}
+.drawer-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.da-btn{width:100%;padding:10px;border-radius:var(--radius-sm);border:1px solid;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.da-edit{border-color:rgba(6,214,160,.3);color:var(--accent3);background:rgba(6,214,160,.06);}
+.da-edit:hover{background:rgba(6,214,160,.14);}
+.da-pass{border-color:rgba(74,144,217,.3);color:var(--accent);background:rgba(74,144,217,.06);}
+.da-pass:hover{background:rgba(74,144,217,.14);}
+.da-perm{border-color:rgba(142,95,212,.3);color:var(--accent2);background:rgba(142,95,212,.06);}
+.da-perm:hover{background:rgba(142,95,212,.14);}
+.da-block{border-color:rgba(243,156,18,.3);color:var(--accent4);background:rgba(243,156,18,.06);}
+.da-block:hover{background:rgba(243,156,18,.14);}
+.da-del{border-color:rgba(231,76,60,.3);color:var(--absent);background:rgba(231,76,60,.06);}
+.da-del:hover{background:rgba(231,76,60,.14);}
+
+/* CONFIRM MODAL */
+.confirm-box{max-width:400px;}
+.confirm-icon-wrap{text-align:center;padding:10px 0 4px;}
+.confirm-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:auto;}
+.confirm-msg{text-align:center;font-size:13px;line-height:1.7;color:var(--text-muted);margin-top:8px;}
+.confirm-name{color:var(--text);font-weight:800;}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 22px;font-size:12.5px;font-weight:600;z-index:9000;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;display:flex;align-items:center;gap:10px;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,204,113,.3);}.toast.success i{color:var(--present);}
+.toast.info{border-color:rgba(74,144,217,.3);}.toast.info i{color:var(--accent);}
+.toast.error{border-color:rgba(231,76,60,.3);}.toast.error i{color:var(--absent);}
+.toast.warn{border-color:rgba(243,156,18,.3);}.toast.warn i{color:var(--accent4);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr);}.perm-page-layout{grid-template-columns:1fr;}}
+@media(max-width:768px){.main-content{padding:68px 13px 26px;}.stats-row{grid-template-columns:1fr 1fr;}.form-grid{grid-template-columns:1fr;}.page-tab span{display:none;}.drawer{width:100%;max-width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="saved-flash" id="savedFlash"><i class="fas fa-check" style="margin-left:6px"></i> ذخیره شد</div>
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+<div class="sb-overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="logo">بور<span>بور</span></div>
+    <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="logo-sub">پنل مدیریت مدارس</div>
+  <div class="admin-block">
+    <div class="admin-avatar-sm">S</div>
+    <div>
+      <div class="admin-name">سامان رضوی</div>
+      <div class="admin-role">مدیر کل سامانه</div>
+      <div class="admin-badge-lbl">Super Admin</div>
+    </div>
+  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item"><a href="../html/Super_admin_dashboard.html"><i class="fas fa-school"></i> داشبورد مدارس</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_dashboard.html"><i class="fas fa-id-card"></i> اشتراک‌ها</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_dashboard.html"><i class="fas fa-key"></i> لایسنس‌ها</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_dashboard.html"><i class="fas fa-tags"></i> پلان‌های پرداخت</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_dashboard.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">تنظیمات</div>
+  <div class="nav-item active"><a href="../html/Super_admin_management.html"><i class="fas fa-users-cog"></i> مدیریت ادمین‌ها</a></div>
+  <div class="nav-item"><a href="../html/Super_admin_setting.html"><i class="fas fa-cog"></i> تنظیمات سامانه</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting">
+      <h1>مدیریت <span>ادمین‌ها</span></h1>
+      <p><i class="fas fa-users-cog" style="color:var(--accent3);font-size:11px"></i> کنترل دسترسی و مدیریت کاربران سامانه</p>
+    </div>
+    <div class="top-actions">
+      <button class="back-btn"><i class="fas fa-arrow-right"></i> بازگشت به داشبورد</button>
+      <button class="add-admin-btn" onclick="openAddModal()"><i class="fas fa-user-plus"></i> افزودن ادمین</button>
+      <div class="profile-btn">S</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card sc-blue"><div class="stat-icon si-blue"><i class="fas fa-users"></i></div><div><div class="stat-val" style="color:var(--accent)" id="st-total">۰</div><div class="stat-lbl">کل ادمین‌ها</div></div></div>
+    <div class="stat-card sc-green"><div class="stat-icon si-green"><i class="fas fa-user-check"></i></div><div><div class="stat-val" style="color:var(--present)" id="st-active">۰</div><div class="stat-lbl">ادمین فعال</div></div></div>
+    <div class="stat-card sc-yellow"><div class="stat-icon si-yellow"><i class="fas fa-crown"></i></div><div><div class="stat-val" style="color:var(--accent4)" id="st-super">۰</div><div class="stat-lbl">Super Admin</div></div></div>
+    <div class="stat-card sc-red"><div class="stat-icon si-red"><i class="fas fa-user-slash"></i></div><div><div class="stat-val" style="color:var(--absent)" id="st-blocked">۰</div><div class="stat-lbl">مسدود شده</div></div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="page-tabs">
+    <button class="page-tab active" id="tab-list" onclick="switchTab('list')"><i class="fas fa-users"></i><span>لیست ادمین‌ها</span></button>
+    <button class="page-tab" id="tab-log" onclick="switchTab('log')"><i class="fas fa-history"></i><span>تاریخچه فعالیت</span></button>
+    <button class="page-tab" id="tab-perms" onclick="switchTab('perms')"><i class="fas fa-shield-alt"></i><span>ماتریس دسترسی</span></button>
+  </div>
+
+  <!-- TAB: LIST -->
+  <div class="tab-panel active" id="panel-list">
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-wrap"><i class="fas fa-search search-icon"></i><input type="text" id="adminSearch" placeholder="جستجو نام، ایمیل، مدرسه..." oninput="applyFilters()"/></div>
+        <select class="filter-select" id="roleFilter" onchange="applyFilters()">
+          <option value="all">همه نقش‌ها</option>
+          <option value="superadmin">Super Admin</option>
+          <option value="schooladmin">مدیر مدرسه</option>
+          <option value="operator">اپراتور</option>
+          <option value="viewer">ناظر</option>
+        </select>
+        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+          <option value="all">همه وضعیت‌ها</option>
+          <option value="active">فعال</option>
+          <option value="blocked">مسدود</option>
+          <option value="pending">در انتظار</option>
+        </select>
+        <button class="export-btn xlsx-btn" onclick="exportAdminsExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+        <button class="export-btn word-btn" onclick="exportAdminsWord()"><i class="fas fa-file-word"></i> Word</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr>
+            <th>ادمین</th><th>نقش</th><th>مدرسه‌ها</th><th>آخرین ورود</th><th>تاریخ ثبت</th><th>وضعیت</th><th>اقدام</th>
+          </tr></thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="adminPageInfo"></div>
+        <div class="page-btns" id="adminPageBtns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: LOG -->
+  <div class="tab-panel" id="panel-log">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-history"></i> تاریخچه فعالیت‌های ادمین‌ها</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <select class="filter-select" id="logAdminFilter" onchange="renderLog()"><option value="all">همه ادمین‌ها</option></select>
+          <select class="filter-select" id="logActionFilter" onchange="renderLog()">
+            <option value="all">همه اقدام‌ها</option>
+            <option value="ورود">ورود</option><option value="ایجاد">ایجاد</option>
+            <option value="ویرایش">ویرایش</option><option value="حذف">حذف</option>
+            <option value="مسدود">مسدود</option><option value="رمز">رمز عبور</option>
+          </select>
+          <button class="export-btn xlsx-btn" onclick="exportLogExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="export-btn word-btn" onclick="exportLogWord()"><i class="fas fa-file-word"></i> Word</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="log-table">
+          <thead><tr><th>#</th><th>ادمین</th><th>اقدام</th><th>جزئیات</th><th>IP</th><th>زمان</th></tr></thead>
+          <tbody id="logTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PERMS — NEW INDIVIDUAL EDITOR -->
+  <div class="tab-panel" id="panel-perms">
+    <div class="perm-page-layout">
+      <!-- Admin selector list -->
+      <div class="admin-perm-list">
+        <div class="apl-title"><i class="fas fa-users-cog"></i> انتخاب ادمین</div>
+        <div id="aplList"></div>
+      </div>
+      <!-- Permission editor -->
+      <div class="perm-editor" id="permEditor">
+        <div style="padding:60px;text-align:center;color:var(--text-muted);">
+          <i class="fas fa-user-shield" style="font-size:40px;opacity:.2;display:block;margin-bottom:16px"></i>
+          <div style="font-size:13px;font-weight:700">یک ادمین را از فهرست سمت راست انتخاب کنید</div>
+          <div style="font-size:11px;margin-top:6px">تا دسترسی‌های اختصاصی او را مدیریت کنید</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-backdrop" id="drawerBd" onclick="closeDrawer()"></div>
+<div class="drawer" id="adminDrawer">
+  <div class="drawer-hdr">
+    <div class="drawer-title"><i class="fas fa-id-badge"></i> پروفایل ادمین</div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-backdrop" id="adminModal" onclick="closeModalOutside(event,'adminModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i class="fas fa-user-plus"></i> <span id="adminModalTitle">افزودن ادمین جدید</span></div>
+      <button class="modal-close" onclick="closeModal('adminModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><label>نام</label><input type="text" id="f_fname" placeholder="نام..."/></div>
+        <div class="fg"><label>نام خانوادگی</label><input type="text" id="f_lname" placeholder="نام خانوادگی..."/></div>
+        <div class="fg"><label>ایمیل</label><input type="email" id="f_email" placeholder="example@mail.com" dir="ltr"/></div>
+        <div class="fg"><label>شماره موبایل</label><input type="text" id="f_phone" placeholder="09..." dir="ltr"/></div>
+        <div class="fg"><label>نقش</label>
+          <select id="f_role" onchange="onRoleChange()">
+            <option value="superadmin">Super Admin</option>
+            <option value="schooladmin">مدیر مدرسه</option>
+            <option value="operator">اپراتور</option>
+            <option value="viewer">ناظر</option>
+          </select>
+        </div>
+        <div class="fg"><label>وضعیت</label>
+          <select id="f_status">
+            <option value="active">فعال</option>
+            <option value="pending">در انتظار تأیید</option>
+            <option value="blocked">مسدود</option>
+          </select>
+        </div>
+      </div>
+      <div id="schoolAssignWrap" class="fg" style="display:none">
+        <label>تخصیص مدارس</label>
+        <div class="school-tags-wrap" id="schoolTagsWrap">
+          <select class="school-add-select" id="schoolAddSelect" onchange="addSchoolTag()">
+            <option value="">+ افزودن مدرسه...</option>
+            <option>هنرستان شهید بوربور</option><option>دبیرستان نمونه تهران</option>
+            <option>دبستان پیشرفت</option><option>مدرسه علوم مشهد</option>
+            <option>هنرستان فنی شیراز</option><option>متوسطه اول امام علی</option>
+            <option>دبستان کوثر</option><option>دبیرستان شهدای اهواز</option>
+          </select>
+        </div>
+      </div>
+      <div id="passWrap">
+        <div class="form-grid">
+          <div class="fg"><label>رمز عبور</label><input type="password" id="f_pass" placeholder="حداقل ۸ کاراکتر" dir="ltr" oninput="checkPassStrength()"/>
+            <div class="pass-strength-bar"><div class="pass-strength-fill" id="passBar" style="width:0%;background:var(--absent)"></div></div>
+            <div class="pass-hint" id="passHint" style="color:var(--text-muted)"></div>
+          </div>
+          <div class="fg"><label>تکرار رمز عبور</label><input type="password" id="f_pass2" placeholder="تکرار رمز عبور" dir="ltr"/></div>
+        </div>
+      </div>
+      <div class="fg"><label>یادداشت</label><input type="text" id="f_note" placeholder="توضیح کوتاه..."/></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-cancel" onclick="closeModal('adminModal')">انصراف</button>
+      <button class="modal-save" id="adminModalSaveBtn" onclick="saveAdmin()"><i class="fas fa-save" style="margin-left:6px"></i> ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASS MODAL -->
+<div class="modal-backdrop" id="passModal" onclick="closeModalOutside(event,'passModal')">
+  <div class="modal-box" style="max-width:420px;" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i class="fas fa-lock"></i> تغییر رمز عبور</div>
+      <button class="modal-close" onclick="closeModal('passModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:4px;">
+        <div class="a-avatar" id="pmAvatar" style="width:38px;height:38px;font-size:14px;"></div>
+        <div><div style="font-weight:700;font-size:13px" id="pmName"></div><div style="font-size:10.5px;color:var(--text-muted)" id="pmRole"></div></div>
+      </div>
+      <div class="fg"><label>رمز عبور جدید</label><input type="password" id="pm_pass" placeholder="حداقل ۸ کاراکتر" dir="ltr" oninput="checkPmStrength()"/>
+        <div class="pass-strength-bar"><div class="pass-strength-fill" id="pmBar" style="width:0%;background:var(--absent)"></div></div>
+        <div class="pass-hint" id="pmHint" style="color:var(--text-muted)"></div>
+      </div>
+      <div class="fg"><label>تکرار رمز عبور جدید</label><input type="password" id="pm_pass2" placeholder="تکرار رمز عبور" dir="ltr"/></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-cancel" onclick="closeModal('passModal')">انصراف</button>
+      <button class="modal-save" onclick="savePass()"><i class="fas fa-key" style="margin-left:6px"></i> ذخیره رمز</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-backdrop" id="confirmModal" onclick="closeModalOutside(event,'confirmModal')">
+  <div class="modal-box confirm-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title"><i id="confirmIcon2" class="fas fa-exclamation-triangle"></i> <span id="confirmTitle">تأیید عملیات</span></div>
+      <button class="modal-close" onclick="closeModal('confirmModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-icon-wrap"><div class="confirm-icon" id="confirmIconWrap"><i id="confirmIconBig" class="fas fa-trash"></i></div></div>
+      <div class="confirm-msg" id="confirmMsg"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-cancel" onclick="closeModal('confirmModal')">انصراف</button>
+      <button class="modal-danger" id="confirmOkBtn">تأیید</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i></i><span id="toastMsg"></span></div>
+
+<script>
+const fa = n => String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+
+/* ══ DATA ══ */
+let admins = [
+  {id:1,fname:'سامان',lname:'رضوی',email:'saman@bourbour.ir',phone:'09121111111',role:'superadmin',status:'active',schools:[],lastLogin:'۱۴۰۴/۰۳/۱۸ — ۱۴:۳۲',created:'۱۴۰۳/۰۱/۰۱',note:'مدیر اصلی سامانه',color:'linear-gradient(135deg,var(--accent4),#e67e22)',initials:'SR'},
+  {id:2,fname:'مریم',lname:'موسوی',email:'maryam@school.ir',phone:'09132222222',role:'schooladmin',status:'active',schools:['دبیرستان نمونه تهران'],lastLogin:'۱۴۰۴/۰۳/۱۷ — ۰۹:۱۵',created:'۱۴۰۳/۰۴/۱۲',note:'مدیر دبیرستان نمونه',color:'linear-gradient(135deg,var(--accent),var(--accent2))',initials:'MM'},
+  {id:3,fname:'رضا',lname:'صادقی',email:'reza.s@pishraft.ir',phone:'09143333333',role:'schooladmin',status:'active',schools:['دبستان پیشرفت','دبستان کوثر'],lastLogin:'۱۴۰۴/۰۳/۱۵ — ۱۶:۴۵',created:'۱۴۰۳/۰۵/۲۰',note:'',color:'linear-gradient(135deg,var(--accent3),#05a07a)',initials:'RS'},
+  {id:4,fname:'نگار',lname:'احمدی',email:'negar.op@bourbour.ir',phone:'09154444444',role:'operator',status:'active',schools:['هنرستان شهید بوربور','متوسطه اول امام علی'],lastLogin:'۱۴۰۴/۰۳/۱۸ — ۱۱:۰۰',created:'۱۴۰۳/۰۸/۰۱',note:'اپراتور ارشد',color:'linear-gradient(135deg,#e88ec0,#c06090)',initials:'NA'},
+  {id:5,fname:'کاوه',lname:'کریمی',email:'kaveh@bourbour.ir',phone:'09165555555',role:'viewer',status:'active',schools:['هنرستان فنی شیراز'],lastLogin:'۱۴۰۴/۰۳/۱۰ — ۰۸:۳۰',created:'۱۴۰۳/۱۰/۱۵',note:'ناظر آموزش',color:'linear-gradient(135deg,var(--accent2),#6a3fa0)',initials:'KK'},
+  {id:6,fname:'فاطمه',lname:'نوری',email:'fateme.n@school.ir',phone:'09176666666',role:'schooladmin',status:'blocked',schools:['هنرستان فنی شیراز'],lastLogin:'۱۴۰۴/۰۱/۰۵ — ۱۰:۲۰',created:'۱۴۰۳/۰۳/۱۰',note:'حساب مسدود شده',color:'linear-gradient(135deg,rgba(231,76,60,.8),#c0392b)',initials:'FN'},
+  {id:7,fname:'امیر',lname:'رضایی',email:'amir.r@bourbour.ir',phone:'09187777777',role:'operator',status:'pending',schools:[],lastLogin:'—',created:'۱۴۰۴/۰۳/۱۶',note:'در انتظار تأیید مدیر',color:'linear-gradient(135deg,var(--accent4),var(--accent))',initials:'AR'},
+  {id:8,fname:'زهرا',lname:'محمدی',email:'zahra.m@school.ir',phone:'09198888888',role:'schooladmin',status:'active',schools:['دبستان کوثر'],lastLogin:'۱۴۰۴/۰۳/۱۷ — ۱۳:۵۵',created:'۱۴۰۳/۰۶/۰۸',note:'',color:'linear-gradient(135deg,#4db8ff,var(--accent))',initials:'ZM'},
+];
+
+let activityLog = [
+  {id:1,adminName:'سامان رضوی',adminId:1,action:'ورود',detail:'ورود موفق به سامانه',ip:'192.168.1.1',time:'۱۴۰۴/۰۳/۱۸ — ۱۴:۳۲'},
+  {id:2,adminName:'سامان رضوی',adminId:1,action:'ایجاد',detail:'ادمین جدید: امیر رضایی اضافه شد',ip:'192.168.1.1',time:'۱۴۰۴/۰۳/۱۶ — ۱۰:۱۵'},
+  {id:3,adminName:'نگار احمدی',adminId:4,action:'ویرایش',detail:'اطلاعات هنرستان شهید بوربور ویرایش شد',ip:'10.0.0.5',time:'۱۴۰۴/۰۳/۱۸ — ۱۱:۰۰'},
+  {id:4,adminName:'سامان رضوی',adminId:1,action:'مسدود',detail:'حساب فاطمه نوری مسدود شد',ip:'192.168.1.1',time:'۱۴۰۴/۰۲/۱۰ — ۱۶:۴۰'},
+  {id:5,adminName:'رضا صادقی',adminId:3,action:'ورود',detail:'ورود موفق به سامانه',ip:'172.16.0.8',time:'۱۴۰۴/۰۳/۱۵ — ۱۶:۴۵'},
+  {id:6,adminName:'سامان رضوی',adminId:1,action:'رمز',detail:'رمز عبور کاوه کریمی تغییر کرد',ip:'192.168.1.1',time:'۱۴۰۴/۰۳/۱۲ — ۰۹:۳۰'},
+  {id:7,adminName:'مریم موسوی',adminId:2,action:'ویرایش',detail:'اطلاعات دبیرستان نمونه تهران ویرایش شد',ip:'10.0.0.12',time:'۱۴۰۴/۰۳/۱۷ — ۰۹:۱۵'},
+  {id:8,adminName:'نگار احمدی',adminId:4,action:'ایجاد',detail:'لایسنس جدید برای متوسطه امام علی صادر شد',ip:'10.0.0.5',time:'۱۴۰۴/۰۳/۱۴ — ۱۴:۲۲'},
+  {id:9,adminName:'سامان رضوی',adminId:1,action:'حذف',detail:'حساب ادمین قدیمی حذف شد',ip:'192.168.1.1',time:'۱۴۰۴/۰۳/۰۵ — ۱۱:۱۰'},
+  {id:10,adminName:'زهرا محمدی',adminId:8,action:'ورود',detail:'ورود موفق به سامانه',ip:'10.0.1.22',time:'۱۴۰۴/۰۳/۱۷ — ۱۳:۵۵'},
+];
+
+/* ══ PERMISSION DEFINITIONS ══ */
+const permGroups = [
+  {
+    key:'schools',label:'مدارس',icon:'fas fa-school',color:'rgba(74,144,217,.15)',iconColor:'var(--accent)',
+    perms:[
+      {key:'school_view',label:'مشاهده مدارس',desc:'مشاهده لیست و اطلاعات کامل مدارس'},
+      {key:'school_edit',label:'ویرایش مدارس',desc:'تغییر و به‌روزرسانی اطلاعات مدرسه',badge:'warn'},
+      {key:'school_add',label:'افزودن مدرسه',desc:'ثبت و ایجاد مدرسه جدید در سامانه',badge:'warn'},
+      {key:'school_delete',label:'حذف مدرسه',desc:'حذف کامل و دائمی مدرسه از سامانه',badge:'danger'},
+    ]
+  },
+  {
+    key:'users',label:'کاربران',icon:'fas fa-users',color:'rgba(6,214,160,.13)',iconColor:'var(--accent3)',
+    perms:[
+      {key:'student_manage',label:'مدیریت دانش‌آموزان',desc:'افزودن، ویرایش و حذف دانش‌آموزان'},
+      {key:'teacher_manage',label:'مدیریت معلمان',desc:'افزودن، ویرایش و حذف معلمان'},
+      {key:'parent_manage',label:'مدیریت اولیا',desc:'مدیریت اطلاعات اولیای دانش‌آموزان'},
+    ]
+  },
+  {
+    key:'finance',label:'مالی و لایسنس',icon:'fas fa-credit-card',color:'rgba(243,156,18,.12)',iconColor:'var(--accent4)',
+    perms:[
+      {key:'license_view',label:'مشاهده لایسنس‌ها',desc:'مشاهده وضعیت و جزئیات لایسنس‌ها'},
+      {key:'license_issue',label:'صدور لایسنس',desc:'صدور لایسنس جدید برای مدارس',badge:'warn'},
+      {key:'license_revoke',label:'لغو لایسنس',desc:'لغو و ابطال لایسنس‌های موجود',badge:'danger'},
+      {key:'plan_manage',label:'مدیریت پلان‌ها',desc:'تنظیم قیمت، تخفیف و پلان‌های اشتراک',badge:'danger'},
+    ]
+  },
+  {
+    key:'reports',label:'گزارش‌ها',icon:'fas fa-chart-bar',color:'rgba(142,95,212,.13)',iconColor:'var(--accent2)',
+    perms:[
+      {key:'report_view',label:'مشاهده گزارش‌ها',desc:'دسترسی به گزارش‌های آماری سامانه'},
+      {key:'report_export',label:'خروجی گزارش',desc:'دانلود گزارش به فرمت Excel و Word'},
+      {key:'report_advanced',label:'گزارش پیشرفته',desc:'گزارش‌های تحلیلی و مقایسه‌ای'},
+    ]
+  },
+  {
+    key:'system',label:'سیستم و ادمین',icon:'fas fa-cog',color:'rgba(231,76,60,.1)',iconColor:'var(--absent)',
+    perms:[
+      {key:'admin_manage',label:'مدیریت ادمین‌ها',desc:'افزودن، ویرایش و حذف ادمین‌های سامانه',badge:'danger'},
+      {key:'perm_manage',label:'مدیریت دسترسی‌ها',desc:'تغییر سطح دسترسی ادمین‌های دیگر',badge:'danger'},
+      {key:'system_settings',label:'تنظیمات سامانه',desc:'پیکربندی کلی و تنظیمات سیستمی',badge:'danger'},
+      {key:'activity_log',label:'مشاهده لاگ‌ها',desc:'دسترسی به تاریخچه فعالیت‌ها'},
+    ]
+  },
+];
+
+/* Default permissions per role */
+const roleDefaults = {
+  superadmin: {school_view:true,school_edit:true,school_add:true,school_delete:true,student_manage:true,teacher_manage:true,parent_manage:true,license_view:true,license_issue:true,license_revoke:true,plan_manage:true,report_view:true,report_export:true,report_advanced:true,admin_manage:true,perm_manage:true,system_settings:true,activity_log:true},
+  schooladmin: {school_view:true,school_edit:true,school_add:false,school_delete:false,student_manage:true,teacher_manage:true,parent_manage:true,license_view:true,license_issue:false,license_revoke:false,plan_manage:false,report_view:true,report_export:true,report_advanced:false,admin_manage:false,perm_manage:false,system_settings:false,activity_log:false},
+  operator: {school_view:true,school_edit:true,school_add:false,school_delete:false,student_manage:true,teacher_manage:true,parent_manage:false,license_view:true,license_issue:false,license_revoke:false,plan_manage:false,report_view:true,report_export:true,report_advanced:false,admin_manage:false,perm_manage:false,system_settings:false,activity_log:false},
+  viewer: {school_view:true,school_edit:false,school_add:false,school_delete:false,student_manage:false,teacher_manage:false,parent_manage:false,license_view:true,license_issue:false,license_revoke:false,plan_manage:false,report_view:true,report_export:true,report_advanced:false,admin_manage:false,perm_manage:false,system_settings:false,activity_log:false},
+};
+
+/* Per-admin custom permissions store — starts as copy of role defaults */
+let adminPerms = {};
+admins.forEach(a => {
+  adminPerms[a.id] = Object.assign({}, roleDefaults[a.role] || roleDefaults.viewer);
+});
+
+let selectedPermAdminId = null;
+
+/* ══ STATE ══ */
+let filteredAdmins = [...admins];
+let adminPage = 1;
+const APER = 6;
+let editingId = null;
+let assignedSchools = [];
+let confirmCallback = null;
+
+/* ══ STATS ══ */
+function updateStats(){
+  document.getElementById('st-total').textContent = fa(admins.length);
+  document.getElementById('st-active').textContent = fa(admins.filter(a=>a.status==='active').length);
+  document.getElementById('st-super').textContent = fa(admins.filter(a=>a.role==='superadmin').length);
+  document.getElementById('st-blocked').textContent = fa(admins.filter(a=>a.status==='blocked').length);
+}
+
+/* ══ SIDEBAR ══ */
+function toggleSidebar(){const sb=document.getElementById('sidebar');sb.classList.contains('open')?closeSidebar():openSidebar();}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('on');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('on');document.body.style.overflow='';}
+document.getElementById('overlay').addEventListener('click',closeSidebar);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSidebar();closeAllModals();}});
+
+/* ══ TOAST ══ */
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast'),i=t.querySelector('i');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast '+type+' show';
+  i.className=type==='success'?'fas fa-check-circle':type==='error'?'fas fa-times-circle':type==='warn'?'fas fa-exclamation-triangle':'fas fa-info-circle';
+  clearTimeout(t._tid);t._tid=setTimeout(()=>{t.className='toast '+type;},3200);
+}
+
+let savedFlashTimer = null;
+function showSavedFlash(){
+  const el = document.getElementById('savedFlash');
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'savedFlash 1.8s ease forwards';
+  clearTimeout(savedFlashTimer);
+  savedFlashTimer = setTimeout(()=>{ el.style.display='none'; }, 1800);
+}
+
+/* ══ TABS ══ */
+function switchTab(id){
+  document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(id==='log')renderLog();
+  if(id==='perms')renderPermTab();
+}
+
+/* ══ ROLE HELPERS ══ */
+const roleLabel = r => ({superadmin:'Super Admin',schooladmin:'مدیر مدرسه',operator:'اپراتور',viewer:'ناظر'}[r]||r);
+const roleCls   = r => ({superadmin:'role-superadmin',schooladmin:'role-schooladmin',operator:'role-operator',viewer:'role-viewer'}[r]||'role-viewer');
+const roleIcon  = r => ({superadmin:'fas fa-crown',schooladmin:'fas fa-school',operator:'fas fa-tools',viewer:'fas fa-eye'}[r]||'fas fa-user');
+const statusCls = s => ({active:'sb-active',blocked:'sb-blocked',pending:'sb-pending'}[s]||'sb-active');
+const statusLbl = s => ({active:'فعال',blocked:'مسدود',pending:'در انتظار'}[s]||s);
+const statusIcon= s => ({active:'fas fa-check-circle',blocked:'fas fa-ban',pending:'fas fa-hourglass-half'}[s]||'fas fa-circle');
+
+/* ══ FILTER + RENDER ══ */
+function applyFilters(){
+  const q=document.getElementById('adminSearch').value.trim().toLowerCase();
+  const role=document.getElementById('roleFilter').value;
+  const status=document.getElementById('statusFilter').value;
+  filteredAdmins=admins.filter(a=>{
+    const str=(a.fname+' '+a.lname+' '+a.email+' '+a.schools.join(' ')).toLowerCase();
+    return(!q||str.includes(q))&&(role==='all'||a.role===role)&&(status==='all'||a.status===status);
+  });
+  adminPage=1;renderAdmins();
+}
+
+function renderAdmins(){
+  const total=filteredAdmins.length;
+  const pages=Math.max(1,Math.ceil(total/APER));
+  if(adminPage>pages)adminPage=pages;
+  const slice=filteredAdmins.slice((adminPage-1)*APER,adminPage*APER);
+  const tbody=document.getElementById('adminTableBody');
+  tbody.innerHTML='';
+  if(!slice.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-search" style="display:block;font-size:30px;opacity:.3;margin-bottom:12px"></i>ادمینی یافت نشد</td></tr>`;
+  } else {
+    slice.forEach(a=>{
+      const tr=document.createElement('tr');
+      const schoolsHtml=a.role==='superadmin'
+        ?`<span style="font-size:10px;color:var(--accent4);font-weight:700"><i class="fas fa-globe" style="margin-left:4px"></i>همه مدارس</span>`
+        :a.schools.length
+          ?a.schools.map(s=>`<span style="display:inline-block;background:rgba(74,144,217,.1);color:var(--accent);font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:12px;margin:1px;border:1px solid rgba(74,144,217,.18)">${s}</span>`).join('')
+          :`<span style="color:var(--text-muted);font-size:11px">—</span>`;
+      tr.innerHTML=`
+        <td><div class="a-cell" style="cursor:pointer" onclick="openDrawer(${a.id})">
+          <div class="a-avatar" style="background:${a.color}">${a.initials}</div>
+          <div><div class="a-name">${a.fname} ${a.lname}</div><div class="a-email">${a.email}</div></div>
+        </div></td>
+        <td><span class="role-badge ${roleCls(a.role)}"><i class="${roleIcon(a.role)}" style="font-size:9px"></i> ${roleLabel(a.role)}</span></td>
+        <td style="max-width:200px;line-height:1.8">${schoolsHtml}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${a.lastLogin}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${a.created}</td>
+        <td><span class="status-badge ${statusCls(a.status)}"><i class="${statusIcon(a.status)}" style="font-size:9px"></i> ${statusLbl(a.status)}</span></td>
+        <td><div class="row-actions">
+          <button class="ra-btn ra-log" title="فعالیت‌ها" onclick="openDrawer(${a.id})"><i class="fas fa-history"></i></button>
+          <button class="ra-btn ra-edit" title="ویرایش" onclick="openEditModal(${a.id})"><i class="fas fa-edit"></i></button>
+          <button class="ra-btn ra-pass" title="تغییر رمز" onclick="openPassModal(${a.id})"><i class="fas fa-key"></i></button>
+          <button class="ra-btn ra-perm" title="دسترسی‌ها" onclick="openPermForAdmin(${a.id})"><i class="fas fa-shield-alt"></i></button>
+          <button class="ra-btn ra-block" title="${a.status==='blocked'?'فعال‌سازی':'مسدود کردن'}" onclick="toggleBlock(${a.id})"><i class="fas ${a.status==='blocked'?'fa-unlock':'fa-ban'}"></i></button>
+          <button class="ra-btn ra-del" title="حذف" onclick="openDeleteConfirm(${a.id})"><i class="fas fa-trash"></i></button>
+        </div></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  document.getElementById('adminPageInfo').textContent=`نمایش ${fa(Math.min((adminPage-1)*APER+1,total))}–${fa(Math.min(adminPage*APER,total))} از ${fa(total)} ادمین`;
+  const btns=document.getElementById('adminPageBtns');btns.innerHTML='';
+  const prev=document.createElement('button');prev.className='pg-btn';prev.innerHTML='<i class="fas fa-chevron-right"></i>';prev.disabled=adminPage===1;prev.onclick=()=>{adminPage--;renderAdmins();};btns.appendChild(prev);
+  for(let p=1;p<=pages;p++){const b=document.createElement('button');b.className='pg-btn'+(p===adminPage?' active':'');b.textContent=fa(p);const pp=p;b.onclick=()=>{adminPage=pp;renderAdmins();};btns.appendChild(b);}
+  const next=document.createElement('button');next.className='pg-btn';next.innerHTML='<i class="fas fa-chevron-left"></i>';next.disabled=adminPage===pages;next.onclick=()=>{adminPage++;renderAdmins();};btns.appendChild(next);
+}
+
+/* ══ OPEN PERM TAB FOR SPECIFIC ADMIN (from table button) ══ */
+function openPermForAdmin(id){
+  switchTab('perms');
+  setTimeout(()=>{
+    selectPermAdmin(id);
+  }, 100);
+}
+
+/* ══ PERMISSION TAB ══ */
+function getPermCount(adminId){
+  const p = adminPerms[adminId] || {};
+  return Object.values(p).filter(Boolean).length;
+}
+
+function getTotalPerms(){
+  let total = 0;
+  permGroups.forEach(g => total += g.perms.length);
+  return total;
+}
+
+function renderPermTab(){
+  renderAplList();
+  if(selectedPermAdminId) renderPermEditor(selectedPermAdminId);
+}
+
+function renderAplList(){
+  const list = document.getElementById('aplList');
+  list.innerHTML = '';
+  admins.forEach(a => {
+    const count = getPermCount(a.id);
+    const total = getTotalPerms();
+    const item = document.createElement('div');
+    item.className = 'apl-item' + (selectedPermAdminId === a.id ? ' selected' : '');
+    item.onclick = () => selectPermAdmin(a.id);
+    item.innerHTML = `
+      <div class="apl-avatar" style="background:${a.color}">${a.initials}</div>
+      <div class="apl-info">
+        <div class="apl-name">${a.fname} ${a.lname}</div>
+        <div class="apl-role-label">${roleLabel(a.role)}</div>
+      </div>
+      <div class="apl-perm-count">${fa(count)}/${fa(total)}</div>`;
+    list.appendChild(item);
+  });
+}
+
+function selectPermAdmin(id){
+  selectedPermAdminId = id;
+  renderAplList();
+  renderPermEditor(id);
+}
+
+function renderPermEditor(adminId){
+  const a = admins.find(x => x.id === adminId);
+  if(!a) return;
+  const perms = adminPerms[adminId];
+  const isSuperAdmin = a.role === 'superadmin';
+  const count = getPermCount(adminId);
+  const total = getTotalPerms();
+
+  let html = `
+    <div class="perm-editor-hdr">
+      <div class="peh-info">
+        <div class="peh-avatar" style="background:${a.color}">${a.initials}</div>
+        <div>
+          <div class="peh-name">${a.fname} ${a.lname}</div>
+          <div class="peh-meta">
+            <span class="role-badge ${roleCls(a.role)}" style="font-size:9px"><i class="${roleIcon(a.role)}" style="font-size:8px"></i> ${roleLabel(a.role)}</span>
+            <span style="color:var(--accent3);font-weight:700">${fa(count)} دسترسی فعال از ${fa(total)}</span>
+            ${isSuperAdmin ? '<span style="color:var(--accent4);font-size:10px;font-weight:700"><i class="fas fa-lock" style="margin-left:3px"></i>دسترسی کامل</span>' : ''}
+          </div>
+        </div>
+      </div>
+      <div class="peh-actions">
+        <button class="peh-btn peh-reset" onclick="resetToRoleDefaults(${adminId})" ${isSuperAdmin?'disabled style="opacity:.4;cursor:not-allowed"':''}><i class="fas fa-undo"></i> بازنشانی نقش</button>
+        <button class="peh-btn peh-all-on" onclick="setAllPerms(${adminId},true)" ${isSuperAdmin?'disabled style="opacity:.4;cursor:not-allowed"':''}><i class="fas fa-check-double"></i> فعال همه</button>
+        <button class="peh-btn peh-all-off" onclick="setAllPerms(${adminId},false)" ${isSuperAdmin?'disabled style="opacity:.4;cursor:not-allowed"':''}><i class="fas fa-times"></i> غیرفعال همه</button>
+      </div>
+    </div>`;
+
+  permGroups.forEach((group, gi) => {
+    const groupActive = group.perms.filter(p => perms[p.key]).length;
+    const isOpen = true;
+    html += `
+      <div class="perm-group">
+        <div class="perm-group-hdr" onclick="togglePermGroup(${gi})">
+          <div class="perm-group-icon" style="background:${group.color};color:${group.iconColor}"><i class="${group.icon}"></i></div>
+          <div class="perm-group-label">${group.label}</div>
+          <div class="perm-group-count">${fa(groupActive)} از ${fa(group.perms.length)} فعال</div>
+          <i class="fas fa-chevron-down perm-group-arrow open" id="arr-${gi}"></i>
+        </div>
+        <div class="perm-group-body open" id="grp-${gi}">`;
+    group.perms.forEach(perm => {
+      const isOn = !!perms[perm.key];
+      const disabled = isSuperAdmin ? 'disabled' : '';
+      const badgeHtml = perm.badge === 'danger'
+        ? `<span class="perm-row-badge badge-danger">حساس</span>`
+        : perm.badge === 'warn'
+        ? `<span class="perm-row-badge badge-warn">مهم</span>` : '';
+      html += `
+        <div class="perm-row">
+          <div class="perm-row-info">
+            <div class="perm-row-name">${badgeHtml}${perm.label}</div>
+            <div class="perm-row-desc">${perm.desc}</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-label" style="color:${isOn?'var(--present)':'var(--text-muted)'}" id="lbl-${adminId}-${perm.key}">${isOn?'فعال':'غیرفعال'}</span>
+            <label class="toggle ${disabled?'disabled':''}">
+              <input type="checkbox" ${isOn?'checked':''} ${disabled} onchange="togglePerm(${adminId},'${perm.key}',this.checked)"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  document.getElementById('permEditor').innerHTML = html;
+}
+
+function togglePermGroup(gi){
+  const body = document.getElementById('grp-'+gi);
+  const arrow = document.getElementById('arr-'+gi);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function togglePerm(adminId, key, value){
+  if(!adminPerms[adminId]) adminPerms[adminId] = {};
+  adminPerms[adminId][key] = value;
+  // update label
+  const lbl = document.getElementById(`lbl-${adminId}-${key}`);
+  if(lbl){ lbl.textContent = value ? 'فعال' : 'غیرفعال'; lbl.style.color = value ? 'var(--present)' : 'var(--text-muted)'; }
+  // update group counts
+  refreshGroupCounts(adminId);
+  // update APL list count
+  renderAplList();
+  // log
+  const a = admins.find(x=>x.id===adminId);
+  const permName = permGroups.flatMap(g=>g.perms).find(p=>p.key===key)?.label || key;
+  addLog(1,'سامان رضوی','ویرایش',`دسترسی "${permName}" برای ${a.fname} ${a.lname} ${value?'فعال':'غیرفعال'} شد`);
+  showSavedFlash();
+}
+
+function refreshGroupCounts(adminId){
+  const perms = adminPerms[adminId];
+  permGroups.forEach((group, gi) => {
+    const groupActive = group.perms.filter(p => perms[p.key]).length;
+    const countEl = document.querySelector(`#grp-${gi}`)?.previousElementSibling?.querySelector('.perm-group-count');
+    if(countEl) countEl.textContent = `${fa(groupActive)} از ${fa(group.perms.length)} فعال`;
+  });
+  // update header count
+  const a = admins.find(x=>x.id===adminId);
+  const count = getPermCount(adminId);
+  const total = getTotalPerms();
+  const metaCountEl = document.querySelector('.peh-meta span:nth-child(2)');
+  if(metaCountEl) metaCountEl.textContent = `${fa(count)} دسترسی فعال از ${fa(total)}`;
+}
+
+function setAllPerms(adminId, value){
+  const a = admins.find(x=>x.id===adminId);
+  if(a.role === 'superadmin') return;
+  if(!adminPerms[adminId]) adminPerms[adminId] = {};
+  permGroups.forEach(g => g.perms.forEach(p => { adminPerms[adminId][p.key] = value; }));
+  renderPermEditor(adminId);
+  renderAplList();
+  addLog(1,'سامان رضوی','ویرایش',`همه دسترسی‌های ${a.fname} ${a.lname} ${value?'فعال':'غیرفعال'} شد`);
+  showSavedFlash();
+  showToast(`همه دسترسی‌های ${a.fname} ${a.lname} ${value?'فعال':'غیرفعال'} شد`, value?'success':'warn');
+}
+
+function resetToRoleDefaults(adminId){
+  const a = admins.find(x=>x.id===adminId);
+  if(a.role === 'superadmin') return;
+  adminPerms[adminId] = Object.assign({}, roleDefaults[a.role] || roleDefaults.viewer);
+  renderPermEditor(adminId);
+  renderAplList();
+  addLog(1,'سامان رضوی','ویرایش',`دسترسی‌های ${a.fname} ${a.lname} به پیش‌فرض نقش بازنشانی شد`);
+  showSavedFlash();
+  showToast(`دسترسی‌های ${a.fname} ${a.lname} به پیش‌فرض نقش بازنشانی شد`,'info');
+}
+
+/* ══ DRAWER ══ */
+function openDrawer(id){
+  const a=admins.find(x=>x.id===id);
+  if(!a)return;
+  const logs=activityLog.filter(l=>l.adminId===id).slice(0,5);
+  const logsHtml=logs.length
+    ?logs.map(l=>{
+      const bg={ورود:'rgba(74,144,217,.15)',ایجاد:'rgba(46,204,113,.15)',ویرایش:'rgba(6,214,160,.15)',حذف:'rgba(231,76,60,.15)',مسدود:'rgba(243,156,18,.15)',رمز:'rgba(142,95,212,.15)'}[l.action]||'rgba(74,144,217,.15)';
+      const col={ورود:'var(--accent)',ایجاد:'var(--present)',ویرایش:'var(--accent3)',حذف:'var(--absent)',مسدود:'var(--accent4)',رمز:'var(--accent2)'}[l.action]||'var(--accent)';
+      return`<div class="drawer-log-item">
+        <div class="dlog-icon" style="background:${bg};color:${col}"><i class="${logIcon(l.action)}"></i></div>
+        <div><div class="dlog-text">${l.detail}</div><div class="dlog-time">${l.time} | IP: ${l.ip}</div></div>
+      </div>`;}).join('')
+    :`<div style="color:var(--text-muted);font-size:11.5px;text-align:center;padding:16px">بدون فعالیت ثبت‌شده</div>`;
+  const schoolsHtml=a.role==='superadmin'
+    ?`<div style="color:var(--accent4);font-size:11.5px;font-weight:700"><i class="fas fa-globe" style="margin-left:5px"></i>دسترسی به همه مدارس</div>`
+    :a.schools.length
+      ?a.schools.map(s=>`<span style="display:inline-block;background:rgba(74,144,217,.1);color:var(--accent);font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;margin:2px;border:1px solid rgba(74,144,217,.18)">${s}</span>`).join('')
+      :`<span style="color:var(--text-muted)">بدون مدرسه تخصیص‌یافته</span>`;
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="drawer-avatar" style="background:${a.color}">${a.initials}</div>
+    <div class="drawer-name">${a.fname} ${a.lname}</div>
+    <div class="drawer-email">${a.email}</div>
+    <div class="drawer-role-wrap">
+      <span class="role-badge ${roleCls(a.role)}"><i class="${roleIcon(a.role)}" style="font-size:9px"></i> ${roleLabel(a.role)}</span>
+      &nbsp;
+      <span class="status-badge ${statusCls(a.status)}"><i class="${statusIcon(a.status)}" style="font-size:9px"></i> ${statusLbl(a.status)}</span>
+    </div>
+    <div class="drawer-info-section">
+      <div class="drawer-info-row"><span class="dil"><i class="fas fa-phone"></i>موبایل</span><span class="div-val" dir="ltr">${a.phone}</span></div>
+      <div class="drawer-info-row"><span class="dil"><i class="fas fa-calendar-plus"></i>تاریخ ثبت</span><span class="div-val">${a.created}</span></div>
+      <div class="drawer-info-row"><span class="dil"><i class="fas fa-clock"></i>آخرین ورود</span><span class="div-val">${a.lastLogin}</span></div>
+      <div class="drawer-info-row"><span class="dil"><i class="fas fa-school"></i>مدارس</span><div style="text-align:left;max-width:180px">${schoolsHtml}</div></div>
+      ${a.note?`<div class="drawer-info-row"><span class="dil"><i class="fas fa-sticky-note"></i>یادداشت</span><span class="div-val" style="font-size:11px">${a.note}</span></div>`:''}
+    </div>
+    <div class="drawer-log-title"><i class="fas fa-history"></i> آخرین فعالیت‌ها</div>
+    <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;">${logsHtml}</div>
+    <div class="drawer-actions">
+      <button class="da-btn da-edit" onclick="openEditModal(${a.id});closeDrawer()"><i class="fas fa-edit"></i> ویرایش اطلاعات</button>
+      <button class="da-btn da-pass" onclick="openPassModal(${a.id});closeDrawer()"><i class="fas fa-key"></i> تغییر رمز عبور</button>
+      <button class="da-btn da-perm" onclick="openPermForAdmin(${a.id});closeDrawer()"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</button>
+      <button class="da-btn da-block" onclick="toggleBlock(${a.id});closeDrawer()"><i class="fas ${a.status==='blocked'?'fa-unlock':'fa-ban'}"></i> ${a.status==='blocked'?'فعال‌سازی حساب':'مسدود کردن حساب'}</button>
+      <button class="da-btn da-del" onclick="openDeleteConfirm(${a.id});closeDrawer()"><i class="fas fa-trash"></i> حذف ادمین</button>
+    </div>`;
+  document.getElementById('drawerBd').classList.add('open');
+  document.getElementById('adminDrawer').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawerBd').classList.remove('open');
+  document.getElementById('adminDrawer').classList.remove('open');
+}
+
+function logIcon(action){
+  return {ورود:'fas fa-sign-in-alt',ایجاد:'fas fa-plus-circle',ویرایش:'fas fa-edit',حذف:'fas fa-trash',مسدود:'fas fa-ban',رمز:'fas fa-key'}[action]||'fas fa-circle';
+}
+
+/* ══ ADD MODAL ══ */
+function openAddModal(){
+  editingId=null;
+  document.getElementById('adminModalTitle').textContent='افزودن ادمین جدید';
+  document.getElementById('adminModalSaveBtn').innerHTML='<i class="fas fa-save" style="margin-left:6px"></i> ثبت ادمین';
+  ['f_fname','f_lname','f_email','f_phone','f_note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_role').value='schooladmin';
+  document.getElementById('f_status').value='active';
+  document.getElementById('passWrap').style.display='block';
+  document.getElementById('f_pass').value='';document.getElementById('f_pass2').value='';
+  document.getElementById('passBar').style.width='0%';document.getElementById('passHint').textContent='';
+  assignedSchools=[];renderSchoolTags();onRoleChange();
+  document.getElementById('adminModal').classList.add('open');
+}
+
+function openEditModal(id){
+  editingId=id;
+  const a=admins.find(x=>x.id===id);if(!a)return;
+  document.getElementById('adminModalTitle').textContent='ویرایش ادمین';
+  document.getElementById('adminModalSaveBtn').innerHTML='<i class="fas fa-save" style="margin-left:6px"></i> ذخیره تغییرات';
+  document.getElementById('f_fname').value=a.fname;document.getElementById('f_lname').value=a.lname;
+  document.getElementById('f_email').value=a.email;document.getElementById('f_phone').value=a.phone;
+  document.getElementById('f_role').value=a.role;document.getElementById('f_status').value=a.status;
+  document.getElementById('f_note').value=a.note||'';
+  document.getElementById('passWrap').style.display='none';
+  assignedSchools=[...a.schools];renderSchoolTags();onRoleChange();
+  document.getElementById('adminModal').classList.add('open');
+}
+
+function onRoleChange(){
+  const r=document.getElementById('f_role').value;
+  document.getElementById('schoolAssignWrap').style.display=r==='superadmin'?'none':'flex';
+}
+
+function addSchoolTag(){
+  const sel=document.getElementById('schoolAddSelect');const val=sel.value;
+  if(!val||assignedSchools.includes(val))return;
+  assignedSchools.push(val);sel.value='';renderSchoolTags();
+}
+function removeSchoolTag(s){assignedSchools=assignedSchools.filter(x=>x!==s);renderSchoolTags();}
+function renderSchoolTags(){
+  const wrap=document.getElementById('schoolTagsWrap');const sel=document.getElementById('schoolAddSelect');
+  wrap.querySelectorAll('.school-tag').forEach(t=>t.remove());
+  assignedSchools.forEach(s=>{const tag=document.createElement('div');tag.className='school-tag';tag.innerHTML=`${s}<button onclick="removeSchoolTag('${s}')"><i class="fas fa-times"></i></button>`;wrap.insertBefore(tag,sel);});
+}
+
+function saveAdmin(){
+  const fname=document.getElementById('f_fname').value.trim();
+  const lname=document.getElementById('f_lname').value.trim();
+  const email=document.getElementById('f_email').value.trim();
+  if(!fname||!lname||!email){showToast('نام، نام خانوادگی و ایمیل الزامی است','error');return;}
+  const role=document.getElementById('f_role').value;
+  const status=document.getElementById('f_status').value;
+  if(!editingId){
+    const p=document.getElementById('f_pass').value;const p2=document.getElementById('f_pass2').value;
+    if(p.length<8){showToast('رمز عبور باید حداقل ۸ کاراکتر باشد','error');return;}
+    if(p!==p2){showToast('رمز عبور و تکرار آن یکسان نیستند','error');return;}
+  }
+  const initials=(fname[0]+(lname[0]||'')).toUpperCase();
+  const colors=['linear-gradient(135deg,var(--accent),var(--accent2))','linear-gradient(135deg,var(--accent3),#05a07a)','linear-gradient(135deg,var(--accent4),#e67e22)','linear-gradient(135deg,var(--accent2),#6a3fa0)','linear-gradient(135deg,#4db8ff,var(--accent))'];
+  if(editingId){
+    const a=admins.find(x=>x.id===editingId);
+    Object.assign(a,{fname,lname,email,phone:document.getElementById('f_phone').value,role,status,schools:role==='superadmin'?[]:assignedSchools,note:document.getElementById('f_note').value,initials});
+    addLog(a.id,a.fname+' '+a.lname,'ویرایش',`اطلاعات ${a.fname} ${a.lname} ویرایش شد`);
+    showToast(`اطلاعات ${fname} ${lname} به‌روزرسانی شد ✓`,'success');
+  } else {
+    const newId = admins.length + 1;
+    const newAdmin={id:newId,fname,lname,email,phone:document.getElementById('f_phone').value,role,status,schools:role==='superadmin'?[]:assignedSchools,lastLogin:'—',created:'۱۴۰۴/۰۳/۱۸',note:document.getElementById('f_note').value,color:colors[admins.length%colors.length],initials};
+    admins.push(newAdmin);
+    adminPerms[newId] = Object.assign({}, roleDefaults[role] || roleDefaults.viewer);
+    addLog(1,'سامان رضوی','ایجاد',`ادمین جدید ${fname} ${lname} اضافه شد`);
+    showToast(`ادمین "${fname} ${lname}" با موفقیت اضافه شد ✓`,'success');
+  }
+  closeModal('adminModal');
+  applyFilters();updateStats();populateLogFilter();
+}
+
+/* ══ PASSWORD MODAL ══ */
+function openPassModal(id){
+  const a=admins.find(x=>x.id===id);if(!a)return;
+  document.getElementById('pmAvatar').style.background=a.color;document.getElementById('pmAvatar').textContent=a.initials;
+  document.getElementById('pmName').textContent=a.fname+' '+a.lname;document.getElementById('pmRole').textContent=roleLabel(a.role);
+  document.getElementById('pm_pass').value='';document.getElementById('pm_pass2').value='';
+  document.getElementById('pmBar').style.width='0%';document.getElementById('pmHint').textContent='';
+  document.getElementById('passModal').dataset.adminId=id;
+  document.getElementById('passModal').classList.add('open');
+}
+function savePass(){
+  const p=document.getElementById('pm_pass').value;const p2=document.getElementById('pm_pass2').value;
+  if(p.length<8){showToast('رمز عبور باید حداقل ۸ کاراکتر باشد','error');return;}
+  if(p!==p2){showToast('رمز عبور و تکرار آن یکسان نیستند','error');return;}
+  const id=parseInt(document.getElementById('passModal').dataset.adminId);
+  const a=admins.find(x=>x.id===id);
+  addLog(1,'سامان رضوی','رمز',`رمز عبور ${a.fname} ${a.lname} تغییر کرد`);
+  closeModal('passModal');showToast(`رمز عبور ${a.fname} ${a.lname} تغییر کرد ✓`,'success');
+}
+
+/* ══ BLOCK/UNBLOCK ══ */
+function toggleBlock(id){
+  const a=admins.find(x=>x.id===id);if(!a)return;
+  if(a.role==='superadmin'){showToast('نمی‌توان Super Admin را مسدود کرد','error');return;}
+  const wasBlocked=a.status==='blocked';a.status=wasBlocked?'active':'blocked';
+  addLog(1,'سامان رضوی','مسدود',`حساب ${a.fname} ${a.lname} ${wasBlocked?'فعال':'مسدود'} شد`);
+  applyFilters();updateStats();showToast(`حساب ${a.fname} ${a.lname} ${wasBlocked?'فعال':'مسدود'} شد`,wasBlocked?'success':'warn');
+}
+
+/* ══ DELETE ══ */
+function openDeleteConfirm(id){
+  const a=admins.find(x=>x.id===id);if(!a)return;
+  if(a.role==='superadmin'){showToast('نمی‌توان Super Admin را حذف کرد','error');return;}
+  document.getElementById('confirmTitle').textContent='حذف ادمین';
+  document.getElementById('confirmIcon2').className='fas fa-trash';
+  document.getElementById('confirmIconWrap').style.cssText='background:rgba(231,76,60,.15);color:var(--absent);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:auto;';
+  document.getElementById('confirmIconBig').className='fas fa-trash';
+  document.getElementById('confirmMsg').innerHTML=`آیا از حذف ادمین <span class="confirm-name">${a.fname} ${a.lname}</span> مطمئن هستید؟<br><span style="font-size:11px;color:var(--absent)">این عملیات غیرقابل بازگشت است.</span>`;
+  confirmCallback=()=>{
+    admins=admins.filter(x=>x.id!==id);delete adminPerms[id];
+    applyFilters();updateStats();populateLogFilter();
+    showToast(`ادمین "${a.fname} ${a.lname}" حذف شد`,'error');
+  };
+  document.getElementById('confirmOkBtn').onclick=()=>{confirmCallback&&confirmCallback();closeModal('confirmModal');};
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+/* ══ LOG ══ */
+function addLog(adminId,adminName,action,detail){
+  activityLog.unshift({id:activityLog.length+1,adminName,adminId,action,detail,ip:'192.168.1.1',time:'۱۴۰۴/۰۳/۱۸ — همین الان'});
+}
+function populateLogFilter(){
+  const sel=document.getElementById('logAdminFilter');const cur=sel.value;
+  sel.innerHTML='<option value="all">همه ادمین‌ها</option>';
+  admins.forEach(a=>{const opt=document.createElement('option');opt.value=a.id;opt.textContent=a.fname+' '+a.lname;sel.appendChild(opt);});
+  sel.value=cur;
+}
+function renderLog(){
+  const adminF=document.getElementById('logAdminFilter').value;const actionF=document.getElementById('logActionFilter').value;
+  const list=activityLog.filter(l=>(adminF==='all'||l.adminId==adminF)&&(actionF==='all'||l.action===actionF));
+  const tbody=document.getElementById('logTableBody');tbody.innerHTML='';
+  const actionCls={ورود:'la-login',ایجاد:'la-create',ویرایش:'la-edit',حذف:'la-delete',مسدود:'la-block',رمز:'la-pass'};
+  list.forEach((l,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--text-muted);font-size:11px">${fa(i+1)}</td><td style="font-weight:700;font-size:12px">${l.adminName}</td><td><span class="log-action ${actionCls[l.action]||'la-login'}"><i class="${logIcon(l.action)}" style="font-size:9px"></i> ${l.action}</span></td><td style="font-size:11.5px;color:var(--text-muted)">${l.detail}</td><td style="font-family:monospace;font-size:11px;color:var(--accent3);direction:ltr">${l.ip}</td><td style="font-size:11px;color:var(--text-muted)">${l.time}</td>`;
+    tbody.appendChild(tr);
+  });
+  if(!list.length) tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-muted)">هیچ فعالیتی یافت نشد</td></tr>`;
+}
+
+/* ══ PASS STRENGTH ══ */
+function checkPassStrength(){const p=document.getElementById('f_pass').value;const str=passStrength(p);document.getElementById('passBar').style.width=str.pct+'%';document.getElementById('passBar').style.background=str.color;document.getElementById('passHint').textContent=str.label;document.getElementById('passHint').style.color=str.color;}
+function checkPmStrength(){const p=document.getElementById('pm_pass').value;const str=passStrength(p);document.getElementById('pmBar').style.width=str.pct+'%';document.getElementById('pmBar').style.background=str.color;document.getElementById('pmHint').textContent=str.label;document.getElementById('pmHint').style.color=str.color;}
+function passStrength(p){if(!p)return{pct:0,color:'var(--absent)',label:''};let score=0;if(p.length>=8)score++;if(p.length>=12)score++;if(/[A-Z]/.test(p))score++;if(/[0-9]/.test(p))score++;if(/[^A-Za-z0-9]/.test(p))score++;if(score<=1)return{pct:25,color:'var(--absent)',label:'ضعیف'};if(score<=2)return{pct:50,color:'var(--accent4)',label:'متوسط'};if(score<=3)return{pct:75,color:'var(--accent)',label:'خوب'};return{pct:100,color:'var(--present)',label:'قوی'};}
+
+/* ══ MODAL HELPERS ══ */
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+function closeModalOutside(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function closeAllModals(){['adminModal','passModal','confirmModal'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('open');});}
+
+/* ══ EXPORT ══ */
+function downloadExcel(data,filename,headers){const wsData=[headers,...data];const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(wsData);ws['!cols']=headers.map(()=>({wch:22}));XLSX.utils.book_append_sheet(wb,ws,'Sheet1');XLSX.writeFile(wb,filename+'.xlsx');showToast('فایل Excel دانلود شد ✓','success');}
+function downloadWord(html,filename){const full=`<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><style>body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12pt;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ccc;padding:6px 10px;text-align:right;}th{background:#4a90d9;color:#fff;}tr:nth-child(even){background:#f5f8ff;}</style></head><body>${html}</body></html>`;const blob=new Blob(['\ufeff',full],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.doc';a.click();showToast('فایل Word دانلود شد ✓','success');}
+function exportAdminsExcel(){const headers=['نام','نام خانوادگی','ایمیل','موبایل','نقش','مدارس','آخرین ورود','تاریخ ثبت','وضعیت'];const data=admins.map(a=>[a.fname,a.lname,a.email,a.phone,roleLabel(a.role),a.schools.join(' | ')||'همه مدارس',a.lastLogin,a.created,statusLbl(a.status)]);downloadExcel(data,'ادمین‌های_بوربور',headers);}
+function exportAdminsWord(){let html=`<h2>لیست ادمین‌های سامانه بوربور</h2><table><tr><th>نام و نام خانوادگی</th><th>ایمیل</th><th>نقش</th><th>مدارس</th><th>وضعیت</th><th>آخرین ورود</th></tr>`;admins.forEach(a=>{html+=`<tr><td>${a.fname} ${a.lname}</td><td dir="ltr">${a.email}</td><td>${roleLabel(a.role)}</td><td>${a.schools.join(', ')||'همه'}</td><td>${statusLbl(a.status)}</td><td>${a.lastLogin}</td></tr>`;});html+='</table>';downloadWord(html,'ادمین‌های_بوربور');}
+function exportLogExcel(){const headers=['#','نام ادمین','اقدام','جزئیات','IP','زمان'];const data=activityLog.map((l,i)=>[i+1,l.adminName,l.action,l.detail,l.ip,l.time]);downloadExcel(data,'تاریخچه_فعالیت_بوربور',headers);}
+function exportLogWord(){let html=`<h2>تاریخچه فعالیت ادمین‌ها — بوربور</h2><table><tr><th>#</th><th>ادمین</th><th>اقدام</th><th>جزئیات</th><th>IP</th><th>زمان</th></tr>`;activityLog.forEach((l,i)=>{html+=`<tr><td>${i+1}</td><td>${l.adminName}</td><td>${l.action}</td><td>${l.detail}</td><td dir="ltr">${l.ip}</td><td>${l.time}</td></tr>`;});html+='</table>';downloadWord(html,'تاریخچه_فعالیت_بوربور');}
+
+/* ══ INIT ══ */
+updateStats();
+applyFilters();
+populateLogFilter();
+</script>
+</body>
+</html>

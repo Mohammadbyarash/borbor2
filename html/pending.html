@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>وضعیت پیش‌ثبت‌نام - مدرسه بوربور</title>
+  <link rel="stylesheet" href="../style/scrollbar.css">
+  <link rel="stylesheet" href="../style/pending.css">
+  <link rel="icon" href="../image/iconB.png"/>
+  <  <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+  <style>
+
+
+#jdp-custom-overlay { 
+  display:none; position:fixed; inset:0; z-index:999990; 
+}
+#jdp-custom-popup {
+  display:none; position:fixed; z-index:999999;
+  width:310px;
+  background:linear-gradient(145deg,#0f1c3f,#162850);
+  border:1px solid rgba(100,160,255,0.25);
+  border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04);
+  font-family:Vazirmatn,Tahoma,sans-serif;
+  direction:rtl;
+  overflow:hidden;
+  user-select:none;
+  padding:0;
+}
+.jdp-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.jdp-nav-btn{background:rgba(255,255,255,0.06);border:none;color:#7eb8ff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0;}
+.jdp-nav-btn:hover{background:rgba(255,255,255,0.18);}
+.jdp-month-year{color:#e0eeff;font-size:15px;font-weight:600;text-align:center;flex:1;cursor:pointer;padding:4px 10px;border-radius:8px;transition:background 0.2s;}
+.jdp-month-year:hover{background:rgba(255,255,255,0.08);}
+.jdp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:10px 14px 6px;}
+.jdp-weekday{text-align:center;color:rgba(180,200,255,0.5);font-size:11px;font-weight:500;padding:3px 0;}
+.jdp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:0 14px 12px;}
+.jdp-day{text-align:center;padding:7px 2px;border-radius:8px;cursor:pointer;color:#c8d8f0;font-size:12px;font-weight:500;transition:all 0.15s;border:1px solid transparent;background:rgba(255,255,255,0.03);}
+.jdp-day:hover{background:rgba(80,150,255,0.18);color:#fff;}
+.jdp-day.today{border:1px solid rgba(80,150,255,0.5);color:#7eb8ff;background:rgba(80,150,255,0.12);font-weight:700;}
+.jdp-day.selected{background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;font-weight:700;border-color:transparent;}
+.jdp-day.empty{cursor:default;pointer-events:none;background:transparent;border-color:transparent;}
+.jdp-year-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;}
+.jdp-year-range{color:rgba(180,200,255,0.6);font-size:12px;font-weight:600;}
+.jdp-year-month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 14px 12px;}
+.jdp-ym-item{text-align:center;padding:10px 4px;border-radius:10px;cursor:pointer;color:#a0c0f0;font-size:12px;font-weight:500;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);transition:all 0.15s;}
+.jdp-ym-item:hover{background:rgba(80,150,255,0.2);color:#fff;}
+.jdp-ym-item.active{background:linear-gradient(135deg,#3d8bff,#1a5fd4);color:#fff;border-color:transparent;font-weight:700;}
+.jdp-footer{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid rgba(255,255,255,0.07);}
+.jdp-today-btn{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(80,150,255,0.35);background:rgba(80,150,255,0.15);color:#7eb8ff;font-size:12px;font-family:Vazirmatn,sans-serif;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.jdp-today-btn:hover{background:rgba(80,150,255,0.25);}
+.jdp-clear-btn{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(220,60,60,0.3);background:rgba(220,60,60,0.12);color:#f08080;font-size:12px;font-family:Vazirmatn,sans-serif;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.jdp-clear-btn:hover{background:rgba(220,60,60,0.22);}
+    /* ══════════════════════════════════════
+       اسپینرها
+    ══════════════════════════════════════ */
+    .spinner-accepted { border-top-color:#27ae60!important; border-right-color:#229954!important; }
+    .spinner-accepted::before { border-bottom-color:#27ae60!important; border-left-color:#229954!important; }
+    .spinner-rejected { border-top-color:#e74c3c!important; border-right-color:#c0392b!important; }
+    .spinner-rejected::before { border-bottom-color:#e74c3c!important; border-left-color:#c0392b!important; }
+
+    /* ══════════════════════════════════════
+       کارت اطلاعات دانش‌آموز (مثل عکس ۲)
+    ══════════════════════════════════════ */
+    .student-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      text-align: right;
+      position: relative;
+      overflow: hidden;
+    }
+    .student-card::before {
+      content:'';
+      position:absolute;
+      right:0; top:0; bottom:0;
+      width:4px;
+      border-radius:4px 0 0 4px;
+    }
+    .student-card.pending::before  { background: linear-gradient(180deg,#f39c12,#e67e22); }
+    .student-card.accepted::before { background: linear-gradient(180deg,#27ae60,#229954); }
+    .student-card.rejected::before { background: linear-gradient(180deg,#e74c3c,#c0392b); }
+
+    .sc-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-family: "Shabnam", sans-serif;
+      margin-bottom: 8px;
+    }
+    .sc-meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 12px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .sc-meta span { display:flex; align-items:center; gap:5px; }
+    .sc-meta i { font-size:11px; opacity:.7; }
+    .sc-tracking {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .sc-tracking-label { font-size:13px; color:rgba(255,255,255,.5); }
+    .sc-tracking-code {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+    .sc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .sc-badge.pending  { background:rgba(243,156,18,.15); color:#f39c12; border:1px solid rgba(243,156,18,.4); }
+    .sc-badge.accepted { background:rgba(39,174,96,.15);  color:#27ae60; border:1px solid rgba(39,174,96,.4); }
+    .sc-badge.rejected { background:rgba(231,76,60,.15);  color:#e74c3c; border:1px solid rgba(231,76,60,.4); }
+    .sc-date { font-size:11px; color:rgba(255,255,255,.35); margin-bottom:18px; }
+
+    .sc-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .sc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: "Vazirmatn", sans-serif;
+      transition: all 0.25s ease;
+    }
+    .sc-btn:hover { transform: translateY(-2px); }
+    .sc-btn.view  {
+      background: rgba(56,189,248,.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56,189,248,.4);
+    }
+    .sc-btn.view:hover { background: rgba(56,189,248,.25); }
+    .sc-btn.edit  {
+      background: rgba(251,191,36,.15);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,.4);
+    }
+    .sc-btn.edit:hover { background: rgba(251,191,36,.25); }
+    .sc-btn.print {
+      background: rgba(167,139,250,.15);
+      color: #a78bfa;
+      border: 1px solid rgba(167,139,250,.4);
+    }
+    .sc-btn.print:hover { background: rgba(167,139,250,.25); }
+
+    /* ══════════════════════════════════════
+       مودال مشاهده / ویرایش
+    ══════════════════════════════════════ */
+    #dataModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.8);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    #dataModal.open { display: flex; }
+
+    #dataModalInner {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      direction: rtl;
+      animation: modalIn .25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity:0; transform:scale(.95) translateY(10px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+
+    .mhd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 20px;
+    }
+    .mhd h3 {
+      color: #38bdf8;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Shabnam", sans-serif;
+    }
+    .mx {
+      background: rgba(255,255,255,.07);
+      border: none;
+      color: #fff;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background .2s;
+      display: flex; align-items:center; justify-content:center;
+    }
+    .mx:hover { background: rgba(231,76,60,.5); }
+
+    .ms-title {
+      color: #fbbf24;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0 8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      margin: 18px 0 12px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .mg {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 12px;
+    }
+    .mf { display: flex; flex-direction: column; gap: 5px; }
+    .mf label { font-size: 11px; color: rgba(255,255,255,.4); }
+    .mv {
+      font-size: 13px;
+      color: #e2e8f0;
+      background: rgba(255,255,255,.05);
+      padding: 9px 12px;
+      border-radius: 8px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+    }
+    .mi {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 13px;
+      font-family: "Vazirmatn", sans-serif;
+      transition: border-color .2s;
+      direction: rtl;
+      width: 100%;
+    }
+    .mi:focus { outline: none; border-color: #38bdf8; }
+    .mi[type="file"] { padding: 6px 8px; font-size: 12px; cursor:pointer; }
+
+    .mdocs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+    .da {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: rgba(56,189,248,.1);
+      border: 1px solid rgba(56,189,248,.3);
+      border-radius: 8px;
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 12px;
+      transition: background .2s;
+    }
+    .da:hover { background: rgba(56,189,248,.2); }
+
+    .macts {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .btn-cancel {
+      padding: 10px 24px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: "Vazirmatn", sans-serif;
+      transition: background .2s;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,.13); }
+    .btn-save {
+      padding: 10px 28px;
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: "Vazirmatn", sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity .2s;
+    }
+    .btn-save:hover    { opacity: .88; }
+    .btn-save:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* scrollbar inside modal */
+    #dataModalInner::-webkit-scrollbar { width: 5px; }
+    #dataModalInner::-webkit-scrollbar-track { background: #0f172a; }
+    #dataModalInner::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+    /* ══════════════════════════════════════
+       توست
+    ══════════════════════════════════════ */
+    #_pToast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-size: 14px;
+      z-index: 99999;
+      color: #fff;
+      min-width: 240px;
+      text-align: center;
+      font-family: "Vazirmatn", sans-serif;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      transition: opacity .35s, bottom .35s;
+      pointer-events: none;
+      opacity: 0;
+    }
+    
+    
+    .msel {
+    background: #172047 !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: "Vazirmatn", sans-serif;
+    font-size: 14px;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: left 10px center !important;
+    background-size: 16px !important;
+    padding-left: 32px !important;
+}
+
+.msel option {
+    background: #172047 !important;
+    color: #fff !important;
+    padding: 8px 12px;
+}
+
+.msel:focus {
+    outline: none;
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+}
+
+/* ─── upload label در مودال ویرایش ─── */
+.mu-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #172047;
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 54px;
+    width: 100%;
+}
+
+.mu-label:hover {
+    border-color: #3498db;
+    background: #1a2550;
+    transform: translateY(-1px);
+}
+
+.mu-label.mu-uploaded {
+    border-color: #27ae60;
+    border-style: solid;
+    background: rgba(39,174,96,0.08);
+}
+
+.mu-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+
+.mu-label.mu-uploaded .mu-icon {
+    background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.mu-icon i {
+    color: #fff;
+    font-size: 15px;
+}
+
+.mu-text {
+    flex: 1;
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: "Vazirmatn", sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+    #_pToast.show { opacity:1; }
+  </style>
+</head>
+<body>
+
+  <div class="particle" style="width:80px;height:80px;left:10%;animation-duration:15s;animation-delay:0s;"></div>
+  <div class="particle" style="width:60px;height:60px;left:80%;animation-duration:12s;animation-delay:2s;"></div>
+  <div class="particle" style="width:40px;height:40px;left:50%;animation-duration:18s;animation-delay:4s;"></div>
+  <div class="particle" style="width:50px;height:50px;left:30%;animation-duration:20s;animation-delay:1s;"></div>
+  <div class="particle" style="width:70px;height:70px;left:70%;animation-duration:16s;animation-delay:3s;"></div>
+
+  <div class="container">
+
+    <!-- ===== بارگذاری ===== -->
+    <div id="stateLoading">
+      <div class="spinner-wrapper">
+        <div class="spinner"></div>
+        <i class="fas fa-search spinner-icon"></i>
+      </div>
+      <h1 class="status-title">در حال بررسی وضعیت...</h1>
+      <div class="status-subtitle">
+        <i class="fas fa-sync-alt"></i>
+        <span>لطفاً چند لحظه صبر کنید</span>
+      </div>
+    </div>
+
+    <!-- ===== در انتظار بررسی ===== -->
+    <div id="statePending" style="display:none;">
+      <div class="spinner-wrapper">
+        <div class="spinner"></div>
+        <i class="fas fa-clipboard-check spinner-icon"></i>
+      </div>
+      <h1 class="status-title">پیش‌ثبت‌نام ارسال شد</h1>
+      <div class="status-subtitle" style="color:#f39c12;">
+        <i class="fas fa-sync-alt"></i>
+        <span>اطلاعات شما در حال بررسی است</span>
+      </div>
+      <div id="pendingStudentInfo" class="student-card pending"></div>
+      <div class="info-cards">
+        <div class="info-card">
+          <i class="fas fa-phone-alt"></i>
+          <p>در صورت نیاز به تکمیل یا اصلاح اطلاعات، همکاران ما حداکثر ظرف <strong style="color:#f39c12;">۳ روز کاری</strong> با شما تماس می‌گیرند.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-mobile-alt"></i>
+          <p>لطفاً تلفن همراه خود را پاسخگو نگه دارید و پیامک‌های دریافتی را بررسی کنید.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-redo-alt"></i>
+          <p>این صفحه هر <strong style="color:#f39c12;">۶۰ ثانیه</strong> به‌طور خودکار وضعیت را بررسی می‌کند.</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="btn btn-refresh" onclick="location.reload()">
+          <i class="fas fa-redo-alt"></i>
+          <span>بررسی مجدد وضعیت</span>
+        </button>
+      </div>
+      <div class="footer-note">
+        <p><i class="fas fa-info-circle"></i> پس از بررسی نهایی، نتیجه در همین صفحه نمایش داده خواهد شد.</p>
+      </div>
+    </div>
+
+    <!-- ===== قبول شده ===== -->
+    <div id="stateAccepted" style="display:none;">
+      <div class="spinner-wrapper">
+        <div class="spinner spinner-accepted"></div>
+        <i class="fas fa-check-circle spinner-icon" style="color:#27ae60;"></i>
+      </div>
+      <h1 class="status-title">تبریک! قبول شدید 🎉</h1>
+      <div class="status-subtitle" style="color:#27ae60;">
+        <i class="fas fa-check-double"></i>
+        <span>درخواست پیش‌ثبت‌نام شما تأیید شد</span>
+      </div>
+      <div id="acceptedStudentInfo" class="student-card accepted"></div>
+      <div class="info-cards">
+        <div class="info-card" style="border-right-color:#27ae60;">
+          <i class="fas fa-calendar-check" style="color:#27ae60;"></i>
+          <p>لطفاً برای تکمیل فرآیند ثبت‌نام رسمی، در <strong style="color:#27ae60;">اسرع وقت</strong> به دفتر مدرسه مراجعه فرمایید.</p>
+        </div>
+        <div class="info-card" style="border-right-color:#27ae60;">
+          <i class="fas fa-file-alt" style="color:#27ae60;"></i>
+          <p>مدارک لازم: <strong style="color:#27ae60;">کارت ملی، شناسنامه، کارنامه سال قبل</strong> و ۲ قطعه عکس ۳×۴.</p>
+        </div>
+        <div class="info-card" style="border-right-color:#27ae60;">
+          <i class="fas fa-clock" style="color:#27ae60;"></i>
+          <p>ساعت مراجعه: <strong style="color:#27ae60;">شنبه تا چهارشنبه، ۸ صبح الی ۲ بعدازظهر</strong>.</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <a href="landing.html" class="btn btn-home">
+          <i class="fas fa-home"></i>
+          <span>صفحه اصلی</span>
+        </a>
+        <a href="tel:09120000000" class="btn btn-refresh" style="background:linear-gradient(90deg,#27ae60,#229954);box-shadow:0 5px 20px rgba(39,174,96,0.3);">
+          <i class="fas fa-phone"></i>
+          <span>تماس با مدرسه</span>
+        </a>
+      </div>
+      <div class="footer-note" style="border-color:rgba(39,174,96,0.3);background:rgba(39,174,96,0.08);">
+        <p><i class="fas fa-star" style="color:#27ae60;"></i> پذیرش شما منوط به تکمیل ثبت‌نام رسمی و ارائه مدارک است.</p>
+      </div>
+    </div>
+
+    <!-- ===== رد شده ===== -->
+    <div id="stateRejected" style="display:none;">
+      <div class="spinner-wrapper">
+        <div class="spinner spinner-rejected"></div>
+        <i class="fas fa-times-circle spinner-icon" style="color:#e74c3c;"></i>
+      </div>
+      <h1 class="status-title">متأسفانه پذیرفته نشدید</h1>
+      <div class="status-subtitle" style="color:#e74c3c;">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>درخواست پیش‌ثبت‌نام تأیید نشد</span>
+      </div>
+      <div id="rejectedStudentInfo" class="student-card rejected"></div>
+      <div class="info-cards">
+        <div class="info-card" style="border-right-color:#e74c3c;">
+          <i class="fas fa-phone-alt" style="color:#e74c3c;"></i>
+          <p>برای اطلاع از دلیل رد درخواست، با <strong style="color:#e74c3c;">دفتر مدرسه</strong> تماس بگیرید.</p>
+        </div>
+        <div class="info-card" style="border-right-color:#e74c3c;">
+          <i class="fas fa-undo" style="color:#e74c3c;"></i>
+          <p>این تصمیم قطعی نیست. در صورت داشتن مدارک تکمیلی می‌توانید <strong style="color:#e74c3c;">درخواست تجدیدنظر</strong> بدهید.</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <a href="dashbord.html" class="btn btn-home">
+          <i class="fas fa-home"></i>
+          <span>صفحه اصلی</span>
+        </a>
+        <a href="tel:09120000000" class="btn" style="background:linear-gradient(90deg,#e74c3c,#c0392b);color:white;box-shadow:0 5px 20px rgba(231,76,60,0.3);border-radius:12px;padding:16px 30px;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;">
+          <i class="fas fa-phone"></i>
+          <span>تماس برای تجدیدنظر</span>
+        </a>
+      </div>
+      <div class="footer-note" style="border-color:rgba(231,76,60,0.3);background:rgba(231,76,60,0.08);">
+        <p><i class="fas fa-info-circle" style="color:#e74c3c;"></i> جهت تجدیدنظر حداکثر ظرف ۵ روز کاری با مدرسه تماس بگیرید.</p>
+      </div>
+    </div>
+
+    <!-- ===== خطا ===== -->
+    <div id="stateError" style="display:none;">
+      <div class="spinner-wrapper">
+        <div class="spinner spinner-rejected"></div>
+        <i class="fas fa-exclamation-triangle spinner-icon" style="color:#f39c12;"></i>
+      </div>
+      <h1 class="status-title">اطلاعاتی یافت نشد</h1>
+      <div class="status-subtitle" style="color:#f39c12;">
+        <i class="fas fa-question-circle"></i>
+        <span id="errorMessage">ابتدا پیش‌ثبت‌نام کنید</span>
+      </div>
+      <div class="info-cards">
+        <div class="info-card" style="border-right-color:#f39c12;">
+          <i class="fas fa-user-plus" style="color:#f39c12;"></i>
+          <p>شما هنوز پیش‌ثبت‌نام نکرده‌اید یا از دستگاه دیگری وارد شده‌اید.</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <a href="../html/sign-up.html" class="btn btn-refresh">
+          <i class="fas fa-user-plus"></i>
+          <span>پیش‌ثبت‌نام</span>
+        </a>
+        <a href="dashbord.html" class="btn btn-home">
+          <i class="fas fa-home"></i>
+          <span>صفحه اصلی</span>
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <!-- ══════════════════════════════════════
+       مودال مشاهده / ویرایش
+  ══════════════════════════════════════ -->
+  <div id="dataModal">
+    <div id="dataModalInner"></div>
+  </div>
+
+  <div id="_pToast"></div>
+
+  <!-- JDP POPUP -->
+<div id="jdp-custom-overlay"></div>
+<div id="jdp-custom-popup">
+  <div class="jdp-header">
+    <button class="jdp-nav-btn" id="jdpPrevBtn">‹</button>
+    <div class="jdp-month-year" id="jdpMonthYear" onclick="jdpToggleMonthView()"></div>
+    <button class="jdp-nav-btn" id="jdpNextBtn">›</button>
+  </div>
+  <div id="jdpDayView">
+    <div class="jdp-weekdays">
+      <div class="jdp-weekday">ش</div><div class="jdp-weekday">ی</div>
+      <div class="jdp-weekday">د</div><div class="jdp-weekday">س</div>
+      <div class="jdp-weekday">چ</div><div class="jdp-weekday">پ</div>
+      <div class="jdp-weekday">ج</div>
+    </div>
+    <div class="jdp-days" id="jdpDaysGrid"></div>
+  </div>
+  <div id="jdpMonthView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearPrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpMonthGrid"></div>
+  </div>
+  <div id="jdpYearView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearRangeLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpYearGrid"></div>
+  </div>
+  <div class="jdp-footer">
+    <button class="jdp-today-btn" onclick="jdpGoToday()">امروز</button>
+    <button class="jdp-clear-btn" onclick="jdpClear()">پاک کردن</button>
+  </div>
+</div>
+
+  <script src="../javaScript/pending.js"></script>
+</body>
+</html>

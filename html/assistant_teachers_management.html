@@ -1,0 +1,4697 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — مدیریت معلمین</title>
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <style>
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --late: #f39c12;
+        --leave: #8e5fd4;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 45% 45% at 55% 45%,
+            rgba(6, 214, 160, 0.04) 0%,
+            transparent 65%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── SIDEBAR (مثل داشبورد) ── */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 6px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #fff;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .deputy-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .deputy-block::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+          circle,
+          rgba(74, 144, 217, 0.15),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .deputy-avatar {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .deputy-name {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .deputy-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .deputy-badge {
+        margin-top: 7px;
+        display: inline-block;
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(243, 156, 18, 0.22);
+      }
+
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .nav-item {
+        margin-bottom: 2px;
+      }
+      .nav-item a {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .nav-item a i {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .nav-item a:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .nav-item.active a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .nav-item.active a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .nav-item.active a i {
+        opacity: 1;
+        color: var(--accent);
+      }
+      .nav-badge {
+        margin-right: auto;
+        background: var(--accent5);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* ── HAMBURGER ── */
+      .hamburger {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .hamburger:hover {
+        border-color: var(--border-hover);
+      }
+      .hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text-muted);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger:hover span {
+        background: var(--text);
+      }
+
+      .sb-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 199;
+      }
+      .sb-overlay.on {
+        display: block;
+      }
+
+      /* ── MAIN ── */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 14px;
+      }
+      .greeting h1 {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .greeting h1 span {
+        color: var(--accent);
+      }
+      .greeting p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .action-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 15px;
+        transition: all 0.2s;
+      }
+      .action-btn:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .notif-dot {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 7px;
+        height: 7px;
+        background: var(--accent5);
+        border-radius: 50%;
+        border: 2px solid var(--bg-main);
+      }
+      .profile-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
+      }
+      .add-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 800;
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+      }
+      .add-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(74, 144, 217, 0.4);
+      }
+
+      /* ── STAT CARDS ── */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.25s;
+      }
+      .stat-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+      }
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .si-blue {
+        background: rgba(74, 144, 217, 0.15);
+        color: var(--accent);
+      }
+      .si-green {
+        background: rgba(46, 204, 113, 0.15);
+        color: var(--present);
+      }
+      .si-purple {
+        background: rgba(142, 95, 212, 0.15);
+        color: var(--accent2);
+      }
+      .si-orange {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .stat-val {
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .stat-lbl {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      /* ── CARD ── */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+      }
+
+      /* ── TOOLBAR ── */
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+      }
+      .search-wrap input {
+        width: 100%;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12.5px;
+        padding: 10px 38px 10px 14px;
+        border-radius: var(--radius-sm);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-wrap input:focus {
+        border-color: var(--border-hover);
+      }
+      .search-wrap input::placeholder {
+        color: var(--text-muted);
+      }
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 13px;
+        pointer-events: none;
+      }
+      .filter-sel {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        outline: none;
+      }
+      .filter-sel:focus {
+        border-color: var(--border-hover);
+      }
+      .view-toggle {
+        display: flex;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .vt-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .vt-btn.active {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+      }
+      .vt-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+
+      /* ── TABLE ── */
+      .t-wrap {
+        overflow-x: auto;
+      }
+      .t-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .t-table th {
+        text-align: right;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        padding: 11px 14px;
+        background: rgba(74, 144, 217, 0.06);
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+      }
+      .t-table th:hover {
+        color: var(--text);
+      }
+      .t-table td {
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        vertical-align: middle;
+      }
+      .t-table tr:last-child td {
+        border-bottom: none;
+      }
+      .t-table tbody tr {
+        transition: background 0.15s;
+        cursor: pointer;
+      }
+      .t-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.025);
+      }
+      .tc-cell {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .tc-av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      .tc-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .tc-name {
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+      .tc-id {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .subj-tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+      .row-acts {
+        display: flex;
+        gap: 5px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .t-table tbody tr:hover .row-acts {
+        opacity: 1;
+      }
+      .ra {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .ra:hover {
+        border-color: var(--border-hover);
+        color: #fff;
+      }
+      .ra.ra-v:hover {
+        border-color: rgba(74, 144, 217, 0.4);
+        color: var(--accent);
+        background: rgba(74, 144, 217, 0.1);
+      }
+      .ra.ra-s:hover {
+        border-color: rgba(6, 214, 160, 0.4);
+        color: var(--accent3);
+        background: rgba(6, 214, 160, 0.1);
+      }
+      .ra.ra-e:hover {
+        border-color: rgba(142, 95, 212, 0.4);
+        color: var(--accent2);
+        background: rgba(142, 95, 212, 0.1);
+      }
+      .ra.ra-del:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+        background: rgba(231, 76, 60, 0.1);
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .sd-active {
+        background: var(--present);
+        box-shadow: 0 0 6px rgba(46, 204, 113, 0.5);
+      }
+      .sd-absent {
+        background: var(--absent);
+      }
+      .sd-leave {
+        background: var(--late);
+      }
+
+      /* ── GRID ── */
+      .tc-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 14px;
+      }
+      .tc-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        transition: all 0.25s;
+        cursor: pointer;
+        position: relative;
+      }
+      .tc-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+      }
+      .tc-card-top {
+        height: 5px;
+      }
+      .tc-card-body {
+        padding: 18px 16px;
+      }
+      .tc-card-av {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        font-weight: 900;
+        margin: 0 auto 10px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+      .tc-card-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .tc-card-name {
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 3px;
+      }
+      .tc-card-subj {
+        font-size: 10.5px;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      .tc-card-stats {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 12px;
+      }
+      .tccs {
+        text-align: center;
+      }
+      .tccs-val {
+        font-size: 16px;
+        font-weight: 900;
+      }
+      .tccs-lbl {
+        font-size: 9px;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+      .tc-card-btns {
+        display: flex;
+        gap: 6px;
+      }
+      .tcb {
+        flex: 1;
+        padding: 7px 4px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 10.5px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+      .tcb:hover {
+        color: #fff;
+        border-color: var(--border-hover);
+      }
+      .tcb.tcb-v:hover {
+        border-color: rgba(74, 144, 217, 0.5);
+        color: var(--accent);
+        background: rgba(74, 144, 217, 0.1);
+      }
+      .tcb.tcb-s:hover {
+        border-color: rgba(6, 214, 160, 0.5);
+        color: var(--accent3);
+        background: rgba(6, 214, 160, 0.1);
+      }
+
+      /* ── PAGINATION ── */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0 0;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .page-info {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .page-btns {
+        display: flex;
+        gap: 5px;
+      }
+      .pg-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pg-btn.active {
+        background: rgba(74, 144, 217, 0.2);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 700;
+      }
+      .pg-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+      .pg-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      /* ── GENERIC MODAL BASE ── */
+      .modal-back {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        z-index: 4000;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 20px;
+        overflow-y: auto;
+        backdrop-filter: blur(4px);
+      }
+      .modal-back.open {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.22);
+        border-radius: var(--radius);
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+        animation: fadeUp 0.3s ease both;
+        margin: auto;
+      }
+      .modal-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg-card);
+        z-index: 5;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .mh-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .mh-av {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      .mh-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .mh-name {
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .mh-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .modal-close:hover {
+        border-color: rgba(231, 76, 60, 0.4);
+        color: var(--absent);
+      }
+
+      /* ── SCHEDULE MODAL ── */
+      .week-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 22px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .week-label {
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .week-label i {
+        color: var(--accent);
+      }
+      .week-nav-btns {
+        display: flex;
+        gap: 6px;
+      }
+      .wn-btn {
+        padding: 6px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .wn-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .wn-btn.wn-today {
+        border-color: rgba(74, 144, 217, 0.3);
+        color: var(--accent);
+        background: rgba(74, 144, 217, 0.08);
+      }
+      .wn-btn.wn-today:hover {
+        background: rgba(74, 144, 217, 0.16);
+      }
+
+      /* ── SCHEDULE GRID ── */
+      .sched-wrap {
+        padding: 20px 22px;
+        overflow-x: auto;
+      }
+      .sched-grid {
+        display: grid;
+        grid-template-columns: 80px repeat(5, 1fr);
+        gap: 0;
+        min-width: 640px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .sg-head {
+        background: rgba(74, 144, 217, 0.08);
+        border-bottom: 1px solid var(--border);
+      }
+      .sg-time-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        padding: 12px 10px;
+        text-align: center;
+        border-left: 1px solid var(--border);
+      }
+      .sg-day-head {
+        padding: 12px 8px;
+        text-align: center;
+        border-left: 1px solid var(--border);
+      }
+      .sg-day-head:last-child {
+        border-left: none;
+      }
+      .sg-day-name {
+        font-size: 11.5px;
+        font-weight: 800;
+      }
+      .sg-day-date {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .sg-day-head.today-col {
+        background: rgba(74, 144, 217, 0.12);
+      }
+      .sg-day-head.today-col .sg-day-name {
+        color: var(--accent);
+      }
+      .sg-row {
+        display: contents;
+      }
+      .sg-time-cell {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .sg-time-text {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        direction: ltr;
+      }
+      .sg-cell {
+        border-bottom: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        padding: 5px;
+        min-height: 72px;
+        position: relative;
+        transition: background 0.2s;
+      }
+      .sg-cell:last-child {
+        border-left: none;
+      }
+      .sg-cell.today-col {
+        background: rgba(74, 144, 217, 0.03);
+      }
+      .sg-cell:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .sg-cell.has-class {
+        cursor: pointer;
+      }
+      .sg-cell.has-class:hover {
+        background: rgba(74, 144, 217, 0.05);
+      }
+      .sg-row-last .sg-time-cell,
+      .sg-row-last .sg-cell {
+        border-bottom: none;
+      }
+      .sg-cell.edit-mode {
+        cursor: pointer;
+      }
+      .sg-cell.edit-mode:hover {
+        background: rgba(74, 144, 217, 0.08);
+        outline: 1px dashed rgba(74, 144, 217, 0.3);
+      }
+      .sg-cell.edit-mode.has-class:hover .sess-block {
+        opacity: 0.6;
+      }
+      .sg-add-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .sg-cell.edit-mode:hover .sg-add-hint {
+        opacity: 1;
+      }
+      .sg-add-hint i {
+        font-size: 16px;
+        color: rgba(74, 144, 217, 0.5);
+      }
+
+      /* ── SESSION BLOCK ── */
+      .sess-block {
+        border-radius: 8px;
+        padding: 7px 9px;
+        height: 100%;
+        min-height: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.2s;
+      }
+      .sess-block::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 0 8px 8px 0;
+      }
+      .sess-block:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .sb-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 4px;
+      }
+      .sb-subj {
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+      .sb-cls {
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .sb-room {
+        font-size: 9.5px;
+        margin-top: 4px;
+        opacity: 0.7;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .sb-room i {
+        font-size: 8px;
+      }
+      .sess-del {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        background: rgba(231, 76, 60, 0.8);
+        border: none;
+        color: #fff;
+        font-size: 9px;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .sg-cell.edit-mode .sess-block:hover .sess-del {
+        display: flex;
+      }
+
+      .sess-blue {
+        background: rgba(74, 144, 217, 0.13);
+        border-color: rgba(74, 144, 217, 0.18);
+      }
+      .sess-blue::before {
+        background: var(--accent);
+      }
+      .sess-blue .sb-subj {
+        color: var(--accent);
+      }
+      .sess-blue .sb-cls {
+        background: rgba(74, 144, 217, 0.2);
+        color: var(--accent);
+      }
+      .sess-purple {
+        background: rgba(142, 95, 212, 0.13);
+        border-color: rgba(142, 95, 212, 0.18);
+      }
+      .sess-purple::before {
+        background: var(--accent2);
+      }
+      .sess-purple .sb-subj {
+        color: var(--accent2);
+      }
+      .sess-purple .sb-cls {
+        background: rgba(142, 95, 212, 0.2);
+        color: var(--accent2);
+      }
+      .sess-green {
+        background: rgba(6, 214, 160, 0.1);
+        border-color: rgba(6, 214, 160, 0.16);
+      }
+      .sess-green::before {
+        background: var(--accent3);
+      }
+      .sess-green .sb-subj {
+        color: var(--accent3);
+      }
+      .sess-green .sb-cls {
+        background: rgba(6, 214, 160, 0.15);
+        color: var(--accent3);
+      }
+      .sess-orange {
+        background: rgba(243, 156, 18, 0.1);
+        border-color: rgba(243, 156, 18, 0.16);
+      }
+      .sess-orange::before {
+        background: var(--accent4);
+      }
+      .sess-orange .sb-subj {
+        color: var(--accent4);
+      }
+      .sess-orange .sb-cls {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .sess-pink {
+        background: rgba(232, 142, 192, 0.1);
+        border-color: rgba(232, 142, 192, 0.16);
+      }
+      .sess-pink::before {
+        background: #e88ec0;
+      }
+      .sess-pink .sb-subj {
+        color: #e88ec0;
+      }
+      .sess-pink .sb-cls {
+        background: rgba(232, 142, 192, 0.15);
+        color: #e88ec0;
+      }
+      .sess-red {
+        background: rgba(231, 76, 60, 0.1);
+        border-color: rgba(231, 76, 60, 0.16);
+      }
+      .sess-red::before {
+        background: var(--absent);
+      }
+      .sess-red .sb-subj {
+        color: var(--absent);
+      }
+      .sess-red .sb-cls {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+      }
+      .sg-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+      }
+      .sg-empty-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* ── SCHEDULE SUMMARY STRIP ── */
+      .sched-summary {
+        display: flex;
+        gap: 12px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        background: rgba(74, 144, 217, 0.03);
+      }
+      .ss-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        flex: 1;
+        min-width: 120px;
+      }
+      .ss-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .ss-val {
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .ss-lbl {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* ── SCHED EDIT FOOTER ── */
+      .sched-edit-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 22px;
+        border-top: 1px solid var(--border);
+        background: rgba(142, 95, 212, 0.05);
+      }
+      .sched-edit-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .sched-edit-hint i {
+        color: var(--accent2);
+      }
+      .sched-edit-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* ── PROFILE PANEL ── */
+      .prof-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 3000;
+        display: none;
+        backdrop-filter: blur(4px);
+      }
+      .prof-overlay.open {
+        display: block;
+      }
+      .prof-panel {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 440px;
+        max-width: 95vw;
+        background: var(--bg-card);
+        border-right: 1px solid rgba(74, 144, 217, 0.2);
+        z-index: 3001;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-110%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+      }
+      .prof-panel.open {
+        transform: translateX(0);
+      }
+      .prof-cover {
+        height: 110px;
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.25),
+          rgba(142, 95, 212, 0.2)
+        );
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .prof-cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.07) 1px, transparent 1px);
+        background-size: 22px 22px;
+      }
+      .prof-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+      .prof-close:hover {
+        background: rgba(231, 76, 60, 0.4);
+      }
+      .prof-av-wrap {
+        position: absolute;
+        bottom: -24px;
+        right: 20px;
+      }
+      .prof-av {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 900;
+        border: 3px solid var(--bg-card);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .prof-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .prof-av-edit-hint {
+        position: absolute;
+        bottom: -24px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #fff;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        z-index: 3;
+      }
+      .prof-av-wrap:hover .prof-av-edit-hint {
+        opacity: 1;
+      }
+      .prof-identity {
+        padding: 32px 20px 16px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .prof-name {
+        font-size: 16px;
+        font-weight: 900;
+        margin-bottom: 5px;
+      }
+      .prof-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .prof-tabs {
+        display: flex;
+        background: var(--bg-card2);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .pt-tab {
+        flex: 1;
+        padding: 11px 6px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .pt-tab i {
+        font-size: 11px;
+      }
+      .pt-tab.active {
+        color: #fff;
+        background: rgba(74, 144, 217, 0.08);
+      }
+      .pt-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent);
+      }
+      .prof-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px;
+      }
+      .prof-body::-webkit-scrollbar {
+        width: 4px;
+      }
+      .prof-body::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+      .pt-panel {
+        display: none;
+        animation: fadeUp 0.3s ease both;
+      }
+      .pt-panel.active {
+        display: block;
+      }
+      .p-sec {
+        margin-bottom: 18px;
+      }
+      .p-sec-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        padding-bottom: 7px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: space-between;
+      }
+      .p-sec-title .left-part {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .p-sec-title i {
+        color: var(--accent);
+      }
+      .p-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .p-field {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 11px;
+        position: relative;
+      }
+      .p-field-lbl {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+        font-weight: 700;
+      }
+      .p-field-val {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .p-field-val.ltr {
+        direction: ltr;
+        text-align: left;
+      }
+      .mini-sched-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 6px;
+      }
+      .msr-day {
+        font-size: 11px;
+        font-weight: 700;
+        min-width: 40px;
+      }
+      .msr-sessions {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        flex: 1;
+        justify-content: center;
+      }
+      .msr-sess {
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 10px;
+      }
+      .msr-count {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        min-width: 30px;
+        text-align: left;
+      }
+      .workload-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .wb-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1s;
+      }
+      .prof-footer {
+        padding: 14px 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .pf-sched-btn {
+        flex: 1;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.3);
+        transition: all 0.25s;
+      }
+      .pf-sched-btn:hover {
+        transform: translateY(-2px);
+      }
+      .pf-sms-btn {
+        background: rgba(6, 214, 160, 0.1);
+        border: 1px solid rgba(6, 214, 160, 0.25);
+        color: var(--accent3);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 11px 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .pf-sms-btn:hover {
+        background: rgba(6, 214, 160, 0.2);
+      }
+      .pf-edit-btn {
+        background: rgba(142, 95, 212, 0.1);
+        border: 1px solid rgba(142, 95, 212, 0.25);
+        color: var(--accent2);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 11px 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .pf-edit-btn:hover {
+        background: rgba(142, 95, 212, 0.2);
+      }
+
+      /* ── NOTIFICATIONS PANEL ── */
+      .notif-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 380px;
+        max-width: 95vw;
+        background: var(--bg-card);
+        border-right: 1px solid rgba(74, 144, 217, 0.2);
+        z-index: 3500;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .notif-panel.open {
+        transform: translateX(0);
+      }
+      .notif-panel-hdr {
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        background: var(--bg-card);
+      }
+      .notif-panel-title {
+        font-size: 15px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .notif-panel-title i {
+        color: var(--accent4);
+      }
+      .notif-badge-count {
+        background: var(--accent5);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .notif-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      .notif-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .notif-list::-webkit-scrollbar-thumb {
+        background: rgba(74, 144, 217, 0.2);
+        border-radius: 4px;
+      }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        padding: 13px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 9px;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .notif-item:hover {
+        border-color: var(--border-hover);
+      }
+      .notif-item.unread {
+        border-color: rgba(74, 144, 217, 0.2);
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .ni-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .ni-content {
+        flex: 1;
+      }
+      .ni-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .ni-body {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+      .ni-time {
+        font-size: 10px;
+        color: rgba(180, 200, 255, 0.3);
+        margin-top: 5px;
+      }
+      .ni-unread-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 4px;
+      }
+      .notif-panel-footer {
+        padding: 12px 18px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .notif-mark-all {
+        width: 100%;
+        background: rgba(74, 144, 217, 0.08);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        color: var(--accent);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .notif-mark-all:hover {
+        background: rgba(74, 144, 217, 0.16);
+      }
+
+      /* ── SMS MODAL ── */
+      .sms-modal-box {
+        max-width: 480px;
+      }
+      .sms-form {
+        padding: 20px 22px;
+      }
+      .sms-recipient {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        margin-bottom: 14px;
+      }
+      .sms-rec-av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      .sms-rec-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sms-rec-name {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .sms-rec-phone {
+        font-size: 11px;
+        color: var(--text-muted);
+        direction: ltr;
+      }
+      .sms-templates {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .sms-tpl {
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 4px 11px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+      .sms-tpl:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .sms-tpl.active {
+        border-color: rgba(74, 144, 217, 0.4);
+        background: rgba(74, 144, 217, 0.1);
+        color: var(--accent);
+      }
+      .sms-textarea {
+        width: 100%;
+        min-height: 120px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12.5px;
+        padding: 12px 14px;
+        outline: none;
+        resize: vertical;
+        line-height: 1.7;
+        transition: border-color 0.2s;
+      }
+      .sms-textarea:focus {
+        border-color: var(--border-hover);
+      }
+      .sms-char-count {
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: left;
+        margin-top: 5px;
+      }
+      .sms-footer {
+        display: flex;
+        gap: 8px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .sms-send-btn {
+        flex: 1;
+        background: linear-gradient(135deg, var(--accent3), #2ecc71);
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(6, 214, 160, 0.25);
+        transition: all 0.25s;
+      }
+      .sms-send-btn:hover {
+        transform: translateY(-2px);
+      }
+      .sms-cancel-btn {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 12px 18px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .sms-cancel-btn:hover {
+        color: var(--text);
+      }
+
+      /* ── ADD/EDIT TEACHER MODAL ── */
+      .edit-modal-box {
+        max-width: 640px;
+      }
+      .edit-form {
+        padding: 22px;
+      }
+      .edit-section {
+        margin-bottom: 20px;
+      }
+      .edit-section-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .edit-section-title i {
+        color: var(--accent);
+      }
+      .edit-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .edit-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .edit-field.full {
+        grid-column: 1/-1;
+      }
+      .edit-field label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .edit-field input,
+      .edit-field select,
+      .edit-field textarea {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12.5px;
+        padding: 10px 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+      }
+      .edit-field input:focus,
+      .edit-field select:focus,
+      .edit-field textarea:focus {
+        border-color: var(--border-hover);
+      }
+      .edit-field input::placeholder {
+        color: var(--text-muted);
+      }
+      .edit-field select option {
+        background: var(--bg-card2);
+      }
+      .edit-field textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .photo-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .photo-upload-area:hover {
+        border-color: rgba(74, 144, 217, 0.4);
+        background: rgba(74, 144, 217, 0.04);
+      }
+      .photo-upload-area.has-photo {
+        border-style: solid;
+        border-color: rgba(74, 144, 217, 0.3);
+      }
+      .photo-upload-area img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 8px;
+      }
+      .photo-upload-area .pu-icon {
+        font-size: 28px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+      .photo-upload-area .pu-text {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .photo-upload-area .pu-limit {
+        font-size: 10px;
+        color: rgba(180, 200, 255, 0.3);
+        margin-top: 4px;
+      }
+      .photo-upload-area input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .edit-footer {
+        display: flex;
+        gap: 8px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .edit-save-btn {
+        flex: 1;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.25s;
+      }
+      .edit-save-btn:hover {
+        transform: translateY(-2px);
+      }
+      .edit-cancel-btn {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .edit-cancel-btn:hover {
+        color: var(--text);
+      }
+
+      /* ── SESSION ADD MODAL ── */
+      .sess-add-box {
+        max-width: 400px;
+      }
+      .sess-add-form {
+        padding: 20px 22px;
+      }
+      .sess-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 11px;
+      }
+
+      /* ── TOAST ── */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 13px 22px;
+        font-size: 12.5px;
+        font-weight: 600;
+        z-index: 9000;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.35s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-color: rgba(46, 204, 113, 0.3);
+      }
+      .toast.success i {
+        color: var(--present);
+      }
+      .toast.info {
+        border-color: rgba(74, 144, 217, 0.3);
+      }
+      .toast.info i {
+        color: var(--accent);
+      }
+      .toast.error {
+        border-color: rgba(231, 76, 60, 0.3);
+      }
+      .toast.error i {
+        color: var(--absent);
+      }
+
+      /* ── CONFIRM DIALOG ── */
+      .confirm-box {
+        max-width: 380px;
+      }
+      .confirm-body {
+        padding: 24px 22px;
+        text-align: center;
+      }
+      .confirm-icon {
+        font-size: 36px;
+        margin-bottom: 14px;
+      }
+      .confirm-title {
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .confirm-text {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+      .confirm-footer {
+        display: flex;
+        gap: 8px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .confirm-yes {
+        flex: 1;
+        background: linear-gradient(135deg, var(--absent), #c0392b);
+        border: none;
+        color: #fff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .confirm-yes:hover {
+        transform: translateY(-1px);
+      }
+      .confirm-no {
+        flex: 1;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .confirm-no:hover {
+        color: var(--text);
+      }
+
+      /* excel btn */
+      .excel-btn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(6, 214, 160, 0.1);
+        border: 1px solid rgba(6, 214, 160, 0.25);
+        color: var(--accent3);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 9px 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .excel-btn:hover {
+        background: rgba(6, 214, 160, 0.2);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @media (max-width: 1100px) {
+        .stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 68px 13px 26px;
+        }
+        .stats-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .prof-panel {
+          width: 100%;
+          max-width: 100vw;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- HAMBURGER -->
+    <button
+      class="hamburger"
+      id="hamburger"
+      onclick="toggleSidebar()"
+      title="منو"
+    >
+      <span></span><span></span><span></span>
+    </button>
+    <div class="sb-overlay" id="overlay"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="logo">بور<span>بور</span></div>
+      <button
+        onclick="closeSidebar()"
+        style="
+          width: 34px;
+          height: 34px;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border);
+          background: transparent;
+          color: var(--text-muted);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          transition: all 0.2s;
+          margin-bottom: 4px;
+        "
+        title="بستن منو"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="deputy-block">
+        <div class="deputy-avatar">ا</div>
+        <div>
+          <div class="deputy-name">احمد کریمی</div>
+          <div class="deputy-role">معاون آموزشی</div>
+          <div class="deputy-badge">هنرستان شهید بوربور</div>
+        </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="nav-item">
+        <a href="../html/assistant_dashboard.html"><i class="fas fa-th-large"></i> داشبورد</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_attendance.html"
+          ><i class="fas fa-clipboard-check"></i> مدیریت حضور و غیاب
+          <span class="nav-badge">۳</span></a
+        >
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_students.html"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+      </div>
+      <div class="nav-item active">
+        <a href="../html/assistant_teachers_management.html"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_grades_management.html"><i class="fas fa-star"></i> نمرات</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">گزارش‌ها و پیام‌ها</div>
+      <div class="nav-item">
+        <a href="../html/assistant_reports.html"><i class="fas fa-chart-bar"></i> گزارش‌ها</a>
+      </div>
+      <div class="nav-item">
+        <a href="../html/assistant_notifications.html"
+          ><i class="fas fa-bell"></i> اطلاعیه‌ها
+          <span class="nav-badge">۵</span></a
+        >
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item">
+        <a href="../html/assistant_profile.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="nav-item">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content" id="mainContent">
+      <div class="top-bar">
+        <div class="greeting">
+          <h1>مدیریت <span>معلمین</span></h1>
+          <p>
+            <i
+              class="fas fa-chalkboard-teacher"
+              style="color: var(--accent3); font-size: 11px"
+            ></i>
+            سال تحصیلی ۱۴۰۴–۱۴۰۵ &nbsp;|&nbsp; هنرستان شهید بوربور
+          </p>
+        </div>
+        <div class="top-actions">
+          <div class="action-btn" onclick="openNotifPanel()" title="اطلاعیه‌ها">
+            <i class="fas fa-bell"></i>
+            <div class="notif-dot" id="notifDot"></div>
+          </div>
+          <button class="excel-btn" onclick="exportExcel()">
+            <i class="fas fa-file-excel"></i> خروجی Excel
+          </button>
+          <button class="add-btn" onclick="openAddTeacher()">
+            <i class="fas fa-user-plus"></i> معلم جدید
+          </button>
+          <div class="profile-btn">ا</div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon si-blue">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--accent)" id="st1">۰</div>
+            <div class="stat-lbl">کل معلمین</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-green">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--present)" id="st2">۰</div>
+            <div class="stat-lbl">حاضر امروز</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-purple">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--accent2)" id="st3">۰</div>
+            <div class="stat-lbl">کلاس این هفته</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-orange">
+            <i class="fas fa-user-times"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color: var(--accent4)" id="st4">۰</div>
+            <div class="stat-lbl">غایب / مرخصی</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="جستجو نام، رشته، کد پرسنلی..."
+              oninput="applyFilters()"
+            />
+          </div>
+          <select class="filter-sel" id="subjFilter" onchange="applyFilters()">
+            <option value="all">همه رشته‌ها</option>
+            <option value="ریاضی">ریاضی</option>
+            <option value="فیزیک">فیزیک</option>
+            <option value="شیمی">شیمی</option>
+            <option value="زیست">زیست‌شناسی</option>
+            <option value="ادبیات">ادبیات</option>
+          </select>
+          <select
+            class="filter-sel"
+            id="statusFilter"
+            onchange="applyFilters()"
+          >
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="present">حاضر</option>
+            <option value="absent">غایب</option>
+            <option value="leave">مرخصی</option>
+          </select>
+          <div class="view-toggle">
+            <button
+              class="vt-btn active"
+              id="btnTbl"
+              onclick="setView('table')"
+              title="جدول"
+            >
+              <i class="fas fa-list"></i>
+            </button>
+            <button
+              class="vt-btn"
+              id="btnGrd"
+              onclick="setView('grid')"
+              title="کارت"
+            >
+              <i class="fas fa-th-large"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="tableView">
+          <div class="t-wrap">
+            <table class="t-table">
+              <thead>
+                <tr>
+                  <th onclick="sortBy('name')">
+                    معلم
+                    <i
+                      class="fas fa-sort"
+                      style="font-size: 9px; margin-right: 3px"
+                    ></i>
+                  </th>
+                  <th>کد پرسنلی</th>
+                  <th onclick="sortBy('subject')">
+                    رشته / درس
+                    <i
+                      class="fas fa-sort"
+                      style="font-size: 9px; margin-right: 3px"
+                    ></i>
+                  </th>
+                  <th>تلفن</th>
+                  <th onclick="sortBy('classes')">
+                    کلاس‌ها
+                    <i
+                      class="fas fa-sort"
+                      style="font-size: 9px; margin-right: 3px"
+                    ></i>
+                  </th>
+                  <th onclick="sortBy('hours')">
+                    ساعت هفتگی
+                    <i
+                      class="fas fa-sort"
+                      style="font-size: 9px; margin-right: 3px"
+                    ></i>
+                  </th>
+                  <th>وضعیت امروز</th>
+                  <th>اقدام</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="gridView" style="display: none">
+          <div class="tc-grid" id="gridBody"></div>
+        </div>
+
+        <div class="pagination">
+          <div class="page-info" id="pageInfo"></div>
+          <div class="page-btns" id="pageBtns"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTIFICATIONS PANEL ══ -->
+    <div
+      class="prof-overlay"
+      id="notifOverlay"
+      onclick="closeNotifPanel()"
+    ></div>
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-panel-hdr">
+        <div class="notif-panel-title">
+          <i class="fas fa-bell"></i> اطلاعیه‌ها
+          <span class="notif-badge-count" id="notifBadgeCount">۵</span>
+        </div>
+        <button class="modal-close" onclick="closeNotifPanel()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="notif-list" id="notifList"></div>
+      <div class="notif-panel-footer">
+        <button class="notif-mark-all" onclick="markAllRead()">
+          <i class="fas fa-check-double"></i> همه را خوانده‌شده علامت بزن
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ SCHEDULE MODAL ══ -->
+    <div class="modal-back" id="schedModal" onclick="closeSchedModal(event)">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <div class="mh-left">
+            <div class="mh-av" id="smAv"></div>
+            <div>
+              <div class="mh-name" id="smName"></div>
+              <div class="mh-sub" id="smSub"></div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button
+              class="wn-btn wn-today"
+              id="schedEditToggle"
+              onclick="toggleSchedEdit()"
+            >
+              <i class="fas fa-edit"></i> ویرایش برنامه
+            </button>
+            <button class="wn-btn wn-today" onclick="goToCurrentWeek()">
+              <i class="fas fa-calendar-day"></i> هفته جاری
+            </button>
+            <button class="modal-close" onclick="closeSchedModalBtn()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="week-nav">
+          <button class="wn-btn" onclick="changeWeek(-1)">
+            <i class="fas fa-chevron-right"></i> هفته قبل
+          </button>
+          <div class="week-label">
+            <i class="fas fa-calendar-week"></i> <span id="weekLabel"></span>
+          </div>
+          <button class="wn-btn" onclick="changeWeek(1)">
+            هفته بعد <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+        <div class="sched-wrap">
+          <div class="sched-grid" id="schedGrid"></div>
+        </div>
+        <div class="sched-summary" id="schedSummary"></div>
+        <div class="sched-edit-bar" id="schedEditBar" style="display: none">
+          <div class="sched-edit-hint">
+            <i class="fas fa-info-circle"></i> روی خانه خالی کلیک کنید تا کلاس
+            اضافه کنید / روی کلاس موجود برای حذف
+          </div>
+          <div class="sched-edit-actions">
+            <button class="wn-btn" onclick="saveSchedEdit()">
+              <i class="fas fa-save"></i> ذخیره تغییرات
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SESSION ADD MODAL ══ -->
+    <div
+      class="modal-back"
+      id="sessAddModal"
+      onclick="closeSessAddModal(event)"
+    >
+      <div class="modal-box sess-add-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <div class="mh-left">
+            <i
+              class="fas fa-plus-circle"
+              style="color: var(--accent); font-size: 18px"
+            ></i>
+            <div class="mh-name">افزودن کلاس جدید</div>
+          </div>
+          <button class="modal-close" onclick="closeSessAddModalBtn()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="sess-add-form">
+          <div class="sess-grid">
+            <div class="edit-field">
+              <label>روز</label>
+              <select
+                id="saDay"
+                class="filter-sel"
+                style="width: 100%; padding: 10px 14px"
+              ></select>
+            </div>
+            <div class="edit-field" style="margin-top: 11px">
+              <label>زنگ</label>
+              <select
+                id="saPeriod"
+                class="filter-sel"
+                style="width: 100%; padding: 10px 14px"
+              ></select>
+            </div>
+            <div class="edit-field" style="margin-top: 11px">
+              <label>نام درس</label>
+              <input type="text" id="saSubject" placeholder="مثلاً: فیزیک ۲" />
+            </div>
+            <div class="edit-field" style="margin-top: 11px">
+              <label>کلاس</label>
+              <input type="text" id="saClass" placeholder="مثلاً: یازدهم الف" />
+            </div>
+            <div class="edit-field" style="margin-top: 11px">
+              <label>کلاس / اتاق</label>
+              <input type="text" id="saRoom" placeholder="مثلاً: ۲۰۵" />
+            </div>
+          </div>
+        </div>
+        <div class="sms-footer">
+          <button class="sms-send-btn" onclick="confirmAddSession()">
+            <i class="fas fa-plus"></i> افزودن
+          </button>
+          <button class="sms-cancel-btn" onclick="closeSessAddModalBtn()">
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ADD/EDIT TEACHER MODAL ══ -->
+    <div class="modal-back" id="editModal" onclick="closeEditModal(event)">
+      <div class="modal-box edit-modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <div class="mh-left">
+            <i
+              class="fas fa-user-edit"
+              style="color: var(--accent2); font-size: 18px"
+            ></i>
+            <div class="mh-name" id="editModalTitle">ویرایش اطلاعات معلم</div>
+          </div>
+          <button class="modal-close" onclick="closeEditModalBtn()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="edit-form">
+          <div class="edit-section">
+            <div class="edit-section-title">
+              <i class="fas fa-camera"></i> تصویر پروفایل
+            </div>
+            <div
+              class="photo-upload-area"
+              id="photoUploadArea"
+              onclick="document.getElementById('photoFileInput').click()"
+            >
+              <div id="photoPreviewWrap">
+                <div class="pu-icon"><i class="fas fa-user-circle"></i></div>
+              </div>
+              <div class="pu-text">برای آپلود عکس کلیک کنید</div>
+              <div class="pu-limit">
+                حداکثر ۱ مگابایت — فرمت‌های مجاز: JPG، PNG، WEBP
+              </div>
+              <input
+                type="file"
+                id="photoFileInput"
+                accept="image/jpeg,image/png,image/webp"
+                style="display: none"
+                onchange="handlePhotoUpload(event)"
+              />
+            </div>
+          </div>
+          <div class="edit-section">
+            <div class="edit-section-title">
+              <i class="fas fa-user"></i> اطلاعات فردی
+            </div>
+            <div class="edit-grid">
+              <div class="edit-field">
+                <label>نام</label
+                ><input type="text" id="ef_fname" placeholder="نام" />
+              </div>
+              <div class="edit-field">
+                <label>نام خانوادگی</label
+                ><input type="text" id="ef_lname" placeholder="نام خانوادگی" />
+              </div>
+              <div class="edit-field">
+                <label>کد پرسنلی</label
+                ><input
+                  type="text"
+                  id="ef_personnel"
+                  placeholder="T-XXXX"
+                  style="direction: ltr"
+                />
+              </div>
+              <div class="edit-field">
+                <label>تحصیلات</label>
+                <select id="ef_degree">
+                  <option>لیسانس</option>
+                  <option>فوق لیسانس</option>
+                  <option>دکترا</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>سابقه تدریس (سال)</label
+                ><input
+                  type="number"
+                  id="ef_exp"
+                  placeholder="۰"
+                  min="0"
+                  max="50"
+                />
+              </div>
+              <div class="edit-field">
+                <label>وضعیت امروز</label>
+                <select id="ef_status">
+                  <option value="present">حاضر</option>
+                  <option value="absent">غایب</option>
+                  <option value="leave">مرخصی</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="edit-section">
+            <div class="edit-section-title">
+              <i class="fas fa-book"></i> تدریس
+            </div>
+            <div class="edit-grid">
+              <div class="edit-field">
+                <label>رشته / درس اصلی</label>
+                <select id="ef_subject">
+                  <option>ریاضی</option>
+                  <option>فیزیک</option>
+                  <option>شیمی</option>
+                  <option>زیست‌شناسی</option>
+                  <option>ادبیات</option>
+                  <option>دین و زندگی</option>
+                  <option>تربیت بدنی</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="edit-section">
+            <div class="edit-section-title">
+              <i class="fas fa-address-book"></i> اطلاعات تماس
+            </div>
+            <div class="edit-grid">
+              <div class="edit-field">
+                <label>تلفن</label
+                ><input
+                  type="text"
+                  id="ef_phone"
+                  placeholder="09xxxxxxxxx"
+                  style="direction: ltr"
+                />
+              </div>
+              <div class="edit-field">
+                <label>ایمیل</label
+                ><input
+                  type="email"
+                  id="ef_email"
+                  placeholder="name@school.ir"
+                  style="direction: ltr"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="edit-footer">
+          <button class="edit-save-btn" onclick="saveTeacher()">
+            <i class="fas fa-save"></i> ذخیره تغییرات
+          </button>
+          <button class="edit-cancel-btn" onclick="closeEditModalBtn()">
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SMS MODAL ══ -->
+    <div class="modal-back" id="smsModal" onclick="closeSmsModal(event)">
+      <div class="modal-box sms-modal-box" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <div class="mh-left">
+            <i
+              class="fas fa-sms"
+              style="color: var(--accent3); font-size: 18px"
+            ></i>
+            <div class="mh-name">ارسال پیامک</div>
+          </div>
+          <button class="modal-close" onclick="closeSmsModalBtn()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="sms-form">
+          <div class="sms-recipient" id="smsRecipient"></div>
+          <div
+            style="
+              font-size: 10.5px;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+              font-weight: 700;
+            "
+          >
+            قالب‌های آماده:
+          </div>
+          <div class="sms-templates" id="smsTemplates"></div>
+          <textarea
+            class="sms-textarea"
+            id="smsText"
+            placeholder="متن پیامک خود را بنویسید..."
+            oninput="updateCharCount()"
+          ></textarea>
+          <div class="sms-char-count" id="charCount">۰ کاراکتر</div>
+        </div>
+        <div class="sms-footer">
+          <button class="sms-send-btn" onclick="sendSms()">
+            <i class="fas fa-paper-plane"></i> ارسال پیامک
+          </button>
+          <button class="sms-cancel-btn" onclick="closeSmsModalBtn()">
+            انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE PANEL ══ -->
+    <div class="prof-overlay" id="profOverlay" onclick="closeProf()"></div>
+    <div class="prof-panel" id="profPanel">
+      <div class="prof-cover">
+        <button class="prof-close" onclick="closeProf()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="prof-av-wrap">
+          <div
+            class="prof-av"
+            id="profAv"
+            onclick="triggerProfPhotoUpload()"
+          ></div>
+          <div class="prof-av-edit-hint" onclick="triggerProfPhotoUpload()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+        <input
+          type="file"
+          id="profPhotoInput"
+          accept="image/jpeg,image/png,image/webp"
+          style="display: none"
+          onchange="handleProfPhotoUpload(event)"
+        />
+      </div>
+      <div class="prof-identity">
+        <div class="prof-name" id="profName"></div>
+        <div class="prof-meta" id="profMeta"></div>
+      </div>
+      <div class="prof-tabs">
+        <button class="pt-tab active" onclick="switchProfTab('info', this)">
+          <i class="fas fa-id-card"></i> اطلاعات
+        </button>
+        <button class="pt-tab" onclick="switchProfTab('schedule', this)">
+          <i class="fas fa-calendar-week"></i> برنامه
+        </button>
+        <button class="pt-tab" onclick="switchProfTab('classes', this)">
+          <i class="fas fa-school"></i> کلاس‌ها
+        </button>
+      </div>
+      <div class="prof-body">
+        <div class="pt-panel active" id="pt-info">
+          <div class="p-sec">
+            <div class="p-sec-title">
+              <span class="left-part"
+                ><i class="fas fa-user"></i> اطلاعات فردی</span
+              >
+              <button
+                onclick="openEditFromProf()"
+                style="
+                  background: rgba(142, 95, 212, 0.1);
+                  border: 1px solid rgba(142, 95, 212, 0.25);
+                  color: var(--accent2);
+                  font-family: inherit;
+                  font-size: 10px;
+                  padding: 4px 10px;
+                  border-radius: 8px;
+                  cursor: pointer;
+                "
+              >
+                <i class="fas fa-edit"></i> ویرایش
+              </button>
+            </div>
+            <div class="p-grid" id="profInfoGrid"></div>
+          </div>
+          <div class="p-sec">
+            <div class="p-sec-title">
+              <span class="left-part"
+                ><i class="fas fa-chart-bar"></i> بار تدریس</span
+              >
+            </div>
+            <div id="profWorkload"></div>
+          </div>
+        </div>
+        <div class="pt-panel" id="pt-schedule">
+          <div class="p-sec">
+            <div class="p-sec-title">
+              <span class="left-part"
+                ><i class="fas fa-calendar-alt"></i> برنامه هفتگی — خلاصه</span
+              >
+            </div>
+            <div id="profMiniSched"></div>
+          </div>
+        </div>
+        <div class="pt-panel" id="pt-classes">
+          <div class="p-sec">
+            <div class="p-sec-title">
+              <span class="left-part"
+                ><i class="fas fa-door-open"></i> کلاس‌های این معلم</span
+              >
+            </div>
+            <div id="profClassList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-footer">
+        <button class="pf-sched-btn" id="profSchedBtn">
+          <i class="fas fa-calendar-week"></i> مشاهده برنامه کامل
+        </button>
+        <button class="pf-edit-btn" onclick="openEditFromProf()">
+          <i class="fas fa-edit"></i> ویرایش
+        </button>
+        <button class="pf-sms-btn" id="profSmsBtn">
+          <i class="fas fa-sms"></i> پیامک
+        </button>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div class="modal-back" id="confirmModal">
+      <div class="modal-box confirm-box" onclick="event.stopPropagation()">
+        <div class="confirm-body">
+          <div class="confirm-icon" id="confirmIcon">⚠️</div>
+          <div class="confirm-title" id="confirmTitle"></div>
+          <div class="confirm-text" id="confirmText"></div>
+        </div>
+        <div class="confirm-footer">
+          <button class="confirm-yes" id="confirmYes">تأیید</button>
+          <button class="confirm-no" onclick="closeConfirm()">انصراف</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i><span id="toastMsg"></span>
+    </div>
+
+    <script>
+      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      const en = (n) =>
+        String(n).replace(/[۰-۹]/g, (d) =>
+          "0123456789".charAt("۰۱۲۳۴۵۶۷۸۹".indexOf(d)),
+        );
+
+      /* ══ SIDEBAR (مثل داشبورد) ══ */
+      function toggleSidebar() {
+        const sb = document.getElementById("sidebar");
+        const ov = document.getElementById("overlay");
+        sb.classList.contains("open") ? closeSidebar() : openSidebar();
+      }
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("overlay").classList.add("on");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("on");
+        document.body.style.overflow = "";
+      }
+      document
+        .getElementById("overlay")
+        .addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      /* ══════════ DATA ══════════ */
+      const subjColors = {
+        ریاضی: ["rgba(74,144,217,0.18)", "var(--accent)", "sess-blue"],
+        فیزیک: ["rgba(142,95,212,0.18)", "var(--accent2)", "sess-purple"],
+        شیمی: ["rgba(6,214,160,0.15)", "var(--accent3)", "sess-green"],
+        زیست‌شناسی: ["rgba(243,156,18,0.15)", "var(--accent4)", "sess-orange"],
+        ادبیات: ["rgba(232,142,192,0.15)", "#e88ec0", "sess-pink"],
+        دین: ["rgba(231,76,60,0.13)", "var(--absent)", "sess-red"],
+        "تربیت بدنی": ["rgba(6,214,160,0.15)", "var(--accent3)", "sess-green"],
+      };
+      function getSubjColor(s) {
+        for (const k of Object.keys(subjColors)) {
+          if (s.includes(k.split("‌")[0].substring(0, 4))) return subjColors[k];
+        }
+        return subjColors["ریاضی"];
+      }
+      const avColors = [
+        ["rgba(74,144,217,0.2)", "var(--accent)"],
+        ["rgba(142,95,212,0.2)", "var(--accent2)"],
+        ["rgba(6,214,160,0.18)", "var(--accent3)"],
+        ["rgba(243,156,18,0.18)", "var(--accent4)"],
+        ["rgba(232,142,192,0.18)", "#e88ec0"],
+        ["rgba(231,76,60,0.18)", "var(--absent)"],
+      ];
+      const DAYS = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه"];
+      const TODAY_IDX = 2;
+      const PERIODS = [
+        { label: "اول", time: "۷:۳۰\n۸:۱۵" },
+        { label: "دوم", time: "۸:۲۰\n۹:۰۵" },
+        { label: "سوم", time: "۹:۱۵\n۱۰:۰۰" },
+        { label: "چهارم", time: "۱۰:۱۵\n۱۱:۰۰" },
+        { label: "پنجم", time: "۱۱:۱۰\n۱۱:۵۵" },
+        { label: "ششم", time: "۱۳:۰۰\n۱۳:۴۵" },
+      ];
+
+      let teachers = [
+        {
+          id: 1,
+          fname: "علی",
+          lname: "محمدی",
+          personnel: "T-1001",
+          subject: "ریاضی",
+          degree: "فوق لیسانس",
+          phone: "09121110001",
+          email: "mohammadi@boorboor.ir",
+          experience: 12,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 0,
+              subject: "ریاضی پایه",
+              className: "دهم الف",
+              room: "۱۰۲",
+            },
+            {
+              day: 0,
+              period: 2,
+              subject: "ریاضی پایه",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 1,
+              period: 1,
+              subject: "حساب دیفرانسیل",
+              className: "دوازدهم ج",
+              room: "۴۰۳",
+            },
+            {
+              day: 1,
+              period: 4,
+              subject: "ریاضی ۲",
+              className: "یازدهم د",
+              room: "۲۰۲",
+            },
+            {
+              day: 2,
+              period: 0,
+              subject: "ریاضی پایه",
+              className: "دهم الف",
+              room: "۱۰۲",
+            },
+            {
+              day: 2,
+              period: 3,
+              subject: "حساب دیفرانسیل",
+              className: "دوازدهم ج",
+              room: "۴۰۳",
+            },
+            {
+              day: 3,
+              period: 1,
+              subject: "ریاضی ۲",
+              className: "یازدهم د",
+              room: "۲۰۲",
+            },
+            {
+              day: 3,
+              period: 3,
+              subject: "ریاضی پایه",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 4,
+              period: 0,
+              subject: "حساب دیفرانسیل",
+              className: "دوازدهم ج",
+              room: "۴۰۳",
+            },
+            {
+              day: 4,
+              period: 2,
+              subject: "ریاضی ۲",
+              className: "یازدهم د",
+              room: "۲۰۲",
+            },
+          ],
+        },
+        {
+          id: 2,
+          fname: "مریم",
+          lname: "رضایی",
+          personnel: "T-1002",
+          subject: "فیزیک",
+          degree: "دکترا",
+          phone: "09131110002",
+          email: "rezaei@boorboor.ir",
+          experience: 8,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 1,
+              subject: "فیزیک پایه",
+              className: "دهم ب",
+              room: "۲۰۵",
+            },
+            {
+              day: 0,
+              period: 3,
+              subject: "فیزیک ۲",
+              className: "یازدهم الف",
+              room: "۲۰۵",
+            },
+            {
+              day: 1,
+              period: 0,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+            {
+              day: 1,
+              period: 3,
+              subject: "فیزیک پایه",
+              className: "دهم ب",
+              room: "۲۰۵",
+            },
+            {
+              day: 2,
+              period: 1,
+              subject: "فیزیک ۲",
+              className: "یازدهم الف",
+              room: "۲۰۵",
+            },
+            {
+              day: 3,
+              period: 0,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+            {
+              day: 3,
+              period: 2,
+              subject: "فیزیک پایه",
+              className: "دهم ب",
+              room: "۲۰۵",
+            },
+            {
+              day: 4,
+              period: 1,
+              subject: "فیزیک ۲",
+              className: "یازدهم الف",
+              room: "۲۰۵",
+            },
+            {
+              day: 4,
+              period: 3,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+          ],
+        },
+        {
+          id: 3,
+          fname: "رضا",
+          lname: "صادقی",
+          personnel: "T-1003",
+          subject: "شیمی",
+          degree: "لیسانس",
+          phone: "09141110003",
+          email: "sadeghi@boorboor.ir",
+          experience: 15,
+          todayStatus: "absent",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 2,
+              subject: "شیمی پایه",
+              className: "دهم ج",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 1,
+              period: 1,
+              subject: "شیمی ۲",
+              className: "یازدهم ب",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 1,
+              period: 4,
+              subject: "شیمی آلی",
+              className: "دوازدهم د",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 2,
+              period: 2,
+              subject: "شیمی پایه",
+              className: "دهم ج",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 2,
+              period: 4,
+              subject: "شیمی ۲",
+              className: "یازدهم ب",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 3,
+              period: 1,
+              subject: "شیمی آلی",
+              className: "دوازدهم د",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 4,
+              period: 0,
+              subject: "شیمی پایه",
+              className: "دهم ج",
+              room: "آزمایشگاه",
+            },
+            {
+              day: 4,
+              period: 3,
+              subject: "شیمی آلی",
+              className: "دوازدهم د",
+              room: "آزمایشگاه",
+            },
+          ],
+        },
+        {
+          id: 4,
+          fname: "فاطمه",
+          lname: "نوری",
+          personnel: "T-1004",
+          subject: "زیست‌شناسی",
+          degree: "فوق لیسانس",
+          phone: "09151110004",
+          email: "noori@boorboor.ir",
+          experience: 6,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 3,
+              subject: "زیست پایه",
+              className: "دهم ب",
+              room: "۳۰۳",
+            },
+            {
+              day: 1,
+              period: 2,
+              subject: "زیست‌شناسی",
+              className: "یازدهم ج",
+              room: "۳۰۳",
+            },
+            {
+              day: 2,
+              period: 0,
+              subject: "زیست پایه",
+              className: "دهم ب",
+              room: "۳۰۳",
+            },
+            {
+              day: 2,
+              period: 3,
+              subject: "زیست‌شناسی",
+              className: "یازدهم ج",
+              room: "۳۰۳",
+            },
+            {
+              day: 3,
+              period: 4,
+              subject: "زیست پایه",
+              className: "دهم ب",
+              room: "۳۰۳",
+            },
+            {
+              day: 4,
+              period: 2,
+              subject: "زیست‌شناسی",
+              className: "یازدهم ج",
+              room: "۳۰۳",
+            },
+          ],
+        },
+        {
+          id: 5,
+          fname: "زهرا",
+          lname: "حسینی",
+          personnel: "T-1005",
+          subject: "ادبیات",
+          degree: "لیسانس",
+          phone: "09161110005",
+          email: "hosseini@boorboor.ir",
+          experience: 20,
+          todayStatus: "leave",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 1,
+              subject: "ادبیات",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 0,
+              period: 4,
+              subject: "ادبیات",
+              className: "دوازدهم الف",
+              room: "۴۰۱",
+            },
+            {
+              day: 1,
+              period: 3,
+              subject: "ادبیات",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 2,
+              period: 1,
+              subject: "ادبیات",
+              className: "دوازدهم الف",
+              room: "۴۰۱",
+            },
+            {
+              day: 3,
+              period: 0,
+              subject: "ادبیات",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 3,
+              period: 3,
+              subject: "ادبیات",
+              className: "دوازدهم الف",
+              room: "۴۰۱",
+            },
+            {
+              day: 4,
+              period: 1,
+              subject: "ادبیات",
+              className: "دهم د",
+              room: "۱۰۴",
+            },
+            {
+              day: 4,
+              period: 4,
+              subject: "ادبیات",
+              className: "دوازدهم الف",
+              room: "۴۰۱",
+            },
+          ],
+        },
+        {
+          id: 6,
+          fname: "حمید",
+          lname: "یوسفی",
+          personnel: "T-1006",
+          subject: "فیزیک",
+          degree: "لیسانس",
+          phone: "09171110006",
+          email: "yousefi@boorboor.ir",
+          experience: 9,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 0,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+            {
+              day: 1,
+              period: 2,
+              subject: "فیزیک پایه",
+              className: "دهم ج",
+              room: "۲۰۵",
+            },
+            {
+              day: 2,
+              period: 4,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+            {
+              day: 3,
+              period: 2,
+              subject: "فیزیک پایه",
+              className: "دهم ج",
+              room: "۲۰۵",
+            },
+            {
+              day: 4,
+              period: 0,
+              subject: "فیزیک ۳",
+              className: "دوازدهم ب",
+              room: "۴۰۲",
+            },
+          ],
+        },
+        {
+          id: 7,
+          fname: "محمد",
+          lname: "امینی",
+          personnel: "T-1007",
+          subject: "دین و زندگی",
+          degree: "فوق لیسانس",
+          phone: "09181110007",
+          email: "amini@boorboor.ir",
+          experience: 11,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 4,
+              subject: "دین و زندگی",
+              className: "دهم الف",
+              room: "۱۰۱",
+            },
+            {
+              day: 1,
+              period: 0,
+              subject: "دین و زندگی",
+              className: "یازدهم الف",
+              room: "۲۰۱",
+            },
+            {
+              day: 2,
+              period: 2,
+              subject: "دین و زندگی",
+              className: "دوازدهم الف",
+              room: "۴۰۱",
+            },
+            {
+              day: 3,
+              period: 4,
+              subject: "دین و زندگی",
+              className: "دهم ب",
+              room: "۱۰۱",
+            },
+            {
+              day: 4,
+              period: 3,
+              subject: "دین و زندگی",
+              className: "یازدهم ب",
+              room: "۲۰۱",
+            },
+          ],
+        },
+        {
+          id: 8,
+          fname: "سمیرا",
+          lname: "کمالی",
+          personnel: "T-1008",
+          subject: "تربیت بدنی",
+          degree: "لیسانس",
+          phone: "09191110008",
+          email: "kamali@boorboor.ir",
+          experience: 5,
+          todayStatus: "present",
+          photo: null,
+          schedule: [
+            {
+              day: 0,
+              period: 5,
+              subject: "تربیت بدنی",
+              className: "دهم",
+              room: "سالن ورزش",
+            },
+            {
+              day: 1,
+              period: 5,
+              subject: "تربیت بدنی",
+              className: "یازدهم",
+              room: "سالن ورزش",
+            },
+            {
+              day: 2,
+              period: 5,
+              subject: "تربیت بدنی",
+              className: "دوازدهم",
+              room: "سالن ورزش",
+            },
+            {
+              day: 3,
+              period: 5,
+              subject: "تربیت بدنی",
+              className: "دهم",
+              room: "سالن ورزش",
+            },
+            {
+              day: 4,
+              period: 5,
+              subject: "تربیت بدنی",
+              className: "یازدهم",
+              room: "سالن ورزش",
+            },
+          ],
+        },
+      ];
+      let nextId = 9;
+
+      /* ══ NOTIFICATIONS ══ */
+      let notifications = [
+        {
+          id: 1,
+          title: "جلسه شورای معلمان",
+          body: "جلسه فوری فردا چهارشنبه ساعت ۱۲ در سالن اجتماعات — حضور الزامی.",
+          time: "۱ ساعت پیش",
+          icon: "fas fa-exclamation",
+          iconBg: "rgba(231,76,60,0.14)",
+          iconColor: "var(--absent)",
+          unread: true,
+        },
+        {
+          id: 2,
+          title: "مهلت ثبت نمرات",
+          body: "مهلت تحویل نمرات پایان ترم تا ۳۱ اردیبهشت است.",
+          time: "دیروز",
+          icon: "fas fa-star",
+          iconBg: "rgba(74,144,217,0.14)",
+          iconColor: "var(--accent)",
+          unread: true,
+        },
+        {
+          id: 3,
+          title: "کارگاه آموزشی",
+          body: "کارگاه تدریس نوین پنجشنبه ۲۸ اردیبهشت برگزار می‌شود.",
+          time: "۲ روز پیش",
+          icon: "fas fa-flask",
+          iconBg: "rgba(6,214,160,0.14)",
+          iconColor: "var(--accent3)",
+          unread: true,
+        },
+        {
+          id: 4,
+          title: "تعطیلی هفته آینده",
+          body: "مدرسه چهارشنبه آینده تعطیل رسمی است.",
+          time: "۳ روز پیش",
+          icon: "fas fa-calendar-times",
+          iconBg: "rgba(243,156,18,0.14)",
+          iconColor: "var(--accent4)",
+          unread: false,
+        },
+        {
+          id: 5,
+          title: "بخشنامه ارزشیابی",
+          body: "دستورالعمل جدید ارزشیابی توصیفی ابلاغ شد.",
+          time: "۴ روز پیش",
+          icon: "fas fa-file-alt",
+          iconBg: "rgba(142,95,212,0.14)",
+          iconColor: "var(--accent2)",
+          unread: false,
+        },
+      ];
+      function openNotifPanel() {
+        document.getElementById("notifOverlay").classList.add("open");
+        document.getElementById("notifPanel").classList.add("open");
+        renderNotifications();
+      }
+      function closeNotifPanel() {
+        document.getElementById("notifOverlay").classList.remove("open");
+        document.getElementById("notifPanel").classList.remove("open");
+      }
+      function renderNotifications() {
+        const list = document.getElementById("notifList");
+        const unread = notifications.filter((n) => n.unread).length;
+        document.getElementById("notifBadgeCount").textContent = fa(unread);
+        document.getElementById("notifDot").style.display =
+          unread > 0 ? "block" : "none";
+        list.innerHTML = notifications
+          .map(
+            (n) => `
+    <div class="notif-item ${n.unread ? "unread" : ""}" onclick="markNotifRead(${n.id})">
+      <div class="ni-icon" style="background:${n.iconBg};color:${n.iconColor}"><i class="${n.icon}"></i></div>
+      <div class="ni-content">
+        <div class="ni-title">${n.title}</div>
+        <div class="ni-body">${n.body}</div>
+        <div class="ni-time">${n.time}</div>
+      </div>
+      ${n.unread ? '<div class="ni-unread-dot"></div>' : ""}
+    </div>`,
+          )
+          .join("");
+      }
+      function markNotifRead(id) {
+        const n = notifications.find((x) => x.id === id);
+        if (n) n.unread = false;
+        renderNotifications();
+      }
+      function markAllRead() {
+        notifications.forEach((n) => (n.unread = false));
+        renderNotifications();
+        showToast("همه اطلاعیه‌ها خوانده شدند", "success");
+      }
+
+      /* ══ STATE ══ */
+      let filtered = [...teachers],
+        curPage = 1;
+      const PER = 6;
+      let sortKey = null,
+        sortAsc = true,
+        curView = "table";
+      let schedWeekOffset = 0,
+        schedTeacherId = null,
+        schedEditMode = false;
+      let schedEditBuffer = [];
+      let currentEditId = null,
+        currentProfId = null,
+        currentSessAddCell = null;
+
+      /* ══ TOAST ══ */
+      function showToast(msg, type = "success") {
+        const t = document.getElementById("toast"),
+          i = t.querySelector("i");
+        document.getElementById("toastMsg").textContent = msg;
+        t.className = "toast " + type + " show";
+        i.className =
+          type === "success"
+            ? "fas fa-check-circle"
+            : type === "info"
+              ? "fas fa-info-circle"
+              : "fas fa-exclamation-circle";
+        setTimeout(() => {
+          t.className = "toast " + type;
+        }, 3200);
+      }
+
+      /* ══ CONFIRM ══ */
+      function showConfirm(title, text, icon, onYes) {
+        document.getElementById("confirmTitle").textContent = title;
+        document.getElementById("confirmText").textContent = text;
+        document.getElementById("confirmIcon").textContent = icon;
+        document.getElementById("confirmYes").onclick = () => {
+          closeConfirm();
+          onYes();
+        };
+        document.getElementById("confirmModal").classList.add("open");
+      }
+      function closeConfirm() {
+        document.getElementById("confirmModal").classList.remove("open");
+      }
+
+      /* ══ HELPERS ══ */
+      function getAv(id) {
+        return avColors[(id - 1) % avColors.length];
+      }
+      function statusInfo(s) {
+        if (s === "present") return { cls: "sd-active", lbl: "حاضر" };
+        if (s === "absent") return { cls: "sd-absent", lbl: "غایب" };
+        return { cls: "sd-leave", lbl: "مرخصی" };
+      }
+
+      /* ══ STATS ══ */
+      function updateStats() {
+        document.getElementById("st1").textContent = fa(teachers.length);
+        document.getElementById("st2").textContent = fa(
+          teachers.filter((t) => t.todayStatus === "present").length,
+        );
+        document.getElementById("st3").textContent = fa(
+          teachers.reduce((s, t) => s + t.schedule.length, 0),
+        );
+        document.getElementById("st4").textContent = fa(
+          teachers.filter((t) => t.todayStatus !== "present").length,
+        );
+      }
+
+      /* ══ FILTER / SORT ══ */
+      function applyFilters() {
+        const q = document
+          .getElementById("searchInput")
+          .value.trim()
+          .toLowerCase();
+        const subj = document.getElementById("subjFilter").value;
+        const st = document.getElementById("statusFilter").value;
+        filtered = teachers.filter((t) => {
+          const full = (
+            t.fname +
+            " " +
+            t.lname +
+            " " +
+            t.subject +
+            " " +
+            t.personnel
+          ).toLowerCase();
+          return (
+            (!q || full.includes(q)) &&
+            (subj === "all" || t.subject.includes(subj)) &&
+            (st === "all" || t.todayStatus === st)
+          );
+        });
+        if (sortKey) doSort(false);
+        curPage = 1;
+        render();
+      }
+      function sortBy(k) {
+        sortKey === k
+          ? (sortAsc = !sortAsc)
+          : ((sortKey = k), (sortAsc = true));
+        doSort(true);
+      }
+      function doSort(re) {
+        filtered.sort((a, b) => {
+          let va, vb;
+          if (sortKey === "name") {
+            va = a.fname;
+            vb = b.fname;
+          } else if (sortKey === "subject") {
+            va = a.subject;
+            vb = b.subject;
+          } else if (sortKey === "classes") {
+            va = a.schedule.length;
+            vb = b.schedule.length;
+          } else if (sortKey === "hours") {
+            va = a.schedule.length * 0.75;
+            vb = b.schedule.length * 0.75;
+          }
+          return (va > vb ? 1 : -1) * (sortAsc ? 1 : -1);
+        });
+        if (re) {
+          curPage = 1;
+          render();
+        }
+      }
+
+      /* ══ RENDER ══ */
+      function render() {
+        updateStats();
+        const total = filtered.length;
+        const pages = Math.max(1, Math.ceil(total / PER));
+        if (curPage > pages) curPage = pages;
+        const slice = filtered.slice((curPage - 1) * PER, curPage * PER);
+        curView === "table" ? renderTable(slice) : renderGrid(slice);
+        renderPagination(total, pages);
+      }
+      function renderTable(slice) {
+        const tb = document.getElementById("tableBody");
+        tb.innerHTML = "";
+        if (!slice.length) {
+          tb.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);font-size:13px;"><i class="fas fa-search" style="font-size:26px;display:block;margin-bottom:10px;"></i>معلمی یافت نشد</td></tr>`;
+          return;
+        }
+        slice.forEach((t) => {
+          const [bg, col] = getAv(t.id);
+          const [sbg, scol] = getSubjColor(t.subject);
+          const si = statusInfo(t.todayStatus);
+          const hrs = fa(t.schedule.length * 0.75);
+          const tr = document.createElement("tr");
+          tr.onclick = () => openProf(t.id);
+          const avEl = t.photo
+            ? `<div class="tc-av"><img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+            : `<div class="tc-av" style="background:${bg};color:${col}">${t.fname[0]}</div>`;
+          tr.innerHTML = `
+      <td><div class="tc-cell">${avEl}<div><div class="tc-name">${t.fname} ${t.lname}</div><div class="tc-id">${t.personnel}</div></div></div></td>
+      <td style="direction:ltr;font-size:11px;color:var(--text-muted);">${t.personnel}</td>
+      <td><span class="subj-tag" style="background:${sbg};color:${scol}">${t.subject}</span></td>
+      <td style="direction:ltr;font-size:11.5px;color:var(--text-muted);">${t.phone}</td>
+      <td style="font-size:13px;font-weight:900;color:var(--accent)">${fa(t.schedule.length)}</td>
+      <td style="font-size:13px;font-weight:900;color:var(--accent2)">${hrs}</td>
+      <td><div style="display:flex;align-items:center;gap:7px;"><span class="status-dot ${si.cls}"></span><span style="font-size:11px;">${si.lbl}</span></div></td>
+      <td onclick="event.stopPropagation()">
+        <div class="row-acts">
+          <button class="ra ra-v" title="پروفایل" onclick="openProf(${t.id})"><i class="fas fa-eye"></i></button>
+          <button class="ra ra-s" title="برنامه هفتگی" onclick="openSched(${t.id})"><i class="fas fa-calendar-week"></i></button>
+          <button class="ra ra-e" title="ویرایش" onclick="openEditTeacher(${t.id})"><i class="fas fa-edit"></i></button>
+          <button class="ra ra-del" title="حذف" onclick="deleteTeacher(${t.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>`;
+          tb.appendChild(tr);
+        });
+      }
+      function renderGrid(slice) {
+        const gb = document.getElementById("gridBody");
+        gb.innerHTML = "";
+        if (!slice.length) {
+          gb.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">معلمی یافت نشد</div>`;
+          return;
+        }
+        slice.forEach((t) => {
+          const [bg, col] = getAv(t.id);
+          const [sbg, scol, scls] = getSubjColor(t.subject);
+          const si = statusInfo(t.todayStatus);
+          const avInner = t.photo
+            ? `<img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;">`
+            : t.fname[0];
+          const c = document.createElement("div");
+          c.className = "tc-card";
+          c.innerHTML = `
+      <div class="tc-card-top" style="background:linear-gradient(90deg,${col},transparent)"></div>
+      <div class="tc-card-body">
+        <div class="tc-card-av" style="background:${bg};color:${col}">${avInner}</div>
+        <div class="tc-card-name">${t.fname} ${t.lname}</div>
+        <div class="tc-card-subj" style="color:${scol}">${t.subject}</div>
+        <div class="tc-card-stats">
+          <div class="tccs"><div class="tccs-val" style="color:var(--accent)">${fa(t.schedule.length)}</div><div class="tccs-lbl">کلاس</div></div>
+          <div class="tccs"><div class="tccs-val" style="color:var(--accent2)">${fa(t.schedule.length * 0.75)}</div><div class="tccs-lbl">ساعت</div></div>
+          <div class="tccs"><div class="tccs-val"><span class="status-dot ${si.cls}" style="display:inline-block;vertical-align:middle;"></span></div><div class="tccs-lbl">${si.lbl}</div></div>
+        </div>
+        <div class="tc-card-btns">
+          <button class="tcb tcb-v" onclick="openProf(${t.id})"><i class="fas fa-eye"></i> پروفایل</button>
+          <button class="tcb tcb-s" onclick="openSched(${t.id})"><i class="fas fa-calendar-week"></i> برنامه</button>
+        </div>
+      </div>`;
+          gb.appendChild(c);
+        });
+      }
+      function renderPagination(total, pages) {
+        document.getElementById("pageInfo").textContent =
+          `نمایش ${fa(Math.min((curPage - 1) * PER + 1, total))}–${fa(Math.min(curPage * PER, total))} از ${fa(total)} معلم`;
+        const btns = document.getElementById("pageBtns");
+        btns.innerHTML = "";
+        const prev = document.createElement("button");
+        prev.className = "pg-btn";
+        prev.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        prev.disabled = curPage === 1;
+        prev.onclick = () => {
+          curPage--;
+          render();
+        };
+        btns.appendChild(prev);
+        for (let p = 1; p <= pages; p++) {
+          const b = document.createElement("button");
+          b.className = "pg-btn" + (p === curPage ? " active" : "");
+          b.textContent = fa(p);
+          const pp = p;
+          b.onclick = () => {
+            curPage = pp;
+            render();
+          };
+          btns.appendChild(b);
+        }
+        const next = document.createElement("button");
+        next.className = "pg-btn";
+        next.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        next.disabled = curPage === pages;
+        next.onclick = () => {
+          curPage++;
+          render();
+        };
+        btns.appendChild(next);
+      }
+      function setView(v) {
+        curView = v;
+        document.getElementById("tableView").style.display =
+          v === "table" ? "block" : "none";
+        document.getElementById("gridView").style.display =
+          v === "grid" ? "block" : "none";
+        document
+          .getElementById("btnTbl")
+          .classList.toggle("active", v === "table");
+        document
+          .getElementById("btnGrd")
+          .classList.toggle("active", v === "grid");
+        render();
+      }
+
+      /* ══ DELETE ══ */
+      function deleteTeacher(id) {
+        const t = teachers.find((x) => x.id === id);
+        showConfirm(
+          `حذف ${t.fname} ${t.lname}؟`,
+          `این معلم و تمام برنامه‌های مرتبط حذف می‌شود.`,
+          "🗑️",
+          () => {
+            teachers = teachers.filter((x) => x.id !== id);
+            applyFilters();
+            showToast(`${t.fname} ${t.lname} حذف شد`, "info");
+          },
+        );
+      }
+
+      /* ══ SCHEDULE ══ */
+      function openSched(id) {
+        schedTeacherId = id;
+        schedWeekOffset = 0;
+        schedEditMode = false;
+        const t = teachers.find((x) => x.id === id);
+        schedEditBuffer = JSON.parse(JSON.stringify(t.schedule));
+        const [bg, col] = getAv(t.id);
+        const sm = document.getElementById("smAv");
+        if (t.photo) {
+          sm.innerHTML = `<img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else {
+          sm.innerHTML = t.fname[0];
+          sm.style.background = bg;
+          sm.style.color = col;
+        }
+        sm.style.cssText += `;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;`;
+        document.getElementById("smName").textContent = t.fname + " " + t.lname;
+        document.getElementById("smSub").textContent =
+          t.subject + " | " + t.personnel;
+        document.getElementById("schedEditBar").style.display = "none";
+        document.getElementById("schedEditToggle").innerHTML =
+          '<i class="fas fa-edit"></i> ویرایش برنامه';
+        document.getElementById("schedEditToggle").style.background = "";
+        renderSchedGrid(t);
+        document.getElementById("schedModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSchedModalBtn() {
+        if (schedEditMode) {
+          showConfirm(
+            "خروج بدون ذخیره؟",
+            "تغییرات ذخیره نمی‌شود.",
+            "⚠️",
+            () => {
+              schedEditMode = false;
+              document.getElementById("schedModal").classList.remove("open");
+              document.body.style.overflow = "";
+            },
+          );
+        } else {
+          document.getElementById("schedModal").classList.remove("open");
+          document.body.style.overflow = "";
+        }
+      }
+      function closeSchedModal(e) {
+        if (e.target === document.getElementById("schedModal"))
+          closeSchedModalBtn();
+      }
+      function changeWeek(d) {
+        schedWeekOffset += d;
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        renderSchedGrid(t);
+      }
+      function goToCurrentWeek() {
+        schedWeekOffset = 0;
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        renderSchedGrid(t);
+      }
+      function toggleSchedEdit() {
+        schedEditMode = !schedEditMode;
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        if (schedEditMode) {
+          schedEditBuffer = JSON.parse(JSON.stringify(t.schedule));
+          document.getElementById("schedEditBar").style.display = "flex";
+          document.getElementById("schedEditToggle").innerHTML =
+            '<i class="fas fa-times"></i> لغو ویرایش';
+          document.getElementById("schedEditToggle").style.background =
+            "rgba(231,76,60,0.1)";
+        } else {
+          schedEditBuffer = JSON.parse(JSON.stringify(t.schedule));
+          document.getElementById("schedEditBar").style.display = "none";
+          document.getElementById("schedEditToggle").innerHTML =
+            '<i class="fas fa-edit"></i> ویرایش برنامه';
+          document.getElementById("schedEditToggle").style.background = "";
+        }
+        renderSchedGrid(t);
+      }
+      function saveSchedEdit() {
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        t.schedule = JSON.parse(JSON.stringify(schedEditBuffer));
+        schedEditMode = false;
+        document.getElementById("schedEditBar").style.display = "none";
+        document.getElementById("schedEditToggle").innerHTML =
+          '<i class="fas fa-edit"></i> ویرایش برنامه';
+        document.getElementById("schedEditToggle").style.background = "";
+        renderSchedGrid(t);
+        applyFilters();
+        showToast("برنامه با موفقیت ذخیره شد", "success");
+      }
+      function removeSessionFromBuffer(day, period) {
+        schedEditBuffer = schedEditBuffer.filter(
+          (s) => !(s.day === day && s.period === period),
+        );
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        renderSchedGrid(t);
+      }
+      function openSessAddModal(day, period) {
+        currentSessAddCell = { day, period };
+        const dayEl = document.getElementById("saDay");
+        const perEl = document.getElementById("saPeriod");
+        dayEl.innerHTML = DAYS.map(
+          (d, i) =>
+            `<option value="${i}" ${i === day ? "selected" : ""}>${d}</option>`,
+        ).join("");
+        perEl.innerHTML = PERIODS.map(
+          (p, i) =>
+            `<option value="${i}" ${i === period ? "selected" : ""}>${p.label} (${p.time.replace("\n", " – ")})</option>`,
+        ).join("");
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        document.getElementById("saSubject").value = t.subject + " ";
+        document.getElementById("saClass").value = "";
+        document.getElementById("saRoom").value = "";
+        document.getElementById("sessAddModal").classList.add("open");
+      }
+      function closeSessAddModalBtn() {
+        document.getElementById("sessAddModal").classList.remove("open");
+      }
+      function closeSessAddModal(e) {
+        if (e.target === document.getElementById("sessAddModal"))
+          closeSessAddModalBtn();
+      }
+      function confirmAddSession() {
+        const day = parseInt(document.getElementById("saDay").value);
+        const period = parseInt(document.getElementById("saPeriod").value);
+        const subject = document.getElementById("saSubject").value.trim();
+        const className = document.getElementById("saClass").value.trim();
+        const room = document.getElementById("saRoom").value.trim();
+        if (!subject || !className) {
+          showToast("لطفاً نام درس و کلاس را وارد کنید", "error");
+          return;
+        }
+        schedEditBuffer = schedEditBuffer.filter(
+          (s) => !(s.day === day && s.period === period),
+        );
+        schedEditBuffer.push({
+          day,
+          period,
+          subject,
+          className,
+          room: room || "—",
+        });
+        closeSessAddModalBtn();
+        const t = teachers.find((x) => x.id === schedTeacherId);
+        renderSchedGrid(t);
+        showToast("کلاس اضافه شد", "success");
+      }
+      function getWeekDates(offset) {
+        const baseDay = 23,
+          baseMonth = 2,
+          baseYear = 1404;
+        const days = [];
+        for (let d = 0; d < 5; d++) {
+          let day = baseDay + d + offset * 7,
+            month = baseMonth,
+            year = baseYear;
+          const ml = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+          while (day > ml[month]) {
+            day -= ml[month];
+            month++;
+            if (month > 12) {
+              month = 1;
+              year++;
+            }
+          }
+          while (day < 1) {
+            month--;
+            if (month < 1) {
+              month = 12;
+              year--;
+            }
+            day += ml[month];
+          }
+          days.push(
+            `${fa(year)}/${fa(String(month).padStart(2, "0"))}/${fa(String(day).padStart(2, "0"))}`,
+          );
+        }
+        return days;
+      }
+      function renderSchedGrid(t) {
+        const dates = getWeekDates(schedWeekOffset);
+        document.getElementById("weekLabel").textContent =
+          dates[0] + " تا " + dates[4];
+        const grid = document.getElementById("schedGrid");
+        grid.innerHTML = "";
+        const src = schedEditMode ? schedEditBuffer : t.schedule;
+        const lookup = {};
+        src.forEach((s) => {
+          lookup[s.day + "_" + s.period] = s;
+        });
+        const tlh = document.createElement("div");
+        tlh.className = "sg-time-label sg-head";
+        tlh.style.cssText =
+          "display:flex;align-items:center;justify-content:center;";
+        tlh.innerHTML =
+          '<i class="fas fa-clock" style="color:var(--accent);opacity:.5;"></i>';
+        grid.appendChild(tlh);
+        DAYS.forEach((day, di) => {
+          const h = document.createElement("div");
+          h.className =
+            "sg-day-head sg-head" +
+            (di === TODAY_IDX && schedWeekOffset === 0 ? " today-col" : "");
+          h.innerHTML = `<div class="sg-day-name">${day}</div><div class="sg-day-date">${dates[di]}</div>`;
+          grid.appendChild(h);
+        });
+        PERIODS.forEach((period, pi) => {
+          const isLast = pi === PERIODS.length - 1;
+          const tc = document.createElement("div");
+          tc.className = "sg-time-cell" + (isLast ? " sg-row-last" : "");
+          tc.innerHTML = `<div class="sg-time-text">${period.label}<br>${period.time}</div>`;
+          grid.appendChild(tc);
+          DAYS.forEach((day, di) => {
+            const cell = document.createElement("div");
+            cell.className =
+              "sg-cell" +
+              (di === TODAY_IDX && schedWeekOffset === 0 ? " today-col" : "") +
+              (isLast ? " sg-row-last" : "") +
+              (schedEditMode ? " edit-mode" : "");
+            const sess = lookup[di + "_" + pi];
+            if (sess) {
+              cell.classList.add("has-class");
+              const [sbg, scol, scls] = getSubjColor(sess.subject);
+              const delBtn = schedEditMode
+                ? `<button class="sess-del" onclick="event.stopPropagation();removeSessionFromBuffer(${di},${pi})"><i class="fas fa-times"></i></button>`
+                : "";
+              cell.innerHTML = `<div class="sess-block ${scls}">${delBtn}<div class="sb-top"><div class="sb-subj">${sess.subject}</div><span class="sb-cls">${sess.className}</span></div><div class="sb-room"><i class="fas fa-door-open"></i> ${sess.room}</div></div>`;
+              if (!schedEditMode)
+                cell.onclick = () =>
+                  showToast(
+                    `${sess.subject} | ${sess.className} | ${sess.room}`,
+                    "info",
+                  );
+              else cell.onclick = () => openSessAddModal(di, pi);
+            } else {
+              if (schedEditMode) {
+                cell.innerHTML = `<div class="sg-add-hint"><i class="fas fa-plus-circle"></i></div>`;
+                cell.onclick = () => openSessAddModal(di, pi);
+              } else {
+                cell.innerHTML = `<div class="sg-empty"><div class="sg-empty-dot"></div></div>`;
+              }
+            }
+            grid.appendChild(cell);
+          });
+        });
+        const summary = document.getElementById("schedSummary");
+        const totalSess = src.length;
+        const totalHrs = (totalSess * 0.75).toFixed(1);
+        const classSet = new Set(src.map((s) => s.className));
+        const busyDays = new Set(src.map((s) => s.day)).size;
+        const [sbg, scol] = getSubjColor(t.subject);
+        summary.innerHTML = `
+    <div class="ss-item"><div class="ss-icon" style="background:${sbg};color:${scol}"><i class="fas fa-book-open"></i></div><div><div class="ss-val" style="color:${scol}">${fa(totalSess)}</div><div class="ss-lbl">کلاس این هفته</div></div></div>
+    <div class="ss-item"><div class="ss-icon" style="background:rgba(142,95,212,0.15);color:var(--accent2)"><i class="fas fa-clock"></i></div><div><div class="ss-val" style="color:var(--accent2)">${fa(+totalHrs)}</div><div class="ss-lbl">ساعت تدریس</div></div></div>
+    <div class="ss-item"><div class="ss-icon" style="background:rgba(6,214,160,0.13);color:var(--accent3)"><i class="fas fa-users"></i></div><div><div class="ss-val" style="color:var(--accent3)">${fa(classSet.size)}</div><div class="ss-lbl">کلاس مختلف</div></div></div>
+    <div class="ss-item"><div class="ss-icon" style="background:rgba(243,156,18,0.13);color:var(--accent4)"><i class="fas fa-calendar-day"></i></div><div><div class="ss-val" style="color:var(--accent4)">${fa(busyDays)}</div><div class="ss-lbl">روز کاری</div></div></div>`;
+      }
+
+      /* ══ PROFILE PANEL ══ */
+      function openProf(id) {
+        currentProfId = id;
+        const t = teachers.find((x) => x.id === id);
+        if (!t) return;
+        const [bg, col] = getAv(t.id);
+        const [sbg, scol] = getSubjColor(t.subject);
+        const si = statusInfo(t.todayStatus);
+        const av = document.getElementById("profAv");
+        av.style.cssText = `background:${bg};color:${col};width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;border:3px solid var(--bg-card);box-shadow:0 4px 16px rgba(0,0,0,0.4);overflow:hidden;cursor:pointer;`;
+        if (t.photo)
+          av.innerHTML = `<img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;">`;
+        else av.textContent = t.fname[0];
+        document.getElementById("profName").textContent =
+          t.fname + " " + t.lname;
+        document.getElementById("profMeta").innerHTML = `
+    <span class="subj-tag" style="background:${sbg};color:${scol};font-size:10px;padding:3px 9px;border-radius:12px;">${t.subject}</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px;"><span class="status-dot ${si.cls}"></span>${si.lbl}</span>
+    <span style="font-size:10px;color:var(--text-muted);">${t.personnel}</span>`;
+        function mf(lbl, val, ltr = false) {
+          return `<div class="p-field"><div class="p-field-lbl">${lbl}</div><div class="p-field-val${ltr ? " ltr" : ""}">${val || "—"}</div></div>`;
+        }
+        document.getElementById("profInfoGrid").innerHTML =
+          mf("نام", t.fname) +
+          mf("نام خانوادگی", t.lname) +
+          mf("تحصیلات", t.degree) +
+          mf("سابقه", t.experience + " سال") +
+          mf("تلفن", t.phone, true) +
+          mf("ایمیل", t.email, true);
+        const pct = Math.min(100, Math.round((t.schedule.length / 12) * 100));
+        document.getElementById("profWorkload").innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;">
+      <span>بار تدریس هفتگی</span>
+      <span style="color:var(--accent);font-weight:700;">${fa(t.schedule.length)} کلاس / ${fa(t.schedule.length * 0.75)} ساعت</span>
+    </div>
+    <div class="workload-bar"><div class="wb-fill" style="width:${pct}%;background:${pct > 80 ? "var(--absent)" : pct > 60 ? "var(--late)" : "var(--accent)"};"></div></div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:5px;">${pct > 80 ? "بار سنگین" : pct > 60 ? "بار متوسط" : "بار معمولی"} (${fa(pct)}٪ از ظرفیت)</div>`;
+        const dayMap = {};
+        t.schedule.forEach((s) => {
+          (dayMap[s.day] = dayMap[s.day] || []).push(s);
+        });
+        document.getElementById("profMiniSched").innerHTML = DAYS.map(
+          (day, di) => {
+            const sessions = dayMap[di] || [];
+            const isToday = di === TODAY_IDX;
+            return `<div class="mini-sched-row" style="${isToday ? "border-color:rgba(74,144,217,0.3);background:rgba(74,144,217,0.04);" : ""}">
+      <div class="msr-day" style="${isToday ? "color:var(--accent);" : ""}">${day}</div>
+      <div class="msr-sessions">${
+        sessions.length
+          ? sessions
+              .map((s) => {
+                const [sb, sc] = getSubjColor(s.subject);
+                return `<span class="msr-sess" style="background:${sb};color:${sc};">${s.className}</span>`;
+              })
+              .join("")
+          : '<span style="font-size:10px;color:var(--text-muted);">—</span>'
+      }</div>
+      <div class="msr-count">${sessions.length ? fa(sessions.length) + " کلاس" : ""}</div>
+    </div>`;
+          },
+        ).join("");
+        const classSet = {};
+        t.schedule.forEach((s) => {
+          const k = s.className;
+          if (!classSet[k])
+            classSet[k] = { subj: s.subject, sessions: 0, rooms: new Set() };
+          classSet[k].sessions++;
+          classSet[k].rooms.add(s.room);
+        });
+        document.getElementById("profClassList").innerHTML = Object.entries(
+          classSet,
+        )
+          .map(([cls, info]) => {
+            const [sb, sc] = getSubjColor(info.subj);
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;gap:8px;">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:28px;height:28px;border-radius:7px;background:${sb};color:${sc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">${cls[0]}</div>
+        <div><div style="font-size:12px;font-weight:700;">${cls}</div><div style="font-size:10px;color:var(--text-muted);">${info.subj}</div></div>
+      </div>
+      <div style="text-align:left;"><div style="font-size:12px;font-weight:700;color:var(--accent)">${fa(info.sessions)} جلسه</div><div style="font-size:9.5px;color:var(--text-muted);">${[...info.rooms].join("، ")}</div></div>
+    </div>`;
+          })
+          .join("");
+        document.getElementById("profSchedBtn").onclick = () => {
+          closeProf();
+          openSched(id);
+        };
+        document.getElementById("profSmsBtn").onclick = () => {
+          closeProf();
+          openSmsModal(id);
+        };
+        document
+          .querySelectorAll(".pt-tab")
+          .forEach((b) => b.classList.remove("active"));
+        document.querySelector(".pt-tab").classList.add("active");
+        document
+          .querySelectorAll(".pt-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("pt-info").classList.add("active");
+        document.getElementById("profOverlay").classList.add("open");
+        document.getElementById("profPanel").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeProf() {
+        document.getElementById("profOverlay").classList.remove("open");
+        document.getElementById("profPanel").classList.remove("open");
+        document.body.style.overflow = "";
+        currentProfId = null;
+      }
+      function switchProfTab(id, btn) {
+        document
+          .querySelectorAll(".pt-tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".pt-panel")
+          .forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("pt-" + id).classList.add("active");
+      }
+
+      /* ══ PROF PHOTO ══ */
+      function triggerProfPhotoUpload() {
+        document.getElementById("profPhotoInput").click();
+      }
+      function handleProfPhotoUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.match(/image\/(jpeg|png|webp)/)) {
+          showToast("فقط فرمت‌های JPG، PNG، WEBP مجاز است", "error");
+          return;
+        }
+        if (file.size > 1 * 1024 * 1024) {
+          showToast("حجم عکس بیشتر از ۱ مگابایت است", "error");
+          e.target.value = "";
+          return;
+        }
+        const r = new FileReader();
+        r.onload = (ev) => {
+          const src = ev.target.result;
+          const t = teachers.find((x) => x.id === currentProfId);
+          if (t) t.photo = src;
+          const av = document.getElementById("profAv");
+          av.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+          render();
+          showToast("عکس پروفایل با موفقیت آپلود شد", "success");
+        };
+        r.readAsDataURL(file);
+      }
+
+      /* ══ ADD/EDIT TEACHER ══ */
+      let editPhotoData = null;
+      function openAddTeacher() {
+        currentEditId = null;
+        editPhotoData = null;
+        document.getElementById("editModalTitle").textContent =
+          "افزودن معلم جدید";
+        document.getElementById("ef_fname").value = "";
+        document.getElementById("ef_lname").value = "";
+        document.getElementById("ef_personnel").value =
+          "T-" + (1000 + teachers.length + 1);
+        document.getElementById("ef_degree").value = "لیسانس";
+        document.getElementById("ef_exp").value = "";
+        document.getElementById("ef_status").value = "present";
+        document.getElementById("ef_subject").value = "ریاضی";
+        document.getElementById("ef_phone").value = "";
+        document.getElementById("ef_email").value = "";
+        document.getElementById("photoPreviewWrap").innerHTML =
+          '<div class="pu-icon"><i class="fas fa-user-circle"></i></div>';
+        document
+          .getElementById("photoUploadArea")
+          .classList.remove("has-photo");
+        document.getElementById("photoFileInput").value = "";
+        document.getElementById("editModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function openEditTeacher(id) {
+        currentEditId = id;
+        editPhotoData = null;
+        const t = teachers.find((x) => x.id === id);
+        document.getElementById("editModalTitle").textContent =
+          "ویرایش اطلاعات معلم";
+        document.getElementById("ef_fname").value = t.fname;
+        document.getElementById("ef_lname").value = t.lname;
+        document.getElementById("ef_personnel").value = t.personnel;
+        document.getElementById("ef_degree").value = t.degree;
+        document.getElementById("ef_exp").value = t.experience;
+        document.getElementById("ef_status").value = t.todayStatus;
+        document.getElementById("ef_subject").value = t.subject;
+        document.getElementById("ef_phone").value = t.phone;
+        document.getElementById("ef_email").value = t.email;
+        if (t.photo) {
+          document.getElementById("photoPreviewWrap").innerHTML =
+            `<img src="${t.photo}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 8px;">`;
+          document.getElementById("photoUploadArea").classList.add("has-photo");
+          editPhotoData = t.photo;
+        } else {
+          document.getElementById("photoPreviewWrap").innerHTML =
+            '<div class="pu-icon"><i class="fas fa-user-circle"></i></div>';
+          document
+            .getElementById("photoUploadArea")
+            .classList.remove("has-photo");
+        }
+        document.getElementById("editModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function openEditFromProf() {
+        const id = currentProfId;
+        closeProf();
+        setTimeout(() => openEditTeacher(id), 200);
+      }
+      function closeEditModalBtn() {
+        document.getElementById("editModal").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function closeEditModal(e) {
+        if (e.target === document.getElementById("editModal"))
+          closeEditModalBtn();
+      }
+      function handlePhotoUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.match(/image\/(jpeg|png|webp)/)) {
+          showToast("فقط فرمت‌های JPG، PNG، WEBP مجاز است", "error");
+          e.target.value = "";
+          return;
+        }
+        if (file.size > 1 * 1024 * 1024) {
+          showToast("حجم عکس بیشتر از ۱ مگابایت است", "error");
+          e.target.value = "";
+          return;
+        }
+        const r = new FileReader();
+        r.onload = (ev) => {
+          editPhotoData = ev.target.result;
+          document.getElementById("photoPreviewWrap").innerHTML =
+            `<img src="${editPhotoData}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 8px;">`;
+          document.getElementById("photoUploadArea").classList.add("has-photo");
+        };
+        r.readAsDataURL(file);
+      }
+      function saveTeacher() {
+        const fname = document.getElementById("ef_fname").value.trim();
+        const lname = document.getElementById("ef_lname").value.trim();
+        if (!fname || !lname) {
+          showToast("لطفاً نام و نام خانوادگی را وارد کنید", "error");
+          return;
+        }
+        const obj = {
+          fname,
+          lname,
+          personnel: document.getElementById("ef_personnel").value.trim(),
+          degree: document.getElementById("ef_degree").value,
+          experience: parseInt(document.getElementById("ef_exp").value) || 0,
+          todayStatus: document.getElementById("ef_status").value,
+          subject: document.getElementById("ef_subject").value,
+          phone: document.getElementById("ef_phone").value.trim(),
+          email: document.getElementById("ef_email").value.trim(),
+        };
+        if (currentEditId) {
+          const t = teachers.find((x) => x.id === currentEditId);
+          Object.assign(t, obj);
+          if (editPhotoData !== null) t.photo = editPhotoData;
+          showToast(`اطلاعات ${fname} ${lname} ذخیره شد`, "success");
+        } else {
+          teachers.push({
+            id: nextId++,
+            ...obj,
+            photo: editPhotoData,
+            schedule: [],
+          });
+          showToast(`معلم جدید ${fname} ${lname} اضافه شد`, "success");
+        }
+        closeEditModalBtn();
+        applyFilters();
+      }
+
+      /* ══ SMS ══ */
+      const smsTemplates = [
+        "لطفاً برنامه کلاس‌های خود را بررسی فرمایید.",
+        "جلسه شورای معلمان فردا ساعت ۱۲ برگزار می‌شود.",
+        "مهلت ثبت نمرات تا پایان هفته است.",
+        "خواهشمند است گزارش حضور کلاس را ارسال فرمایید.",
+        "تعطیلی فوق‌العاده مدرسه اعلام می‌شود.",
+      ];
+      let currentSmsTeacherId = null;
+      function openSmsModal(id) {
+        currentSmsTeacherId = id;
+        const t = teachers.find((x) => x.id === id);
+        const [bg, col] = getAv(t.id);
+        const avHtml = t.photo
+          ? `<div class="sms-rec-av"><img src="${t.photo}"></div>`
+          : `<div class="sms-rec-av" style="background:${bg};color:${col}">${t.fname[0]}</div>`;
+        document.getElementById("smsRecipient").innerHTML =
+          `${avHtml}<div><div class="sms-rec-name">${t.fname} ${t.lname}</div><div class="sms-rec-phone">${t.phone}</div></div>`;
+        document.getElementById("smsTemplates").innerHTML = smsTemplates
+          .map(
+            (tpl, i) =>
+              `<button class="sms-tpl" onclick="selectSmsTemplate(${i},this)">${tpl.substring(0, 28)}…</button>`,
+          )
+          .join("");
+        document.getElementById("smsText").value = "";
+        document.getElementById("charCount").textContent = "۰ کاراکتر";
+        document.getElementById("smsModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSmsModalBtn() {
+        document.getElementById("smsModal").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function closeSmsModal(e) {
+        if (e.target === document.getElementById("smsModal"))
+          closeSmsModalBtn();
+      }
+      function selectSmsTemplate(i, btn) {
+        document
+          .querySelectorAll(".sms-tpl")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("smsText").value = smsTemplates[i];
+        updateCharCount();
+      }
+      function updateCharCount() {
+        document.getElementById("charCount").textContent =
+          fa(document.getElementById("smsText").value.length) + " کاراکتر";
+      }
+      function sendSms() {
+        const text = document.getElementById("smsText").value.trim();
+        if (!text) {
+          showToast("لطفاً متن پیامک را بنویسید", "error");
+          return;
+        }
+        const t = teachers.find((x) => x.id === currentSmsTeacherId);
+        closeSmsModalBtn();
+        showToast(`پیامک به ${t.fname} ${t.lname} ارسال شد`, "success");
+      }
+
+      /* ══ EXCEL ══ */
+      function exportExcel() {
+        const BOM = "\uFEFF";
+        const headers = [
+          "ردیف",
+          "نام",
+          "نام خانوادگی",
+          "کد پرسنلی",
+          "رشته",
+          "تحصیلات",
+          "سابقه (سال)",
+          "تلفن",
+          "ایمیل",
+          "تعداد کلاس",
+          "ساعت هفتگی",
+          "وضعیت امروز",
+        ];
+        const statusMap = { present: "حاضر", absent: "غایب", leave: "مرخصی" };
+        const rows = teachers.map((t, i) => [
+          i + 1,
+          t.fname,
+          t.lname,
+          t.personnel,
+          t.subject,
+          t.degree,
+          t.experience,
+          t.phone,
+          t.email,
+          t.schedule.length,
+          t.schedule.length * 0.75,
+          statusMap[t.todayStatus] || t.todayStatus,
+        ]);
+        const schedHeaders = ["نام معلم", "روز", "زنگ", "درس", "کلاس", "اتاق"];
+        const schedRows = [];
+        teachers.forEach((t) => {
+          t.schedule.forEach((s) => {
+            schedRows.push([
+              t.fname + " " + t.lname,
+              DAYS[s.day],
+              PERIODS[s.period].label,
+              s.subject,
+              s.className,
+              s.room,
+            ]);
+          });
+        });
+        let csv = BOM + "=== اطلاعات معلمین — هنرستان شهید بوربور ===\r\n\r\n";
+        csv += headers.join(",") + "\r\n";
+        rows.forEach(
+          (r) =>
+            (csv +=
+              r
+                .map((v) => '"' + String(v).replace(/"/g, '""') + '"')
+                .join(",") + "\r\n"),
+        );
+        csv += "\r\n=== برنامه هفتگی ===\r\n\r\n";
+        csv += schedHeaders.join(",") + "\r\n";
+        schedRows.forEach(
+          (r) =>
+            (csv +=
+              r
+                .map((v) => '"' + String(v).replace(/"/g, '""') + '"')
+                .join(",") + "\r\n"),
+        );
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "teachers_boorboor_1404.csv";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+        showToast("فایل Excel با موفقیت دانلود شد", "success");
+      }
+
+      /* ══ INIT ══ */
+      renderNotifications();
+      applyFilters();
+    </script>
+  </body>
+</html>

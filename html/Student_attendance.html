@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور - حضور و غیاب</title>
+    <link rel="icon" href="../image/iconB.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg-main:#202b59;--bg-card:#1f285a;--bg-card2:#1e2957;--bg-sidebar:#172047;
+  --accent:#3498db;--accent2:#9b59b6;--accent4:#f39c12;--accent5:#e74c3c;
+  --present:#27ae60;--absent:#e74c3c;--late:#f39c12;--leave:#9b59b6;
+  --text:#fff;--text-muted:rgba(255,255,255,.55);--border:rgba(255,255,255,.09);
+  --glow:0 0 28px rgba(52,152,219,.14);--sidebar-w:260px;--radius:14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 10%,rgba(79,142,247,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(124,58,237,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:28px 16px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .3s ease;}
+.logo{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:40px;}
+.nav-item{margin-bottom:6px;}
+.nav-item a{color:rgba(255,255,255,.72);text-decoration:none;padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:10px;font-size:14px;font-weight:400;transition:all .25s;}
+.nav-item a i{font-size:15px;width:20px;text-align:center;}
+.nav-item a:hover,.nav-item.active a{background:var(--bg-main);color:#fff;}
+.nav-item.active a{font-weight:600;}
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+
+/* MAIN */
+.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:28px 24px;position:relative;z-index:1;}
+
+/* TOP BAR */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;}
+.greeting-block h1{font-size:20px;font-weight:700;}
+.greeting-block h1 span{color:var(--accent);}
+.greeting-block p{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.top-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.notif-btn{position:relative;width:38px;height:38px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
+.notif-btn:hover{color:var(--text);background:var(--bg-card2);}
+.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.profile-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.stat-card.green::before{background:linear-gradient(90deg,var(--present),#0bc87c);}
+.stat-card.red::before{background:linear-gradient(90deg,var(--absent),#f97316);}
+.stat-card.yellow::before{background:linear-gradient(90deg,var(--late),#fbbf24);}
+.stat-card:hover{transform:translateY(-4px);border-color:rgba(79,142,247,.22);box-shadow:var(--glow);}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
+.blue   .stat-icon{background:rgba(79,142,247,.15);color:var(--accent);}
+.green  .stat-icon{background:rgba(6,214,160,.15);color:var(--present);}
+.red    .stat-icon{background:rgba(239,68,68,.15);color:var(--absent);}
+.yellow .stat-icon{background:rgba(245,158,11,.15);color:var(--late);}
+.stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:11px;color:var(--text-muted);}
+.stat-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
+.badge-green{background:rgba(6,214,160,.15);color:var(--present);}
+.badge-red{background:rgba(239,68,68,.15);color:var(--absent);}
+.badge-blue{background:rgba(52,152,219,.15);color:var(--accent);}
+.badge-yel{background:rgba(245,158,11,.15);color:var(--late);}
+
+/* SECTION HEADER */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.section-title i{color:var(--accent);}
+.section-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap;}
+
+/* CALENDAR CARD */
+.calendar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.cal-nav-btn{width:32px;height:32px;border-radius:8px;background:var(--bg-card2);border:1px solid var(--border);color:var(--text-muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.cal-nav-btn:hover{color:var(--text);background:rgba(52,152,219,.15);border-color:var(--accent);}
+.cal-nav-btn:disabled{opacity:.3;cursor:default;}
+.cal-month-name{font-size:15px;font-weight:700;}
+.cal-year-label{font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;}
+.cal-head-cell{text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);padding:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:default;border:1.5px solid transparent;transition:all .2s;position:relative;}
+.cal-day.empty{background:transparent;border-color:transparent;}
+.cal-day.normal{background:rgba(255,255,255,.04);color:var(--text-muted);}
+.cal-day.normal:hover{background:rgba(255,255,255,.08);}
+.cal-day.present{background:rgba(39,174,96,.15);border-color:rgba(39,174,96,.35);color:var(--present);}
+.cal-day.absent{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.35);color:var(--absent);}
+.cal-day.late{background:rgba(243,156,18,.15);border-color:rgba(243,156,18,.35);color:var(--late);}
+.cal-day.leave{background:rgba(155,89,182,.15);border-color:rgba(155,89,182,.35);color:var(--accent2);}
+.cal-day.holiday{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border-color:transparent;}
+.cal-day.future{background:rgba(255,255,255,.02);color:rgba(255,255,255,.15);border-color:transparent;}
+.cal-day.today{box-shadow:0 0 0 2px var(--accent);}
+.cal-day-dot{width:4px;height:4px;border-radius:50%;margin-top:2px;}
+.present .cal-day-dot{background:var(--present);}
+.absent  .cal-day-dot{background:var(--absent);}
+.late    .cal-day-dot{background:var(--late);}
+.leave   .cal-day-dot{background:var(--accent2);}
+.cal-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);}
+.cal-legend-box{width:12px;height:12px;border-radius:3px;}
+
+/* MIDDLE ROW */
+.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+
+/* SUBJECT BARS */
+.subject-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.subject-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.subject-item:last-child{border-bottom:none;}
+.subj-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.subj-info{flex:1;min-width:0;}
+.subj-name{font-size:13px;font-weight:600;margin-bottom:5px;}
+.subj-bar-wrap{height:5px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;}
+.subj-bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.subj-pct{font-size:13px;font-weight:700;min-width:36px;text-align:left;flex-shrink:0;}
+.subj-counts{display:flex;gap:6px;flex-shrink:0;}
+.subj-count-chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
+
+/* TREND CHART */
+.trend-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.chart-wrap{position:relative;height:210px;margin-top:10px;}
+
+/* BOTTOM ROW */
+.bot-row{display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;}
+
+/* ABSENCE LOG */
+.absence-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.absence-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);transition:transform .2s;}
+.absence-item:last-child{border-bottom:none;}
+.absence-item:hover{transform:translateX(3px);}
+.absence-date{font-size:11px;color:var(--text-muted);min-width:80px;line-height:1.5;}
+.absence-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1;}
+.absence-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.tag-absent{background:rgba(231,76,60,.15);color:var(--absent);}
+.tag-late{background:rgba(243,156,18,.15);color:var(--late);}
+.tag-leave{background:rgba(155,89,182,.15);color:var(--accent2);}
+.absence-type-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+
+/* DONUT */
+.summary-donut-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;}
+.donut-wrap{position:relative;width:160px;height:160px;margin:8px auto 16px;}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-pct{font-size:28px;font-weight:800;color:var(--present);}
+.donut-sub{font-size:10px;color:var(--text-muted);}
+.donut-legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto;}
+.dl-item{display:flex;align-items:center;gap:7px;font-size:11px;}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.dl-val{margin-right:auto;font-weight:700;font-size:13px;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.stat-card,.calendar-card,.subject-card,.trend-card,.absence-card,.summary-donut-card{animation:fadeUp .5s ease both;}
+.stat-card:nth-child(1){animation-delay:.04s;}.stat-card:nth-child(2){animation-delay:.08s;}
+.stat-card:nth-child(3){animation-delay:.12s;}.stat-card:nth-child(4){animation-delay:.16s;}
+.calendar-card{animation-delay:.2s;}.subject-card{animation-delay:.24s;}.trend-card{animation-delay:.28s;}
+.absence-card{animation-delay:.32s;}.summary-donut-card{animation-delay:.36s;}
+
+/* HAMBURGER */
+.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;}
+.sidebar-overlay.active{display:block;}
+
+/* RESPONSIVE */
+@media(max-width:1280px){:root{--sidebar-w:240px;}}
+@media(max-width:1024px){
+  :root{--sidebar-w:220px;}
+  .main-content{padding:22px 18px;}
+  .stat-row{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .mid-row{grid-template-columns:1fr;}
+  .bot-row{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .menu-toggle{display:flex;}
+  .sidebar{transform:translateX(110%);box-shadow:-5px 0 20px rgba(0,0,0,.4);}
+  .sidebar.active{transform:translateX(0);}
+  .main-content{margin-right:0;padding:70px 16px 20px;}
+  .stat-row{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .mid-row,.bot-row{grid-template-columns:1fr;gap:12px;}
+}
+@media(max-width:480px){
+  .main-content{padding:66px 12px 16px;}
+  .stat-card{padding:14px 12px;}.stat-value{font-size:22px;}
+  .stat-icon{width:36px;height:36px;font-size:14px;margin-bottom:10px;}
+  .cal-head-cell{font-size:9px;}.cal-day{font-size:9px;border-radius:6px;}
+  .subj-counts{display:none;}.absence-date{min-width:64px;}
+}
+@media(max-width:360px){.stat-row{gap:7px;}.stat-value{font-size:20px;}}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo">بوربور</div>
+  <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item active"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+</div>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1>حضور و غیاب — <span>علی مختاری</span></h1>
+      <p id="termLabel">سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
+    </div>
+    <div class="top-actions">
+      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-avatar">ع</div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card green">
+      <div class="stat-badge badge-green" id="pctBadge">۹۲٪</div>
+      <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+      <div class="stat-value" id="statPresent">—</div>
+      <div class="stat-label">روز حاضر</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-badge badge-red">این ترم</div>
+      <div class="stat-icon"><i class="fas fa-user-times"></i></div>
+      <div class="stat-value" id="statAbsent">—</div>
+      <div class="stat-label">روز غیبت</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-badge badge-yel">تأخیر</div>
+      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-value" id="statLate">—</div>
+      <div class="stat-label">تأخیر</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-badge badge-blue">کل</div>
+      <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-label">روز درسی</div>
+    </div>
+  </div>
+
+  <div class="calendar-card">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="prevMonth"><i class="fas fa-chevron-right"></i></button>
+      <div style="text-align:center">
+        <div class="cal-month-name" id="calMonthName">—</div>
+        <div class="cal-year-label" id="calYearLabel"></div>
+      </div>
+      <button class="cal-nav-btn" id="nextMonth"><i class="fas fa-chevron-left"></i></button>
+    </div>
+    <div class="cal-head">
+      <div class="cal-head-cell">ش</div><div class="cal-head-cell">ی</div>
+      <div class="cal-head-cell">د</div><div class="cal-head-cell">س</div>
+      <div class="cal-head-cell">چ</div><div class="cal-head-cell">پ</div>
+      <div class="cal-head-cell">ج</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-legend">
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(39,174,96,.55)"></div>حاضر</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(231,76,60,.55)"></div>غیبت</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(243,156,18,.55)"></div>تأخیر</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(155,89,182,.55)"></div>مرخصی</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(255,255,255,.1)"></div>تعطیل / آینده</div>
+    </div>
+  </div>
+
+  <div class="mid-row">
+    <div class="subject-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chart-bar"></i> درصد حضور هر درس</div>
+      </div>
+      <div id="subjectList"></div>
+    </div>
+    <div class="trend-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chart-line"></i> روند ماهانه حضور</div>
+      </div>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="bot-row">
+    <div class="absence-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-list-ul"></i> سوابق غیبت و تأخیر</div>
+      </div>
+      <div id="absenceList"></div>
+    </div>
+    <div class="summary-donut-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fas fa-chart-pie"></i> خلاصه ترم</div>
+      </div>
+      <div class="donut-wrap">
+        <canvas id="donutChart"></canvas>
+        <div class="donut-center">
+          <div class="donut-pct" id="donutPct">—</div>
+          <div class="donut-sub">حضور کل</div>
+        </div>
+      </div>
+      <div class="donut-legend">
+        <div class="dl-item"><div class="dl-dot" style="background:var(--present)"></div><span style="color:var(--text-muted)">حاضر</span><span class="dl-val" style="color:var(--present)" id="dlPresent">—</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--absent)"></div><span style="color:var(--text-muted)">غایب</span><span class="dl-val" style="color:var(--absent)" id="dlAbsent">—</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--late)"></div><span style="color:var(--text-muted)">تأخیر</span><span class="dl-val" style="color:var(--late)" id="dlLate">—</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--accent2)"></div><span style="color:var(--text-muted)">مرخصی</span><span class="dl-val" style="color:var(--accent2)" id="dlLeave">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CALENDAR METADATA — محاسبه‌شده از تقویم واقعی
+═══════════════════════════════════════════════ */
+const MONTH_NAMES = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const DAY_NAMES   = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
+
+// offset روز اول (شنبه=0..جمعه=6) و تعداد روز — محاسبه‌شده با Python از تاریخ میلادی واقعی
+const META = {
+  1404: {
+    offset: [6,2,5,1,4,0,3,5,0,2,4,6],
+    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
+  },
+  1405: {
+    offset: [0,3,6,2,5,1,4,6,1,3,5,0],
+    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
+  },
+  1406: {
+    // فقط برای محاسبه future — offset مهر 1406 لازم نیست تا خرداد
+    offset: [0,3,6,2,5,1,4,6,1,3,5,0], // تقریبی، لازم نیست دقیق باشد
+    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
+  }
+};
+
+// تعطیلات رسمی ثابت: {year: { month(1-12): [days] }}
+const FIXED_HOLIDAYS = {
+  1404: {
+    1:  [1,2,3,4,12,13],   // فروردین
+    3:  [14,15],            // خرداد
+    11: [22],               // بهمن
+    12: [29]                // اسفند
+  },
+  1405: {
+    1:  [1,2,3,4,12,13],
+    3:  [14,15],
+    11: [22],
+    12: [29]
+  }
+};
+
+// جمعه‌ها همیشه تعطیل (col index 6)
+function isFriday(offset, day) {
+  return (offset + day - 1) % 7 === 6;
+}
+
+// آیا روز تعطیل رسمی است؟
+function isFixedHoliday(year, month, day) {
+  return (FIXED_HOLIDAYS[year]?.[month] || []).includes(day);
+}
+
+/* ═══════════════════════════════════════════════
+   TODAY: 26 اردیبهشت 1404
+═══════════════════════════════════════════════ */
+const TODAY = { year: 1404, month: 2, day: 26 };
+
+function compareDates(y1,m1,d1, y2,m2,d2){
+  if(y1!==y2) return y1-y2;
+  if(m1!==m2) return m1-m2;
+  return d1-d2;
+}
+
+function isFuture(year, month, day){
+  return compareDates(year,month,day, TODAY.year,TODAY.month,TODAY.day) > 0;
+}
+function isToday(year, month, day){
+  return year===TODAY.year && month===TODAY.month && day===TODAY.day;
+}
+
+/* ═══════════════════════════════════════════════
+   سال تحصیلی: مهر → خرداد (دو سال پشت سرهم)
+   ماه‌های درسی: مهر(7)..اسفند(12) از سال اول
+                 فروردین(1)..خرداد(3) از سال دوم
+═══════════════════════════════════════════════ */
+// ساختار ماه‌های تقویم: [{year, month}]
+// سال تحصیلی 1: مهر1404..خرداد1405
+// سال تحصیلی 2: مهر1405..خرداد1406
+const SCHOOL_MONTHS_1 = [
+  {year:1404,month:7},{year:1404,month:8},{year:1404,month:9},
+  {year:1404,month:10},{year:1404,month:11},{year:1404,month:12},
+  {year:1405,month:1},{year:1405,month:2},{year:1405,month:3}
+];
+const SCHOOL_MONTHS_2 = [
+  {year:1405,month:7},{year:1405,month:8},{year:1405,month:9},
+  {year:1405,month:10},{year:1405,month:11},{year:1405,month:12},
+  {year:1406,month:1},{year:1406,month:2},{year:1406,month:3}
+];
+
+// همه ماه‌های قابل نمایش
+const ALL_MONTHS = [...SCHOOL_MONTHS_1, ...SCHOOL_MONTHS_2];
+
+/* ═══════════════════════════════════════════════
+   وضعیت‌سازی تصادفی — نمایشی
+   (در پروژه واقعی از API می‌آید)
+═══════════════════════════════════════════════ */
+const rng = (seed) => {
+  let s = seed;
+  return () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 4294967296; };
+};
+const rand = rng(42);
+
+// برای هر ماه، وضعیت هر روز را تولید می‌کنیم
+// P=حاضر, A=غیبت, L=تأخیر, V=مرخصی, H=تعطیل, F=آینده
+const monthStatusCache = {};
+
+function getMonthStatuses(year, month) {
+  const key = `${year}-${month}`;
+  if(monthStatusCache[key]) return monthStatusCache[key];
+
+  const meta = META[year] || META[1405];
+  const offset = meta.offset[month-1];
+  const days   = meta.days[month-1];
+  const result = [];
+
+  for(let d=1; d<=days; d++){
+    if(isFixedHoliday(year, month, d) || isFriday(offset, d)){
+      result.push('H');
+    } else if(isFuture(year, month, d)){
+      result.push('F');
+    } else {
+      const r = rand();
+      if(r < 0.78)      result.push('P');
+      else if(r < 0.87) result.push('L');
+      else if(r < 0.94) result.push('A');
+      else               result.push('V');
+    }
+  }
+
+  monthStatusCache[key] = result;
+  return result;
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATOR STATE
+═══════════════════════════════════════════════ */
+// پیدا کردن ایندکس ماه جاری در لیست (اردیبهشت 1404 = index 1 در SCHOOL_MONTHS_1)
+// ولی ما ALL_MONTHS داریم
+let currentIdx = ALL_MONTHS.findIndex(m => m.year===TODAY.year && m.month===TODAY.month);
+if(currentIdx < 0) currentIdx = 0;
+
+/* ═══════════════════════════════════════════════
+   RENDER CALENDAR
+═══════════════════════════════════════════════ */
+function renderCalendar(idx){
+  const {year, month} = ALL_MONTHS[idx];
+  const meta    = META[year] || META[1405];
+  const offset  = meta.offset[month-1];
+  const days    = meta.days[month-1];
+  const statuses = getMonthStatuses(year, month);
+
+  document.getElementById('calMonthName').textContent = MONTH_NAMES[month-1];
+  document.getElementById('calYearLabel').textContent = toF(year);
+
+  // nav buttons
+  document.getElementById('prevMonth').disabled = (idx === 0);
+  document.getElementById('nextMonth').disabled = (idx === ALL_MONTHS.length - 1);
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // empty cells
+  for(let i=0; i<offset; i++){
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  statuses.forEach((st, i) => {
+    const day = i + 1;
+    const el  = document.createElement('div');
+    const cls = st === 'H' ? 'holiday'
+              : st === 'F' ? 'future'
+              : st === 'P' ? 'present'
+              : st === 'A' ? 'absent'
+              : st === 'L' ? 'late'
+              : st === 'V' ? 'leave'
+              : 'normal';
+
+    el.className = 'cal-day ' + cls;
+    if(isToday(year, month, day)) el.classList.add('today');
+    el.textContent = toF(day);
+
+    if(['P','A','L','V'].includes(st)){
+      const dot = document.createElement('div');
+      dot.className = 'cal-day-dot';
+      el.appendChild(dot);
+    }
+    grid.appendChild(el);
+  });
+
+  updateStats();
+}
+
+/* ═══════════════════════════════════════════════
+   STATS — جمع کل از تمام ماه‌های گذشته + جاری
+═══════════════════════════════════════════════ */
+function computeTotals(){
+  let P=0, A=0, L=0, V=0;
+  // فقط ماه‌های سال تحصیلی 1 (مهر1404..اردیبهشت1404 = تا امروز)
+  for(const {year,month} of SCHOOL_MONTHS_1){
+    if(compareDates(year,month,1, TODAY.year,TODAY.month,TODAY.day) > 0) break;
+    const st = getMonthStatuses(year, month);
+    st.forEach(s => {
+      if(s==='P') P++;
+      else if(s==='A') A++;
+      else if(s==='L') L++;
+      else if(s==='V') V++;
+    });
+  }
+  return {P,A,L,V,total:P+A+L+V};
+}
+
+let donutChart = null;
+
+function updateStats(){
+  const {P,A,L,V,total} = computeTotals();
+  const pct = total > 0 ? Math.round(P/total*100) : 0;
+
+  document.getElementById('statPresent').textContent = toF(P);
+  document.getElementById('statAbsent').textContent  = toF(A);
+  document.getElementById('statLate').textContent    = toF(L);
+  document.getElementById('statTotal').textContent   = toF(total);
+  document.getElementById('pctBadge').textContent    = toF(pct) + '٪';
+  document.getElementById('donutPct').textContent    = toF(pct) + '٪';
+  document.getElementById('dlPresent').textContent   = toF(P);
+  document.getElementById('dlAbsent').textContent    = toF(A);
+  document.getElementById('dlLate').textContent      = toF(L);
+  document.getElementById('dlLeave').textContent     = toF(V);
+
+  if(donutChart){
+    donutChart.data.datasets[0].data = [P,A,L,V];
+    donutChart.update();
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   NAV BUTTONS
+═══════════════════════════════════════════════ */
+document.getElementById('prevMonth').addEventListener('click',()=>{
+  if(currentIdx>0){ currentIdx--; renderCalendar(currentIdx); }
+});
+document.getElementById('nextMonth').addEventListener('click',()=>{
+  if(currentIdx<ALL_MONTHS.length-1){ currentIdx++; renderCalendar(currentIdx); }
+});
+
+/* ═══════════════════════════════════════════════
+   SUBJECT BARS
+═══════════════════════════════════════════════ */
+const subjects = [
+  {name:'ریاضی',   icon:'fa-calculator',color:'#4f8ef7',bg:'rgba(79,142,247,.15)', pct:96,absent:1,late:2},
+  {name:'فیزیک',  icon:'fa-atom',      color:'#ef4444',bg:'rgba(239,68,68,.15)',   pct:90,absent:3,late:1},
+  {name:'شیمی',   icon:'fa-flask',     color:'#06d6a0',bg:'rgba(6,214,160,.15)',   pct:94,absent:2,late:2},
+  {name:'ادبیات', icon:'fa-book',      color:'#f59e0b',bg:'rgba(245,158,11,.15)',  pct:88,absent:4,late:3},
+  {name:'زبان',   icon:'fa-language',  color:'#7c3aed',bg:'rgba(124,58,237,.15)',  pct:92,absent:2,late:2},
+  {name:'دین',    icon:'fa-star',      color:'#ec4899',bg:'rgba(236,72,153,.15)',  pct:100,absent:0,late:1},
+];
+
+function pctColor(p){
+  if(p>=95) return 'var(--present)';
+  if(p>=85) return 'var(--accent)';
+  if(p>=75) return 'var(--late)';
+  return 'var(--absent)';
+}
+
+const subjectList = document.getElementById('subjectList');
+subjects.forEach(s=>{
+  const el = document.createElement('div');
+  el.className = 'subject-item';
+  el.innerHTML = `
+    <div class="subj-icon" style="background:${s.bg};color:${s.color}"><i class="fas ${s.icon}"></i></div>
+    <div class="subj-info">
+      <div class="subj-name">${s.name}</div>
+      <div class="subj-bar-wrap">
+        <div class="subj-bar-fill" style="width:0%;background:${pctColor(s.pct)}" data-w="${s.pct}"></div>
+      </div>
+    </div>
+    <div class="subj-pct" style="color:${pctColor(s.pct)}">${toF(s.pct)}٪</div>
+    <div class="subj-counts">
+      <span class="subj-count-chip" style="background:rgba(231,76,60,.12);color:var(--absent)">${toF(s.absent)} غیبت</span>
+      <span class="subj-count-chip" style="background:rgba(243,156,18,.12);color:var(--late)">${toF(s.late)} تأخیر</span>
+    </div>`;
+  subjectList.appendChild(el);
+});
+setTimeout(()=>{
+  document.querySelectorAll('.subj-bar-fill').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
+},300);
+
+/* ═══════════════════════════════════════════════
+   MONTHLY TREND CHART
+═══════════════════════════════════════════════ */
+// برچسب‌های ماه‌های درسی (مهر تا اردیبهشت = ۸ ماه گذشته + جاری)
+const trendLabels = ['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'];
+const trendPresent= [22,18,20,19,21,17,20,18];
+const trendAbsent = [0,2,1,2,0,3,1,1];
+const trendLate   = [1,2,1,0,2,1,3,2];
+
+new Chart(document.getElementById('trendChart'),{
+  type:'bar',
+  data:{
+    labels: trendLabels,
+    datasets:[
+      {label:'حاضر',data:trendPresent,backgroundColor:'rgba(39,174,96,.75)',borderRadius:5,borderSkipped:false},
+      {label:'غایب',data:trendAbsent, backgroundColor:'rgba(231,76,60,.75)',borderRadius:5,borderSkipped:false},
+      {label:'تأخیر',data:trendLate,  backgroundColor:'rgba(243,156,18,.75)',borderRadius:5,borderSkipped:false}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'rgba(232,237,248,.65)',font:{family:'Vazirmatn',size:11},boxWidth:10,padding:12}},
+      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
+    },
+    scales:{
+      x:{stacked:true,ticks:{color:'rgba(232,237,248,.45)',font:{family:'Vazirmatn',size:10}},grid:{color:'rgba(255,255,255,.03)'}},
+      y:{stacked:true,min:0,ticks:{color:'rgba(232,237,248,.45)',font:{family:'Vazirmatn',size:10},stepSize:5},grid:{color:'rgba(255,255,255,.04)'}}
+    },
+    animation:{duration:1100,easing:'easeInOutQuart'}
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   ABSENCE LOG
+═══════════════════════════════════════════════ */
+const absences=[
+  {date:'شنبه ۲۶ اردیبهشت ۱۴۰۴',type:'late',  label:'تأخیر',subjects:['ریاضی']},
+  {date:'سه‌شنبه ۲۳ اردیبهشت ۱۴۰۴',type:'absent',label:'غیبت',subjects:['فیزیک','شیمی']},
+  {date:'شنبه ۱۲ اردیبهشت ۱۴۰۴',type:'absent',label:'غیبت',subjects:['زبان','دین']},
+  {date:'یکشنبه ۱۷ فروردین ۱۴۰۴',type:'late',  label:'تأخیر',subjects:['ادبیات']},
+  {date:'شنبه ۱۵ اسفند ۱۴۰۳',type:'leave',  label:'مرخصی',subjects:['همه دروس']},
+  {date:'دوشنبه ۳ آذر ۱۴۰۴',   type:'absent',label:'غیبت',subjects:['ریاضی','فیزیک']},
+];
+const icons={absent:'<i class="fas fa-user-times"></i>',late:'<i class="fas fa-clock"></i>',leave:'<i class="fas fa-door-open"></i>'};
+const colors={absent:'rgba(231,76,60,.2)',late:'rgba(243,156,18,.2)',leave:'rgba(155,89,182,.2)'};
+const textCol={absent:'var(--absent)',late:'var(--late)',leave:'var(--accent2)'};
+const tagCls={absent:'tag-absent',late:'tag-late',leave:'tag-leave'};
+
+const absenceList = document.getElementById('absenceList');
+absences.forEach(a=>{
+  const el = document.createElement('div');
+  el.className='absence-item';
+  el.innerHTML=`
+    <div class="absence-type-icon" style="background:${colors[a.type]};color:${textCol[a.type]}">${icons[a.type]}</div>
+    <div class="absence-date">${a.date}</div>
+    <div class="absence-tags">
+      <span class="absence-tag ${tagCls[a.type]}">${a.label}</span>
+      ${a.subjects.map(s=>`<span class="absence-tag" style="background:rgba(255,255,255,.06);color:var(--text-muted)">${s}</span>`).join('')}
+    </div>`;
+  absenceList.appendChild(el);
+});
+
+/* ═══════════════════════════════════════════════
+   DONUT
+═══════════════════════════════════════════════ */
+donutChart = new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{datasets:[{data:[1,0,0,0],backgroundColor:['rgba(39,174,96,.85)','rgba(231,76,60,.85)','rgba(243,156,18,.85)','rgba(155,89,182,.85)'],borderWidth:0,hoverOffset:6}]},
+  options:{
+    cutout:'70%',responsive:true,maintainAspectRatio:true,
+    plugins:{
+      legend:{display:false},
+      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'},
+        callbacks:{label:ctx=>['حاضر','غایب','تأخیر','مرخصی'][ctx.dataIndex]+': '+ctx.raw+' روز'}}
+    },
+    animation:{animateRotate:true,duration:1000,easing:'easeInOutQuart'}
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+renderCalendar(currentIdx);
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function toF(n){
+  return String(n).replace(/\d/g, d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+// hamburger
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('menuToggle').addEventListener('click',()=>{
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click',()=>{
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+});
+</script>
+</body>
+</html>

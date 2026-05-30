@@ -1,0 +1,207 @@
+/* ==================== SUBMENU STYLES ==================== */
+
+/* آیتم‌هایی که زیرمنو دارند */
+.menu-item.has-submenu .menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+/* فلش زیرمنو */
+.submenu-arrow {
+  font-size: 12px !important;
+  width: auto !important;
+  margin-right: auto;
+  margin-left: 0;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
+}
+
+[dir="ltr"] .submenu-arrow {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* چرخش فلش هنگام باز بودن */
+.has-submenu.open .submenu-arrow {
+  transform: rotate(-180deg);
+  opacity: 1;
+}
+
+/* کانتینر زیرمنو */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              transform 0.35s ease;
+  opacity: 0;
+  transform: translateY(-8px);
+  margin: 0 0 0 12px;
+  padding-right: 10px;
+  border-right: 2px solid rgba(52, 152, 219, 0.25);
+  position: relative;
+}
+
+[dir="ltr"] .submenu {
+  margin: 0 12px 0 0;
+  padding-right: 0;
+  padding-left: 10px;
+  border-right: none;
+  border-left: 2px solid rgba(52, 152, 219, 0.25);
+}
+
+/* حالت باز */
+.menu-item.has-submenu.open .submenu {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+/* خط اتصال عمودی با نقطه */
+.submenu::before {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(52, 152, 219, 0.6),
+    rgba(52, 152, 219, 0.1)
+  );
+  border-radius: 2px;
+}
+
+[dir="ltr"] .submenu::before {
+  right: auto;
+  left: -2px;
+}
+
+/* آیتم‌های زیرمنو */
+.submenu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.25s ease;
+  margin-bottom: 3px;
+  position: relative;
+  /* انیمیشن ورود آیتم‌ها به صورت پلکانی */
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+[dir="ltr"] .submenu-item {
+  transform: translateX(-10px);
+}
+
+/* ظاهر شدن آیتم‌ها هنگام باز شدن زیرمنو */
+.menu-item.has-submenu.open .submenu-item {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* تاخیر پلکانی برای هر آیتم */
+.menu-item.has-submenu.open .submenu-item:nth-child(1) { transition-delay: 0.05s; }
+.menu-item.has-submenu.open .submenu-item:nth-child(2) { transition-delay: 0.10s; }
+.menu-item.has-submenu.open .submenu-item:nth-child(3) { transition-delay: 0.15s; }
+.menu-item.has-submenu.open .submenu-item:nth-child(4) { transition-delay: 0.20s; }
+.menu-item.has-submenu.open .submenu-item:nth-child(5) { transition-delay: 0.25s; }
+
+/* ترانزیشن opacity و transform برای آیتم‌ها */
+.submenu-item {
+  transition: background 0.25s ease,
+              color 0.25s ease,
+              padding-right 0.25s ease,
+              opacity 0.3s ease,
+              transform 0.35s ease;
+}
+
+/* آیکون زیرمنو */
+.submenu-item i {
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, color 0.25s ease;
+  flex-shrink: 0;
+}
+
+/* هاور روی آیتم زیرمنو */
+.submenu-item:hover {
+  background: rgba(52, 152, 219, 0.10);
+  color: #fff;
+  padding-right: 16px;
+}
+
+[dir="ltr"] .submenu-item:hover {
+  padding-right: 14px;
+  padding-left: 16px;
+}
+
+.submenu-item:hover i {
+  opacity: 1;
+  color: #3498db;
+}
+
+/* حالت active زیرمنو */
+.submenu-item.active {
+  background: linear-gradient(
+    90deg,
+    rgba(52, 152, 219, 0.2),
+    rgba(52, 152, 219, 0.05)
+  );
+  color: #3498db;
+  font-weight: 500;
+}
+
+.submenu-item.active i {
+  opacity: 1;
+  color: #3498db;
+}
+
+/* نقطه کوچک جلوی آیتم active */
+.submenu-item.active::before {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #3498db;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(52, 152, 219, 0.8);
+}
+
+[dir="ltr"] .submenu-item.active::before {
+  right: auto;
+  left: -14px;
+}
+
+/* هایلایت آیتم اصلی هنگام باز بودن زیرمنو */
+.menu-item.has-submenu.open > .menu-link {
+  background: rgb(18, 26, 57);
+  color: white;
+}
+
+.menu-item.has-submenu.open > .menu-link i:first-child {
+  color: #3498db;
+}
+
+/* پس‌زمینه کل بخش زیرمنو هنگام باز بودن */
+.menu-item.has-submenu.open {
+  background: rgb(18, 26, 57);
+  border-radius: 10px;
+  padding-bottom: 6px;
+}

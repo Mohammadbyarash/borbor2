@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوربور - پیش ثبت نام ها</title>
+    <link rel="icon" href="../image/iconB.png">
+      <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="../style/Pre-registration.css">
+    <link rel="stylesheet" href="../style/menu.css">
+    <link rel="stylesheet" href="../style/scrollbar.css">
+<script src="../javaScript/auth.js" defer></script>
+    <script src="../javaScript/permission-guard.js" defer></script>
+    <script src="../javaScript/sidebar-permissions.js" defer></script>
+    <style>
+        
+        .reg-status-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 10px 18px;
+    flex-wrap: wrap;
+}
+
+.reg-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reg-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #27ae60;
+    transition: background 0.3s;
+    animation: regDotPulse 2s infinite;
+    flex-shrink: 0;
+}
+.reg-status-dot.closed {
+    background: #e74c3c;
+    animation: regDotPulseClosed 2s infinite;
+}
+@keyframes regDotPulse {
+    0%   { box-shadow: 0 0 0 0   rgba(39,174,96,0.5); }
+    70%  { box-shadow: 0 0 0 8px rgba(39,174,96,0);   }
+    100% { box-shadow: 0 0 0 0   rgba(39,174,96,0);   }
+}
+@keyframes regDotPulseClosed {
+    0%   { box-shadow: 0 0 0 0   rgba(231,76,60,0.5); }
+    70%  { box-shadow: 0 0 0 8px rgba(231,76,60,0);   }
+    100% { box-shadow: 0 0 0 0   rgba(231,76,60,0);   }
+}
+
+.reg-status-text {
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.reg-status-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.reg-status-badge.open {
+    background: rgba(39,174,96,0.2);
+    color: #27ae60;
+    border: 1px solid rgba(39,174,96,0.4);
+}
+.reg-status-badge.closed {
+    background: rgba(231,76,60,0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,0.4);
+}
+
+/* ─── دکمه toggle ─── */
+.reg-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: "Vazirmatn", sans-serif;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    color: #fff;
+}
+.reg-toggle-btn.is-open {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 4px 14px rgba(231,76,60,0.4);
+}
+.reg-toggle-btn.is-open:hover {
+    box-shadow: 0 6px 20px rgba(231,76,60,0.6);
+    transform: translateY(-1px);
+}
+.reg-toggle-btn.is-closed {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    box-shadow: 0 4px 14px rgba(39,174,96,0.4);
+}
+.reg-toggle-btn.is-closed:hover {
+    box-shadow: 0 6px 20px rgba(39,174,96,0.6);
+    transform: translateY(-1px);
+}
+.reg-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ─── مودال تأیید باز/بستن ─── */
+.reg-confirm-modal {
+    background: #1e2957;
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 420px;
+    max-width: 90vw;
+    border: 1px solid rgba(255,255,255,0.12);
+    text-align: center;
+    animation: regModalIn 0.25s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+@keyframes regModalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(-14px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.reg-confirm-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #fff;
+    transition: all 0.3s;
+}
+.reg-confirm-icon.open-action {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    box-shadow: 0 8px 24px rgba(39,174,96,0.4);
+}
+.reg-confirm-icon.close-action {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 8px 24px rgba(231,76,60,0.4);
+}
+
+#regConfirmTitle {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    font-family: "Shabnam", sans-serif;
+    margin-bottom: 10px;
+}
+#regConfirmDesc {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.reg-confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.reg-confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 28px;
+    border-radius: 11px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: "Vazirmatn", sans-serif;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.reg-confirm-btn.cancel {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+.reg-confirm-btn.cancel:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+.reg-confirm-btn.ok {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(39,174,96,0.3);
+}
+.reg-confirm-btn.ok.danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 4px 14px rgba(231,76,60,0.3);
+}
+.reg-confirm-btn.ok:hover { transform: translateY(-2px); }
+
+/* ─── ریسپانسیو ─── */
+@media (max-width: 768px) {
+    .reg-status-wrap {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+@media (max-width: 480px) {
+    .reg-confirm-modal {
+        padding: 28px 20px;
+    }
+    .reg-confirm-actions {
+        flex-direction: column-reverse;
+    }
+    .reg-confirm-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">بوربور</div>
+            <nav>
+                <div class="menu-item">
+                    <a href="dashbord.html">
+                        <i class="fas fa-chart-line"></i>
+                        داشبورد
+                    </a>
+                </div>
+                <div class="menu-item has-submenu">
+                    <a href="#" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        مدیریت کاربران
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="../html/Assistant_management.html" class="submenu-item">
+                            <i class="fas fa-user-tie"></i>
+                            مدیریت معاونان
+                        </a>
+                        <a href="../html/Teacher_management.html" class="submenu-item">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            مدیریت معلمین
+                        </a>
+                        <a href="../html/student.html" class="submenu-item">
+                            <i class="fas fa-user-graduate"></i>
+                            مدیریت دانش‌آموزان
+                        </a>
+                        <a href="../html/Parents.html" class="submenu-item">
+                            <i class="fas fa-users"></i>
+                            مدیریت اولیا
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item has-submenu">
+                    <a href="" class="menu-link">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        مدیریت کلاس ها
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="../html/Class-list.html" class="submenu-item">
+                            <i class="fas fa-list"></i>
+                            لیست کلاس‌ها
+                        </a>
+                        <a href="../html/Class-schedule.html" class="submenu-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            برنامه کلاسی
+                        </a>
+                        <a href="../html/Attendance.html" class="submenu-item">
+                            <i class="fas fa-clipboard-check"></i>
+                            حضور و غیاب
+                        </a>
+                        <a href="../html/grades.html" class="submenu-item">
+                            <i class="fas fa-star"></i>
+                            نمرات
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item active">
+                    <a href="../html/Pre-registration.html">
+                        <i class="fas fa-clipboard-list"></i>
+                        پیش ثبت نام ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/reports.html">
+                        <i class="fas fa-file-alt"></i>
+                        گزارش ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/notife.html">
+                        <i class="fas fa-bell"></i>
+                        اطلاعیه ها
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../html/archive.html">
+                        <i class="fas fa-archive"></i>
+                        ارشیو
+                    </a>
+                </div>
+        <div class="menu-item">
+            <a href="../html/permissions.html">
+            <i class="fas fa-shield-alt"></i>
+            مدیریت دسترسی‌ها
+          </a>
+        </div>
+
+                <div class="menu-item">
+                    <a href="../html/settings.html">
+                        <i class="fas fa-cog"></i>
+                        تنظیمات
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="../api/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        خروج
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-header">
+                <h1 class="page-title">پیش ثبت نام ها</h1>
+                
+                
+<!-- بخش وضعیت ثبت‌نام - جایگزین کنید -->
+<div class="reg-status-wrap" id="regStatusWrap">
+    <div class="reg-status-indicator" id="regStatusIndicator">
+        <div class="reg-status-dot" id="regStatusDot"></div>
+        <span class="reg-status-text">وضعیت ثبت‌نام:</span>
+        <span class="reg-status-badge" id="regStatusBadge">در حال بارگذاری</span>
+    </div>
+    <button class="reg-toggle-btn" id="registrationToggleBtn" onclick="toggleRegistration()">
+        <i class="fas fa-lock" id="regToggleIcon"></i>
+        <span id="regToggleText">بستن ثبت‌نام</span>
+    </button>
+</div>
+                
+                <div class="header-left">
+                    <div class="sms-balance-box" id="smsBalanceBox">
+                        <div class="balance-label">
+                            <i class="fas fa-wallet"></i>
+                            موجودی شارژ پیامک:
+                        </div>
+                        <div class="balance-amount" id="smsBalanceAmount">0</div>
+                        <div class="balance-unit">تومان</div>
+                        <button class="btn-charge-account" onclick="openChargeModal()">
+                            <i class="fas fa-plus-circle"></i>
+                            شارژ حساب
+                        </button>
+                    </div>
+                    <div class="admin-info" id="adminInfo">در حال بارگذاری...</div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">در انتظار</div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon accepted">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">قبول شده</div>
+                        <div class="stat-value" id="acceptedCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon rejected">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">رد شده</div>
+                        <div class="stat-value" id="rejectedCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">کل درخواست‌ها</div>
+                        <div class="stat-value" id="totalCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label class="filter-label">جستجو:</label>
+                    <div class="search-group">
+                        <input type="text" id="searchInput" class="search-input" placeholder="جستجو بر اساس نام، کد ملی یا شماره...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">پایه:</label>
+                    
+                    <select id="filterGrade" class="filter-select">
+                        <option value="">همه پایه ها</option>
+                        <option value="tenth">دهم</option>
+                        <option value="eleventh">یازدهم</option>
+                        <option value="twelfth">دوازدهم</option>
+                    </select>
+                    
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">وضعیت:</label>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="">همه وضعیت ها</option>
+                        <option value="pending">در انتظار</option>
+                        <option value="accepted">قبول شده</option>
+                        <option value="rejected">رد شده</option>
+                    </select>
+                </div>
+                
+<div class="filter-group auto-archive-group">
+    <label class="auto-archive-label">
+        <i class="fas fa-clock"></i>
+        آرشیو خودکار پس از:
+    </label>
+    <div class="auto-archive-input-wrap">
+        <input
+            type="number"
+            id="autoArchiveDays"
+            class="auto-archive-days"
+            min="1"
+            max="365"
+            value="30"
+            placeholder="۳۰"
+        >
+        <span class="auto-archive-days-label">روز</span>
+    </div>
+    <button class="auto-archive-save-btn" id="autoArchiveSaveBtn" onclick="saveAutoArchiveDays()">
+        <i class="fas fa-save"></i>
+        ذخیره
+    </button>
+</div>
+                <div class="filter-group">
+                    <button class="excel-export-btn" onclick="openExportModal()">
+                        <i class="fas fa-file-excel"></i>
+                        خروجی Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Registration Cards Grid -->
+            <div class="registrations-grid" id="registrationsGrid">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3>نتیجه‌ای یافت نشد</h3>
+                <p>هیچ پیش ثبت نامی با این فیلتر وجود ندارد.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container" id="paginationContainer" style="display: none;">
+                <button class="pagination-btn" id="prevPage" onclick="changePage(-1)">
+                                       <i class="fas fa-chevron-left"></i>
+
+                    قبلی
+                </button>
+                <div class="pagination-info">
+                    <span>صفحه</span>
+                    <span id="currentPage">1</span>
+                    <span>از</span>
+                    <span id="totalPages">1</span>
+                </div>
+                <button class="pagination-btn" id="nextPage" onclick="changePage(1)">
+                                        <i class="fas fa-chevron-right"></i>
+
+                    بعدی
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Specs Modal -->
+    <div id="specsModal" class="modal">
+        <div class="modal-content specs-modal-content">
+            <button class="close-btn" onclick="closeSpecsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">جزئیات پیش ثبت نام</h2>
+            
+            <div class="specs-header">
+                <div id="specPhotoContainer" class="specs-photo-container"></div>
+                <div class="specs-basic-info">
+                    <h3 id="specStudentName" class="specs-student-name">-</h3>
+                    <div class="specs-student-code">شماره ثبت نام: <span id="specRegistrationId">-</span></div>
+                </div>
+            </div>
+            
+            <div class="specs-sections">
+                <div class="specs-section">
+                    <h3 class="specs-section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        اطلاعات دانش‌آموز
+                    </h3>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">نام:</span>
+                            <span class="spec-value" id="specStudentFirstName">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">نام خانوادگی:</span>
+                            <span class="spec-value" id="specStudentLastName">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">کد ملی:</span>
+                            <span class="spec-value" id="specStudentNationalId">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">تاریخ تولد:</span>
+                            <span class="spec-value" id="specStudentBirthDate">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">پایه تحصیلی:</span>
+                            <span class="spec-value" id="specStudentGrade">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">شماره تماس:</span>
+                            <span class="spec-value" id="specStudentPhone">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="specs-section">
+                    <h3 class="specs-section-title">
+                        <i class="fas fa-male"></i>
+                        اطلاعات پدر
+                    </h3>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">نام:</span>
+                            <span class="spec-value" id="specFatherName">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">نام خانوادگی:</span>
+                            <span class="spec-value" id="specFatherFamily">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">کد ملی:</span>
+                            <span class="spec-value" id="specFatherNationalId">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">تاریخ تولد:</span>
+                            <span class="spec-value" id="specFatherBirthDate">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">تحصیلات:</span>
+                            <span class="spec-value" id="specFatherEducation">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">شغل:</span>
+                            <span class="spec-value" id="specFatherJob">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">شماره تماس:</span>
+                            <span class="spec-value" id="specFatherPhone">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="specs-section">
+                    <h3 class="specs-section-title">
+                        <i class="fas fa-female"></i>
+                        اطلاعات مادر
+                    </h3>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">نام:</span>
+                            <span class="spec-value" id="specMotherName">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">نام خانوادگی:</span>
+                            <span class="spec-value" id="specMotherFamily">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">کد ملی:</span>
+                            <span class="spec-value" id="specMotherNationalId">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">تاریخ تولد:</span>
+                            <span class="spec-value" id="specMotherBirthDate">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">تحصیلات:</span>
+                            <span class="spec-value" id="specMotherEducation">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">شغل:</span>
+                            <span class="spec-value" id="specMotherJob">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">شماره تماس:</span>
+                            <span class="spec-value" id="specMotherPhone">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="specs-section">
+                    <h3 class="specs-section-title">
+                        <i class="fas fa-file-alt"></i>
+                        مدارک
+                    </h3>
+                    <div class="documents-container">
+                        <div class="document-item" id="reportCardDoc">
+                            <div class="document-placeholder">
+                                <i class="fas fa-file-image"></i>
+                                <span>کارنامه</span>
+                            </div>
+                        </div>
+                        <div class="document-item" id="guidanceDoc">
+                            <div class="document-placeholder">
+                                <i class="fas fa-file-image"></i>
+                                <span>هدایت تحصیلی</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Modal -->
+    <div id="statusModal" class="modal">
+        <div class="status-modal-content">
+            <button class="close-btn" onclick="closeStatusModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">
+                <i class="fas fa-edit"></i>
+                تغییر وضعیت
+            </h2>
+            <div class="status-options">
+                <button class="status-option-btn pending" onclick="changeStatus('pending')">
+                    <i class="fas fa-clock"></i>
+                    در انتظار
+                </button>
+                <button class="status-option-btn accepted" onclick="changeStatus('accepted')">
+                    <i class="fas fa-check-circle"></i>
+                    قبول شده
+                </button>
+                <button class="status-option-btn rejected" onclick="changeStatus('rejected')">
+                    <i class="fas fa-times-circle"></i>
+                    رد شده
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMS Modal -->
+    <div class="modal" id="smsModal">
+        <div class="sms-modal-content">
+            <button class="close-btn" onclick="closeSmsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title" id="smsModalTitle">ارسال پیامک</h2>
+
+            <div class="sms-recipient-info" id="smsRecipientInfo">
+                <!-- اطلاعات گیرنده -->
+            </div>
+
+            <div class="sms-recipient-select" id="smsRecipientSelect">
+                <label class="form-label">
+                    <i class="fas fa-user-check"></i>
+                    ارسال به:
+                </label>
+                <div class="recipient-buttons">
+                    <button class="recipient-btn" data-recipient="father" onclick="selectRecipient('father')">
+                        <i class="fas fa-male"></i>
+                        پدر
+                    </button>
+                    <button class="recipient-btn" data-recipient="mother" onclick="selectRecipient('mother')">
+                        <i class="fas fa-female"></i>
+                        مادر
+                    </button>
+                    <button class="recipient-btn" data-recipient="both" onclick="selectRecipient('both')">
+                        <i class="fas fa-users"></i>
+                        هر دو
+                    </button>
+                </div>
+            </div>
+
+            <div class="sms-reason-section">
+                <label class="form-label">
+                    <i class="fas fa-tag"></i>
+                    دلیل ارسال پیامک:
+                </label>
+                <div class="sms-reason-buttons">
+                    <button class="sms-reason-btn" data-reason="acceptance" onclick="selectSmsReason('acceptance')">
+                        <i class="fas fa-check-circle"></i>
+                        قبولی
+                    </button>
+                    <button class="sms-reason-btn" data-reason="rejection" onclick="selectSmsReason('rejection')">
+                        <i class="fas fa-times-circle"></i>
+                        عدم قبولی
+                    </button>
+                    <button class="sms-reason-btn" data-reason="interview" onclick="selectSmsReason('interview')">
+                        <i class="fas fa-calendar-alt"></i>
+                        مصاحبه
+                    </button>
+                    <button class="sms-reason-btn" data-reason="documents" onclick="selectSmsReason('documents')">
+                        <i class="fas fa-file-alt"></i>
+                        مدارک
+                    </button>
+                    <button class="sms-reason-btn" data-reason="other" onclick="selectSmsReason('other')">
+                        <i class="fas fa-ellipsis-h"></i>
+                        سایر
+                    </button>
+                </div>
+            </div>
+
+            <div class="sms-message-section">
+                <label class="form-label">
+                    <i class="fas fa-comment-alt"></i>
+                    متن پیامک:
+                </label>
+                <textarea class="sms-textarea" id="smsMessage" placeholder="متن پیامک خود را وارد کنید..."></textarea>
+                <div class="sms-char-count">
+                    <span id="smsCharCount">0</span> / 300 کاراکتر
+                </div>
+            </div>
+
+            <div class="sms-quick-messages">
+                <h3 class="sms-quick-title">
+                    <i class="fas fa-bolt"></i>
+                    پیام‌های سریع
+                </h3>
+                <div class="sms-quick-grid" id="smsQuickGrid">
+                    <!-- پیام‌های سریع -->
+                </div>
+            </div>
+
+            <div class="sms-actions">
+                <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()">
+                    <i class="fas fa-save"></i>
+                    ذخیره متن
+                </button>
+                <button class="sms-btn sms-btn-send" onclick="sendSms()">
+                    <i class="fas fa-paper-plane"></i>
+                    ارسال پیامک
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charge Modal -->
+    <div class="modal" id="chargeModal">
+        <div class="charge-modal-content">
+            <button class="close-btn" onclick="closeChargeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">
+                <i class="fas fa-wallet"></i>
+                شارژ حساب پیامک
+            </h2>
+
+            <div class="charge-info">
+                <div class="current-balance">
+                    <span class="balance-label">موجودی فعلی:</span>
+                    <span class="balance-value" id="smsBalanceAmount2">0</span>
+                    <span class="balance-unit">تومان</span>
+                </div>
+                <div class="sms-price-info">
+                    <i class="fas fa-info-circle"></i>
+                    هر پیامک 150 تومان
+                </div>
+            </div>
+
+            <div class="charge-options-section">
+                <h3 class="section-title">
+                    <i class="fas fa-list"></i>
+                    انتخاب مبلغ شارژ:
+                </h3>
+                <div class="charge-options-grid">
+                    <button class="charge-option-btn" data-amount="100000" onclick="selectChargeOption(100000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">100,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="200000" onclick="selectChargeOption(200000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">200,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="500000" onclick="selectChargeOption(500000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">500,000</span>
+                        <span class="unit">تومان</span>
+                        <span class="badge-popular">پرطرفدار</span>
+                    </button>
+                    <button class="charge-option-btn" data-amount="1000000" onclick="selectChargeOption(1000000)">
+                        <i class="fas fa-coins"></i>
+                        <span class="amount">1,000,000</span>
+                        <span class="unit">تومان</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="custom-charge-section">
+                <h3 class="section-title">
+                    <i class="fas fa-edit"></i>
+                    مبلغ دلخواه:
+                </h3>
+                <div class="custom-charge-input-wrapper">
+                    <input 
+                        type="number" 
+                        id="customChargeAmount" 
+                        class="custom-charge-input" 
+                        placeholder="مبلغ مورد نظر خود را وارد کنید..."
+                        min="10000"
+                        step="10000"
+                        oninput="selectCustomCharge()"
+                    >
+                    <span class="input-unit">تومان</span>
+                </div>
+                <div class="min-charge-note">
+                    <i class="fas fa-exclamation-circle"></i>
+                    حداقل مبلغ شارژ: 10,000 تومان
+                </div>
+            </div>
+
+            <div class="charge-actions">
+                <button class="charge-btn charge-btn-pay" onclick="proceedToPayment()" disabled>
+                    <i class="fas fa-credit-card"></i>
+                    انتخاب مبلغ الزامی است
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMS Confirm Modal -->
+    <div class="modal" id="smsConfirmModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-question-circle"></i>
+                تأیید ارسال پیامک
+            </h2>
+            
+            <div class="confirm-info">
+                <div class="confirm-row">
+                    <span class="confirm-label">تعداد گیرندگان:</span>
+                    <span class="confirm-value" id="smsConfirmRecipients">0</span>
+                    <span class="confirm-unit">نفر</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">هزینه کل:</span>
+                    <span class="confirm-value" id="smsConfirmCost">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+                <div class="confirm-row recipient-info">
+                    <span class="confirm-label">گیرنده:</span>
+                    <span class="confirm-value-full" id="smsConfirmRecipientText"></span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeSmsConfirmModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="confirmSendSms()">
+                    <i class="fas fa-paper-plane"></i>
+                    ارسال پیامک
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Balance Modal -->
+    <div class="modal" id="lowBalanceModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                موجودی ناکافی
+            </h2>
+            
+            <div class="confirm-info">
+                <p class="low-balance-message">موجودی شما برای ارسال پیامک کافی نیست.</p>
+                <div class="confirm-row">
+                    <span class="confirm-label">موجودی فعلی:</span>
+                    <span class="confirm-value" id="lowBalanceCurrent">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">موجودی مورد نیاز:</span>
+                    <span class="confirm-value" id="lowBalanceNeeded">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeLowBalanceModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="goToChargeFromLowBalance()">
+                    <i class="fas fa-wallet"></i>
+                    شارژ حساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charge Confirm Modal -->
+    <div class="modal" id="chargeConfirmModal">
+        <div class="confirm-modal-content">
+            <h2 class="modal-title">
+                <i class="fas fa-question-circle"></i>
+                تأیید پرداخت
+            </h2>
+            
+            <div class="confirm-info">
+                <p class="charge-confirm-message">آیا از پرداخت مبلغ زیر مطمئن هستید؟</p>
+                <div class="confirm-row highlight">
+                    <span class="confirm-label">مبلغ پرداختی:</span>
+                    <span class="confirm-value large" id="chargeConfirmAmount">0</span>
+                    <span class="confirm-unit">تومان</span>
+                </div>
+            </div>
+            
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" onclick="closeChargeConfirmModal()">
+                    <i class="fas fa-times"></i>
+                    انصراف
+                </button>
+                <button class="btn-confirm-ok" onclick="confirmCharge()">
+                    <i class="fas fa-credit-card"></i>
+                    تأیید و پرداخت
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div class="modal warning-modal" id="warningModal">
+        <div class="warning-modal-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="warning-title" id="warningTitle">توجه!</h3>
+            <p class="warning-message" id="warningMessage"></p>
+            <button class="btn-warning-ok" onclick="closeWarningModal()">
+                <i class="fas fa-check"></i>
+                متوجه شدم
+            </button>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="excel-modal-content">
+            <button class="close-btn" onclick="closeExportModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">
+                <i class="fas fa-file-excel"></i>
+                خروجی Excel
+            </h2>
+            <div class="excel-section">
+                <h3 class="excel-section-title">
+                    <i class="fas fa-filter"></i>
+                    انتخاب نوع خروجی
+                </h3>
+                <div class="excel-options">
+                    <button class="excel-option-btn excel-all-btn" onclick="exportToExcel('all')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-list"></i>
+                            همه درخواست‌ها
+                        </div>
+                        <span class="excel-badge" id="excelAllCount">0</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportToExcel('pending')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-clock"></i>
+                            در انتظار
+                        </div>
+                        <span class="excel-badge" id="excelPendingCount">0</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportToExcel('accepted')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-check-circle"></i>
+                            قبول شده
+                        </div>
+                        <span class="excel-badge" id="excelAcceptedCount">0</span>
+                    </button>
+                    <button class="excel-option-btn" onclick="exportToExcel('rejected')">
+                        <div class="excel-btn-content">
+                            <i class="fas fa-times-circle"></i>
+                            رد شده
+                        </div>
+                        <span class="excel-badge" id="excelRejectedCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="imagePreviewModal" class="modal">
+        <div class="image-preview-modal-content">
+            <button class="close-btn" onclick="closeImagePreview()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="imagePreviewContent" src="" alt="Preview">
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">موفقیت‌آمیز</div>
+            <div class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد!</div>
+        </div>
+        <button class="toast-close" onclick="closeToast()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    
+    
+    
+<!-- مودال تأیید باز/بستن ثبت‌نام - قبل از بسته شدن body اضافه کنید -->
+<div class="modal" id="regToggleModal" style="z-index:9999;">
+    <div class="reg-confirm-modal">
+        <div class="reg-confirm-icon" id="regConfirmIcon">
+            <i class="fas fa-lock-open" id="regConfirmIconInner"></i>
+        </div>
+        <h3 class="reg-confirm-title" id="regConfirmTitle">تأیید عملیات</h3>
+        <p class="reg-confirm-desc" id="regConfirmDesc">آیا مطمئن هستید؟</p>
+        <div class="reg-confirm-actions">
+            <button class="reg-confirm-btn cancel" onclick="closeRegToggleModal()">
+                <i class="fas fa-times"></i>
+                انصراف
+            </button>
+            <button class="reg-confirm-btn ok" id="regConfirmOkBtn" onclick="confirmToggleRegistration()">
+                <i class="fas fa-check"></i>
+                تأیید
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" id="archiveModal">
+    <div class="archive-modal-box">
+        <!-- بستن — سمت راست -->
+        <button class="archive-modal-close" onclick="closeArchiveModal()">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- آیکون -->
+        <div class="archive-modal-icon do-archive" id="archiveModalIcon">
+            <i class="fas fa-archive" id="archiveModalIconInner"></i>
+        </div>
+
+        <h3 class="archive-modal-title" id="archiveModalTitle">آرشیو کردن</h3>
+
+        <!-- نام دانش‌آموز -->
+        <div class="archive-modal-student" id="archiveModalStudent">
+            <i class="fas fa-user-graduate"></i>
+            <span id="archiveModalStudentName">نام دانش‌آموز</span>
+        </div>
+
+        <p class="archive-modal-desc" id="archiveModalDesc">
+            آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟<br>
+            پس از آرشیو، در صفحه آرشیو قابل مشاهده خواهد بود.
+        </p>
+
+        <div class="archive-modal-actions">
+            <button class="arch-btn cancel" onclick="closeArchiveModal()">
+                <i class="fas fa-times"></i>
+                انصراف
+            </button>
+            <button class="arch-btn confirm-archive" id="archiveModalConfirmBtn" onclick="confirmArchive()">
+                <i class="fas fa-archive"></i>
+                آرشیو کن
+            </button>
+        </div>
+    </div>
+</div>
+    <script src="../javaScript/Pre-registration.js"></script>
+    <script src="../javaScript/menu.js"></script>
+</body>
+</html>
