@@ -1,170 +1,305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوربور - مدیریت کلاس ها</title>
-    <link rel="stylesheet" href="../style/Class-schedule.css">
-    <link rel="stylesheet" href="../style/menu.css">
-    <link rel="stylesheet" href="../style/scrollbar.css">
-    <link rel="icon" href="../image/iconB.png">
-      <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور - مدیریت کلاس‌ها</title>
+    <link rel="stylesheet" href="../style/Class-schedule.css" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../css/all.min.css" />
     <script src="../javaScript/auth.js"></script>
-    <script src="../javaScript/theme-loader.js"></script>
     <script src="../javaScript/permission-guard.js"></script>
     <script src="../javaScript/sidebar-permissions.js"></script>
-</head>
-<body>
-    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  </head>
+  <body>
+    <!-- HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" title="منو">
+      <i class="fas fa-bars"></i>
+    </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container">
-      <div class="sidebar" id="sidebar">
-        <div class="logo">بوربور</div>
-        <div class="menu-item">
-          <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
+      <div class="manager-block">
+        <div class="manager-avatar" id="managerAvatarLetter">م</div>
+        <div>
+          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
+          <div class="manager-role" id="managerRole">مدیر سیستم</div>
+          <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
-        <div class="menu-item has-submenu">
-          <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران <i class="fas fa-chevron-down submenu-arrow"></i></a>
-          <div class="submenu">
-            <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
-            <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
-            <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
-            <a href="../html/Parents.html" class="submenu-item"><i class="fas fa-users"></i> مدیریت اولیا</a>
-          </div>
-        </div>
-        <div class="menu-item has-submenu">
-          <a href="" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس ها <i class="fas fa-chevron-down submenu-arrow"></i></a>
-          <div class="submenu">
-            <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
-            <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
-            <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
-            <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
-          </div>
-        </div>
-        <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت نام ها</a></div>
-        <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش ها</a></div>
-        <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه ها</a></div>
-        <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> ارشیو</a></div>
-        <div class="menu-item"><a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a></div>
-        <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
-        <div class="menu-item"><a href="../api/logout"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
       </div>
 
-      <div class="main-content">
-        <div class="top-header">
-          <h1 class="page-title">مدیریت کلاس ها</h1>
-          <!-- ← اینجا داینامیک میشه -->
-          <div class="admin-info" id="adminInfoDisplay">در حال بارگذاری...</div>
-        </div>
-
-        <div class="action-buttons-container">
-          <button class="action-btn-main btn-excel" onclick="openExcelModal()">
-            <i class="fas fa-file-excel"></i><span>خروجی Excel</span>
-          </button>
-          <button class="action-btn-main btn-add-class" onclick="openAddClassModal()">
-            <i class="fas fa-plus-circle"></i><span>افزودن کلاس جدید</span>
-          </button>
-        </div>
-
-        <div class="classes-grid" id="classesGrid"></div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="menu-item">
+        <a href="../html/dashbord.html"
+          ><i class="fas fa-chart-line"></i> داشبورد</a
+        >
       </div>
+
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-users"></i> مدیریت کاربران<i
+            class="fas fa-chevron-down submenu-arrow"
+          ></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Assistant_management.html" class="submenu-item"
+            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
+          >
+          <a href="../html/Teacher_management.html" class="submenu-item"
+            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
+          >
+          <a href="../html/student.html" class="submenu-item"
+            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
+          >
+
+        </div>
+      </div>
+
+      <div class="menu-item has-submenu" id="classMgmtMenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها<i
+            class="fas fa-chevron-down submenu-arrow"
+          ></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Courses.html" class="submenu-item"
+            ><i class="fas fa-list"></i> مدیریت دروس</a
+          >
+          <a href="../html/Class-schedule.html" class="submenu-item active"
+            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
+          >
+          <a href="../html/Attendance.html" class="submenu-item"
+            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
+          >
+          <a href="../html/grades.html" class="submenu-item"
+            ><i class="fas fa-star"></i> نمرات</a
+          >
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">مدیریت</div>
+      <div class="menu-item">
+        <a href="../html/Pre-registration.html"
+          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/reports.html"
+          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
+      </div>
+      <div class="menu-item">
+        <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">سیستم</div>
+      <div class="menu-item">
+        <a href="../html/permissions.html"
+          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
+        >
+      </div>
+       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="menu-item">
+        <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
     </div>
 
-    <!-- Schedule Modal -->
+    <!-- MAIN -->
+    <div class="main-content">
+      <div class="top-header">
+        <div class="page-title-wrap">
+          <h1>مدیریت <span>کلاس‌ها</span></h1>
+          <div class="admin-info" id="adminInfoDisplay">
+            <span class="live-dot"></span>در حال بارگذاری...
+          </div>
+        </div>
+        <div class="profile-btn" id="profileBtnLetter">م</div>
+      </div>
+
+      <div class="action-buttons-container">
+        <button class="action-btn-main btn-excel" onclick="openExcelModal()">
+          <i class="fas fa-file-excel"></i> خروجی Excel
+        </button>
+        <button
+          class="action-btn-main btn-add-class"
+          onclick="openAddClassModal()"
+        >
+          <i class="fas fa-plus"></i> افزودن کلاس جدید
+        </button>
+      </div>
+
+      <div class="classes-grid" id="classesGrid"></div>
+    </div>
+
+    <!-- SCHEDULE MODAL -->
     <div class="modal" id="scheduleModal">
       <div class="schedule-modal-content">
-        <button class="close-btn" onclick="closeScheduleModal()"><i class="fas fa-times"></i></button>
+        <button class="close-btn" onclick="closeScheduleModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="scheduleModalTitle">برنامه هفتگی کلاس</h2>
         <div class="schedule-grid-layout" id="scheduleTable"></div>
       </div>
     </div>
 
-    <!-- Edit Modal -->
+    <!-- EDIT MODAL -->
     <div class="modal" id="editModal">
       <div class="edit-modal-content">
-        <button class="close-btn" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+        <button class="close-btn" onclick="closeEditModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="editModalTitle">ویرایش کلاس</h2>
         <div class="edit-section">
-          <h3 class="section-title"><i class="fas fa-info-circle"></i> اطلاعات کلی</h3>
+          <div class="section-title">
+            <i class="fas fa-info-circle"></i> اطلاعات کلی
+          </div>
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">رشته:</label>
-              <input type="text" class="form-input" id="editField" disabled>
+              <label class="form-label">رشته</label>
+              <input type="text" class="form-input" id="editField" disabled />
             </div>
           </div>
         </div>
         <div class="edit-section">
-          <h3 class="section-title"><i class="fas fa-calendar-alt"></i> برنامه هفتگی</h3>
+          <div class="section-title">
+            <i class="fas fa-calendar-alt"></i> برنامه هفتگی
+          </div>
           <div class="schedule-grid" id="editScheduleGrid"></div>
         </div>
       </div>
     </div>
 
-    <!-- Excel Export Modal -->
+    <!-- EXCEL MODAL -->
     <div class="modal" id="excelModal">
       <div class="excel-modal-content">
-        <button class="close-btn" onclick="closeExcelModal()"><i class="fas fa-times"></i></button>
-        <h2 class="modal-title">دریافت خروجی Excel</h2>
+        <button class="close-btn" onclick="closeExcelModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">خروجی Excel</h2>
         <div class="excel-section">
-          <h3 class="excel-section-title"><i class="fas fa-chart-bar"></i><span>خروجی کلی</span></h3>
+          <div class="excel-section-title">
+            <i class="fas fa-layer-group"></i> خروجی کلی
+          </div>
           <div class="excel-options">
             <button class="excel-option-btn" onclick="exportExcel('all')">
-              <div class="text">همه کلاس‌ها</div>
-              <span class="badge" id="allClassesCount">0 کلاس</span>
-              <i class="fas fa-file-excel icon"></i>
+              <span style="font-weight: 600"
+                ><i
+                  class="fas fa-layer-group"
+                  style="margin-left: 8px; color: var(--accent3)"
+                ></i
+                >همه کلاس‌ها</span
+              >
+              <span class="badge" id="allClassesCount">0</span>
             </button>
           </div>
         </div>
         <div class="excel-section">
           <div class="individual-classes-wrapper">
-            <div class="individual-classes-header"><i class="fas fa-list"></i> دریافت خروجی کلاس‌های خاص:</div>
-            <div class="individual-classes-grid" id="individualClassOptions"></div>
+            <div class="individual-classes-header">
+              <i class="fas fa-list"></i> دریافت خروجی کلاس‌های خاص
+            </div>
+            <div
+              class="individual-classes-grid"
+              id="individualClassOptions"
+            ></div>
           </div>
         </div>
-        <div class="excel-options">
-          <button class="excel-option-btn excel-option-btn-cancel" onclick="closeExcelModal()">
-            <span class="text">انصراف</span><i class="fas fa-times icon"></i>
+        <button
+          class="excel-option-btn excel-option-btn-cancel"
+          onclick="closeExcelModal()"
+        >
+          <span style="font-weight: 600"
+            ><i class="fas fa-times" style="margin-left: 7px"></i>انصراف</span
+          >
+        </button>
+      </div>
+    </div>
+
+    <!-- DELETE MODAL -->
+    <div class="modal" id="deleteClassModal">
+      <div class="delete-modal-content">
+        <div class="delete-icon"><i class="fas fa-archive"></i></div>
+        <h2 class="modal-title" style="border: none; margin-bottom: 10px">
+          آرشیو کلاس
+        </h2>
+        <p class="delete-modal-text" id="deleteClassText">آیا مطمئن هستید؟</p>
+        <div
+          style="
+            background: rgba(74, 144, 217, 0.08);
+            border: 1px solid rgba(74, 144, 217, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            font-size: 12px;
+            text-align: right;
+          "
+        >
+          <i class="fas fa-info-circle"></i
+          ><span>این عملیات قابل بازگشت نیست.</span>
+        </div>
+        <div class="delete-modal-buttons">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="confirmDeleteClass()"
+          >
+            <i class="fas fa-archive"></i> آرشیو
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeDeleteClassModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Delete Class Modal -->
-    <div class="modal" id="deleteClassModal">
-      <div class="delete-modal-content">
-        <div class="delete-icon"><i class="fas fa-exclamation-triangle"></i></div>
-        <h2 class="modal-title">ارشیو کلاس</h2>
-        <p class="delete-modal-text" id="deleteClassText">آیا مطمئن هستید؟</p>
-        <div class="delete-modal-buttons">
-          <button class="modal-btn modal-btn-confirm" onclick="confirmDeleteClass()"><i class="fas fa-trash-alt"></i> ارشیو کلاس</button>
-          <button class="modal-btn modal-btn-cancel" onclick="closeDeleteClassModal()"><i class="fas fa-times"></i> انصراف</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Class Modal — رشته و پایه داینامیک از DB -->
+    <!-- ADD CLASS MODAL -->
     <div class="modal" id="addClassModal">
       <div class="add-class-modal-content">
-        <button class="close-btn" onclick="closeAddClassModal()"><i class="fas fa-times"></i></button>
+        <button class="close-btn" onclick="closeAddClassModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title">افزودن کلاس جدید</h2>
         <div class="edit-section">
-          <div class="form-grid">
+          <div class="form-grid" style="grid-template-columns: 1fr">
             <div class="form-group">
-              <label class="form-label">شماره / کد کلاس:</label>
-              <input type="text" class="form-input" id="newClassNumber" placeholder="مثال: 106">
+              <label class="form-label">شماره / کد کلاس</label>
+              <input
+                type="text"
+                class="form-input"
+                id="newClassNumber"
+                placeholder="مثال: 106"
+              />
             </div>
             <div class="form-group">
-              <label class="form-label">پایه:</label>
-              <!-- داینامیک از grades table -->
+              <label class="form-label">پایه</label>
               <select class="form-select" id="newClassGrade">
                 <option value="">در حال بارگذاری...</option>
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">رشته:</label>
-              <!-- داینامیک از fields table -->
+              <label class="form-label">رشته</label>
               <select class="form-select" id="newClassField">
                 <option value="">در حال بارگذاری...</option>
               </select>
@@ -172,12 +307,82 @@
           </div>
         </div>
         <button class="save-btn" onclick="addNewClass()">
-          <i class="fas fa-plus-circle"></i> افزودن کلاس
+          <i class="fas fa-plus"></i> افزودن کلاس
         </button>
       </div>
     </div>
 
     <script src="../javaScript/Class-schedule.js"></script>
-    <script src="../javaScript/menu.js"></script>
-</body>
+    <script>
+      /* ── Sidebar ── */
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("active");
+        document.getElementById("sidebarOverlay").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+        document.body.style.overflow = "";
+      }
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", openSidebar);
+      document
+        .getElementById("sidebarCloseBtn")
+        .addEventListener("click", closeSidebar);
+      document
+        .getElementById("sidebarOverlay")
+        .addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      /* submenu accordion */
+      document
+        .querySelectorAll(".menu-item.has-submenu")
+        .forEach(function (item) {
+          item
+            .querySelector(".menu-link")
+            .addEventListener("click", function (e) {
+              e.preventDefault();
+              document
+                .querySelectorAll(".menu-item.has-submenu")
+                .forEach(function (o) {
+                  if (o !== item) o.classList.remove("open");
+                });
+              item.classList.toggle("open");
+            });
+        });
+      document.getElementById("classMgmtMenu").classList.add("open");
+
+      /* ── Profile info ── */
+      fetch("../api/stats.php")
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (d) {
+          if (d.success && d.currentUser) {
+            var u = d.currentUser;
+            var letter = (u.name || "م").charAt(0);
+            var mn = document.getElementById("managerName");
+            var mr = document.getElementById("managerRole");
+            var av = document.getElementById("managerAvatarLetter");
+            var pb = document.getElementById("profileBtnLetter");
+            if (mn) mn.textContent = u.name || "";
+            if (mr) mr.textContent = u.role_label || u.role || "";
+            if (av) av.textContent = letter;
+            if (pb) pb.textContent = letter;
+            var info = document.getElementById("adminInfoDisplay");
+            if (info)
+              info.innerHTML =
+                '<span class="live-dot"></span>' +
+                (u.role_label || "") +
+                ": " +
+                (u.name || "");
+          }
+        })
+        .catch(function () {});
+    </script>
+  </body>
 </html>

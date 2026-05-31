@@ -50,3 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+var sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+if (sidebarCloseBtn) {
+  sidebarCloseBtn.addEventListener('click', function() {
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+  });
+}

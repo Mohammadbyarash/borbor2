@@ -1,567 +1,3997 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوربور - حضور و غیاب</title>
-    <link rel="stylesheet" href="../style/attendance.css">
-    <link rel="stylesheet" href="../style/menu.css">
-    <link rel="stylesheet" href="../style/scrollbar.css">
-    <link rel="icon" href="../image/iconB.png">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="../date/dist/jalalidatepicker.min.css">
-    <script defer src="../javaScript/auth.js"></script>
-    <script defer src="../javaScript/theme-loader.js"></script>
-    <script defer src="../javaScript/permission-guard.js"></script>
-    <script defer src="../javaScript/sidebar-permissions.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — حضور و غیاب</title>
+    <link rel="stylesheet" href="../css/all.min.css" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <link rel="stylesheet" href="../date/dist/jalalidatepicker.min.css" />
+    <link rel="icon" href="../image/iconB.png" />
     <style>
-        .details-modal-content {
-            background: #283369; border-radius: 15px; padding: 35px;
-            width: 95%; max-width: 1100px;
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative; max-height: 90vh;
-            overflow-y: auto; box-sizing: border-box;
+      /* ══════════════════════════════════════════════════════
+   FONTS
+══════════════════════════════════════════════════════ */
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════════════ */
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --late: #f39c12;
+        --leave: #4a90d9;
+        --expulsion: #8e5fd4;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   PAGE LOADER
+══════════════════════════════════════════════════════ */
+      #pageLoader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        gap: 18px;
+        transition: opacity 0.5s ease;
+      }
+      #pageLoader.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loader-spinner {
+        width: 58px;
+        height: 58px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.85s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
-        .details-modal-content::-webkit-scrollbar { width: 6px; }
-        .details-modal-content::-webkit-scrollbar-track { background:#172047; border-radius:10px; }
-        .details-modal-content::-webkit-scrollbar-thumb { background:#3498db; border-radius:10px; }
+      }
+      .loader-text {
+        color: var(--text);
+        font-size: 15px;
+      }
+      .loader-sub {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: -8px;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   LIB ERROR
+══════════════════════════════════════════════════════ */
+      #lib-error {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--bg-main);
+        z-index: 10001;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        color: var(--text);
+        font-family: "Vazirmatn", sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      #lib-error.show {
+        display: flex;
+      }
+      #lib-error i {
+        font-size: 48px;
+        color: var(--absent);
+      }
+      #lib-error h2 {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      #lib-error p {
+        color: var(--text-muted);
+        font-size: 14px;
+        max-width: 400px;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════ */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 500;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 499;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 4px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #fff;
+        font-family: "Shabnam", sans-serif;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 18px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-close-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 32px;
+        height: 32px;
+        background: rgba(231, 76, 60, 0.12);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: 50%;
+        color: var(--absent);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .sidebar-close-btn:hover {
+        background: var(--absent);
+        color: #fff;
+        transform: rotate(90deg);
+      }
+
+      .manager-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .manager-block::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+          circle,
+          rgba(74, 144, 217, 0.15),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .manager-avatar {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .manager-name {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .manager-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .manager-badge {
+        margin-top: 7px;
+        display: inline-block;
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .menu-item {
+        margin-bottom: 2px;
+      }
+      .menu-item a,
+      .menu-item .menu-link {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+      .menu-item a i,
+      .menu-item .menu-link i:first-child {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .menu-item a:hover,
+      .menu-item .menu-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .menu-item:not(.has-submenu).active > a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .menu-item:not(.has-submenu).active > a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .menu-item.has-submenu {
+        position: relative;
+      }
+      .submenu-arrow {
+        margin-right: auto;
+        font-size: 12px !important;
+        transition: transform 0.3s;
+      }
+      .menu-item.has-submenu.open .submenu-arrow {
+        transform: rotate(180deg);
+      }
+      .menu-item.has-submenu.open > .menu-link {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-sm);
+        margin-top: 4px;
+      }
+      .menu-item.has-submenu.open .submenu {
+        max-height: 500px;
+      }
+      .submenu-item {
+        color: rgba(180, 200, 255, 0.6);
+        text-decoration: none;
+        padding: 10px 14px 10px 44px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 12px;
+        font-weight: 400;
+        transition: all 0.2s;
+        border-radius: 8px;
+        margin: 4px;
+      }
+      .submenu-item i {
+        font-size: 13px;
+        width: 18px;
+        text-align: center;
+        opacity: 0.75;
+      }
+      .submenu-item:hover {
+        background: rgba(74, 144, 217, 0.1);
+        color: #fff;
+      }
+      .submenu-item.active {
+        background: rgba(74, 144, 217, 0.14);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   HAMBURGER
+══════════════════════════════════════════════════════ */
+      .menu-toggle {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        color: var(--text-muted);
+        font-size: 18px;
+      }
+      .menu-toggle:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      /* ══════════════════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════════════════ */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 14px;
+        animation: fadeUp 0.4s ease both;
+      }
+      .page-title-wrap h1 {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+      .page-title-wrap h1 span {
+        color: var(--accent);
+      }
+      .admin-info {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        flex-shrink: 0;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
+        }
+      }
+      .profile-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
+        color: #fff;
+      }
+
+      /* DATE DISPLAY */
+      .current-date-display {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 20px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        animation: fadeUp 0.4s 0.05s ease both;
+      }
+      .current-date-display i {
+        color: var(--accent);
+        font-size: 16px;
+      }
+
+      /* ACTION BUTTONS */
+      .action-buttons-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.4s 0.1s ease both;
+      }
+      .action-btn-main {
+        padding: 10px 18px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .btn-excel {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.2);
+      }
+      .btn-excel:hover {
+        background: rgba(6, 214, 160, 0.24);
+      }
+      .btn-stats {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .btn-stats:hover {
+        background: rgba(74, 144, 217, 0.24);
+      }
+      .btn-reports {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+      }
+      .btn-reports:hover {
+        background: rgba(142, 95, 212, 0.24);
+      }
+
+      /* CLASSES GRID */
+      .classes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+        animation: fadeUp 0.4s 0.15s ease both;
+      }
+      .class-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        transition:
+          transform 0.28s,
+          box-shadow 0.28s,
+          border-color 0.28s;
+        position: relative;
+        overflow: hidden;
+      }
+      .class-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+      }
+      .class-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        border-color: var(--border-hover);
+      }
+      .class-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .class-number {
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 800;
+        font-family: "Shabnam", sans-serif;
+      }
+      .class-grade {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .class-info {
+        margin-bottom: 16px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+      }
+      .info-label {
+        color: var(--text-muted);
+      }
+      .info-value {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .class-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .btn {
+        flex: 1;
+        padding: 9px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn-view-attendance {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+      }
+      .btn-view-attendance:hover {
+        background: rgba(142, 95, 212, 0.26);
+      }
+      .btn-register-attendance {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+      }
+      .btn-register-attendance:hover {
+        background: rgba(46, 204, 113, 0.26);
+      }
+
+      /* EMPTY STATE */
+      .att-empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: var(--text-muted);
+        font-size: 15px;
+        grid-column: 1/-1;
+      }
+      .att-empty i {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 16px;
+        opacity: 0.4;
+      }
+
+      /* SKELETON */
+      .sk-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-card2);
+        margin-bottom: 8px;
+        animation: skPulse 1.4s ease-in-out infinite;
+      }
+      .sk {
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.07);
+      }
+      .sk-av {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .sk-tx {
+        height: 14px;
+        flex: 1;
+      }
+      .sk-btn {
+        width: 72px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+      }
+      @keyframes skPulse {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* ══════════════════════════════════════════════════════
+   MODAL BASE
+══════════════════════════════════════════════════════ */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 2000;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 16px;
+        overflow-y: auto;
+      }
+      .modal.active {
+        display: flex;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+        border-radius: var(--radius);
+        padding: 30px 26px;
+        position: relative;
+        width: 100%;
+        margin: auto;
+        animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .modal-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        text-align: center;
+        margin-bottom: 22px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .close-btn {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      .close-btn:hover {
+        background: var(--absent);
+        color: #fff;
+        transform: rotate(90deg);
+      }
+
+      /* ══════════════════════════════════════════════════════
+   REGISTER MODAL
+══════════════════════════════════════════════════════ */
+      .register-modal-card {
+        max-width: 1150px;
+      }
+
+      .date-selection-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 18px;
+      }
+      .date-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .form-label i {
+        color: var(--accent);
+        font-size: 12px;
+      }
+      .form-input,
+      .form-select {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+        width: 100%;
+      }
+      .form-input::placeholder {
+        color: var(--text-muted);
+      }
+      .form-input:focus,
+      .form-select:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+      }
+      .form-select option {
+        background: var(--bg-card2);
+        color: var(--text);
+      }
+      .selected-day-display {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        min-height: 18px;
+      }
+
+      #holidayNotice {
+        background: linear-gradient(
+          135deg,
+          rgba(231, 76, 60, 0.18),
+          rgba(192, 57, 43, 0.14)
+        );
+        color: var(--absent);
+        padding: 12px 18px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 18px;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid rgba(231, 76, 60, 0.25);
+      }
+
+      .quick-actions-section {
+        margin-bottom: 20px;
+      }
+      .section-subtitle {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "Shabnam", sans-serif;
+      }
+      .quick-action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .quick-action-btn {
+        padding: 9px 14px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-all-present {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+      }
+      .btn-all-present:hover {
+        background: rgba(46, 204, 113, 0.26);
+      }
+      .btn-all-absent {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+      }
+      .btn-all-absent:hover {
+        background: rgba(231, 76, 60, 0.26);
+      }
+      .btn-all-excused {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        border: 1px solid rgba(243, 156, 18, 0.2);
+      }
+      .btn-all-excused:hover {
+        background: rgba(243, 156, 18, 0.26);
+      }
+      .btn-all-late {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .btn-all-late:hover {
+        background: rgba(74, 144, 217, 0.26);
+      }
+      .btn-all-expulsion {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+      }
+      .btn-all-expulsion:hover {
+        background: rgba(142, 95, 212, 0.26);
+      }
+      .btn-group-sms {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        border: 1px solid rgba(243, 156, 18, 0.2);
+      }
+      .btn-group-sms:hover {
+        background: rgba(243, 156, 18, 0.26);
+      }
+
+      .students-attendance-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .student-attendance-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .student-attendance-item:hover {
+        border-color: var(--border-hover);
+      }
+      .student-info-compact {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 180px;
+      }
+      .student-avatar-compact {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        font-family: "Shabnam", sans-serif;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
+      }
+      .student-name-compact {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .student-code-compact {
+        color: var(--text-muted);
+        font-size: 11px;
+        margin-top: 2px;
+      }
+      .attendance-status-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .status-btn {
+        padding: 7px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .status-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .status-btn.active.present {
+        border-color: var(--present);
+        background: rgba(46, 204, 113, 0.18);
+        color: var(--present);
+      }
+      .status-btn.active.absent {
+        border-color: var(--absent);
+        background: rgba(231, 76, 60, 0.18);
+        color: var(--absent);
+      }
+      .status-btn.active.late {
+        border-color: var(--late);
+        background: rgba(243, 156, 18, 0.18);
+        color: var(--late);
+      }
+      .status-btn.active.leave {
+        border-color: var(--leave);
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--leave);
+      }
+      .status-btn.active.expulsion {
+        border-color: var(--expulsion);
+        background: rgba(142, 95, 212, 0.18);
+        color: var(--expulsion);
+      }
+
+      .btn-send-sms {
+        background: rgba(243, 156, 18, 0.1);
+        color: var(--accent4);
+        border: 1px solid rgba(243, 156, 18, 0.18);
+        border-radius: 8px;
+        padding: 7px 11px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      .btn-send-sms:hover {
+        background: rgba(243, 156, 18, 0.22);
+      }
+
+      .save-attendance-btn {
+        width: 100%;
+        padding: 13px;
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.22);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .save-attendance-btn:hover {
+        background: rgba(46, 204, 113, 0.26);
+        color: #fff;
+      }
+      .save-attendance-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   VIEW MODAL
+══════════════════════════════════════════════════════ */
+      .view-modal-card {
+        max-width: 1350px;
+      }
+
+      .current-viewing-date {
+        background: linear-gradient(
+          135deg,
+          rgba(46, 204, 113, 0.14),
+          rgba(39, 174, 96, 0.1)
+        );
+        border: 1px solid rgba(46, 204, 113, 0.22);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--present);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+      }
+      .current-viewing-date i {
+        font-size: 18px;
+      }
+
+      .date-filter-group {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .date-filter-group .form-label {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .date-filter-inputs {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+      }
+      .date-separator {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .filter-apply-btn,
+      .filter-reset-btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .filter-apply-btn {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+      }
+      .filter-apply-btn:hover {
+        background: rgba(46, 204, 113, 0.26);
+      }
+      .filter-reset-btn {
+        background: rgba(231, 76, 60, 0.12);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.18);
+      }
+      .filter-reset-btn:hover {
+        background: rgba(231, 76, 60, 0.22);
+      }
+
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .summary-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        transition: all 0.2s;
+      }
+      .summary-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--border-hover);
+      }
+      .summary-card.card-present {
+        border-right: 3px solid var(--present);
+      }
+      .summary-card.card-absent {
+        border-right: 3px solid var(--absent);
+      }
+      .summary-card.card-excused {
+        border-right: 3px solid var(--late);
+      }
+      .summary-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .card-present .summary-icon {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .card-absent .summary-icon {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .card-excused .summary-icon {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--late);
+      }
+      .summary-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .summary-value {
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+
+      .search-section {
+        margin-bottom: 14px;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 11px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+      }
+      .search-input::placeholder {
+        color: var(--text-muted);
+      }
+      .search-input:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+      }
+
+      .attendance-list-container {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .attendance-list-header {
+        display: grid;
+        grid-template-columns: 55px 140px 1fr 100px 100px 100px 100px 115px;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 12px 16px;
+      }
+      .list-col {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .attendance-list-header .list-col {
+        color: var(--accent);
+        font-size: 11.5px;
+      }
+      .attendance-list-body {
+        display: flex;
+        flex-direction: column;
+      }
+      .attendance-list-row {
+        display: grid;
+        grid-template-columns: 55px 140px 1fr 100px 100px 100px 100px 115px;
+        gap: 8px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        transition: all 0.2s;
+        font-size: 13px;
+      }
+      .attendance-list-row:hover {
+        background: rgba(74, 144, 217, 0.05);
+        transform: translateX(-2px);
+      }
+      .stat-present {
+        color: var(--present) !important;
+        font-weight: 700 !important;
+      }
+      .stat-absent {
+        color: var(--absent) !important;
+        font-weight: 700 !important;
+      }
+      .stat-excused {
+        color: var(--late) !important;
+        font-weight: 700 !important;
+      }
+      .stat-percentage {
+        color: var(--accent) !important;
+        font-weight: 700 !important;
+      }
+      .btn-view-details {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        padding: 5px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        transition: all 0.2s;
+      }
+      .btn-view-details:hover {
+        background: rgba(74, 144, 217, 0.26);
+        color: #fff;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   DETAILS MODAL
+══════════════════════════════════════════════════════ */
+      .details-modal-card {
+        max-width: 1100px;
+      }
+
+      .student-info-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 22px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .student-avatar-small {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 22px;
+        font-family: "Shabnam", sans-serif;
+        border: 3px solid rgba(74, 144, 217, 0.3);
+        flex-shrink: 0;
+      }
+      .student-name-details {
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 4px;
+      }
+      .student-code-details {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .attendance-details-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .detail-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        transition: all 0.2s;
+      }
+      .detail-card:hover {
+        transform: translateY(-3px);
+      }
+      .detail-card:nth-child(1):hover {
+        border-color: rgba(46, 204, 113, 0.35);
+      }
+      .detail-card:nth-child(2):hover {
+        border-color: rgba(231, 76, 60, 0.35);
+      }
+      .detail-card:nth-child(3):hover {
+        border-color: rgba(243, 156, 18, 0.35);
+      }
+      .detail-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .present-icon {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .absent-icon {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .excused-icon {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--late);
+      }
+      .detail-card-label {
+        color: var(--text-muted);
+        font-size: 11.5px;
+        margin-bottom: 4px;
+      }
+      .detail-card-value {
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+
+      /* CALENDAR */
+      .attendance-calendar {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+      }
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .calendar-title {
+        color: var(--accent);
+        font-size: 15px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .calendar-navigation {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .calendar-nav-btn {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .calendar-nav-btn:hover {
+        background: rgba(74, 144, 217, 0.14);
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .calendar-current-month {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+        min-width: 100px;
+        text-align: center;
+      }
+      .calendar-weekdays,
+      .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+      }
+      .calendar-weekdays {
+        margin-bottom: 8px;
+      }
+      .calendar-weekday {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 6px 2px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 6px;
+      }
+      .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.12);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 4px;
+      }
+      .calendar-day:hover {
+        background: rgba(74, 144, 217, 0.1);
+        border-color: var(--border-hover);
+      }
+      .calendar-day.weekend {
+        background: rgba(231, 76, 60, 0.07);
+        border-color: rgba(231, 76, 60, 0.15);
+      }
+      .calendar-day.other-month {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .calendar-day.other-month:hover {
+        background: rgba(0, 0, 0, 0.12);
+        border-color: transparent;
+      }
+      .calendar-day.today {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent);
+      }
+      .calendar-day.has-attendance {
+        border-width: 2px;
+      }
+      .calendar-day.has-attendance.present {
+        border-color: var(--present);
+        background: rgba(46, 204, 113, 0.1);
+      }
+      .calendar-day.has-attendance.absent {
+        border-color: var(--absent);
+        background: rgba(231, 76, 60, 0.1);
+      }
+      .calendar-day.has-attendance.late {
+        border-color: var(--late);
+        background: rgba(243, 156, 18, 0.1);
+      }
+      .calendar-day.has-attendance.leave {
+        border-color: var(--leave);
+        background: rgba(74, 144, 217, 0.1);
+      }
+      .calendar-day.has-attendance.expulsion {
+        border-color: var(--expulsion);
+        background: rgba(142, 95, 212, 0.1);
+      }
+      .calendar-day-number {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 2px;
+      }
+      .calendar-day.other-month .calendar-day-number {
+        color: var(--text-muted);
+      }
+      .calendar-day-status {
+        font-size: 12px;
+      }
+      .calendar-day-info {
+        font-size: 7px;
+        color: var(--text-muted);
+        text-align: center;
+        margin-top: 1px;
+        line-height: 1.2;
+      }
+      .calendar-day-info.holiday-name {
+        font-size: 6.5px;
+        font-weight: 600;
+        color: var(--absent);
+      }
+      .calendar-legend {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-box {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        border: 2px solid;
+      }
+      .legend-box.present {
+        background: rgba(46, 204, 113, 0.15);
+        border-color: var(--present);
+      }
+      .legend-box.absent {
+        background: rgba(231, 76, 60, 0.15);
+        border-color: var(--absent);
+      }
+      .legend-box.weekend {
+        background: rgba(231, 76, 60, 0.08);
+        border-color: rgba(231, 76, 60, 0.3);
+      }
+      .legend-label {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+
+      /* TIMELINE */
+      .attendance-timeline {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-top: 16px;
+      }
+      .timeline-title {
+        color: var(--accent);
+        font-size: 15px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .timeline-container {
+        position: relative;
+        padding-right: 26px;
+        max-height: 360px;
+        overflow-y: auto;
+      }
+      .timeline-container::-webkit-scrollbar {
+        width: 4px;
+      }
+      .timeline-container::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 10px;
+      }
+      .timeline-container::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 10px;
+        opacity: 0.5;
+      }
+      .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+        padding-right: 24px;
+        border-right: 1px solid var(--border);
+      }
+      .timeline-item:last-child {
+        border-right: none;
+        padding-bottom: 0;
+      }
+      .timeline-dot {
+        position: absolute;
+        right: -5px;
+        top: 5px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: 2px solid;
+      }
+      .timeline-dot.present {
+        background: var(--present);
+        border-color: var(--present);
+      }
+      .timeline-dot.absent {
+        background: var(--absent);
+        border-color: var(--absent);
+      }
+      .timeline-dot.late {
+        background: var(--late);
+        border-color: var(--late);
+      }
+      .timeline-dot.leave {
+        background: var(--leave);
+        border-color: var(--leave);
+      }
+      .timeline-dot.expulsion {
+        background: var(--expulsion);
+        border-color: var(--expulsion);
+      }
+      .timeline-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 11px 13px;
+        border-radius: var(--radius-sm);
+      }
+      .timeline-date {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .timeline-info {
+        color: var(--text-muted);
+        font-size: 11.5px;
+      }
+      .timeline-status {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 6px;
+      }
+      .timeline-status.present {
+        background: rgba(46, 204, 113, 0.15);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.25);
+      }
+      .timeline-status.absent {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.25);
+      }
+      .timeline-status.late {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--late);
+        border: 1px solid rgba(243, 156, 18, 0.25);
+      }
+      .timeline-status.leave {
+        background: rgba(74, 144, 217, 0.15);
+        color: var(--leave);
+        border: 1px solid rgba(74, 144, 217, 0.25);
+      }
+      .timeline-status.expulsion {
+        background: rgba(142, 95, 212, 0.15);
+        color: var(--expulsion);
+        border: 1px solid rgba(142, 95, 212, 0.25);
+      }
+
+      /* ══════════════════════════════════════════════════════
+   STATS MODAL
+══════════════════════════════════════════════════════ */
+      .stats-modal-card {
+        max-width: 1150px;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .stat-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s;
+      }
+      .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--border-hover);
+      }
+      .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .stat-icon-classes {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+      }
+      .stat-icon-students {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+      }
+      .stat-icon-present {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .stat-icon-absent {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 11.5px;
+        margin-bottom: 4px;
+      }
+      .stat-value {
+        color: var(--text);
+        font-size: 26px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+      .chart-section-modal {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+      }
+      .chart-title-modal {
+        color: var(--accent);
+        font-size: 15px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+      }
+      .chart-header-with-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .chart-navigation {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .chart-nav-btn {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .chart-nav-btn:hover {
+        background: rgba(74, 144, 217, 0.14);
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .chart-canvas-container {
+        position: relative;
+        width: 100%;
+        height: 360px;
+      }
+      .chart-canvas-container canvas {
+        display: block !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   REPORTS MODAL
+══════════════════════════════════════════════════════ */
+      .reports-modal-card {
+        max-width: 1350px;
+      }
+      .report-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .report-tab {
+        padding: 9px 18px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .report-tab:hover {
+        color: var(--text);
+        border-color: var(--border-hover);
+      }
+      .report-tab.active {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border-color: rgba(74, 144, 217, 0.25);
+      }
+      .report-content {
+        display: none;
+      }
+      .report-content.active {
+        display: block;
+      }
+      .date-range-filter {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .date-range-inputs {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto auto;
+        gap: 10px;
+        align-items: end;
+      }
+      .threshold-input-group {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .threshold-input-group label {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .threshold-input-group input {
+        width: 120px;
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 9px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        outline: none;
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .comparison-table {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        margin-top: 16px;
+      }
+      .comparison-header {
+        display: grid;
+        grid-template-columns: 100px 150px repeat(4, 1fr);
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 12px 16px;
+        font-weight: 700;
+        color: var(--accent);
+        font-size: 12px;
+      }
+      .comparison-row {
+        display: grid;
+        grid-template-columns: 100px 150px repeat(4, 1fr);
+        gap: 8px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        transition: all 0.2s;
+      }
+      .comparison-row:hover {
+        background: rgba(74, 144, 217, 0.05);
+      }
+      .comparison-cell {
+        text-align: center;
+        color: var(--text);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .absent-students-list {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        margin-top: 16px;
+      }
+      .absent-student-card {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-right: 3px solid var(--absent);
+        border-radius: var(--radius-sm);
+        padding: 13px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s;
+        gap: 13px;
+      }
+      .absent-student-card:hover {
+        transform: translateX(-3px);
+        border-color: rgba(231, 76, 60, 0.4);
+      }
+      .absent-student-info {
+        flex: 1;
+      }
+      .absent-student-info h4 {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .absent-student-info p {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin: 0;
+      }
+      .absent-count {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.25);
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 20px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   SMS MODAL
+══════════════════════════════════════════════════════ */
+      .sms-modal-card {
+        max-width: 680px;
+      }
+      .sms-student-info {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-right: 3px solid var(--accent4);
+        border-radius: var(--radius-sm);
+        padding: 16px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+      .sms-student-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 20px;
+        font-family: "Shabnam", sans-serif;
+        flex-shrink: 0;
+      }
+      .sms-student-name {
+        color: var(--text);
+        font-size: 16px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 3px;
+      }
+      .sms-student-code {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .sms-reason-section {
+        margin-bottom: 20px;
+      }
+      .sms-reason-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .sms-reason-btn {
+        padding: 12px 14px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .sms-reason-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .sms-reason-btn.active {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        border-color: rgba(243, 156, 18, 0.3);
+      }
+      .sms-message-section {
+        margin-bottom: 20px;
+      }
+      .sms-textarea {
+        width: 100%;
+        min-height: 130px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+        resize: vertical;
+        margin-top: 10px;
+      }
+      .sms-textarea:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+      }
+      .sms-textarea::placeholder {
+        color: var(--text-muted);
+      }
+      .sms-char-count {
+        text-align: left;
+        color: var(--text-muted);
+        font-size: 11.5px;
+        margin-top: 5px;
+      }
+      .sms-char-count #smsCharCount {
+        color: var(--accent4);
+        font-weight: 700;
+      }
+      .sms-quick-messages {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+      .sms-quick-title {
+        color: var(--accent4);
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .sms-quick-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .sms-quick-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 10px 13px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 9px;
+      }
+      .sms-quick-item:hover {
+        border-color: rgba(243, 156, 18, 0.35);
+        transform: translateX(-2px);
+      }
+      .sms-quick-text {
+        color: var(--text);
+        font-size: 12.5px;
+        flex: 1;
+      }
+      .sms-quick-icon {
+        color: var(--accent4);
+        font-size: 14px;
+      }
+      .sms-quick-delete {
+        background: rgba(231, 76, 60, 0.12);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.18);
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        transition: all 0.2s;
+        opacity: 0;
+      }
+      .sms-quick-item:hover .sms-quick-delete {
+        opacity: 1;
+      }
+      .sms-quick-delete:hover {
+        background: var(--absent);
+        color: #fff;
+      }
+      .sms-no-quick-messages {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 13px;
+        padding: 16px;
+      }
+      .sms-actions {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 10px;
+      }
+      .sms-btn {
+        padding: 12px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .sms-btn-save {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .sms-btn-save:hover {
+        background: rgba(74, 144, 217, 0.26);
+      }
+      .sms-btn-send {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+      }
+      .sms-btn-send:hover {
+        background: rgba(46, 204, 113, 0.26);
+      }
+
+      /* ══════════════════════════════════════════════════════
+   EDIT MODAL
+══════════════════════════════════════════════════════ */
+      .edit-modal-card {
+        max-width: 900px;
+      }
+      .edit-attendance-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .edit-attendance-item {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        display: grid;
+        grid-template-columns: 90px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .edit-attendance-item:hover {
+        border-color: var(--border-hover);
+      }
+      .edit-period-badge {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 11.5px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .edit-period-info .date {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .edit-period-info .day {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+      .edit-status-buttons {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .edit-status-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-size: 11.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-muted);
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .edit-status-btn.active.present {
+        background: rgba(46, 204, 113, 0.15);
+        border-color: var(--present);
+        color: var(--present);
+      }
+      .edit-status-btn.active.absent {
+        background: rgba(231, 76, 60, 0.15);
+        border-color: var(--absent);
+        color: var(--absent);
+      }
+      .edit-status-btn.active.late {
+        background: rgba(243, 156, 18, 0.15);
+        border-color: var(--late);
+        color: var(--late);
+      }
+      .save-edit-btn {
+        width: 100%;
+        padding: 12px;
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .save-edit-btn:hover {
+        background: rgba(46, 204, 113, 0.26);
+        color: #fff;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+      .toast-notification {
+        position: fixed;
+        top: -180px;
+        right: 24px;
+        background: var(--bg-card2);
+        border: 1px solid rgba(46, 204, 113, 0.3);
+        color: var(--text);
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 280px;
+        max-width: 400px;
+        z-index: 9999;
+        transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+      .toast-notification.show {
+        top: 24px;
+      }
+      .toast-notification.hide {
+        top: -180px;
+        transition: top 0.35s ease-in;
+      }
+      .toast-notification.error {
+        border-color: rgba(231, 76, 60, 0.35);
+      }
+      .toast-notification.warning {
+        border-color: rgba(243, 156, 18, 0.35);
+      }
+      .toast-notification.info {
+        border-color: rgba(74, 144, 217, 0.35);
+      }
+      .toast-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .toast-notification:not(.error):not(.warning):not(.info) .toast-icon {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .toast-notification.error .toast-icon {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .toast-notification.warning .toast-icon {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--late);
+      }
+      .toast-notification.info .toast-icon {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+      }
+      .toast-content {
+        flex: 1;
+      }
+      .toast-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .toast-message {
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 13px;
+        padding: 3px;
+        border-radius: 50%;
+        transition: all 0.2s;
+      }
+      .toast-close:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* DISABLED STATES */
+      .status-btn:disabled,
+      .btn-send-sms:disabled,
+      .quick-action-btn:disabled,
+      .save-attendance-btn:disabled {
+        opacity: 0.45 !important;
+        cursor: not-allowed !important;
+        pointer-events: none !important;
+      }
+
+      /* ══════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════ */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+      @media (max-width: 1200px) {
+        .attendance-list-header,
+        .attendance-list-row {
+          grid-template-columns: 50px 120px 1fr 90px 90px 90px 90px 105px;
+        }
+      }
+      @media (max-width: 1050px) {
+        .attendance-list-header,
+        .attendance-list-row {
+          grid-template-columns: 50px 1fr 90px 90px 90px 90px 105px;
+        }
+        .list-col.col-code {
+          display: none !important;
+        }
+      }
+      @media (max-width: 900px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
         .attendance-details-grid {
-            display: grid; grid-template-columns: repeat(3,1fr);
-            gap: 20px; margin-bottom: 30px;
+          grid-template-columns: repeat(3, 1fr);
         }
-        @media (max-width: 900px) {
-            .details-modal-content { padding: 28px 18px; }
-            .attendance-details-grid { gap: 12px; }
+        .comparison-header,
+        .comparison-row {
+          grid-template-columns: 80px 1fr repeat(4, 1fr);
         }
-        @media (max-width: 768px) {
-            .details-modal-content {
-                padding: 50px 14px 18px; width:100%;
-                max-width:100%; max-height:95vh; border-radius:12px;
-            }
-            #studentAttendanceDetailsModal .student-info-header {
-                flex-direction:column; align-items:center;
-                text-align:center; gap:10px;
-                margin-bottom:18px; padding-bottom:14px;
-            }
-            #studentAttendanceDetailsModal .student-basic-info-details {
-                display:flex; flex-direction:column; align-items:center;
-            }
-            #studentAttendanceDetailsModal .student-avatar-small { width:56px; height:56px; font-size:22px; }
-            #studentAttendanceDetailsModal .student-name-details { font-size:17px; }
-            #studentAttendanceDetailsModal .student-code-details  { font-size:13px; }
-            .attendance-details-grid { grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
-            .attendance-details-grid .detail-card {
-                flex-direction:column; align-items:center;
-                text-align:center; padding:12px 8px; gap:6px;
-            }
-            .attendance-details-grid .detail-card-icon { width:38px; height:38px; font-size:15px; }
-            .attendance-details-grid .detail-card-label { font-size:10px; line-height:1.3; }
-            .attendance-details-grid .detail-card-value { font-size:22px; }
-            .attendance-calendar { padding:14px; }
-            .calendar-header { flex-direction:column; gap:10px; margin-bottom:12px; padding-bottom:12px; }
-            .calendar-title { font-size:14px; width:100%; justify-content:center; }
-            .calendar-navigation { width:100%; justify-content:center; }
-            .calendar-current-month { font-size:13px; min-width:95px; }
-            .calendar-nav-btn { width:30px; height:30px; font-size:12px; }
-            .calendar-weekdays, .calendar-days { gap:4px; }
-            .calendar-weekday { font-size:10px; padding:5px 1px; }
-            .calendar-day { padding:3px; min-height:44px; aspect-ratio:unset; border-radius:8px; }
-            .calendar-day-number { font-size:12px; margin-bottom:1px; }
-            .calendar-day-status { font-size:13px; }
-            .calendar-day-info { font-size:6px; }
-            .calendar-legend { gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; padding-top:10px; }
-            .legend-label { font-size:10px; }
-            .legend-box { width:14px; height:14px; }
-            .attendance-timeline { padding:14px; margin-top:18px; }
-            .timeline-title { font-size:14px; margin-bottom:12px; }
-            .timeline-container { padding-right:20px; max-height:260px; }
-            .timeline-item { padding-right:20px; padding-bottom:18px; }
-            .timeline-content { padding:10px; }
-            .timeline-date { font-size:11px; }
-            .timeline-info { font-size:10px; }
-            .timeline-status { font-size:10px; padding:2px 7px; }
-        }
-        @media (max-width: 600px) {
-            .details-modal-content { padding:48px 12px 14px; }
-            .attendance-details-grid { gap:6px; }
-            .attendance-details-grid .detail-card { padding:10px 6px; }
-            .attendance-details-grid .detail-card-icon { width:34px; height:34px; font-size:13px; }
-            .attendance-details-grid .detail-card-label { font-size:9px; }
-            .attendance-details-grid .detail-card-value { font-size:20px; }
-            .calendar-weekday { font-size:9px; padding:4px 0; }
-            .calendar-day { min-height:40px; }
-            .calendar-day-number { font-size:11px; }
-        }
-        @media (max-width: 480px) {
-            .details-modal-content { padding:46px 10px 12px; }
-            .attendance-details-grid { grid-template-columns:1fr; gap:8px; }
-            .attendance-details-grid .detail-card {
-                flex-direction:row; align-items:center;
-                text-align:right; padding:12px 14px; gap:12px;
-            }
-            .attendance-details-grid .detail-card::before { display:none; }
-            .attendance-details-grid .detail-card-icon { width:40px; height:40px; font-size:16px; flex-shrink:0; }
-            .attendance-details-grid .detail-card-info {
-                flex:1; display:flex; align-items:center; justify-content:space-between;
-            }
-            .attendance-details-grid .detail-card-label { font-size:13px; }
-            .attendance-details-grid .detail-card-value { font-size:26px; }
-            .calendar-weekdays, .calendar-days { gap:3px; }
-            .calendar-weekday { font-size:8.5px; }
-            .calendar-day { min-height:38px; border-radius:7px; }
-            .calendar-day-number { font-size:11px; }
-            .calendar-nav-btn { width:28px; height:28px; }
-            .calendar-current-month { font-size:12px; min-width:85px; }
-            .calendar-legend { gap:6px; }
-            .legend-box { width:12px; height:12px; }
-            .legend-label { font-size:9px; }
-            .timeline-container { max-height:220px; }
-        }
-        @media (max-width: 380px) {
-            .details-modal-content { padding:44px 8px 10px; }
-            .attendance-details-grid .detail-card { padding:10px 12px; gap:10px; }
-            .attendance-details-grid .detail-card-icon { width:36px; height:36px; }
-            .attendance-details-grid .detail-card-label { font-size:12px; }
-            .attendance-details-grid .detail-card-value { font-size:22px; }
-            .calendar-weekday { font-size:8px; }
-            .calendar-day { min-height:34px; border-radius:6px; }
-            .calendar-day-number { font-size:10px; }
-            .calendar-day-info { display:none; }
-            .calendar-day-info.holiday-name { display:block; font-size:5px; }
-            .calendar-nav-btn { width:25px; height:25px; font-size:10px; }
-            .calendar-current-month { font-size:11px; min-width:72px; }
-            .timeline-container { max-height:190px; }
-        }
-        @media (max-width: 900px) and (orientation: landscape) {
-            .details-modal-content { max-height:98vh; padding-top:46px; }
-            .attendance-details-grid { grid-template-columns:repeat(3,1fr); }
-            .attendance-details-grid .detail-card { flex-direction:column; padding:8px; }
-            .timeline-container { max-height:160px; }
-        }
-        @media (hover: none) and (pointer: coarse) {
-            .calendar-nav-btn { min-width:44px; min-height:44px; }
-        }
-        #pageLoader {
-            position: fixed; inset: 0; background: #0f1b3d;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            z-index: 10000; gap: 18px; transition: opacity 0.5s ease;
-        }
-        #pageLoader.hide { opacity: 0; pointer-events: none; }
-        .loader-spinner {
-            width: 58px; height: 58px;
-            border: 5px solid rgba(255,255,255,0.12);
-            border-top-color: #4da3ff;
-            border-radius: 50%; animation: spin 0.85s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loader-text { color: #c8d8f0; font-family: Vazirmatn, sans-serif; font-size: 15px; }
-        .loader-sub  { color: #6a8ab0; font-family: Vazirmatn, sans-serif; font-size: 12px; margin-top: -8px; }
+      }
 
-        #lib-error {
-            display: none; position: fixed; inset: 0; background: #0f1b3d;
-            z-index: 10001; align-items: center; justify-content: center;
-            flex-direction: column; gap: 16px; color: #fff;
-            font-family: Vazirmatn, sans-serif; text-align: center; padding: 20px;
+      /* ─── 768px ─── */
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
         }
-        #lib-error.show { display: flex; }
-        #lib-error i { font-size: 48px; color: #e74c3c; }
-        #lib-error h2 { font-size: 20px; font-weight: 600; }
-        #lib-error p  { color: rgba(255,255,255,.6); font-size: 14px; max-width: 400px; }
+        .main-content {
+          padding: 68px 14px 24px;
+        }
+        .classes-grid {
+          grid-template-columns: 1fr;
+        }
+        .action-buttons-container {
+          justify-content: stretch;
+        }
+        .action-btn-main {
+          flex: 1;
+          justify-content: center;
+          font-size: 12px;
+        }
+
+        .modal {
+          padding: 6px;
+          align-items: flex-start;
+        }
+        .modal-card {
+          padding: 44px 14px 18px !important;
+          border-radius: var(--radius) !important;
+          max-height: 96vh !important;
+        }
+        .modal-title {
+          font-size: 15px !important;
+          margin-bottom: 16px !important;
+        }
+        .close-btn {
+          top: 12px !important;
+          left: 12px !important;
+          width: 34px !important;
+          height: 34px !important;
+          font-size: 14px !important;
+        }
+
+        .date-selection-section {
+          grid-template-columns: 1fr !important;
+          gap: 10px !important;
+        }
+        .quick-action-buttons {
+          gap: 6px;
+        }
+        .student-attendance-item {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .attendance-status-buttons {
+          width: 100%;
+          gap: 5px;
+        }
+        .status-btn {
+          flex: 1;
+          min-width: calc(33% - 4px);
+          padding: 7px 4px;
+          font-size: 11px;
+          justify-content: center;
+        }
+        .status-btn i {
+          display: none;
+        }
+
+        .date-filter-inputs {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .date-separator {
+          display: none;
+        }
+        .filter-apply-btn,
+        .filter-reset-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .summary-cards {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .summary-card {
+          padding: 12px 14px;
+        }
+        .summary-value {
+          font-size: 24px;
+        }
+
+        .attendance-list-header {
+          display: none;
+        }
+        .attendance-list-body {
+          gap: 8px;
+        }
+        .attendance-list-row {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          grid-template-areas: "idx idx" "name name" "pre abs" "exc pct" "act act" !important;
+          gap: 5px !important;
+          padding: 12px !important;
+          background: var(--bg-card2) !important;
+          border: 1px solid var(--border) !important;
+          border-radius: var(--radius-sm) !important;
+        }
+        .attendance-list-row:hover {
+          transform: none;
+        }
+        .list-col.col-code {
+          display: none !important;
+        }
+        .list-col.col-index {
+          grid-area: idx !important;
+          justify-content: flex-start !important;
+          font-size: 10px !important;
+          color: var(--text-muted) !important;
+        }
+        .list-col.col-name {
+          grid-area: name !important;
+          justify-content: flex-start !important;
+          font-size: 13px !important;
+          font-weight: 700 !important;
+          padding-bottom: 6px !important;
+          border-bottom: 1px solid var(--border) !important;
+        }
+        .list-col.col-present {
+          grid-area: pre !important;
+          display: flex !important;
+          justify-content: flex-start !important;
+          font-size: 11.5px !important;
+        }
+        .list-col.col-absent {
+          grid-area: abs !important;
+          display: flex !important;
+          justify-content: flex-start !important;
+          font-size: 11.5px !important;
+        }
+        .list-col.col-excused {
+          grid-area: exc !important;
+          display: flex !important;
+          justify-content: flex-start !important;
+          font-size: 11.5px !important;
+        }
+        .list-col.col-percentage {
+          grid-area: pct !important;
+          display: flex !important;
+          justify-content: flex-start !important;
+          font-size: 11.5px !important;
+        }
+        .list-col.col-actions {
+          grid-area: act !important;
+          padding-top: 6px !important;
+          border-top: 1px solid var(--border) !important;
+        }
+        .list-col.col-present::before {
+          content: "حاضر: ";
+          color: var(--text-muted);
+          font-size: 10px;
+          margin-left: 3px;
+        }
+        .list-col.col-absent::before {
+          content: "غایب: ";
+          color: var(--text-muted);
+          font-size: 10px;
+          margin-left: 3px;
+        }
+        .list-col.col-excused::before {
+          content: "تأخیر: ";
+          color: var(--text-muted);
+          font-size: 10px;
+          margin-left: 3px;
+        }
+        .list-col.col-percentage::before {
+          content: "حضور: ";
+          color: var(--text-muted);
+          font-size: 10px;
+          margin-left: 3px;
+        }
+        .btn-view-details {
+          width: 100%;
+          justify-content: center;
+          padding: 9px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .stat-card {
+          flex-direction: column;
+          text-align: center;
+          padding: 12px;
+          gap: 7px;
+        }
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          font-size: 17px;
+        }
+        .stat-value {
+          font-size: 20px;
+        }
+        .chart-canvas-container {
+          height: 270px !important;
+        }
+        .chart-header-with-nav {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .attendance-details-grid {
+          grid-template-columns: 1fr !important;
+          gap: 8px;
+        }
+        .calendar-header {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .calendar-title {
+          justify-content: center;
+        }
+        .calendar-navigation {
+          justify-content: center;
+        }
+        .calendar-weekday {
+          font-size: 10px;
+        }
+        .calendar-legend {
+          gap: 8px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .sms-student-info {
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+        }
+        .sms-reason-buttons {
+          grid-template-columns: 1fr;
+        }
+        .sms-actions {
+          grid-template-columns: 1fr;
+          gap: 9px;
+        }
+        .sms-quick-delete {
+          opacity: 1 !important;
+        }
+
+        .report-tab {
+          font-size: 11px;
+          padding: 7px 12px;
+        }
+        .date-range-inputs {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .comparison-header {
+          display: none;
+        }
+        .comparison-row {
+          grid-template-columns: 1fr;
+        }
+        .comparison-cell {
+          text-align: right;
+          justify-content: space-between;
+          padding: 5px 0;
+          border-bottom: 1px solid var(--border);
+        }
+        .comparison-cell::before {
+          content: attr(data-label);
+          font-weight: 700;
+          color: var(--accent);
+          margin-left: 8px;
+        }
+
+        .student-info-header {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .timeline-container {
+          max-height: 240px;
+        }
+
+        .edit-attendance-item {
+          grid-template-columns: 1fr !important;
+        }
+
+        .quick-action-btn {
+          flex: 1;
+        }
+        .quick-action-buttons {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* ─── 600px ─── */
+      @media (max-width: 600px) {
+        .stats-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .stat-card {
+          flex-direction: row;
+          text-align: right !important;
+        }
+        .stat-icon {
+          flex-shrink: 0;
+        }
+        .chart-canvas-container {
+          height: 240px !important;
+        }
+        .quick-action-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* ─── 480px ─── */
+      @media (max-width: 480px) {
+        .main-content {
+          padding: 66px 10px 20px;
+        }
+        .modal {
+          padding: 4px;
+        }
+        .modal-card {
+          padding: 42px 10px 14px !important;
+          max-height: 98vh !important;
+        }
+        .status-btn {
+          min-width: calc(50% - 3px) !important;
+          font-size: 10px !important;
+        }
+        .calendar-weekday {
+          font-size: 9px;
+        }
+        .calendar-day {
+          min-height: 38px;
+          aspect-ratio: unset;
+        }
+        .calendar-day-number {
+          font-size: 11px;
+        }
+        .calendar-day-info {
+          display: none;
+        }
+        .calendar-day-info.holiday-name {
+          display: block;
+          font-size: 5.5px;
+        }
+        .calendar-nav-btn {
+          width: 28px;
+          height: 28px;
+        }
+        .legend-box {
+          width: 12px !important;
+          height: 12px !important;
+        }
+        .legend-label {
+          font-size: 9px;
+        }
+        .summary-value {
+          font-size: 20px;
+        }
+        .report-tab {
+          font-size: 10px;
+          padding: 6px 9px;
+        }
+        .quick-action-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* ─── 380px ─── */
+      @media (max-width: 380px) {
+        .modal-card {
+          padding: 40px 8px 12px !important;
+        }
+        .calendar-weekday {
+          font-size: 8px;
+        }
+        .calendar-day {
+          min-height: 33px;
+        }
+        .stat-value {
+          font-size: 18px;
+        }
+        .chart-canvas-container {
+          height: 200px !important;
+        }
+      }
+
+      /* ─── LANDSCAPE ─── */
+      @media (max-width: 900px) and (orientation: landscape) {
+        .modal-card {
+          max-height: 98vh !important;
+          padding-top: 42px !important;
+        }
+        .summary-cards {
+          grid-template-columns: repeat(3, 1fr) !important;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(4, 1fr) !important;
+        }
+        .stat-card {
+          flex-direction: column !important;
+          text-align: center !important;
+          padding: 8px !important;
+          gap: 5px !important;
+        }
+        .stat-icon {
+          width: 32px !important;
+          height: 32px !important;
+          font-size: 13px !important;
+        }
+        .stat-value {
+          font-size: 14px !important;
+        }
+        .chart-canvas-container {
+          height: 180px !important;
+        }
+        .attendance-details-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+        }
+        .timeline-container {
+          max-height: 140px !important;
+        }
+      }
+
+      /* ─── TOUCH ─── */
+      @media (hover: none) and (pointer: coarse) {
+        .filter-apply-btn,
+        .filter-reset-btn,
+        .btn-view-details,
+        .search-input,
+        .form-input,
+        .form-select,
+        .calendar-nav-btn,
+        .chart-nav-btn,
+        .close-btn,
+        .status-btn,
+        .quick-action-btn {
+          min-height: 44px;
+        }
+        .close-btn {
+          min-width: 44px;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <!-- LIB ERROR -->
+    <div id="lib-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h2>خطا در بارگذاری کتابخانه‌ها</h2>
+      <p id="libErrorMsg">
+        فایل‌های lib/jalaali.min.js، lib/chart.min.js و lib/xlsx.full.min.js
+        یافت نشدند.
+      </p>
+    </div>
 
-<div id="lib-error">
-    <i class="fas fa-exclamation-triangle"></i>
-    <h2>خطا در بارگذاری کتابخانه‌ها</h2>
-    <p>فایل‌های lib/jalaali.min.js، lib/chart.min.js و lib/xlsx.full.min.js یافت نشدند.</p>
-</div>
+    <!-- PAGE LOADER -->
+    <div id="pageLoader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">در حال بارگذاری...</div>
+      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+    </div>
 
-<div id="pageLoader">
-    <div class="loader-spinner"></div>
-    <div class="loader-text">در حال بارگذاری...</div>
-    <div class="loader-sub">در حال دریافت اطلاعات...</div>
-</div>
+    <!-- HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" title="منو">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<div class="container">
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
-        <div class="logo">بوربور</div>
-        <div class="menu-item">
-            <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="manager-block">
+        <div class="manager-avatar" id="managerAvatarLetter">م</div>
+        <div>
+          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
+          <div class="manager-role" id="managerRole">مدیر سیستم</div>
+          <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
-        <div class="menu-item has-submenu">
-            <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران <i class="fas fa-chevron-down submenu-arrow"></i></a>
-            <div class="submenu">
-                <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
-                <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
-                <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
-                <a href="../html/Parents.html" class="submenu-item"><i class="fas fa-users"></i> مدیریت اولیا</a>
-            </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="menu-item">
+        <a href="../html/dashbord.html"
+          ><i class="fas fa-chart-line"></i> داشبورد</a
+        >
+      </div>
+      <div class="menu-item has-submenu" id="userMgmtMenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-users"></i> مدیریت کاربران
+          <i class="fas fa-chevron-down submenu-arrow"></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Assistant_management.html" class="submenu-item"
+            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
+          >
+          <a href="../html/Teacher_management.html" class="submenu-item"
+            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
+          >
+          <a href="../html/student.html" class="submenu-item"
+            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
+          >
+
         </div>
-        <div class="menu-item has-submenu">
-            <a href="#" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس ها <i class="fas fa-chevron-down submenu-arrow"></i></a>
-            <div class="submenu">
-                <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
-                <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
-                <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
-                <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
-            </div>
+      </div>
+      <div class="menu-item has-submenu" id="classMgmtMenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
+          <i class="fas fa-chevron-down submenu-arrow"></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Courses.html" class="submenu-item"
+            ><i class="fas fa-list"></i> مدیریت دروس</a
+          >
+          <a href="../html/Class-schedule.html" class="submenu-item"
+            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
+          >
+          <a href="../html/Attendance.html" class="submenu-item active"
+            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
+          >
+          <a href="../html/grades.html" class="submenu-item"
+            ><i class="fas fa-star"></i> نمرات</a
+          >
         </div>
-        <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت نام ها</a></div>
-        <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش ها</a></div>
-        <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه ها</a></div>
-        <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> ارشیو</a></div>
-        <div class="menu-item"><a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a></div>
-        <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
-        <div class="menu-item"><a href="../api/logout"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">مدیریت</div>
+      <div class="menu-item">
+        <a href="../html/Pre-registration.html"
+          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/reports.html"
+          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
+      </div>
+      <div class="menu-item">
+        <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">سیستم</div>
+      <div class="menu-item">
+        <a href="../html/permissions.html"
+          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
+        >
+      </div>
+       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="menu-item">
+        <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <div class="top-header">
-            <h1 class="page-title">حضور و غیاب کلاس‌ها</h1>
-            <div class="admin-info" id="adminInfoDisplay">در حال بارگذاری...</div>
+      <div class="top-bar">
+        <div class="page-title-wrap">
+          <h1>حضور و غیاب <span>کلاس‌ها</span></h1>
+          <div class="admin-info" id="adminInfoDisplay">
+            <span class="live-dot"></span>در حال بارگذاری...
+          </div>
         </div>
-        <div class="current-date-display">
-            <i class="fas fa-calendar-day"></i>
-            <span id="currentDateDisplay">در حال بارگذاری...</span>
-        </div>
-        <div class="action-buttons-container">
-            <button class="action-btn-main btn-excel" onclick="exportAttendanceExcel()">
-                <i class="fas fa-file-excel"></i><span>خروجی Excel</span>
-            </button>
-            <button class="action-btn-main btn-stats" onclick="openStatsModal()">
-                <i class="fas fa-chart-bar"></i><span>آمار کلی</span>
-            </button>
-            <button class="action-btn-main" style="background:#9b59b6;" onclick="openAdvancedReportsModal()">
-                <i class="fas fa-chart-pie"></i><span>گزارش‌های پیشرفته</span>
-            </button>
-        </div>
-        <div class="classes-grid" id="classesGrid"></div>
+        <div class="profile-btn" id="profileBtnLetter">م</div>
+      </div>
+      <div class="current-date-display">
+        <i class="fas fa-calendar-day"></i>
+        <span id="currentDateDisplay">در حال بارگذاری...</span>
+      </div>
+      <div class="action-buttons-container">
+        <button
+          class="action-btn-main btn-excel"
+          onclick="exportAttendanceExcel()"
+        >
+          <i class="fas fa-file-excel"></i><span>خروجی Excel</span>
+        </button>
+        <button class="action-btn-main btn-stats" onclick="openStatsModal()">
+          <i class="fas fa-chart-bar"></i><span>آمار کلی</span>
+        </button>
+        <button
+          class="action-btn-main btn-reports"
+          onclick="openAdvancedReportsModal()"
+        >
+          <i class="fas fa-chart-pie"></i><span>گزارش‌های پیشرفته</span>
+        </button>
+      </div>
+      <div class="classes-grid" id="classesGrid"></div>
     </div>
-</div>
 
-<div class="modal" id="registerAttendanceModal">
-    <div class="register-modal-content">
-        <button class="close-btn" onclick="closeRegisterAttendanceModal()"><i class="fas fa-times"></i></button>
+    <!-- TOAST -->
+    <div class="toast-notification" id="globalToast">
+      <div class="toast-icon">
+        <i class="fas fa-check-circle" id="toastIcon"></i>
+      </div>
+      <div class="toast-content">
+        <div class="toast-title" id="toastTitle">موفقیت‌آمیز!</div>
+        <div class="toast-message" id="toastMsg">عملیات با موفقیت انجام شد</div>
+      </div>
+      <button class="toast-close" onclick="closeGlobalToast()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- ══ REGISTER MODAL ══ -->
+    <div class="modal" id="registerAttendanceModal">
+      <div class="modal-card register-modal-card">
+        <button class="close-btn" onclick="closeRegisterAttendanceModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="registerModalTitle">ثبت حضور و غیاب</h2>
         <div class="date-selection-section">
-            <div class="date-input-group">
-                <label class="form-label">انتخاب تاریخ:</label>
-                <input data-jdp type="text" class="form-input jalali-datepicker" id="attendanceDate" placeholder="1404/01/01">
-                <div class="selected-day-display" id="selectedDayDisplay"></div>
-            </div>
-            <div class="date-input-group">
-                <label class="form-label">انتخاب زنگ:</label>
-                <select class="form-select" id="attendancePeriod">
-                    <option value="">— انتخاب زنگ —</option>
-                </select>
-            </div>
+          <div class="date-input-group">
+            <label class="form-label"
+              ><i class="fas fa-calendar"></i> انتخاب تاریخ:</label
+            >
+            <input
+              data-jdp
+              type="text"
+              class="form-input"
+              id="attendanceDate"
+              placeholder="1404/01/01"
+              autocomplete="off"
+              readonly
+            />
+            <div class="selected-day-display" id="selectedDayDisplay"></div>
+          </div>
+          <div class="date-input-group">
+            <label class="form-label"
+              ><i class="fas fa-clock"></i> انتخاب زنگ:</label
+            >
+            <select class="form-select" id="attendancePeriod">
+              <option value="">— انتخاب زنگ —</option>
+            </select>
+          </div>
+        </div>
+        <div id="holidayNotice">
+          <i class="fas fa-exclamation-triangle"></i><span></span>
         </div>
         <div class="quick-actions-section">
-            <h3 class="section-subtitle"><i class="fas fa-magic"></i> عملیات سریع</h3>
-            <div class="quick-action-buttons">
-                <button class="quick-action-btn btn-all-present" onclick="markAllStudents('present')"><i class="fas fa-check-double"></i> همه حاضر</button>
-                <button class="quick-action-btn btn-all-absent" onclick="markAllStudents('absent')"><i class="fas fa-times"></i> همه غایب</button>
-                <button class="quick-action-btn btn-all-excused" onclick="markAllStudents('leave')"><i class="fas fa-door-open"></i> همه مرخصی</button>
-                <button class="quick-action-btn" style="background:linear-gradient(135deg,#f39c12,#e67e22);" onclick="markAllStudents('late')"><i class="fas fa-clock"></i> همه تأخیر</button>
-                <button class="quick-action-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);" onclick="markAllStudents('expulsion')"><i class="fas fa-user-slash"></i> همه اخراج</button>
-                <button class="quick-action-btn btn-send-group-sms" onclick="openGroupSmsModal()"><i class="fas fa-sms"></i> پیامک گروهی</button>
-            </div>
+          <h3 class="section-subtitle">
+            <i class="fas fa-magic"></i> عملیات سریع
+          </h3>
+          <div class="quick-action-buttons">
+            <button
+              class="quick-action-btn btn-all-present"
+              onclick="markAllStudents('present')"
+            >
+              <i class="fas fa-check-double"></i> همه حاضر
+            </button>
+            <button
+              class="quick-action-btn btn-all-absent"
+              onclick="markAllStudents('absent')"
+            >
+              <i class="fas fa-times"></i> همه غایب
+            </button>
+            <button
+              class="quick-action-btn btn-all-excused"
+              onclick="markAllStudents('leave')"
+            >
+              <i class="fas fa-door-open"></i> همه مرخصی
+            </button>
+            <button
+              class="quick-action-btn btn-all-late"
+              onclick="markAllStudents('late')"
+            >
+              <i class="fas fa-clock"></i> همه تأخیر
+            </button>
+            <button
+              class="quick-action-btn btn-all-expulsion"
+              onclick="markAllStudents('expulsion')"
+            >
+              <i class="fas fa-user-slash"></i> همه اخراج
+            </button>
+            <button
+              class="quick-action-btn btn-group-sms"
+              onclick="openGroupSmsModal()"
+            >
+              <i class="fas fa-sms"></i> پیامک گروهی
+            </button>
+          </div>
         </div>
         <div class="students-attendance-list" id="studentsAttendanceList"></div>
-        <button class="save-attendance-btn" onclick="saveAttendance()"><i class="fas fa-save"></i> ثبت حضور و غیاب</button>
+        <button class="save-attendance-btn" onclick="saveAttendance()">
+          <i class="fas fa-save"></i> ثبت حضور و غیاب
+        </button>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="viewAttendanceModal">
-    <div class="view-modal-content">
-        <button class="close-btn" onclick="closeViewAttendanceModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ VIEW MODAL ══ -->
+    <div class="modal" id="viewAttendanceModal">
+      <div class="modal-card view-modal-card">
+        <button class="close-btn" onclick="closeViewAttendanceModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="viewModalTitle">مشاهده حضور و غیاب</h2>
-        <div class="filter-section">
-            <div class="current-viewing-date">
-                <i class="fas fa-calendar-check"></i>
-                <span id="viewingDateDisplay"></span>
-            </div>
-            <div class="date-filter-group">
-                <label class="form-label"><i class="fas fa-filter"></i> فیلتر بر اساس تاریخ:</label>
-                <div class="date-filter-inputs">
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="filterStartDate" placeholder="از تاریخ">
-                    <span class="date-separator">تا</span>
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="filterEndDate" placeholder="تا تاریخ">
-                    <button class="filter-apply-btn" onclick="applyDateFilter()"><i class="fas fa-search"></i> اعمال فیلتر</button>
-                    <button class="filter-reset-btn" onclick="resetDateFilter()"><i class="fas fa-undo"></i> حذف فیلتر</button>
-                </div>
-            </div>
+        <div class="current-viewing-date">
+          <i class="fas fa-calendar-check"></i>
+          <span id="viewingDateDisplay"></span>
+        </div>
+        <div class="date-filter-group">
+          <label class="form-label"
+            ><i class="fas fa-filter"></i> فیلتر بر اساس تاریخ:</label
+          >
+          <div class="date-filter-inputs">
+            <input
+              data-jdp
+              type="text"
+              class="form-input"
+              id="filterStartDate"
+              placeholder="از تاریخ"
+              autocomplete="off"
+              readonly
+            />
+            <span class="date-separator">تا</span>
+            <input
+              data-jdp
+              type="text"
+              class="form-input"
+              id="filterEndDate"
+              placeholder="تا تاریخ"
+              autocomplete="off"
+              readonly
+            />
+            <button class="filter-apply-btn" onclick="applyDateFilter()">
+              <i class="fas fa-search"></i> اعمال
+            </button>
+            <button class="filter-reset-btn" onclick="resetDateFilter()">
+              <i class="fas fa-undo"></i> حذف
+            </button>
+          </div>
         </div>
         <div class="summary-cards">
-            <div class="summary-card card-present">
-                <div class="summary-icon"><i class="fas fa-user-check"></i></div>
-                <div class="summary-info"><div class="summary-label">کل حضور</div><div class="summary-value" id="totalPresent">0</div></div>
+          <div class="summary-card card-present">
+            <div class="summary-icon"><i class="fas fa-user-check"></i></div>
+            <div class="summary-info">
+              <div class="summary-label">کل حضور</div>
+              <div class="summary-value" id="totalPresent">0</div>
             </div>
-            <div class="summary-card card-absent">
-                <div class="summary-icon"><i class="fas fa-user-times"></i></div>
-                <div class="summary-info"><div class="summary-label">کل غیبت</div><div class="summary-value" id="totalAbsent">0</div></div>
+          </div>
+          <div class="summary-card card-absent">
+            <div class="summary-icon"><i class="fas fa-user-times"></i></div>
+            <div class="summary-info">
+              <div class="summary-label">کل غیبت</div>
+              <div class="summary-value" id="totalAbsent">0</div>
             </div>
-            <div class="summary-card card-excused">
-                <div class="summary-icon"><i class="fas fa-user-clock"></i></div>
-                <div class="summary-info"><div class="summary-label">تأخیر / مرخصی</div><div class="summary-value" id="totalExcused">0</div></div>
+          </div>
+          <div class="summary-card card-excused">
+            <div class="summary-icon"><i class="fas fa-user-clock"></i></div>
+            <div class="summary-info">
+              <div class="summary-label">تأخیر / مرخصی</div>
+              <div class="summary-value" id="totalExcused">0</div>
             </div>
+          </div>
         </div>
         <div class="search-section">
-            <input type="text" class="search-input" id="studentSearchInput" placeholder="جستجوی دانش‌آموز..." onkeyup="searchAttendanceStudents()">
+          <input
+            type="text"
+            class="search-input"
+            id="studentSearchInput"
+            placeholder="جستجوی دانش‌آموز..."
+            oninput="searchAttendanceStudents()"
+          />
         </div>
         <div class="attendance-list-container">
-            <div class="attendance-list-header">
-                <div class="list-col col-index">ردیف</div>
-                <div class="list-col col-code">کد ملی</div>
-                <div class="list-col col-name">نام و نام خانوادگی</div>
-                <div class="list-col col-present">حاضر</div>
-                <div class="list-col col-absent">غایب</div>
-                <div class="list-col col-excused">تأخیر</div>
-                <div class="list-col col-percentage">درصد حضور</div>
-                <div class="list-col col-actions">عملیات</div>
-            </div>
-            <div class="attendance-list-body" id="attendanceListBody"></div>
+          <div class="attendance-list-header">
+            <div class="list-col col-index">ردیف</div>
+            <div class="list-col col-code">کد ملی</div>
+            <div class="list-col col-name">نام و نام خانوادگی</div>
+            <div class="list-col col-present">حاضر</div>
+            <div class="list-col col-absent">غایب</div>
+            <div class="list-col col-excused">تأخیر</div>
+            <div class="list-col col-percentage">درصد حضور</div>
+            <div class="list-col col-actions">عملیات</div>
+          </div>
+          <div class="attendance-list-body" id="attendanceListBody"></div>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="studentAttendanceDetailsModal">
-    <div class="details-modal-content">
-        <button class="close-btn" onclick="closeStudentAttendanceDetailsModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ DETAILS MODAL ══ -->
+    <div class="modal" id="studentAttendanceDetailsModal">
+      <div class="modal-card details-modal-card">
+        <button
+          class="close-btn"
+          onclick="closeStudentAttendanceDetailsModal()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="studentDetailsTitle">جزئیات حضور و غیاب</h2>
         <div class="student-info-header">
-            <div class="student-avatar-small" id="studentAvatarDetails">؟</div>
-            <div class="student-basic-info-details">
-                <div class="student-name-details" id="studentNameDetails"></div>
-                <div class="student-code-details" id="studentCodeDetails"></div>
-            </div>
+          <div class="student-avatar-small" id="studentAvatarDetails">؟</div>
+          <div>
+            <div class="student-name-details" id="studentNameDetails"></div>
+            <div class="student-code-details" id="studentCodeDetails"></div>
+          </div>
         </div>
         <div class="attendance-details-grid">
-            <div class="detail-card">
-                <div class="detail-card-icon present-icon"><i class="fas fa-check"></i></div>
-                <div class="detail-card-info"><div class="detail-card-label">حضور</div><div class="detail-card-value" id="detailPresentCount">0</div></div>
+          <div class="detail-card">
+            <div class="detail-card-icon present-icon">
+              <i class="fas fa-check"></i>
             </div>
-            <div class="detail-card">
-                <div class="detail-card-icon absent-icon"><i class="fas fa-times"></i></div>
-                <div class="detail-card-info"><div class="detail-card-label">غیبت</div><div class="detail-card-value" id="detailAbsentCount">0</div></div>
+            <div>
+              <div class="detail-card-label">حضور</div>
+              <div class="detail-card-value" id="detailPresentCount">0</div>
             </div>
-            <div class="detail-card">
-                <div class="detail-card-icon excused-icon"><i class="fas fa-clock"></i></div>
-                <div class="detail-card-info"><div class="detail-card-label">تأخیر/مرخصی/اخراج</div><div class="detail-card-value" id="detailExcusedCount">0</div></div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-icon absent-icon">
+              <i class="fas fa-times"></i>
             </div>
+            <div>
+              <div class="detail-card-label">غیبت</div>
+              <div class="detail-card-value" id="detailAbsentCount">0</div>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-icon excused-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <div class="detail-card-label">تأخیر/مرخصی/اخراج</div>
+              <div class="detail-card-value" id="detailExcusedCount">0</div>
+            </div>
+          </div>
         </div>
         <div class="attendance-calendar">
-            <div class="calendar-header">
-                <div class="calendar-title"><i class="fas fa-calendar-alt"></i> تقویم حضور</div>
-                <div class="calendar-navigation">
-                    <button class="calendar-nav-btn" onclick="navigateCalendarMonth(-1)"><i class="fas fa-chevron-right"></i></button>
-                    <span class="calendar-current-month" id="calendarCurrentMonth"></span>
-                    <button class="calendar-nav-btn" onclick="navigateCalendarMonth(1)"><i class="fas fa-chevron-left"></i></button>
-                </div>
+          <div class="calendar-header">
+            <div class="calendar-title">
+              <i class="fas fa-calendar-alt"></i> تقویم حضور
             </div>
-            <div class="calendar-weekdays">
-                <div class="calendar-weekday">شنبه</div><div class="calendar-weekday">یکشنبه</div>
-                <div class="calendar-weekday">دوشنبه</div><div class="calendar-weekday">سه‌شنبه</div>
-                <div class="calendar-weekday">چهارشنبه</div><div class="calendar-weekday">پنجشنبه</div>
-                <div class="calendar-weekday">جمعه</div>
+            <div class="calendar-navigation">
+              <button
+                class="calendar-nav-btn"
+                onclick="navigateCalendarMonth(-1)"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+              <span
+                class="calendar-current-month"
+                id="calendarCurrentMonth"
+              ></span>
+              <button
+                class="calendar-nav-btn"
+                onclick="navigateCalendarMonth(1)"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
             </div>
-            <div class="calendar-days" id="calendarDays"></div>
-            <div class="calendar-legend">
-                <div class="legend-item"><div class="legend-box present"></div><span class="legend-label">حاضر</span></div>
-                <div class="legend-item"><div class="legend-box absent"></div><span class="legend-label">غایب</span></div>
-                <div class="legend-item"><div class="legend-box" style="background:#f39c12;border-color:#f39c12;width:16px;height:16px;border-radius:3px;border:2px solid;"></div><span class="legend-label">تأخیر</span></div>
-                <div class="legend-item"><div class="legend-box" style="background:#3498db;border-color:#3498db;width:16px;height:16px;border-radius:3px;border:2px solid;"></div><span class="legend-label">مرخصی</span></div>
-                <div class="legend-item"><div class="legend-box" style="background:#9b59b6;border-color:#9b59b6;width:16px;height:16px;border-radius:3px;border:2px solid;"></div><span class="legend-label">اخراج</span></div>
-                <div class="legend-item"><div class="legend-box weekend"></div><span class="legend-label">تعطیل</span></div>
+          </div>
+          <div class="calendar-weekdays">
+            <div class="calendar-weekday">شنبه</div>
+            <div class="calendar-weekday">یکشنبه</div>
+            <div class="calendar-weekday">دوشنبه</div>
+            <div class="calendar-weekday">سه‌شنبه</div>
+            <div class="calendar-weekday">چهارشنبه</div>
+            <div class="calendar-weekday">پنجشنبه</div>
+            <div class="calendar-weekday">جمعه</div>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
+          <div class="calendar-legend">
+            <div class="legend-item">
+              <div class="legend-box present"></div>
+              <span class="legend-label">حاضر</span>
             </div>
+            <div class="legend-item">
+              <div class="legend-box absent"></div>
+              <span class="legend-label">غایب</span>
+            </div>
+            <div class="legend-item">
+              <div
+                class="legend-box"
+                style="
+                  background: rgba(243, 156, 18, 0.15);
+                  border-color: var(--late);
+                  width: 14px;
+                  height: 14px;
+                  border-radius: 3px;
+                  border: 2px solid;
+                "
+              ></div>
+              <span class="legend-label">تأخیر</span>
+            </div>
+            <div class="legend-item">
+              <div
+                class="legend-box"
+                style="
+                  background: rgba(74, 144, 217, 0.15);
+                  border-color: var(--leave);
+                  width: 14px;
+                  height: 14px;
+                  border-radius: 3px;
+                  border: 2px solid;
+                "
+              ></div>
+              <span class="legend-label">مرخصی</span>
+            </div>
+            <div class="legend-item">
+              <div
+                class="legend-box"
+                style="
+                  background: rgba(142, 95, 212, 0.15);
+                  border-color: var(--expulsion);
+                  width: 14px;
+                  height: 14px;
+                  border-radius: 3px;
+                  border: 2px solid;
+                "
+              ></div>
+              <span class="legend-label">اخراج</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-box weekend"></div>
+              <span class="legend-label">تعطیل</span>
+            </div>
+          </div>
         </div>
         <div class="attendance-timeline">
-            <h3 class="timeline-title"><i class="fas fa-history"></i> تاریخچه حضور و غیاب</h3>
-            <div class="timeline-container" id="attendanceTimeline"></div>
+          <h3 class="timeline-title">
+            <i class="fas fa-history"></i> تاریخچه حضور و غیاب
+          </h3>
+          <div class="timeline-container" id="attendanceTimeline"></div>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="smsModal">
-    <div class="sms-modal-content">
-        <button class="close-btn" onclick="closeSmsModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ SMS MODAL ══ -->
+    <div class="modal" id="smsModal">
+      <div class="modal-card sms-modal-card">
+        <button class="close-btn" onclick="closeSmsModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title">ارسال پیامک</h2>
         <div class="sms-student-info" id="smsStudentInfo"></div>
         <div class="sms-reason-section">
-            <label class="form-label"><i class="fas fa-tag"></i> دلیل ارسال پیامک:</label>
-            <div class="sms-reason-buttons">
-                <button class="sms-reason-btn" data-reason="absence" onclick="selectSmsReason('absence')"><i class="fas fa-user-times"></i> غیبت</button>
-                <button class="sms-reason-btn" data-reason="delay" onclick="selectSmsReason('delay')"><i class="fas fa-clock"></i> تاخیر</button>
-                <button class="sms-reason-btn" data-reason="leave" onclick="selectSmsReason('leave')"><i class="fas fa-door-open"></i> مرخصی</button>
-            </div>
+          <label class="form-label"
+            ><i class="fas fa-tag"></i> دلیل ارسال پیامک:</label
+          >
+          <div class="sms-reason-buttons">
+            <button
+              class="sms-reason-btn"
+              data-reason="absence"
+              onclick="selectSmsReason('absence')"
+            >
+              <i class="fas fa-user-times"></i> غیبت
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="delay"
+              onclick="selectSmsReason('delay')"
+            >
+              <i class="fas fa-clock"></i> تاخیر
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="leave"
+              onclick="selectSmsReason('leave')"
+            >
+              <i class="fas fa-door-open"></i> مرخصی
+            </button>
+          </div>
         </div>
         <div class="sms-message-section">
-            <label class="form-label"><i class="fas fa-comment-alt"></i> متن پیامک:</label>
-            <textarea class="sms-textarea" id="smsMessage" placeholder="متن پیامک خود را وارد کنید..."></textarea>
-            <div class="sms-char-count"><span id="smsCharCount">0</span> / 300 کاراکتر</div>
+          <label class="form-label"
+            ><i class="fas fa-comment-alt"></i> متن پیامک:</label
+          >
+          <textarea
+            class="sms-textarea"
+            id="smsMessage"
+            placeholder="متن پیامک خود را وارد کنید..."
+          ></textarea>
+          <div class="sms-char-count">
+            <span id="smsCharCount">0</span> / 300 کاراکتر
+          </div>
         </div>
         <div class="sms-quick-messages">
-            <h3 class="sms-quick-title"><i class="fas fa-bolt"></i> پیام‌های سریع</h3>
-            <div class="sms-quick-grid" id="smsQuickGrid"></div>
+          <h3 class="sms-quick-title">
+            <i class="fas fa-bolt"></i> پیام‌های سریع
+          </h3>
+          <div class="sms-quick-grid" id="smsQuickGrid"></div>
         </div>
         <div class="sms-actions">
-            <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()"><i class="fas fa-save"></i> ذخیره متن</button>
-            <button class="sms-btn sms-btn-send" onclick="sendSms()"><i class="fas fa-paper-plane"></i> ارسال پیامک</button>
+          <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()">
+            <i class="fas fa-save"></i> ذخیره
+          </button>
+          <button class="sms-btn sms-btn-send" onclick="sendSms()">
+            <i class="fas fa-paper-plane"></i> ارسال پیامک
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="statsModal">
-    <div class="stats-modal-content">
-        <button class="close-btn" onclick="closeStatsModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ STATS MODAL ══ -->
+    <div class="modal" id="statsModal">
+      <div class="modal-card stats-modal-card">
+        <button class="close-btn" onclick="closeStatsModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title">آمار کلی حضور و غیاب</h2>
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-classes"><i class="fas fa-chalkboard"></i></div>
-                <div class="stat-info"><div class="stat-label">تعداد کلاس‌ها</div><div class="stat-value" id="statTotalClasses">0</div></div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-classes">
+              <i class="fas fa-chalkboard"></i>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-students"><i class="fas fa-users"></i></div>
-                <div class="stat-info"><div class="stat-label">تعداد دانش‌آموزان</div><div class="stat-value" id="statTotalStudents">0</div></div>
+            <div>
+              <div class="stat-label">تعداد کلاس‌ها</div>
+              <div class="stat-value" id="statTotalClasses">0</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-present"><i class="fas fa-user-check"></i></div>
-                <div class="stat-info"><div class="stat-label">حضور امروز</div><div class="stat-value" id="statTodayPresent">—</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-students">
+              <i class="fas fa-users"></i>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon stat-icon-absent"><i class="fas fa-user-times"></i></div>
-                <div class="stat-info"><div class="stat-label">غیبت امروز</div><div class="stat-value" id="statTodayAbsent">—</div></div>
+            <div>
+              <div class="stat-label">تعداد دانش‌آموزان</div>
+              <div class="stat-value" id="statTotalStudents">0</div>
             </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-present">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <div>
+              <div class="stat-label">حضور امروز</div>
+              <div class="stat-value" id="statTodayPresent">—</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-absent">
+              <i class="fas fa-user-times"></i>
+            </div>
+            <div>
+              <div class="stat-label">غیبت امروز</div>
+              <div class="stat-value" id="statTodayAbsent">—</div>
+            </div>
+          </div>
         </div>
-        <div class="chart-section">
-            <div class="chart-header-with-nav">
-                <h3 class="chart-title"><i class="fas fa-chart-line"></i> نمودار کلاس‌ها</h3>
-                <div class="chart-navigation">
-                    <button class="chart-nav-btn" onclick="navigateChartMonth('prev')"><i class="fas fa-chevron-right"></i></button>
-                    <button class="chart-nav-btn" onclick="navigateChartMonth('next')"><i class="fas fa-chevron-left"></i></button>
-                </div>
+        <div class="chart-section-modal">
+          <div class="chart-header-with-nav">
+            <h3 class="chart-title-modal">
+              <i class="fas fa-chart-line"></i> نمودار کلاس‌ها
+            </h3>
+            <div class="chart-navigation">
+              <button
+                class="chart-nav-btn"
+                onclick="navigateChartMonth('prev')"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+              <button
+                class="chart-nav-btn"
+                onclick="navigateChartMonth('next')"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
             </div>
-            <div class="chart-canvas-container"><canvas id="attendanceChart"></canvas></div>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="attendanceChart"></canvas>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="advancedReportsModal">
-    <div class="reports-modal-content">
-        <button class="close-btn" onclick="closeAdvancedReportsModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ ADVANCED REPORTS MODAL ══ -->
+    <div class="modal" id="advancedReportsModal">
+      <div class="modal-card reports-modal-card">
+        <button class="close-btn" onclick="closeAdvancedReportsModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title">گزارش‌های پیشرفته</h2>
         <div class="report-tabs">
-            <button class="report-tab active" onclick="switchReportTab('comparison', event)"><i class="fas fa-balance-scale"></i> مقایسه کلاس‌ها</button>
-            <button class="report-tab" onclick="switchReportTab('absent', event)"><i class="fas fa-exclamation-triangle"></i> دانش‌آموزان پرغیبت</button>
-            <button class="report-tab" onclick="switchReportTab('charts', event)"><i class="fas fa-chart-pie"></i> نمودارهای تحلیلی</button>
+          <button
+            class="report-tab active"
+            onclick="switchReportTab('comparison', event)"
+          >
+            <i class="fas fa-balance-scale"></i> مقایسه کلاس‌ها
+          </button>
+          <button class="report-tab" onclick="switchReportTab('absent', event)">
+            <i class="fas fa-exclamation-triangle"></i> دانش‌آموزان پرغیبت
+          </button>
+          <button class="report-tab" onclick="switchReportTab('charts', event)">
+            <i class="fas fa-chart-pie"></i> نمودارهای تحلیلی
+          </button>
         </div>
         <div id="comparisonReport" class="report-content active">
-            <div class="date-range-filter">
-                <label class="form-label"><i class="fas fa-calendar-alt"></i> انتخاب بازه زمانی:</label>
-                <div class="date-range-inputs">
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="comparisonStartDate" placeholder="از تاریخ">
-                    <span class="date-separator">تا</span>
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="comparisonEndDate" placeholder="تا تاریخ">
-                    <button class="filter-apply-btn" onclick="generateComparisonReport()"><i class="fas fa-sync"></i> بروزرسانی</button>
-                </div>
+          <div class="date-range-filter">
+            <label class="form-label"
+              ><i class="fas fa-calendar-alt"></i> انتخاب بازه زمانی:</label
+            >
+            <div class="date-range-inputs">
+              <input
+                data-jdp
+                type="text"
+                class="form-input"
+                id="comparisonStartDate"
+                placeholder="از تاریخ"
+                autocomplete="off"
+                readonly
+              />
+              <span class="date-separator">تا</span>
+              <input
+                data-jdp
+                type="text"
+                class="form-input"
+                id="comparisonEndDate"
+                placeholder="تا تاریخ"
+                autocomplete="off"
+                readonly
+              />
+              <button
+                class="filter-apply-btn"
+                onclick="generateComparisonReport()"
+              >
+                <i class="fas fa-sync"></i> بروزرسانی
+              </button>
             </div>
-            <div class="comparison-table">
-                <div class="comparison-header">
-                    <div class="comparison-cell">کلاس</div><div class="comparison-cell">رشته</div>
-                    <div class="comparison-cell">تعداد دانش‌آموز</div><div class="comparison-cell">حضور</div>
-                    <div class="comparison-cell">غیبت</div><div class="comparison-cell">درصد حضور</div>
-                </div>
-                <div id="comparisonTableBody"></div>
+          </div>
+          <div class="comparison-table">
+            <div class="comparison-header">
+              <div class="comparison-cell">کلاس</div>
+              <div class="comparison-cell">رشته</div>
+              <div class="comparison-cell">دانش‌آموز</div>
+              <div class="comparison-cell">حضور</div>
+              <div class="comparison-cell">غیبت</div>
+              <div class="comparison-cell">درصد</div>
             </div>
+            <div id="comparisonTableBody"></div>
+          </div>
         </div>
         <div id="absentReport" class="report-content">
-            <div class="threshold-input-group">
-                <label><i class="fas fa-sliders-h"></i> آستانه غیبت (بیش از):</label>
-                <input type="number" id="absentThreshold" value="5" min="1" max="30" onchange="generateAbsentReport()">
-                <span style="color:rgba(255,255,255,.7);margin-right:10px;">جلسه</span>
+          <div class="threshold-input-group">
+            <label
+              ><i class="fas fa-sliders-h"></i> آستانه غیبت (بیش از):</label
+            >
+            <input
+              type="number"
+              id="absentThreshold"
+              value="5"
+              min="1"
+              max="30"
+              onchange="generateAbsentReport()"
+            />
+            <span style="color: var(--text-muted); font-size: 13px">جلسه</span>
+          </div>
+          <div class="date-range-filter">
+            <div class="date-range-inputs">
+              <input
+                data-jdp
+                type="text"
+                class="form-input"
+                id="absentStartDate"
+                placeholder="از تاریخ"
+                autocomplete="off"
+                readonly
+              />
+              <span class="date-separator">تا</span>
+              <input
+                data-jdp
+                type="text"
+                class="form-input"
+                id="absentEndDate"
+                placeholder="تا تاریخ"
+                autocomplete="off"
+                readonly
+              />
+              <button class="filter-apply-btn" onclick="generateAbsentReport()">
+                <i class="fas fa-sync"></i> بروزرسانی
+              </button>
             </div>
-            <div class="date-range-filter">
-                <div class="date-range-inputs">
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="absentStartDate" placeholder="از تاریخ">
-                    <span class="date-separator">تا</span>
-                    <input data-jdp type="text" class="form-input jalali-datepicker" id="absentEndDate" placeholder="تا تاریخ">
-                    <button class="filter-apply-btn" onclick="generateAbsentReport()"><i class="fas fa-sync"></i> بروزرسانی</button>
-                </div>
-            </div>
-            <div class="absent-students-list" id="absentStudentsList"></div>
+          </div>
+          <div class="absent-students-list" id="absentStudentsList"></div>
         </div>
         <div id="chartsReport" class="report-content">
-            <div class="chart-section">
-                <h3 class="chart-title"><i class="fas fa-chart-area"></i> نمودار روند حضور هر کلاس</h3>
-                <div class="chart-canvas-container"><canvas id="trendChart"></canvas></div>
+          <div class="chart-section-modal">
+            <h3 class="chart-title-modal" style="margin-bottom: 16px">
+              <i class="fas fa-chart-area"></i> نمودار روند حضور هر کلاس
+            </h3>
+            <div class="chart-canvas-container">
+              <canvas id="trendChart"></canvas>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal" id="editAttendanceModal">
-    <div class="edit-modal-content">
-        <button class="close-btn" onclick="closeEditAttendanceModal()"><i class="fas fa-times"></i></button>
+    <!-- ══ EDIT MODAL ══ -->
+    <div class="modal" id="editAttendanceModal">
+      <div class="modal-card edit-modal-card">
+        <button class="close-btn" onclick="closeEditAttendanceModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <h2 class="modal-title" id="editAttendanceTitle">ویرایش حضور و غیاب</h2>
         <div class="student-info-header">
-            <div class="student-avatar-small" id="editStudentAvatar">؟</div>
-            <div class="student-basic-info-details">
-                <div class="student-name-details" id="editStudentName"></div>
-                <div class="student-code-details" id="editStudentCode"></div>
-            </div>
+          <div class="student-avatar-small" id="editStudentAvatar">؟</div>
+          <div>
+            <div class="student-name-details" id="editStudentName"></div>
+            <div class="student-code-details" id="editStudentCode"></div>
+          </div>
         </div>
         <div class="edit-attendance-grid" id="editAttendanceGrid"></div>
-        <button class="save-edit-btn" onclick="saveEditedAttendance()"><i class="fas fa-save"></i> ذخیره تغییرات</button>
+        <button class="save-edit-btn" onclick="saveEditedAttendance()">
+          <i class="fas fa-save"></i> ذخیره تغییرات
+        </button>
+      </div>
     </div>
-</div>
 
-<script src="../lib/jalaali.min.js"></script>
-<script src="../date/dist/jalalidatepicker.min.js"></script>
-<script src="../lib/chart.min.js"></script>
-<script src="../lib/xlsx.full.min.js"></script>
+    <!-- SCRIPTS -->
+    <script src="../lib/jalaali.min.js"></script>
+    <script src="../date/dist/jalalidatepicker.min.js"></script>
+    <script src="../lib/chart.min.js"></script>
+    <script src="../lib/xlsx.full.min.js"></script>
 
-<script>
-window.addEventListener('DOMContentLoaded', function() {
-    var missing = [];
-    if (typeof jalaali === 'undefined') missing.push('jalaali.min.js');
-    if (typeof Chart === 'undefined') missing.push('chart.min.js');
-    if (typeof XLSX === 'undefined') missing.push('xlsx.full.min.js');
-    
-    if (missing.length) {
-        console.error('کتابخانه‌های زیر لود نشدند:', missing.join(', '));
-        var el = document.getElementById('lib-error');
-        if (el) {
-            el.querySelector('p').innerHTML = 
-                'فایل‌های زیر یافت نشدند:<br><strong>' + 
-                missing.join(' — ') + '</strong>';
-            el.classList.add('show');
+    <script>
+      /* ── Lib check ── */
+      window.addEventListener("DOMContentLoaded", function () {
+        var missing = [];
+        if (typeof jalaali === "undefined") missing.push("jalaali.min.js");
+        if (typeof Chart === "undefined") missing.push("chart.min.js");
+        if (typeof XLSX === "undefined") missing.push("xlsx.full.min.js");
+        if (missing.length) {
+          var el = document.getElementById("lib-error");
+          if (el) {
+            document.getElementById("libErrorMsg").innerHTML =
+              "فایل‌های زیر یافت نشدند:<br><strong>" +
+              missing.join(" — ") +
+              "</strong>";
+            el.classList.add("show");
+          }
+          var loader = document.getElementById("pageLoader");
+          if (loader) loader.classList.add("hide");
         }
-        var loader = document.getElementById('pageLoader');
-        if (loader) loader.classList.add('hide');
-    } else {
-        console.log('✅ همه کتابخانه‌ها با موفقیت لود شدند');
-    }
-});
-</script>
+      });
 
-<script src="../javaScript/attendance.js"></script>
-<script src="../javaScript/menu.js"></script>
-<script>
-function closeEditAttendanceModal(){
-    document.getElementById('editAttendanceModal')?.classList.remove('active');
-}
-function saveEditedAttendance(){
-    if(typeof toast==='function') toast('این قابلیت به زودی اضافه می‌شود','info');
-}
-function generateComparisonReport(){
-    if(typeof toast==='function') toast('در حال توسعه...','info');
-}
-</script>
-</body>
+      /* ── Sidebar ── */
+      document.addEventListener("DOMContentLoaded", function () {
+        /* hamburger */
+        var menuToggle = document.getElementById("menuToggle");
+        var sidebar = document.getElementById("sidebar");
+        var overlay = document.getElementById("sidebarOverlay");
+        function openSidebar() {
+          sidebar.classList.add("active");
+          overlay.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+        function closeSidebar() {
+          sidebar.classList.remove("active");
+          overlay.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+        if (menuToggle) menuToggle.addEventListener("click", openSidebar);
+        if (overlay) overlay.addEventListener("click", closeSidebar);
+        var closeBtn = document.getElementById("sidebarCloseBtn");
+        if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            closeSidebar();
+          }
+        });
+
+        /* submenu accordion */
+        document
+          .querySelectorAll(".menu-item.has-submenu")
+          .forEach(function (item) {
+            var link = item.querySelector(".menu-link");
+            if (!link) return;
+            link.addEventListener("click", function (e) {
+              e.preventDefault();
+              document
+                .querySelectorAll(".menu-item.has-submenu")
+                .forEach(function (o) {
+                  if (o !== item) o.classList.remove("open");
+                });
+              item.classList.toggle("open");
+            });
+          });
+
+        /* open class management menu on load */
+        var classMgmt = document.getElementById("classMgmtMenu");
+        if (classMgmt) classMgmt.classList.add("open");
+
+        /* fetch user info for sidebar */
+        fetch("../api/stats.php")
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (d) {
+            if (d.success && d.currentUser) {
+              var u = d.currentUser;
+              var letter = (u.name || "م").charAt(0);
+              var mn = document.getElementById("managerName");
+              var mr = document.getElementById("managerRole");
+              var av = document.getElementById("managerAvatarLetter");
+              var pb = document.getElementById("profileBtnLetter");
+              var ai = document.getElementById("adminInfoDisplay");
+              if (mn) mn.textContent = u.name || "";
+              if (mr) mr.textContent = u.role_label || u.role || "";
+              if (av) av.textContent = letter;
+              if (pb) pb.textContent = letter;
+              if (ai)
+                ai.innerHTML =
+                  '<span class="live-dot"></span>' +
+                  (u.role_label || "") +
+                  ": " +
+                  (u.name || "");
+            }
+          })
+          .catch(function () {});
+      });
+
+      /* ── Global Toast ── */
+      var _toastTimer = null;
+      function toast(msg, type) {
+        type = type || "success";
+        var el = document.getElementById("globalToast");
+        var iconEl = document.getElementById("toastIcon");
+        var titleEl = document.getElementById("toastTitle");
+        var msgEl = document.getElementById("toastMsg");
+        if (!el) return;
+        el.className = "toast-notification " + (type === "success" ? "" : type);
+        var icons = {
+          success: "fa-check-circle",
+          error: "fa-times-circle",
+          warning: "fa-exclamation-triangle",
+          info: "fa-info-circle",
+        };
+        var titles = {
+          success: "موفقیت‌آمیز!",
+          error: "خطا!",
+          warning: "هشدار!",
+          info: "اطلاع‌رسانی",
+        };
+        if (iconEl) iconEl.className = "fas " + (icons[type] || icons.success);
+        if (titleEl) titleEl.textContent = titles[type] || titles.success;
+        if (msgEl) msgEl.textContent = msg;
+        el.classList.add("show");
+        if (_toastTimer) clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(function () {
+          closeGlobalToast();
+        }, 3500);
+      }
+      function closeGlobalToast() {
+        var el = document.getElementById("globalToast");
+        if (el) {
+          el.classList.remove("show");
+          el.classList.add("hide");
+          setTimeout(function () {
+            el.classList.remove("hide");
+          }, 400);
+        }
+      }
+
+      function closeEditAttendanceModal() {
+        document
+          .getElementById("editAttendanceModal")
+          ?.classList.remove("active");
+      }
+      function saveEditedAttendance() {
+        toast("این قابلیت به زودی اضافه می‌شود", "info");
+      }
+      function generateComparisonReport() {
+        toast("در حال توسعه...", "info");
+      }
+    </script>
+
+    <!-- MAIN JS — original attendance.js goes here -->
+    <script src="../javaScript/attendance.js"></script>
+  </body>
 </html>

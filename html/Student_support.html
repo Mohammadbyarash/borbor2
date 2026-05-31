@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — پشتیبانی</title>
+<link rel="icon" href="../image/iconB.png">
+       
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+
+:root {
+  --bg-main:      #0f1629;
+  --bg-card:      #162040;
+  --bg-card2:     #1a2650;
+  --bg-sidebar:   #0b1120;
+  --accent:       #4a90d9;
+  --accent2:      #8e5fd4;
+  --accent3:      #06d6a0;
+  --accent4:      #f39c12;
+  --accent5:      #e74c3c;
+  --present:      #2ecc71;
+  --text:         #e8f0ff;
+  --text-muted:   rgba(180,200,255,0.48);
+  --border:       rgba(255,255,255,0.07);
+  --border-hover: rgba(74,144,217,0.35);
+  --radius:       18px;
+  --radius-sm:    11px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: "Vazirmatn","Shabnam",Tahoma,sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%,  rgba(74,144,217,.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,.10) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(74,144,217,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,144,217,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events:none; z-index:0;
+}
+
+/* ════ SIDEBAR ════ */
+.sidebar {
+  width: 258px;
+  background: var(--bg-sidebar);
+  padding: 26px 14px;
+  border-left: 1px solid var(--border);
+  position: fixed; right:0; top:0;
+  height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 500;
+  display: flex; flex-direction: column;
+  transform: translateX(110%);
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,.5);
+}
+.sidebar.active { transform: translateX(0) !important; }
+.sidebar-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.65); z-index:499;
+}
+.sidebar-overlay.active { display:block; }
+
+.logo { text-align:center; margin-bottom:4px; font-size:28px; font-weight:900; letter-spacing:-1px; color:#fff; font-family:"Shabnam",sans-serif; }
+.logo span { color:var(--accent); }
+.logo-sub { text-align:center; font-size:10px; color:var(--text-muted); margin-bottom:18px; letter-spacing:1px; text-transform:uppercase; }
+
+.sidebar-close-btn {
+  position:absolute; top:14px; left:14px;
+  width:32px; height:32px;
+  background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.2);
+  border-radius:50%; color:var(--accent5);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:all .2s;
+}
+.sidebar-close-btn:hover { background:var(--accent5); color:#fff; transform:rotate(90deg); }
+
+.student-block {
+  background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.10));
+  border:1px solid rgba(74,144,217,.2);
+  border-radius:var(--radius-sm);
+  padding:15px 13px; margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.student-block::before {
+  content:''; position:absolute; top:-20px; left:-20px; width:80px; height:80px;
+  background:radial-gradient(circle,rgba(74,144,217,.15),transparent 70%); pointer-events:none;
+}
+.student-avatar {
+  width:46px; height:46px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:800; flex-shrink:0;
+  box-shadow:0 4px 14px rgba(74,144,217,.35);
+}
+.student-name { font-size:13px; font-weight:700; margin-bottom:2px; }
+.student-role { font-size:10px; color:var(--text-muted); }
+.student-badge {
+  margin-top:7px; display:inline-block;
+  background:rgba(6,214,160,.12); color:var(--accent3);
+  font-size:9px; font-weight:700; padding:2px 9px; border-radius:20px;
+  border:1px solid rgba(6,214,160,.2);
+}
+
+.nav-section-label {
+  font-size:9px; font-weight:700; color:rgba(180,200,255,.28);
+  letter-spacing:1.5px; text-transform:uppercase; padding:0 14px; margin:14px 0 8px;
+}
+.nav-item { margin-bottom:2px; }
+.nav-item a {
+  color:rgba(180,200,255,.58); text-decoration:none; padding:10px 14px;
+  display:flex; align-items:center; gap:11px;
+  border-radius:var(--radius-sm); font-size:12.5px; font-weight:500;
+  transition:all .2s; position:relative;
+}
+.nav-item a i { font-size:14px; width:20px; text-align:center; flex-shrink:0; opacity:.75; }
+.nav-item a:hover { background:rgba(255,255,255,.05); color:#fff; }
+.nav-item.active a {
+  background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.05));
+  color:#fff; font-weight:700; border:1px solid rgba(74,144,217,.22);
+}
+.nav-item.active a::before {
+  content:''; position:absolute; right:0; top:50%; transform:translateY(-50%);
+  width:3px; height:65%; background:var(--accent); border-radius:3px 0 0 3px;
+}
+.nav-badge {
+  margin-right:auto; background:var(--accent5); color:#fff;
+  font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:20px;
+  min-width:20px; text-align:center;
+}
+.nav-divider { height:1px; background:var(--border); margin:10px 4px; }
+.sidebar-footer {
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--border);
+  font-size:10px; color:var(--text-muted); text-align:center; line-height:1.7;
+}
+
+/* ════ HAMBURGER ════ */
+.menu-toggle {
+  position:fixed; top:16px; right:20px; z-index:300;
+  width:44px; height:44px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s; box-shadow:0 4px 16px rgba(0,0,0,.3);
+  color:var(--text-muted); font-size:18px;
+}
+.menu-toggle:hover { border-color:var(--border-hover); color:var(--text); }
+
+/* ════ MAIN ════ */
+.main-content {
+  min-height:100vh; width:100%;
+  padding:72px 24px 36px;
+  position:relative; z-index:1;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:22px; gap:14px; flex-wrap:wrap;
+  animation:fadeUp .4s ease both;
+}
+.greeting-block h1 { font-size:20px; font-weight:800; line-height:1.3; }
+.greeting-block h1 span { color:var(--accent); }
+.greeting-block p {
+  font-size:11.5px; color:var(--text-muted);
+  margin-top:5px; display:flex; align-items:center; gap:7px;
+}
+.live-dot {
+  width:6px; height:6px; background:var(--accent3);
+  border-radius:50%; animation:pulse 2s infinite; flex-shrink:0;
+}
+@keyframes pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,.5)}
+  50%{box-shadow:0 0 0 5px rgba(6,214,160,0)}
+}
+.top-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.action-btn {
+  position:relative; width:40px; height:40px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text-muted); font-size:15px; transition:all .2s;
+}
+.action-btn:hover { color:#fff; border-color:var(--border-hover); }
+.notif-dot {
+  position:absolute; top:8px; left:8px; width:7px; height:7px;
+  background:var(--accent5); border-radius:50%; border:2px solid var(--bg-main);
+}
+.profile-btn {
+  width:40px; height:40px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:#fff;
+  box-shadow:0 3px 10px rgba(74,144,217,.35);
+}
+
+/* ════ SECTION HEADER ════ */
+.sec-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+.sec-title { font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:8px; }
+.sec-title i { color:var(--accent); font-size:14px; }
+.sec-link {
+  font-size:11px; color:var(--accent); cursor:pointer;
+  text-decoration:none; padding:3px 8px; border-radius:6px; transition:background .2s;
+}
+.sec-link:hover { background:rgba(74,144,217,.1); }
+
+/* ════ SEARCH BAR ════ */
+.search-wrap {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  margin-bottom:20px; animation:fadeUp .45s .04s ease both;
+}
+.search-inner {
+  display:flex; align-items:center; gap:12px;
+  background:var(--bg-card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:12px 16px;
+  transition:border-color .2s;
+}
+.search-inner:focus-within { border-color:rgba(74,144,217,.4); }
+.search-inner i { color:var(--text-muted); font-size:14px; flex-shrink:0; }
+.search-inner input {
+  background:none; border:none; outline:none;
+  color:var(--text); font-family:"Vazirmatn",sans-serif;
+  font-size:13px; width:100%;
+}
+.search-inner input::placeholder { color:var(--text-muted); }
+.search-hint { font-size:11px; color:var(--text-muted); margin-top:10px; display:flex; align-items:center; gap:6px; }
+
+/* ════ STAT ROW ════ */
+.stat-row {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px; margin-bottom:20px;
+}
+.stat-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 14px 16px;
+  position:relative; overflow:hidden;
+  transition:transform .28s,box-shadow .28s,border-color .28s;
+  animation:fadeUp .45s ease both; min-width:0; cursor:default;
+}
+.stat-card::before {
+  content:''; position:absolute; top:0; right:0; left:0; height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.stat-card.blue::before   { background:linear-gradient(90deg,#4a90d9,#8e5fd4); }
+.stat-card.green::before  { background:linear-gradient(90deg,#06d6a0,#2ecc71); }
+.stat-card.yellow::before { background:linear-gradient(90deg,#f39c12,#fbbf24); }
+.stat-card.red::before    { background:linear-gradient(90deg,#e74c3c,#f97316); }
+.stat-card:nth-child(1){animation-delay:.06s} .stat-card:nth-child(2){animation-delay:.10s}
+.stat-card:nth-child(3){animation-delay:.14s} .stat-card:nth-child(4){animation-delay:.18s}
+.stat-card:hover { transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,.3); border-color:rgba(74,144,217,.18); }
+.stat-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:6px; }
+.stat-icon { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.blue   .stat-icon { background:rgba(74,144,217,.15);  color:var(--accent);  }
+.green  .stat-icon { background:rgba(6,214,160,.15);   color:var(--accent3); }
+.yellow .stat-icon { background:rgba(243,156,18,.15);  color:var(--accent4); }
+.red    .stat-icon { background:rgba(231,76,60,.15);   color:var(--accent5); }
+.stat-badge { font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+.blue   .stat-badge { background:rgba(74,144,217,.15);  color:var(--accent);  }
+.green  .stat-badge { background:rgba(6,214,160,.15);   color:var(--accent3); }
+.yellow .stat-badge { background:rgba(243,156,18,.15);  color:var(--accent4); }
+.red    .stat-badge { background:rgba(231,76,60,.15);   color:var(--accent5); }
+.stat-value { font-size:30px; font-weight:900; line-height:1; font-family:"Shabnam",sans-serif; margin-bottom:4px; }
+.stat-label { font-size:11px; color:var(--text-muted); font-weight:500; }
+
+/* ════ CATEGORIES ════ */
+.cat-row {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px; margin-bottom:20px;
+  animation:fadeUp .45s .20s ease both;
+}
+.cat-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 14px;
+  text-align:center; cursor:pointer;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  position:relative; overflow:hidden;
+}
+.cat-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,.25); border-color:var(--border-hover); }
+.cat-card.active-cat { border-color:rgba(74,144,217,.4); background:rgba(74,144,217,.07); }
+.cat-icon-wrap {
+  width:48px; height:48px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; margin:0 auto 10px;
+}
+.cat-name { font-size:12px; font-weight:700; margin-bottom:4px; }
+.cat-count { font-size:10px; color:var(--text-muted); }
+
+/* ════ MAIN ROW ════ */
+.main-row {
+  display:grid; grid-template-columns:1.3fr 0.7fr;
+  gap:16px; margin-bottom:20px;
+}
+
+/* ── FAQ ── */
+.faq-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  animation:fadeUp .45s .24s ease both;
+}
+.faq-item {
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  margin-bottom:8px; overflow:hidden; transition:border-color .2s;
+}
+.faq-item:last-child { margin-bottom:0; }
+.faq-item.open { border-color:rgba(74,144,217,.3); }
+.faq-q {
+  display:flex; align-items:center; gap:10px;
+  padding:13px 14px; cursor:pointer;
+  font-size:13px; font-weight:600;
+  transition:background .2s; user-select:none;
+}
+.faq-q:hover { background:rgba(255,255,255,.03); }
+.faq-item.open .faq-q { background:rgba(74,144,217,.07); }
+.faq-q-icon {
+  width:28px; height:28px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; flex-shrink:0;
+}
+.faq-q-text { flex:1; }
+.faq-arrow {
+  font-size:11px; color:var(--text-muted);
+  transition:transform .3s; flex-shrink:0;
+}
+.faq-item.open .faq-arrow { transform:rotate(180deg); color:var(--accent); }
+.faq-a {
+  max-height:0; overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1), padding .3s;
+  font-size:12px; color:var(--text-muted); line-height:1.7;
+}
+.faq-item.open .faq-a { max-height:200px; }
+.faq-a-inner { padding:0 14px 14px 14px; padding-right:52px; }
+
+/* ── CONTACT CARD ── */
+.contact-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  animation:fadeUp .45s .28s ease both;
+  display:flex; flex-direction:column; gap:10px;
+}
+.contact-item {
+  display:flex; align-items:center; gap:12px;
+  background:var(--bg-card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:13px 14px;
+  transition:border-color .2s, transform .2s;
+  cursor:default;
+}
+.contact-item:hover { border-color:var(--border-hover); transform:translateX(-3px); }
+.contact-icon {
+  width:38px; height:38px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; flex-shrink:0;
+}
+.contact-info { flex:1; min-width:0; }
+.contact-label { font-size:10px; color:var(--text-muted); margin-bottom:2px; }
+.contact-value { font-size:13px; font-weight:700; }
+.contact-hours { font-size:9.5px; color:var(--text-muted); margin-top:2px; }
+
+/* ════ BOTTOM ROW ════ */
+.bot-row {
+  display:grid; grid-template-columns:1.2fr 0.8fr;
+  gap:16px;
+}
+
+/* ── TICKET FORM ── */
+.ticket-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  animation:fadeUp .45s .32s ease both;
+}
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.form-row.full { grid-template-columns:1fr; }
+.form-group { display:flex; flex-direction:column; gap:6px; }
+.form-label { font-size:11px; font-weight:600; color:var(--text-muted); }
+.form-control {
+  background:var(--bg-card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:10px 13px;
+  color:var(--text); font-family:"Vazirmatn",sans-serif; font-size:12.5px;
+  outline:none; transition:border-color .2s; width:100%;
+}
+.form-control:focus { border-color:rgba(74,144,217,.4); }
+.form-control::placeholder { color:var(--text-muted); }
+select.form-control { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(180,200,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 12px center; padding-left:32px; }
+select.form-control option { background:var(--bg-card2); color:var(--text); }
+textarea.form-control { resize:vertical; min-height:90px; }
+
+/* ── UPLOAD AREA ── */
+.upload-area {
+  border:1.5px dashed rgba(74,144,217,.3); border-radius:var(--radius-sm);
+  padding:22px 18px; text-align:center; cursor:pointer;
+  transition:border-color .2s, background .2s;
+  background:rgba(74,144,217,.03); position:relative;
+}
+.upload-area:hover,
+.upload-area.drag-over { border-color:rgba(74,144,217,.6); background:rgba(74,144,217,.08); }
+.upload-area input[type="file"] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+}
+.upload-icon { font-size:22px; color:var(--accent); margin-bottom:8px; display:block; opacity:.8; }
+.upload-main-text { font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px; }
+.upload-sub-text  { font-size:10px; color:rgba(180,200,255,.32); display:block; }
+
+/* file items */
+.file-list-wrap { margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+.file-item {
+  display:flex; align-items:center; gap:9px;
+  background:var(--bg-card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:9px 12px;
+  animation:fadeUp .25s ease both;
+}
+.file-item-icon {
+  width:30px; height:30px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; flex-shrink:0;
+}
+.file-item-info { flex:1; min-width:0; }
+.file-item-name { font-size:11px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.file-item-size { font-size:10px; color:var(--text-muted); margin-top:1px; }
+.file-item-remove {
+  width:24px; height:24px; border-radius:50%;
+  background:rgba(231,76,60,.12); border:none; color:var(--accent5);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:11px; transition:all .2s; flex-shrink:0;
+}
+.file-item-remove:hover { background:var(--accent5); color:#fff; }
+
+.submit-btn {
+  width:100%; padding:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none; border-radius:var(--radius-sm);
+  color:#fff; font-family:"Vazirmatn",sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer;
+  transition:opacity .2s, transform .2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:4px;
+}
+.submit-btn:hover { opacity:.9; transform:translateY(-1px); }
+
+/* ── TICKET LIST ── */
+.tickets-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  animation:fadeUp .45s .36s ease both;
+}
+.ticket-item {
+  padding:12px 0; border-bottom:1px solid var(--border);
+  transition:transform .2s, background .2s; cursor:pointer;
+  border-radius:var(--radius-sm);
+}
+.ticket-item:last-child { border-bottom:none; }
+.ticket-item:hover { transform:translateX(3px); background:rgba(255,255,255,.02); }
+.ticket-top { display:flex; align-items:flex-start; gap:10px; margin-bottom:6px; }
+.ticket-icon {
+  width:32px; height:32px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; flex-shrink:0;
+}
+.ticket-meta { flex:1; min-width:0; }
+.ticket-title { font-size:12.5px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ticket-date  { font-size:10px; color:var(--text-muted); }
+.ticket-status-row { display:flex; align-items:center; justify-content:space-between; }
+.ticket-id    { font-size:10px; color:var(--text-muted); font-family:"Shabnam",sans-serif; }
+.ticket-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; }
+.badge-wait   { background:rgba(243,156,18,.14); color:var(--accent4); }
+.badge-review { background:rgba(74,144,217,.14);  color:var(--accent);  }
+.badge-solved { background:rgba(46,204,113,.14);  color:var(--present); }
+.badge-need   { background:rgba(231,76,60,.14);   color:var(--accent5); }
+
+/* ════ MODAL BASE ════ */
+.modal-backdrop {
+  display:none; position:fixed; inset:0; z-index:800;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-backdrop.show { display:flex; }
+.modal-box {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  width:100%; max-width:520px;
+  max-height:90vh; overflow-y:auto;
+  position:relative;
+  animation:modalIn .28s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+}
+@keyframes modalIn {
+  from { opacity:0; transform:scale(.92) translateY(16px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.modal-header {
+  display:flex; align-items:center; gap:12px;
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0;
+  background:var(--bg-card); z-index:2;
+}
+.modal-header-icon {
+  width:38px; height:38px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.modal-header-title { flex:1; font-size:14px; font-weight:800; }
+.modal-close {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(231,76,60,.1); border:1px solid rgba(231,76,60,.2);
+  color:var(--accent5); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; transition:all .2s; flex-shrink:0;
+}
+.modal-close:hover { background:var(--accent5); color:#fff; transform:rotate(90deg); }
+.modal-body { padding:20px; }
+
+/* ticket detail modal */
+.td-row { display:flex; align-items:flex-start; gap:8px; padding:10px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.td-row:last-child { border-bottom:none; }
+.td-label { color:var(--text-muted); min-width:90px; flex-shrink:0; font-size:11px; }
+.td-val { flex:1; font-weight:600; line-height:1.6; }
+.td-desc { background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-size:12px; color:var(--text-muted); line-height:1.7; margin-top:6px; }
+.td-timeline { margin-top:14px; }
+.td-timeline-title { font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:10px; }
+.td-event { display:flex; gap:10px; margin-bottom:10px; }
+.td-event-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.td-event-line { width:2px; background:var(--border); margin:12px auto 0; flex-shrink:0; }
+.td-event-text { font-size:11px; color:var(--text-muted); line-height:1.5; }
+.td-event-text strong { color:var(--text); font-size:12px; display:block; }
+
+/* all tickets modal */
+.all-ticket-item {
+  display:flex; align-items:center; gap:10px;
+  padding:12px; border:1px solid var(--border);
+  border-radius:var(--radius-sm); margin-bottom:8px;
+  cursor:pointer; transition:border-color .2s, background .2s;
+}
+.all-ticket-item:last-child { margin-bottom:0; }
+.all-ticket-item:hover { border-color:rgba(74,144,217,.3); background:rgba(74,144,217,.04); }
+.all-ticket-item .ticket-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.all-ticket-item .ticket-info { flex:1; min-width:0; }
+.all-ticket-item .ticket-info .t-title { font-size:12.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px; }
+.all-ticket-item .ticket-info .t-meta  { font-size:10px; color:var(--text-muted); }
+
+/* ── TOAST / POPUP ── */
+.toast-wrap {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+  z-index:9000; display:flex; flex-direction:column;
+  align-items:center; gap:10px; pointer-events:none;
+}
+.toast {
+  pointer-events:auto;
+  min-width:280px; max-width:400px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 18px; display:flex; align-items:flex-start; gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.45);
+  animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative; overflow:hidden;
+}
+.toast.removing { animation:toastOut .25s ease forwards; }
+@keyframes toastIn  { from{opacity:0;transform:translateY(20px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes toastOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(10px)} }
+.toast::before {
+  content:''; position:absolute; top:0; right:0; left:0; height:3px; border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+}
+.toast.success::before { background:linear-gradient(90deg,var(--accent3),var(--present)); }
+.toast.error::before   { background:linear-gradient(90deg,var(--accent5),#f97316); }
+.toast.warning::before { background:linear-gradient(90deg,var(--accent4),#fbbf24); }
+.toast.info::before    { background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.toast-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; margin-top:1px; }
+.toast.success .toast-icon { background:rgba(6,214,160,.15); color:var(--accent3); }
+.toast.error   .toast-icon { background:rgba(231,76,60,.15); color:var(--accent5); }
+.toast.warning .toast-icon { background:rgba(243,156,18,.15); color:var(--accent4); }
+.toast.info    .toast-icon { background:rgba(74,144,217,.15); color:var(--accent); }
+.toast-content { flex:1; min-width:0; }
+.toast-title { font-size:12.5px; font-weight:800; margin-bottom:3px; }
+.toast-msg   { font-size:11.5px; color:var(--text-muted); line-height:1.55; }
+.toast-close { width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.06); border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; transition:all .2s; }
+.toast-close:hover { background:rgba(255,255,255,.12); color:var(--text); }
+.toast-bar { position:absolute; bottom:0; right:0; left:0; height:2px; background:rgba(255,255,255,.05); }
+.toast-bar-fill { height:100%; border-radius:2px; }
+.toast.success .toast-bar-fill { background:var(--accent3); }
+.toast.error   .toast-bar-fill { background:var(--accent5); }
+.toast.warning .toast-bar-fill { background:var(--accent4); }
+.toast.info    .toast-bar-fill { background:var(--accent); }
+
+/* ── DANGER OVERLAY ── */
+.danger-overlay {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(8,4,4,.97);
+  flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:32px;
+  animation:dangerIn .3s ease both;
+}
+.danger-overlay.show { display:flex; }
+@keyframes dangerIn { from{opacity:0;transform:scale(1.04)} to{opacity:1;transform:scale(1)} }
+.danger-icon-wrap {
+  width:90px; height:90px; border-radius:50%;
+  background:rgba(231,76,60,.12); border:2px solid rgba(231,76,60,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:38px; color:var(--accent5); margin-bottom:24px;
+  animation:dangerPulse 1.4s infinite;
+}
+@keyframes dangerPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.5)}
+  50%{box-shadow:0 0 0 18px rgba(231,76,60,0)}
+}
+.danger-title { font-size:22px; font-weight:900; color:#fff; margin-bottom:10px; font-family:"Shabnam",sans-serif; letter-spacing:-0.5px; }
+.danger-title span { color:var(--accent5); }
+.danger-body { font-size:13px; color:rgba(255,200,200,.7); line-height:1.8; max-width:420px; margin-bottom:28px; }
+.danger-filename { background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.25); border-radius:8px; padding:8px 18px; font-size:12px; font-weight:700; color:var(--accent5); margin-bottom:24px; display:inline-block; word-break:break-all; }
+.danger-btn { padding:12px 36px; border-radius:var(--radius-sm); background:linear-gradient(135deg,#e74c3c,#c0392b); border:none; color:#fff; font-family:"Vazirmatn",sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:opacity .2s, transform .2s; }
+.danger-btn:hover { opacity:.9; transform:translateY(-1px); }
+.danger-bar { width:100%; max-width:380px; height:4px; background:rgba(231,76,60,.15); border-radius:4px; margin-top:20px; overflow:hidden; }
+.danger-bar-fill { height:100%; background:var(--accent5); border-radius:4px; animation:dangerBarAnim 5s linear forwards; }
+@keyframes dangerBarAnim { from{width:100%} to{width:0%} }
+
+/* ════ ANIMATIONS ════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* ════ RESPONSIVE ════ */
+@media (max-width:1024px) {
+  .stat-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .cat-row  { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .main-row { grid-template-columns:1fr; }
+  .bot-row  { grid-template-columns:1fr; }
+}
+@media (max-width:768px) {
+  .main-content { padding:68px 14px 24px; }
+  .stat-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .cat-row  { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .form-row { grid-template-columns:1fr; }
+  .greeting-block h1 { font-size:16px; }
+  .modal-box { max-width:100%; }
+}
+@media (max-width:540px) {
+  .main-content { padding:66px 12px 20px; }
+  .stat-card  { padding:14px 11px 12px; }
+  .stat-value { font-size:22px; }
+  .stat-icon  { width:34px; height:34px; font-size:13px; }
+  .stat-label { font-size:10px; }
+  .cat-card   { padding:14px 10px; }
+  .cat-icon-wrap { width:40px; height:40px; font-size:15px; }
+  .cat-name   { font-size:11px; }
+  .greeting-block h1 { font-size:14px; }
+  .greeting-block p  { font-size:10px; }
+  .toast { min-width:240px; max-width:calc(100vw - 32px); }
+}
+@media (max-width:400px) {
+  .main-content { padding:64px 10px 16px; }
+  .stat-row { gap:7px; }
+  .stat-card { border-radius:var(--radius-sm); }
+  .stat-value { font-size:20px; }
+  .faq-card, .contact-card, .ticket-card, .tickets-card { padding:13px; }
+  .sec-title  { font-size:12px; }
+}
+@media (max-width:360px) {
+  .stat-value { font-size:18px; }
+  .cat-row    { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .cat-name   { font-size:10px; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ════ SIDEBAR ════ -->
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+  <div class="student-block">
+    <div class="student-avatar">ع</div>
+    <div>
+      <div class="student-name">علی مختاری</div>
+      <div class="student-role">دانش‌آموز</div>
+      <div class="student-badge">یازدهم تجربی</div>
+    </div>
+  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item active"><a href="../html/Student_support.html"><i class="fas fa-headset"></i> پشتیبانی</a></div>
+  <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- ════ MAIN ════ -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="greeting-block">
+      <h1><i class="fas fa-headset" style="color:var(--accent);font-size:16px;margin-left:6px"></i>پشتیبانی — <span>علی مختاری</span></h1>
+      <p><span class="live-dot"></span> پاسخگویی شنبه تا چهارشنبه | ۸ صبح تا ۳ بعدازظهر</p>
+    </div>
+    <div class="top-actions">
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">ع</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <i class="fas fa-search"></i>
+      <input type="text" id="faqSearch" placeholder="جستجو در سوالات متداول..." autocomplete="off">
+    </div>
+    <div class="search-hint"><i class="fas fa-lightbulb" style="color:var(--accent4);font-size:11px"></i> قبل از ثبت تیکت، سوال خود را اینجا جستجو کنید</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-row" id="statRow">
+    <div class="stat-card blue">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-ticket-alt"></i></div><span class="stat-badge">کل</span></div>
+      <div class="stat-value" id="statTotal">۵</div>
+      <div class="stat-label">تیکت ارسال‌شده</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><span class="stat-badge">این ترم</span></div>
+      <div class="stat-value" id="statSolved">۳</div>
+      <div class="stat-label">تیکت حل‌شده</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-clock"></i></div><span class="stat-badge">فعال</span></div>
+      <div class="stat-value" id="statPending">۲</div>
+      <div class="stat-label">در انتظار پاسخ</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-hourglass-half"></i></div><span class="stat-badge">میانگین</span></div>
+      <div class="stat-value">۴</div>
+      <div class="stat-label">ساعت زمان پاسخ</div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="cat-row" id="catRow"></div>
+
+  <!-- FAQ + CONTACT -->
+  <div class="main-row">
+    <div class="faq-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-question-circle"></i> سوالات متداول</div>
+        <span class="sec-link" id="faqCount">۸ سوال</span>
+      </div>
+      <div id="faqList"></div>
+    </div>
+    <div class="contact-card">
+      <div class="sec-hdr" style="margin-bottom:5px">
+        <div class="sec-title"><i class="fas fa-phone-alt"></i> راه‌های تماس</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-phone"></i></div>
+        <div class="contact-info"><div class="contact-label">تلفن دفتر</div><div class="contact-value">۰۲۱–۳۳۴۴۵۵۶۶</div><div class="contact-hours">شنبه تا چهارشنبه ۸–۱۵</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(6,214,160,.15);color:var(--accent3)"><i class="fas fa-envelope"></i></div>
+        <div class="contact-info"><div class="contact-label">ایمیل مدرسه</div><div class="contact-value" style="font-size:11px">support@boorboor.edu.ir</div><div class="contact-hours">پاسخ تا ۲۴ ساعت</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-user-tie"></i></div>
+        <div class="contact-info"><div class="contact-label">ناظم مدرسه</div><div class="contact-value">آقای حسینی</div><div class="contact-hours">داخلی ۱۰۱ | اتاق ناظم</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-laptop"></i></div>
+        <div class="contact-info"><div class="contact-label">پشتیبانی فنی سامانه</div><div class="contact-value">واحد IT</div><div class="contact-hours">داخلی ۲۰۵ | شنبه تا پنجشنبه</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET FORM + TICKET LIST -->
+  <div class="bot-row">
+    <div class="ticket-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-plus-circle"></i> ثبت تیکت جدید</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">موضوع</label>
+          <select class="form-control" id="ticketSubject">
+            <option value="">انتخاب کنید...</option>
+            <option>مشکل فنی سامانه</option>
+            <option>اعتراض به نمره</option>
+            <option>غیبت اشتباه</option>
+            <option>برنامه هفتگی</option>
+            <option>سایر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">اولویت</label>
+          <select class="form-control" id="ticketPriority">
+            <option>عادی</option>
+            <option>مهم</option>
+            <option>فوری</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">عنوان تیکت</label>
+          <input type="text" class="form-control" placeholder="خلاصه‌ای از مشکل بنویسید..." id="ticketTitle">
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">توضیحات</label>
+          <textarea class="form-control" placeholder="مشکل خود را با جزئیات کامل شرح دهید..." id="ticketDesc"></textarea>
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:14px">
+        <div class="form-group">
+          <label class="form-label">
+            پیوست فایل
+            <span style="color:var(--text-muted);font-weight:400"> (اختیاری — حداکثر ۵ فایل)</span>
+          </label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput"
+              accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+              multiple>
+            <i class="fas fa-cloud-upload-alt upload-icon" id="uploadIcon"></i>
+            <span class="upload-main-text" id="uploadText">کلیک کنید یا فایل را اینجا رها کنید</span>
+            <span class="upload-sub-text">JPG، PNG، GIF، WEBP، PDF — هر فایل حداکثر ۵ مگابایت</span>
+          </div>
+          <div class="file-list-wrap" id="fileList"></div>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="submitTicket()">
+        <i class="fas fa-paper-plane"></i> ارسال تیکت
+      </button>
+    </div>
+
+    <div class="tickets-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-list-ul"></i> تیکت‌های من</div>
+        <a class="sec-link" id="allTicketsLink" href="#">همه</a>
+      </div>
+      <div id="ticketList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TICKET DETAIL MODAL ════ -->
+<div class="modal-backdrop" id="ticketDetailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon" id="tdModalIcon"></div>
+      <div class="modal-header-title" id="tdModalTitle">جزئیات تیکت</div>
+      <button class="modal-close" onclick="closeModal('ticketDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="tdModalBody"></div>
+  </div>
+</div>
+
+<!-- ════ ALL TICKETS MODAL ════ -->
+<div class="modal-backdrop" id="allTicketsModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-list-ul"></i></div>
+      <div class="modal-header-title">همه تیکت‌های من</div>
+      <button class="modal-close" onclick="closeModal('allTicketsModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="allTicketsBody"></div>
+  </div>
+</div>
+
+<!-- ════ DANGER OVERLAY ════ -->
+<div class="danger-overlay" id="dangerOverlay">
+  <div class="danger-icon-wrap"><i class="fas fa-skull-crossbones"></i></div>
+  <div class="danger-title">فایل <span>مخرب</span> شناسایی شد!</div>
+  <div class="danger-filename" id="dangerFileName">—</div>
+  <div class="danger-body">
+    این فایل از نوع مجاز نیست و می‌تواند امنیت سامانه را به خطر بیندازد.<br>
+    فایل به طور خودکار حذف شد و رویداد ثبت گردید.<br>
+    <strong style="color:#fff">فقط JPG، PNG، GIF، WEBP و PDF مجاز هستند.</strong>
+  </div>
+  <button class="danger-btn" onclick="closeDanger()"><i class="fas fa-shield-alt" style="margin-left:6px"></i>متوجه شدم</button>
+  <div class="danger-bar"><div class="danger-bar-fill" id="dangerBarFill"></div></div>
+</div>
+
+<!-- ════ TOAST CONTAINER ════ -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ══════════ HELPERS ══════════ */
+function toF(n){ return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
+function fmtSize(b){ if(b<1024)return b+'B'; if(b<1048576)return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
+
+/* ══════════ TOAST ══════════ */
+const TOAST_ICONS = { success:'fa-check-circle', error:'fa-times-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
+function showToast(type, title, msg, duration=4000){
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `
+    <div class="toast-icon"><i class="fas ${TOAST_ICONS[type]}"></i></div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      ${msg ? `<div class="toast-msg">${msg}</div>` : ''}
+    </div>
+    <button class="toast-close" onclick="removeToast(this.parentElement)"><i class="fas fa-times"></i></button>
+    <div class="toast-bar"><div class="toast-bar-fill" style="animation:dangerBarAnim ${duration}ms linear forwards"></div></div>`;
+  wrap.appendChild(t);
+  setTimeout(()=>removeToast(t), duration);
+}
+function removeToast(el){
+  if(!el||el.classList.contains('removing')) return;
+  el.classList.add('removing');
+  setTimeout(()=>el.remove(), 260);
+}
+
+/* ══════════ MODAL ══════════ */
+function openModal(id){ document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-backdrop').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) closeModal(m.id); });
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal-backdrop.show').forEach(m=>closeModal(m.id)); closeDanger(); } });
+
+/* ══════════ CATEGORIES ══════════ */
+const CATS = [
+  { icon:'fa-star',            label:'نمرات',       count:'۳ سوال', color:'var(--accent4)', bg:'rgba(243,156,18,.15)',  filter:'grades'   },
+  { icon:'fa-clipboard-check', label:'حضور و غیاب', count:'۲ سوال', color:'var(--accent3)', bg:'rgba(6,214,160,.15)',   filter:'attend'   },
+  { icon:'fa-calendar-week',   label:'برنامه',       count:'۱ سوال', color:'var(--accent)',  bg:'rgba(74,144,217,.15)', filter:'schedule' },
+  { icon:'fa-laptop',          label:'مشکل فنی',     count:'۲ سوال', color:'var(--accent2)', bg:'rgba(142,95,212,.15)', filter:'tech'     },
+];
+let activeFilter = 'all';
+CATS.forEach(c=>{
+  const el = document.createElement('div');
+  el.className = 'cat-card';
+  el.dataset.filter = c.filter;
+  el.innerHTML = `<div class="cat-icon-wrap" style="background:${c.bg};color:${c.color}"><i class="fas ${c.icon}"></i></div><div class="cat-name">${c.label}</div><div class="cat-count">${c.count}</div>`;
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.cat-card').forEach(x=>x.classList.remove('active-cat'));
+    if(activeFilter===c.filter){ activeFilter='all'; filterFAQ('all'); }
+    else { el.classList.add('active-cat'); activeFilter=c.filter; filterFAQ(c.filter); }
+  });
+  document.getElementById('catRow').appendChild(el);
+});
+
+/* ══════════ FAQ ══════════ */
+const FAQS = [
+  { q:'چطور نمراتم را در سامانه ببینم؟',          a:'از منوی سمت راست وارد بخش «نمرات» شوید. نمرات هر درس به تفکیک ماه و ترم نمایش داده می‌شود.', cat:'grades',   icon:'fa-star',            color:'var(--accent4)', bg:'rgba(243,156,18,.14)'  },
+  { q:'غیبت اشتباه ثبت شده، چه کار کنم؟',         a:'از طریق همین صفحه یک تیکت با موضوع «غیبت اشتباه» ارسال کنید. معمولاً ظرف یک روز کاری بررسی می‌شود.', cat:'attend',   icon:'fa-clipboard-check', color:'var(--accent3)', bg:'rgba(6,214,160,.14)'   },
+  { q:'برنامه هفتگی‌ام تغییر کرده، چطور بدانم؟', a:'هر تغییر در برنامه از طریق اطلاعیه‌ها اطلاع‌رسانی می‌شود. همچنین می‌توانید بخش «برنامه هفتگی» را بررسی کنید.', cat:'schedule', icon:'fa-calendar-week',   color:'var(--accent)',  bg:'rgba(74,144,217,.14)' },
+  { q:'رمز ورود سامانه را فراموش کرده‌ام',         a:'با واحد IT مدرسه (داخلی ۲۰۵) تماس بگیرید تا رمز عبور برایتان بازنشانی شود.', cat:'tech',     icon:'fa-laptop',          color:'var(--accent2)', bg:'rgba(142,95,212,.14)' },
+  { q:'چطور به اعتراض نمره‌ام رسیدگی می‌شود؟',   a:'تیکتی با موضوع «اعتراض به نمره» ارسال کنید. دبیر مربوطه ظرف ۳ روز کاری پاسخ می‌دهد.', cat:'grades',   icon:'fa-star',            color:'var(--accent4)', bg:'rgba(243,156,18,.14)'  },
+  { q:'آیا می‌توانم نمرات ترم قبل را ببینم؟',     a:'بله، در بخش نمرات می‌توانید از فیلتر ترم برای مشاهده نمرات ترم‌های قبلی استفاده کنید.', cat:'grades',   icon:'fa-star',            color:'var(--accent4)', bg:'rgba(243,156,18,.14)'  },
+  { q:'سامانه کند است یا باز نمی‌شود',            a:'ابتدا اینترنت خود را بررسی کنید. اگر مشکل ادامه داشت، تیکت فنی ارسال کنید تا تیم IT بررسی کند.', cat:'tech',     icon:'fa-laptop',          color:'var(--accent2)', bg:'rgba(142,95,212,.14)' },
+  { q:'چند غیبت تا اخطار دارم؟',                  a:'بر اساس آیین‌نامه مدرسه، بیش از ۱۶ ساعت غیبت موجه در ترم منجر به اخطار کتبی می‌شود.', cat:'attend',   icon:'fa-clipboard-check', color:'var(--accent3)', bg:'rgba(6,214,160,.14)'   },
+];
+
+function renderFAQ(list){
+  const container = document.getElementById('faqList');
+  container.innerHTML='';
+  document.getElementById('faqCount').textContent = toF(list.length)+' سوال';
+  if(!list.length){
+    container.innerHTML=`<div style="text-align:center;padding:28px;color:var(--text-muted);font-size:12px"><i class="fas fa-search" style="font-size:22px;margin-bottom:10px;display:block;opacity:.4"></i>نتیجه‌ای یافت نشد</div>`;
+    return;
+  }
+  list.forEach(f=>{
+    const el=document.createElement('div');
+    el.className='faq-item';
+    el.innerHTML=`
+      <div class="faq-q" onclick="toggleFAQ(this.parentElement)">
+        <div class="faq-q-icon" style="background:${f.bg};color:${f.color}"><i class="fas ${f.icon}"></i></div>
+        <span class="faq-q-text">${f.q}</span>
+        <i class="fas fa-chevron-down faq-arrow"></i>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>`;
+    container.appendChild(el);
+  });
+}
+function toggleFAQ(el){
+  const isOpen=el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(x=>x.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+function filterFAQ(cat){
+  const q=document.getElementById('faqSearch').value.trim().toLowerCase();
+  let list=cat==='all'?FAQS:FAQS.filter(f=>f.cat===cat);
+  if(q) list=list.filter(f=>f.q.includes(q)||f.a.includes(q));
+  renderFAQ(list);
+}
+document.getElementById('faqSearch').addEventListener('input',()=>filterFAQ(activeFilter));
+renderFAQ(FAQS);
+
+/* ══════════ TICKETS DATA ══════════ */
+const STATUS_MAP = {
+  wait:   { label:'در انتظار',          cls:'badge-wait'   },
+  review: { label:'در بررسی',           cls:'badge-review' },
+  solved: { label:'حل‌شده',            cls:'badge-solved'  },
+  need:   { label:'نیاز به اطلاعات',   cls:'badge-need'   },
+};
+let allTickets = [
+  { id:'#۱۰۰۴۱', icon:'fa-star',            bg:'rgba(243,156,18,.14)', color:'var(--accent4)', title:'اعتراض به نمره ریاضی',      date:'۱۴۰۴/۰۲/۲۰', status:'review', priority:'مهم',  subject:'اعتراض به نمره',   desc:'در آزمون ریاضی فصل سوم نمره‌ام ۱۷ ثبت شده، اما فکر می‌کنم برگه‌ام اشتباه تصحیح شده. لطفاً بررسی شود.', reply:'' },
+  { id:'#۱۰۰۳۸', icon:'fa-clipboard-check', bg:'rgba(6,214,160,.14)',  color:'var(--accent3)', title:'غیبت اشتباه ۱۵ اردیبهشت',  date:'۱۴۰۴/۰۲/۱۵', status:'wait',   priority:'عادی', subject:'غیبت اشتباه',      desc:'در تاریخ ۱۵ اردیبهشت در کلاس حاضر بودم اما غیبت برایم ثبت شده. لطفاً بررسی و اصلاح شود.', reply:'' },
+  { id:'#۱۰۰۳۱', icon:'fa-laptop',          bg:'rgba(142,95,212,.14)', color:'var(--accent2)', title:'مشکل در ورود به سامانه',    date:'۱۴۰۴/۰۲/۰۸', status:'solved', priority:'فوری', subject:'مشکل فنی سامانه',  desc:'از دیروز نمی‌توانم وارد حساب کاربری‌ام شوم. رمز عبور را هم عوض کردم ولی فایده نداشت.', reply:'مشکل از سمت سرور بود و برطرف شد. در صورت تکرار با IT تماس بگیرید.' },
+  { id:'#۱۰۰۲۴', icon:'fa-star',            bg:'rgba(243,156,18,.14)', color:'var(--accent4)', title:'خطا در نمایش نمره شیمی',    date:'۱۴۰۴/۰۱/۲۵', status:'solved', priority:'عادی', subject:'مشکل فنی سامانه',  desc:'نمره شیمی در داشبورد صحیح نمایش داده نمی‌شود.', reply:'باگ در نمایش رفع شد. نمرات اکنون صحیح هستند.' },
+  { id:'#۱۰۰۱۷', icon:'fa-calendar-week',   bg:'rgba(74,144,217,.14)', color:'var(--accent)',  title:'تغییر برنامه هفتگی',        date:'۱۴۰۴/۰۱/۱۸', status:'solved', priority:'عادی', subject:'برنامه هفتگی',     desc:'برنامه هفتگی در سامانه به‌روزرسانی نشده. تغییرات جدید نشان داده نمی‌شود.', reply:'برنامه هفتگی به‌روزرسانی شد.' },
+];
+
+function updateStats(){
+  document.getElementById('statTotal').textContent   = toF(allTickets.length);
+  document.getElementById('statSolved').textContent  = toF(allTickets.filter(t=>t.status==='solved').length);
+  document.getElementById('statPending').textContent = toF(allTickets.filter(t=>t.status==='wait'||t.status==='review').length);
+}
+
+/* ── RENDER LIST (sidebar) ── */
+function renderTicketList(){
+  const container = document.getElementById('ticketList');
+  container.innerHTML='';
+  const shown = allTickets.slice(0,5);
+  shown.forEach(t=>{
+    const st=STATUS_MAP[t.status];
+    const el=document.createElement('div');
+    el.className='ticket-item';
+    el.innerHTML=`
+      <div class="ticket-top">
+        <div class="ticket-icon" style="background:${t.bg};color:${t.color}"><i class="fas ${t.icon}"></i></div>
+        <div class="ticket-meta">
+          <div class="ticket-title">${t.title}</div>
+          <div class="ticket-date">${t.date}</div>
+        </div>
+      </div>
+      <div class="ticket-status-row">
+        <span class="ticket-id">${t.id}</span>
+        <span class="ticket-badge ${st.cls}">${st.label}</span>
+      </div>`;
+    el.addEventListener('click',()=>openTicketDetail(t));
+    container.appendChild(el);
+  });
+}
+
+/* ── TICKET DETAIL MODAL ── */
+const TIMELINE = {
+  wait:   [{dot:'var(--accent4)',  text:'<strong>تیکت ثبت شد</strong>در انتظار بررسی توسط پشتیبانی'},{dot:'rgba(255,255,255,.15)',text:'<strong style="opacity:.4">پاسخ کارشناس</strong><span style="opacity:.4">در انتظار...</span>'}],
+  review: [{dot:'var(--accent3)',  text:'<strong>تیکت ثبت شد</strong>در انتظار بررسی توسط پشتیبانی'},{dot:'var(--accent)',   text:'<strong>در حال بررسی</strong>کارشناس پشتیبانی در حال بررسی است'}],
+  solved: [{dot:'var(--accent3)',  text:'<strong>تیکت ثبت شد</strong>'},{dot:'var(--accent)',   text:'<strong>بررسی شد</strong>'},{dot:'var(--present)', text:'<strong>حل شد ✓</strong>'}],
+  need:   [{dot:'var(--accent3)',  text:'<strong>تیکت ثبت شد</strong>'},{dot:'var(--accent5)',  text:'<strong>نیاز به اطلاعات بیشتر</strong>لطفاً توضیحات تکمیلی ارسال کنید'}],
+};
+function openTicketDetail(t){
+  const st=STATUS_MAP[t.status];
+  document.getElementById('tdModalIcon').innerHTML=`<i class="fas ${t.icon}"></i>`;
+  document.getElementById('tdModalIcon').style.cssText=`background:${t.bg};color:${t.color}`;
+  document.getElementById('tdModalTitle').textContent=t.title;
+  const tl=TIMELINE[t.status]||[];
+  const tlHtml=tl.map(e=>`
+    <div class="td-event">
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="td-event-dot" style="background:${e.dot}"></div></div>
+      <div class="td-event-text">${e.text}</div>
+    </div>`).join('');
+  document.getElementById('tdModalBody').innerHTML=`
+    <div class="td-row"><span class="td-label">شناسه تیکت</span><span class="td-val" style="font-family:'Shabnam',sans-serif">${t.id}</span></div>
+    <div class="td-row"><span class="td-label">موضوع</span><span class="td-val">${t.subject||'—'}</span></div>
+    <div class="td-row"><span class="td-label">اولویت</span><span class="td-val">${t.priority||'عادی'}</span></div>
+    <div class="td-row"><span class="td-label">تاریخ ثبت</span><span class="td-val">${t.date}</span></div>
+    <div class="td-row"><span class="td-label">وضعیت</span><span class="td-val"><span class="ticket-badge ${st.cls}">${st.label}</span></span></div>
+    <div class="td-row" style="flex-direction:column;gap:6px">
+      <span class="td-label">توضیحات</span>
+      <div class="td-desc">${t.desc}</div>
+    </div>
+    ${t.reply?`<div class="td-row" style="flex-direction:column;gap:6px"><span class="td-label" style="color:var(--accent3)"><i class="fas fa-reply" style="margin-left:4px"></i>پاسخ پشتیبانی</span><div class="td-desc" style="border-color:rgba(6,214,160,.2)">${t.reply}</div></div>`:''}
+    ${tl.length?`<div class="td-timeline"><div class="td-timeline-title">جریان تیکت</div>${tlHtml}</div>`:''}`;
+  openModal('ticketDetailModal');
+}
+
+/* ── ALL TICKETS MODAL ── */
+function openAllTickets(){
+  const body=document.getElementById('allTicketsBody');
+  body.innerHTML='';
+  if(!allTickets.length){ body.innerHTML=`<div style="text-align:center;padding:28px;color:var(--text-muted);font-size:12px">هیچ تیکتی ثبت نشده</div>`; }
+  allTickets.forEach(t=>{
+    const st=STATUS_MAP[t.status];
+    const el=document.createElement('div');
+    el.className='all-ticket-item';
+    el.innerHTML=`
+      <div class="ticket-icon" style="background:${t.bg};color:${t.color}"><i class="fas ${t.icon}"></i></div>
+      <div class="ticket-info">
+        <div class="t-title">${t.title}</div>
+        <div class="t-meta">${t.id} | ${t.date}</div>
+      </div>
+      <span class="ticket-badge ${st.cls}">${st.label}</span>`;
+    el.addEventListener('click',()=>{ closeModal('allTicketsModal'); openTicketDetail(t); });
+    body.appendChild(el);
+  });
+  openModal('allTicketsModal');
+}
+document.getElementById('allTicketsLink').addEventListener('click',e=>{e.preventDefault();openAllTickets();});
+
+renderTicketList();
+updateStats();
+
+/* ══════════ FILE UPLOAD ══════════ */
+const ALLOWED_TYPES = ['image/jpeg','image/png','image/gif','image/webp','application/pdf'];
+const MAX_FILE_SIZE = 5*1024*1024;
+const MAX_FILES     = 5;
+let uploadedFiles   = [];
+
+const fileInput  = document.getElementById('fileInput');
+const uploadArea = document.getElementById('uploadArea');
+const fileList   = document.getElementById('fileList');
+
+/* click handled by native input (position:absolute, opacity:0) */
+fileInput.addEventListener('change', e=>{ handleFiles(Array.from(e.target.files)); fileInput.value=''; });
+
+/* drag & drop */
+uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave',()=>{ uploadArea.classList.remove('drag-over'); });
+uploadArea.addEventListener('drop', e=>{
+  e.preventDefault(); uploadArea.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+function handleFiles(files){
+  files.forEach(file=>{
+    if(!ALLOWED_TYPES.includes(file.type)){
+      document.getElementById('dangerFileName').textContent = file.name;
+      const bar = document.getElementById('dangerBarFill');
+      bar.style.animation='none'; bar.offsetHeight;
+      bar.style.animation='dangerBarAnim 5s linear forwards';
+      document.getElementById('dangerOverlay').classList.add('show');
+      return;
+    }
+    if(file.size > MAX_FILE_SIZE){ showToast('warning','حجم زیاد',`فایل «${file.name}» بیشتر از ۵ مگابایت است.`); return; }
+    if(uploadedFiles.length >= MAX_FILES){ showToast('warning','محدودیت فایل','حداکثر ۵ فایل می‌توانید پیوست کنید.'); return; }
+    if(uploadedFiles.find(f=>f.name===file.name&&f.size===file.size)){ showToast('info','فایل تکراری',`«${file.name}» قبلاً اضافه شده.`); return; }
+    uploadedFiles.push(file);
+    renderFileItem(file);
+    showToast('success','فایل اضافه شد',`«${file.name}» با موفقیت پیوست شد.`);
+  });
+}
+
+const FILE_ICONS = {
+  'image/jpeg':'fa-file-image','image/png':'fa-file-image','image/gif':'fa-file-image',
+  'image/webp':'fa-file-image','application/pdf':'fa-file-pdf'
+};
+const FILE_COLORS = {
+  'image/jpeg':'var(--accent3)','image/png':'var(--accent3)','image/gif':'var(--accent3)',
+  'image/webp':'var(--accent3)','application/pdf':'var(--accent5)'
+};
+
+function renderFileItem(file){
+  const icon  = FILE_ICONS[file.type]  || 'fa-file';
+  const color = FILE_COLORS[file.type] || 'var(--accent)';
+  const el = document.createElement('div');
+  el.className='file-item';
+  el.dataset.name=file.name;
+  el.innerHTML=`
+    <div class="file-item-icon" style="background:${color}22;color:${color}"><i class="fas ${icon}"></i></div>
+    <div class="file-item-info">
+      <div class="file-item-name">${file.name}</div>
+      <div class="file-item-size">${fmtSize(file.size)}</div>
+    </div>
+    <button class="file-item-remove" title="حذف فایل"><i class="fas fa-times"></i></button>`;
+  el.querySelector('.file-item-remove').addEventListener('click',()=>{
+    uploadedFiles = uploadedFiles.filter(f=>!(f.name===file.name&&f.size===file.size));
+    el.style.animation='toastOut .2s ease forwards';
+    setTimeout(()=>el.remove(),220);
+    showToast('info','فایل حذف شد',`«${file.name}» از لیست حذف شد.`);
+  });
+  fileList.appendChild(el);
+}
+
+/* ══════════ DANGER ══════════ */
+let dangerTimer=null;
+function closeDanger(){
+  document.getElementById('dangerOverlay').classList.remove('show');
+  if(dangerTimer) clearTimeout(dangerTimer);
+}
+// auto-close after 5s
+const dangerOvl=document.getElementById('dangerOverlay');
+const observer=new MutationObserver(()=>{
+  if(dangerOvl.classList.contains('show')){
+    if(dangerTimer) clearTimeout(dangerTimer);
+    dangerTimer=setTimeout(closeDanger,5200);
+  }
+});
+observer.observe(dangerOvl,{attributes:true,attributeFilter:['class']});
+
+/* ══════════ SUBMIT TICKET ══════════ */
+function submitTicket(){
+  const title   = document.getElementById('ticketTitle').value.trim();
+  const subject = document.getElementById('ticketSubject').value;
+  const desc    = document.getElementById('ticketDesc').value.trim();
+  const priority= document.getElementById('ticketPriority').value;
+
+  if(!subject){ showToast('error','خطا','لطفاً موضوع تیکت را انتخاب کنید.'); return; }
+  if(!title)  { showToast('error','خطا','لطفاً عنوان تیکت را وارد کنید.'); return; }
+  if(!desc)   { showToast('error','خطا','لطفاً توضیحات تیکت را بنویسید.'); return; }
+
+  const newId = '#' + (10042 + allTickets.length);
+  const now = '۱۴۰۴/۰۲/۲۶';
+  const iconMap={'اعتراض به نمره':'fa-star','غیبت اشتباه':'fa-clipboard-check','برنامه هفتگی':'fa-calendar-week','مشکل فنی سامانه':'fa-laptop','سایر':'fa-question-circle'};
+  const bgMap={'اعتراض به نمره':'rgba(243,156,18,.14)','غیبت اشتباه':'rgba(6,214,160,.14)','برنامه هفتگی':'rgba(74,144,217,.14)','مشکل فنی سامانه':'rgba(142,95,212,.14)','سایر':'rgba(74,144,217,.14)'};
+  const colorMap={'اعتراض به نمره':'var(--accent4)','غیبت اشتباه':'var(--accent3)','برنامه هفتگی':'var(--accent)','مشکل فنی سامانه':'var(--accent2)','سایر':'var(--accent)'};
+
+  const newTicket = { id:newId, icon:iconMap[subject]||'fa-question-circle', bg:bgMap[subject]||'rgba(74,144,217,.14)', color:colorMap[subject]||'var(--accent)', title, date:now, status:'wait', priority, subject, desc, reply:'' };
+  allTickets.unshift(newTicket);
+
+  /* reset form */
+  document.getElementById('ticketTitle').value='';
+  document.getElementById('ticketDesc').value='';
+  document.getElementById('ticketSubject').value='';
+  document.getElementById('ticketPriority').value='عادی';
+  uploadedFiles=[];
+  fileList.innerHTML='';
+
+  renderTicketList();
+  updateStats();
+  showToast('success','تیکت ثبت شد',`تیکت شما با کد ${newId} ثبت شد. در اسرع وقت پاسخ خواهید گرفت.`,5000);
+}
+
+/* ══════════ SIDEBAR ══════════ */
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.getElementById('menuToggle').addEventListener('click',openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click',closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
+</script>
+</body>
+</html>

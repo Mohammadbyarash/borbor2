@@ -4,723 +4,585 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بوربور - داشبورد دانش‌آموز</title>
-    <link rel="icon" href="../image/iconB.png">
+        <link rel="icon" href="../image/iconB.png" />
     <link rel="stylesheet" href="../style/scrollbar.css" />
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap');
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Medium.woff2")  format("woff2"); font-weight:500; font-display:swap; }
+@font-face { font-family:"Shabnam";   src:url("../font/Shabnam-Bold.woff2")      format("woff2"); font-weight:700; font-display:swap; }
+@font-face { font-family:"Shabnam";   src:url("../font/Shabnam-Medium.woff2")    format("woff2"); font-weight:500; font-display:swap; }
 
 :root {
-  --bg-main: #202b59;
-  --bg-card: #1f285a;
-  --bg-card2: #1e2957;
-  --bg-sidebar: #172047;
-  --accent: #3498db;
-  --accent2: #9b59b6;
+  --bg-main:    #0f1629;
+  --bg-card:    #162040;
+  --bg-card2:   #1a2650;
+  --bg-sidebar: #0b1120;
+  --accent:  #4a90d9;
+  --accent2: #8e5fd4;
   --accent3: #06d6a0;
   --accent4: #f39c12;
   --accent5: #e74c3c;
-  --text: #ffffff;
-  --text-muted: rgba(255,255,255,0.6);
-  --border: rgba(255,255,255,0.1);
-  --present: #27ae60;
-  --absent: #e74c3c;
-  --late: #f39c12;
-  --glow: 0 0 30px rgba(52,152,219,0.15);
-  --sidebar-w: 260px;
+  --present: #2ecc71;
+  --absent:  #e74c3c;
+  --late:    #f39c12;
+  --text:      #e8f0ff;
+  --text-muted: rgba(180,200,255,0.48);
+  --border:      rgba(255,255,255,0.07);
+  --border-h:    rgba(74,144,217,0.35);
+  --radius:    18px;
+  --radius-sm: 11px;
 }
 
+/* ── RESET ── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'Vazirmatn', sans-serif;
-  background: var(--bg-main);
-  color: var(--text);
-  direction: rtl;
-  overflow-x: hidden;
-  min-height: 100vh;
+html, body {
+  overflow-x: hidden;  /* هر دو — جلوگیری از scroll افقی در سامسونگ */
+  max-width: 100%;
 }
-
+html { scroll-behavior:smooth; }
+body {
+  font-family:"Vazirmatn","Shabnam",Tahoma,sans-serif;
+  background:var(--bg-main);
+  color:var(--text);
+  direction:rtl;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+}
 body::before {
-  content:'';
-  position:fixed; inset:0;
+  content:''; position:fixed; inset:0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(124,58,237,0.07) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 60% at 10% 5%, rgba(74,144,217,.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,.10) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(74,144,217,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,144,217,.03) 1px,transparent 1px);
+  background-size:40px 40px;
   pointer-events:none; z-index:0;
 }
 
-/* ════════════════════════════
-   SIDEBAR
-════════════════════════════ */
+/* ════ SIDEBAR ════ */
 .sidebar {
-  width: var(--sidebar-w);
-  background: var(--bg-sidebar);
-  padding: 28px 16px;
-  border-left: 1px solid var(--border);
-  position: fixed;
-  right: 0; top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 200;
-  transition: transform .3s ease;
+  width: 258px;
+  background:var(--bg-sidebar);
+  padding:26px 14px;
+  border-left:1px solid var(--border);
+  position:fixed; right:0; top:0;
+  height:100vh;
+  overflow-y:auto; overflow-x:hidden;
+  z-index:500;
+  display:flex; flex-direction:column;
+  transform:translateX(110%);
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 40px rgba(0,0,0,.5);
+}
+.sidebar.active { transform:translateX(0) !important; }
+.sidebar-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.65); z-index:499;
+}
+.sidebar-overlay.active { display:block; }
+
+.logo { text-align:center; margin-bottom:4px; font-size:28px; font-weight:900; letter-spacing:-1px; color:#fff; font-family:"Shabnam",sans-serif; }
+.logo span { color:var(--accent); }
+.logo-sub  { text-align:center; font-size:10px; color:var(--text-muted); margin-bottom:18px; letter-spacing:1px; }
+
+.sidebar-close-btn {
+  position:absolute; top:14px; left:14px;
+  width:32px; height:32px;
+  background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.2);
+  border-radius:50%; color:var(--absent); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:all .2s;
+}
+.sidebar-close-btn:hover { background:var(--absent); color:#fff; transform:rotate(90deg); }
+
+.student-block {
+  background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.10));
+  border:1px solid rgba(74,144,217,.2);
+  border-radius:var(--radius-sm);
+  padding:15px 13px; margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.student-block::before {
+  content:''; position:absolute; top:-20px; left:-20px; width:80px; height:80px;
+  background:radial-gradient(circle,rgba(74,144,217,.15),transparent 70%); pointer-events:none;
+}
+.student-avatar {
+  width:46px; height:46px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:800; flex-shrink:0;
+  box-shadow:0 4px 14px rgba(74,144,217,.35);
+}
+.student-name  { font-size:13px; font-weight:700; margin-bottom:2px; }
+.student-role  { font-size:10px; color:var(--text-muted); }
+.student-badge {
+  margin-top:7px; display:inline-block;
+  background:rgba(6,214,160,.12); color:var(--accent3);
+  font-size:9px; font-weight:700; padding:2px 9px; border-radius:20px;
+  border:1px solid rgba(6,214,160,.2);
 }
 
-.logo {
-  color: white;
-  font-size: 28px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 40px;
+.nav-section-label {
+  font-size:9px; font-weight:700; color:rgba(180,200,255,.28);
+  letter-spacing:1.5px; text-transform:uppercase; padding:0 14px; margin:14px 0 8px;
 }
-
-.nav-item { margin-bottom: 6px; border-radius: 10px; }
-
+.nav-item { margin-bottom:2px; }
 .nav-item a {
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 400;
-  transition: all .25s;
+  color:rgba(180,200,255,.58); text-decoration:none; padding:10px 14px;
+  display:flex; align-items:center; gap:11px;
+  border-radius:var(--radius-sm); font-size:12.5px; font-weight:500;
+  transition:all .2s; position:relative;
 }
-
-.nav-item a i { font-size: 16px; width: 22px; text-align: center; }
-
-.nav-item a:hover,
+.nav-item a i { font-size:14px; width:20px; text-align:center; flex-shrink:0; opacity:.75; }
+.nav-item a:hover { background:rgba(255,255,255,.05); color:#fff; }
 .nav-item.active a {
-  background: var(--bg-main);
-  color: white;
+  background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.05));
+  color:#fff; font-weight:700; border:1px solid rgba(74,144,217,.22);
 }
-
+.nav-item.active a::before {
+  content:''; position:absolute; right:0; top:50%; transform:translateY(-50%);
+  width:3px; height:65%; background:var(--accent); border-radius:3px 0 0 3px;
+}
 .nav-badge {
-  margin-right: auto;
-  background: var(--accent5);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 20px;
+  margin-right:auto; background:var(--accent5); color:#fff;
+  font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:20px; min-width:20px; text-align:center;
+}
+.nav-divider { height:1px; background:var(--border); margin:10px 4px; }
+.sidebar-footer {
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--border);
+  font-size:10px; color:var(--text-muted); text-align:center; line-height:1.7;
 }
 
-/* ════════════════════════════
-   MAIN
-════════════════════════════ */
+/* ════ HAMBURGER ════ */
+.menu-toggle {
+  position:fixed; top:16px; right:16px; z-index:300;
+  width:44px; height:44px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s; box-shadow:0 4px 16px rgba(0,0,0,.3);
+  color:var(--text-muted); font-size:18px;
+}
+.menu-toggle:hover { border-color:var(--border-h); color:var(--text); }
+
+/* ════ MAIN ════ */
 .main-content {
-  margin-right: var(--sidebar-w);
-  min-height: 100vh;
-  padding: 28px 24px;
-  position: relative;
-  z-index: 1;
+  min-height:100vh;
+  padding:70px 16px 32px;   /* padding یکنواخت برای موبایل */
+  position:relative; z-index:1;
+  /* جلوگیری قطعی از overflow */
+  width:100%;
+  max-width:100%;
 }
 
-/* TOP BAR */
+/* ── TOP BAR ── */
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  gap: 12px;
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:20px; gap:10px;
+  animation:fadeUp .4s ease both;
+  min-width:0;  /* بقیه فلکس‌ها shrink بشن */
 }
-
-.greeting-block h1 { font-size: 20px; font-weight: 700; }
-.greeting-block h1 span { color: var(--accent); }
-.greeting-block p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-
-.top-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-
-.notif-btn {
-  position: relative;
-  width: 38px; height: 38px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--text-muted); font-size: 15px;
-  transition: all .2s;
+.greeting-block { min-width:0; flex:1; }
+.greeting-block h1 { font-size:19px; font-weight:800; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.greeting-block h1 span { color:var(--accent); }
+.greeting-block p  { font-size:11px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.live-dot {
+  width:6px; height:6px; background:var(--accent3); border-radius:50%;
+  animation:pulse 2s infinite; flex-shrink:0;
 }
-.notif-btn:hover { color: var(--text); background: var(--bg-card2); }
-
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,.5)} 50%{box-shadow:0 0 0 5px rgba(6,214,160,0)} }
+.top-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.action-btn {
+  position:relative; width:40px; height:40px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text-muted); font-size:15px; transition:all .2s;
+}
+.action-btn:hover { color:#fff; border-color:var(--border-h); }
 .notif-dot {
-  position: absolute; top: 7px; left: 7px;
-  width: 7px; height: 7px;
-  background: var(--accent5); border-radius: 50%;
-  border: 2px solid var(--bg-main);
+  position:absolute; top:8px; left:8px; width:7px; height:7px;
+  background:var(--accent5); border-radius:50%; border:2px solid var(--bg-main);
+}
+.profile-btn {
+  width:40px; height:40px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:#fff;
+  box-shadow:0 3px 10px rgba(74,144,217,.35); flex-shrink:0;
 }
 
-.profile-avatar {
-  width: 38px; height: 38px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
-}
-
-/* ════════════════════════════
-   SUMMARY CARDS
-════════════════════════════ */
+/* ════ SUMMARY CARDS ════ */
 .summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));  /* minmax(0) — کلید جلوگیری overflow */
+  gap:10px; margin-bottom:18px;
+}
+.s-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px 14px 14px;
+  position:relative; overflow:hidden;
+  transition:transform .28s,box-shadow .28s,border-color .28s;
+  animation:fadeUp .45s ease both;
+  min-width:0;
+}
+.s-card::before {
+  content:''; position:absolute; top:0; right:0; left:0; height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.s-card.c-blue::before   { background:linear-gradient(90deg,#4a90d9,#8e5fd4); }
+.s-card.c-green::before  { background:linear-gradient(90deg,#06d6a0,#2ecc71); }
+.s-card.c-red::before    { background:linear-gradient(90deg,#f39c12,#e67e22); }
+.s-card.c-purple::before { background:linear-gradient(90deg,#8e5fd4,#c85fe8); }
+.s-card:nth-child(1){animation-delay:.04s} .s-card:nth-child(2){animation-delay:.08s}
+.s-card:nth-child(3){animation-delay:.12s} .s-card:nth-child(4){animation-delay:.16s}
+.s-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,.3); border-color:rgba(74,144,217,.18); }
+.s-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.s-icon { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.c-blue   .s-icon { background:rgba(74,144,217,.16); color:var(--accent);  }
+.c-green  .s-icon { background:rgba(6,214,160,.14);  color:var(--accent3); }
+.c-red    .s-icon { background:rgba(243,156,18,.15);  color:var(--accent4); }
+.c-purple .s-icon { background:rgba(142,95,212,.15);  color:var(--accent2); }
+.s-badge { font-size:9.5px; font-weight:600; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+.c-blue   .s-badge { background:rgba(74,144,217,.15); color:var(--accent);  }
+.c-green  .s-badge { background:rgba(6,214,160,.14);  color:var(--accent3); }
+.c-red    .s-badge { background:rgba(243,156,18,.14);  color:var(--accent4); }
+.c-purple .s-badge { background:rgba(142,95,212,.15);  color:var(--accent2); }
+.s-val   { font-size:28px; font-weight:900; line-height:1; font-family:"Shabnam",sans-serif; margin-bottom:3px; }
+.s-label { font-size:11px; color:var(--text-muted); font-weight:500; }
+
+/* ════ SECTION HEADER ════ */
+.sec-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:8px; }
+.sec-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:7px; min-width:0; }
+.sec-title i { color:var(--accent); font-size:13px; flex-shrink:0; }
+.sec-link { font-size:11px; color:var(--accent); cursor:pointer; text-decoration:none; padding:3px 7px; border-radius:6px; transition:background .2s; white-space:nowrap; flex-shrink:0; }
+.sec-link:hover { background:rgba(74,144,217,.1); }
+
+/* ════ CARD BASE ════ */
+.today-card, .mid-card, .bot-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 16px;
+  min-width:0; width:100%;
 }
 
-.summary-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px;
-  position: relative;
-  overflow: hidden;
-  transition: transform .3s, box-shadow .3s, border-color .3s;
-  cursor: default;
-}
-
-.summary-card::before {
-  content: '';
-  position: absolute; top: 0; right: 0;
-  width: 100%; height: 3px;
-  border-radius: 14px 14px 0 0;
-}
-
-.summary-card.blue::before  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-.summary-card.green::before { background: linear-gradient(90deg, var(--present), #0bc87c); }
-.summary-card.red::before   { background: linear-gradient(90deg, var(--absent), #f97316); }
-.summary-card.yellow::before{ background: linear-gradient(90deg, var(--accent4), #fbbf24); }
-
-.summary-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(79,142,247,0.2);
-  box-shadow: var(--glow);
-}
-
-.card-icon {
-  width: 42px; height: 42px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; margin-bottom: 12px;
-}
-
-.blue   .card-icon { background: rgba(79,142,247,0.15);  color: var(--accent); }
-.green  .card-icon { background: rgba(6,214,160,0.15);   color: var(--present); }
-.red    .card-icon { background: rgba(239,68,68,0.15);   color: var(--absent); }
-.yellow .card-icon { background: rgba(245,158,11,0.15);  color: var(--accent4); }
-
-.card-value { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-.card-label { font-size: 11px; color: var(--text-muted); }
-
-.card-change {
-  position: absolute; top: 14px; left: 14px;
-  font-size: 10px; font-weight: 600;
-  padding: 2px 7px; border-radius: 20px;
-}
-.up   { background: rgba(6,214,160,0.15); color: var(--present); }
-.down { background: rgba(239,68,68,0.15); color: var(--absent); }
-
-/* ════════════════════════════
-   TODAY SCHEDULE
-════════════════════════════ */
-.today-schedule {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.section-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px;
-}
-
-.section-title {
-  font-size: 14px; font-weight: 700;
-  display: flex; align-items: center; gap: 7px;
-}
-.section-title i { color: var(--accent); }
-
-.section-link {
-  font-size: 11px; color: var(--accent);
-  cursor: pointer; text-decoration: none;
-  white-space: nowrap;
-}
-
-.schedule-list { display: flex; flex-direction: column; gap: 7px; }
-
+/* ════ TODAY SCHEDULE ════ */
+.today-card { margin-bottom:16px; animation:fadeUp .45s .22s ease both; }
+.schedule-list { display:flex; flex-direction:column; gap:6px; }
 .schedule-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px;
-  background: var(--bg-card2);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  transition: all .2s;
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px;
+  background:var(--bg-card2); border-radius:var(--radius-sm);
+  border:1px solid var(--border); transition:all .2s;
+  min-width:0;
 }
-
-.schedule-item:hover {
-  border-color: rgba(79,142,247,0.25);
-  background: rgba(79,142,247,0.06);
-}
-
+.schedule-item:hover { border-color:var(--border-h); }
 .schedule-item.now {
-  border-color: rgba(79,142,247,0.4);
-  background: rgba(79,142,247,0.1);
-  box-shadow: 0 0 16px rgba(79,142,247,0.1);
+  border-color:rgba(74,144,217,.42);
+  background:rgba(74,144,217,.08);
+  box-shadow:0 0 16px rgba(74,144,217,.1);
 }
-
 .now-tag {
-  font-size: 9px; font-weight: 700;
-  background: var(--accent); color: white;
-  padding: 2px 7px; border-radius: 20px;
-  margin-right: auto;
-  animation: pulse 2s infinite;
+  font-size:9px; font-weight:700;
+  background:var(--accent); color:white;
+  padding:2px 7px; border-radius:20px;
+  margin-right:auto; flex-shrink:0;
+  animation:blink 2s infinite;
 }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.55} }
+.sch-time { font-size:10px; color:var(--text-muted); min-width:46px; text-align:center; line-height:1.5; flex-shrink:0; }
+.sch-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sch-name { font-size:13px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sch-teacher { font-size:11px; color:var(--text-muted); flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:90px; }
 
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+/* ════ MIDDLE ROW ════ */
+.mid-row { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:14px; margin-bottom:16px; }
+.att-week-card { animation:fadeUp .45s .25s ease both; }
+.donut-card    { animation:fadeUp .45s .30s ease both; display:flex; flex-direction:column; }
 
-.sch-time { font-size: 10px; color: var(--text-muted); min-width: 50px; text-align: center; line-height: 1.4; }
-.sch-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.sch-name { font-size: 13px; font-weight: 600; flex: 1; min-width: 0; }
-.sch-teacher { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-
-/* ════════════════════════════
-   MIDDLE ROW
-════════════════════════════ */
-.middle-row {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-/* ATTENDANCE WEEK */
-.attendance-week {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.week-days {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.day-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.day-name { font-size: 10px; color: var(--text-muted); font-weight: 500; text-align: center; }
-
+/* هفته */
+.week-days { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; margin-bottom:14px; }
+.day-item  { display:flex; flex-direction:column; align-items:center; gap:5px; min-width:0; }
+.day-name  { font-size:10px; color:var(--text-muted); font-weight:500; text-align:center; }
 .day-circle {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-  transition: all .3s;
+  width:38px; height:38px; border-radius:50%;
+  border:2px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; transition:all .3s; flex-shrink:0;
 }
+.day-circle.present { border-color:var(--present); background:rgba(46,204,113,.12); color:var(--present); }
+.day-circle.absent  { border-color:var(--absent);  background:rgba(231,76,60,.12);  color:var(--absent); }
+.day-circle.late    { border-color:var(--late);    background:rgba(243,156,18,.12); color:var(--late); }
+.day-circle.holiday { border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:var(--text-muted); }
+.day-status { font-size:9px; font-weight:600; }
+.day-status.present { color:var(--present); }
+.day-status.absent  { color:var(--absent); }
+.day-status.late    { color:var(--late); }
+.day-status.holiday { color:var(--text-muted); }
 
-.day-circle.present { border-color: var(--present); background: rgba(6,214,160,0.12); color: var(--present); }
-.day-circle.absent  { border-color: var(--absent);  background: rgba(239,68,68,0.12);  color: var(--absent); }
-.day-circle.late    { border-color: var(--late);    background: rgba(245,158,11,0.12); color: var(--late); }
-.day-circle.holiday { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: var(--text-muted); }
-
-.day-status { font-size: 9px; font-weight: 600; }
-.day-status.present { color: var(--present); }
-.day-status.absent  { color: var(--absent); }
-.day-status.late    { color: var(--late); }
-.day-status.holiday { color: var(--text-muted); }
-
-.attendance-progress {
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px; padding: 12px 14px;
-  display: flex; align-items: center; gap: 12px;
+.att-progress {
+  background:rgba(255,255,255,.04); border-radius:var(--radius-sm);
+  padding:11px 13px; display:flex; align-items:center; gap:10px; min-width:0;
 }
+.prog-info  { flex:1; min-width:0; }
+.prog-label { font-size:11px; color:var(--text-muted); margin-bottom:5px; }
+.prog-track { height:6px; background:rgba(255,255,255,.06); border-radius:4px; overflow:hidden; }
+.prog-fill  { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent3)); transition:width 1s ease; }
+.prog-pct   { font-size:19px; font-weight:800; color:var(--present); flex-shrink:0; font-family:"Shabnam",sans-serif; }
 
-.progress-info { flex: 1; min-width: 0; }
-.progress-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
-
-.progress-bar {
-  height: 6px; background: rgba(255,255,255,0.08);
-  border-radius: 10px; overflow: hidden;
+/* دونات — اندازه responsive با % نه px ثابت */
+.donut-outer {
+  position:relative;
+  width:min(150px,100%); aspect-ratio:1;
+  margin:6px auto 14px;
 }
-
-.progress-fill {
-  height: 100%; border-radius: 10px;
-  background: linear-gradient(90deg, var(--present), #0bc87c);
-  transition: width 1s ease;
+.donut-svg {
+  width:100%; height:100%;
+  transform:rotate(-90deg);
 }
-
-.progress-pct { font-size: 20px; font-weight: 800; color: var(--present); flex-shrink: 0; }
-
-/* DONUT */
-.donut-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  display: flex; flex-direction: column;
+.donut-track { fill:none; stroke:rgba(255,255,255,.06); stroke-width:16; }
+.donut-seg   { fill:none; stroke-width:16; stroke-linecap:round; }
+.donut-center-text {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
 }
+.donut-pct { font-size:24px; font-weight:800; color:var(--present); line-height:1; font-family:"Shabnam",sans-serif; }
+.donut-sub { font-size:10px; color:var(--text-muted); margin-top:2px; }
+.donut-legend { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:auto; }
+.dl-row   { display:flex; align-items:center; gap:5px; font-size:11px; min-width:0; }
+.dl-dot   { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dl-label { color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.dl-val   { margin-right:auto; font-weight:700; font-size:12px; flex-shrink:0; }
 
-.donut-wrapper {
-  position: relative;
-  width: 150px; height: 150px;
-  margin: 4px auto 14px;
-}
-
-.donut-center {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-
-.donut-pct  { font-size: 24px; font-weight: 800; color: var(--present); }
-.donut-sub  { font-size: 9px; color: var(--text-muted); }
-
-.donut-legend {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 7px; margin-top: auto;
-}
-
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; }
-.legend-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.legend-val  { margin-right: auto; font-weight: 700; font-size: 12px; }
-
-/* ════════════════════════════
-   BOTTOM ROW
-════════════════════════════ */
-.bottom-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-}
-
-/* GRADES */
-.grades-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
+/* ════ BOTTOM ROW ════ */
+.bot-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.grades-card  { animation:fadeUp .45s .35s ease both; }
+.chart-card   { animation:fadeUp .45s .40s ease both; }
+.notices-card { animation:fadeUp .45s .45s ease both; }
 
 .grade-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; gap:9px;
+  padding:8px 0; border-bottom:1px solid var(--border); min-width:0;
 }
-.grade-item:last-child { border-bottom: none; }
+.grade-item:last-child { border-bottom:none; }
+.grade-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; }
+.grade-info { flex:1; min-width:0; }
+.grade-subject { font-size:12px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.grade-date    { font-size:10px; color:var(--text-muted); margin-top:1px; }
+.grade-bar     { width:40px; height:4px; background:rgba(255,255,255,.06); border-radius:4px; overflow:hidden; flex-shrink:0; }
+.grade-bar-fill{ height:100%; border-radius:4px; }
+.grade-score   { font-size:16px; font-weight:800; min-width:30px; text-align:center; flex-shrink:0; font-family:"Shabnam",sans-serif; }
+.grade-score.excellent { color:var(--present); }
+.grade-score.good      { color:var(--accent); }
+.grade-score.average   { color:var(--accent4); }
+.grade-score.poor      { color:var(--absent); }
 
-.grade-subject-icon {
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; flex-shrink: 0;
-}
-
-.grade-info { flex: 1; min-width: 0; }
-.grade-subject { font-size: 12px; font-weight: 600; }
-.grade-date    { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
-
-.grade-score {
-  font-size: 18px; font-weight: 800;
-  min-width: 34px; text-align: center; flex-shrink: 0;
-}
-
-.grade-score.excellent { color: var(--present); }
-.grade-score.good      { color: var(--accent); }
-.grade-score.average   { color: var(--accent4); }
-.grade-score.poor      { color: var(--absent); }
-
-.grade-bar {
-  width: 50px; height: 4px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 4px; overflow: hidden; flex-shrink: 0;
-}
-
-.grade-bar-fill { height: 100%; border-radius: 4px; transition: width 1s; }
-
-/* CHART */
-.chart-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.chart-wrapper { position: relative; height: 185px; margin-top: 10px; }
-
-/* NOTICES */
-.notices-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
+.chart-wrapper { position:relative; height:185px; margin-top:8px; }
 
 .notice-item {
-  display: flex; gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  transition: transform .2s; cursor: pointer;
+  display:flex; gap:9px; padding:9px 0;
+  border-bottom:1px solid var(--border);
+  cursor:pointer; transition:transform .2s; min-width:0;
 }
-.notice-item:last-child { border-bottom: none; }
-.notice-item:hover { transform: translateX(4px); }
+.notice-item:last-child { border-bottom:none; }
+.notice-item:hover { transform:translateX(3px); }
+.notice-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; margin-top:2px; }
+.n-red    { background:rgba(231,76,60,.15); color:var(--absent); }
+.n-blue   { background:rgba(74,144,217,.15); color:var(--accent); }
+.n-green  { background:rgba(6,214,160,.15);  color:var(--accent3); }
+.n-yellow { background:rgba(243,156,18,.15); color:var(--late); }
+.notice-content { flex:1; min-width:0; }
+.notice-title { font-size:12px; font-weight:700; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.notice-body  { font-size:10.5px; color:var(--text-muted); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.notice-time  { font-size:9px; color:rgba(180,200,255,.35); margin-top:3px; }
 
-.notice-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%; margin-top: 5px; flex-shrink: 0;
-}
+/* ════ ANIMATIONS ════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-.notice-title { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
-.notice-body  { font-size: 10px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.notice-time  { font-size: 9px; color: var(--text-muted); margin-top: 3px; }
+/* ════════════════════════════════════════
+   RESPONSIVE — mobile-first breakpoints
+   Galaxy A51 = 412×915   A71 = 412×914
+════════════════════════════════════════ */
 
-/* ════════════════════════════
-   HAMBURGER
-════════════════════════════ */
-.menu-toggle {
-  display: none;
-  position: fixed; top: 14px; right: 14px;
-  z-index: 300;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 42px; height: 42px;
-  border-radius: 10px;
-  cursor: pointer;
-  align-items: center; justify-content: center;
-  font-size: 18px;
-}
+/* ── ≤480px  موبایل استاندارد ── */
+@media (max-width:480px) {
+  .main-content { padding:64px 12px 28px; }
 
-.sidebar-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.55);
-  z-index: 199;
-}
-.sidebar-overlay.active { display: block; }
+  /* تاپ بار */
+  .greeting-block h1 { font-size:16px; }
+  .greeting-block p  { font-size:10.5px; }
 
-/* ════════════════════════════
-   ANIMATIONS
-════════════════════════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
-}
+  /* summary: ۲ستون — همیشه */
+  .summary-grid { gap:8px; margin-bottom:14px; }
+  .s-card { padding:13px 12px 12px; }
+  .s-val  { font-size:24px; }
+  .s-icon { width:34px; height:34px; font-size:14px; }
+  .s-label { font-size:10.5px; }
+  .s-badge { font-size:9px; }
 
-.summary-card,
-.attendance-week, .donut-card,
-.grades-card, .chart-card, .notices-card,
-.today-schedule {
-  animation: fadeUp .5s ease both;
-}
-.summary-card:nth-child(1) { animation-delay:.05s; }
-.summary-card:nth-child(2) { animation-delay:.10s; }
-.summary-card:nth-child(3) { animation-delay:.15s; }
-.summary-card:nth-child(4) { animation-delay:.20s; }
-.today-schedule            { animation-delay:.22s; }
-.attendance-week           { animation-delay:.25s; }
-.donut-card                { animation-delay:.30s; }
-.grades-card               { animation-delay:.35s; }
-.chart-card                { animation-delay:.40s; }
-.notices-card              { animation-delay:.45s; }
+  /* برنامه */
+  .today-card { padding:14px 13px; margin-bottom:12px; }
+  .schedule-item { padding:9px 10px; gap:8px; }
+  .sch-name { font-size:12.5px; }
+  .sch-time { min-width:40px; font-size:9.5px; }
+  .sch-teacher { max-width:72px; font-size:10px; }
 
-/* ════════════════════════════
-   RESPONSIVE
-════════════════════════════ */
+  /* middle row: تک‌ستون */
+  .mid-row { grid-template-columns:minmax(0,1fr); gap:10px; margin-bottom:12px; }
+  .mid-card { padding:14px 13px; }
 
-/* ─── Tablet landscape: 1025-1280 ─── */
-@media (max-width: 1280px) {
-  :root { --sidebar-w: 240px; }
-  .summary-grid { grid-template-columns: repeat(4, 1fr); }
-  .bottom-row   { grid-template-columns: 1fr 1fr 1fr; }
-}
+  /* روزهای هفته */
+  .week-days { gap:4px; }
+  .day-circle { width:34px; height:34px; font-size:12px; }
+  .day-name   { font-size:9px; }
+  .day-status { font-size:8px; }
 
-/* ─── Tablet: 768-1024 ─── */
-@media (max-width: 1024px) {
-  :root { --sidebar-w: 220px; }
-  .main-content { padding: 22px 18px; }
-  .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .middle-row   { grid-template-columns: 1fr; }
-  .bottom-row   { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .notices-card { grid-column: 1 / -1; }
-  .donut-card   { flex-direction: row; align-items: center; gap: 20px; }
-  .donut-wrapper{ margin: 0; flex-shrink: 0; }
-  .donut-legend { grid-template-columns: repeat(4, 1fr); }
-}
+  /* دونات: در موبایل افقی (کنار legend) */
+  .donut-card { flex-direction:row; align-items:center; gap:14px; flex-wrap:nowrap; }
+  .donut-outer { width:110px; height:110px; margin:0; flex-shrink:0; }
+  .donut-pct  { font-size:20px; }
+  .donut-sub  { font-size:9px; }
+  .donut-legend { grid-template-columns:1fr 1fr; margin-top:0; flex:1; gap:6px; }
+  .dl-val  { font-size:11px; }
 
-/* ─── Tablet portrait: 600-768 ─── */
-@media (max-width: 768px) {
-  .menu-toggle { display: flex; }
+  /* progress */
+  .prog-pct { font-size:17px; }
 
-  .sidebar {
-    transform: translateX(110%);
-    box-shadow: -5px 0 20px rgba(0,0,0,.4);
-  }
-  .sidebar.active { transform: translateX(0); }
-
-  .main-content {
-    margin-right: 0;
-    padding: 72px 16px 20px;
-  }
-
-  .top-bar { margin-bottom: 16px; }
-  .greeting-block h1 { font-size: 17px; }
-
-  .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .middle-row   { gap: 12px; }
-  .bottom-row   { grid-template-columns: 1fr; gap: 12px; }
-  .notices-card { grid-column: auto; }
-
-  /* Schedule: scroll horizontally on small screens */
-  .week-days { gap: 6px; }
-  .day-circle { width: 36px; height: 36px; font-size: 13px; }
-  .day-name   { font-size: 9px; }
-}
-
-/* ─── Phone: max 480 ─── */
-@media (max-width: 480px) {
-  .main-content { padding: 68px 12px 16px; }
-
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .summary-card { padding: 14px 12px; }
-  .card-value   { font-size: 22px; }
-  .card-icon    { width: 36px; height: 36px; font-size: 15px; margin-bottom: 10px; }
-
-  /* برنامه امروز - فشرده */
-  .schedule-item { padding: 9px 10px; gap: 8px; }
-  .sch-teacher   { display: none; }
-  .sch-name      { font-size: 12px; }
-  .sch-time      { min-width: 44px; font-size: 9px; }
-
-  /* حضور هفته */
-  .week-days  { gap: 4px; }
-  .day-circle { width: 32px; height: 32px; font-size: 12px; }
-  .day-name   { font-size: 8px; }
-  .day-status { font-size: 8px; }
-
-  /* دونات در موبایل */
-  .donut-card { flex-direction: column; }
-  .donut-wrapper { margin: 4px auto 12px; }
-  .donut-legend { grid-template-columns: repeat(2, 1fr); }
+  /* bottom row: تک‌ستون */
+  .bot-row { grid-template-columns:minmax(0,1fr); gap:10px; }
+  .bot-card { padding:14px 13px; }
 
   /* نمرات */
-  .grade-bar { display: none; }
-  .grade-date { display: none; }
+  .grade-bar  { display:none; }
+  .grade-date { display:none; }
+  .grade-icon { width:28px; height:28px; font-size:11px; }
+  .grade-score { font-size:15px; min-width:28px; }
+  .grade-subject { font-size:11.5px; }
 
   /* نمودار */
-  .chart-wrapper { height: 160px; }
+  .chart-wrapper { height:170px; }
 
   /* اطلاعیه */
-  .notice-body { -webkit-line-clamp: 1; }
-
-  .greeting-block h1 { font-size: 15px; }
-  .greeting-block p  { font-size: 11px; }
+  .notice-title { font-size:11.5px; }
+  .notice-body  { font-size:10px; -webkit-line-clamp:1; }
 }
 
-/* ─── Very small: max 360 ─── */
-@media (max-width: 360px) {
-  .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .summary-card { padding: 12px 10px; }
-  .card-value   { font-size: 20px; }
-  .day-circle   { width: 28px; height: 28px; font-size: 11px; }
+/* ── ≤380px  موبایل خیلی کوچک ── */
+@media (max-width:380px) {
+  .main-content { padding:62px 10px 24px; }
+  .greeting-block h1 { font-size:14.5px; }
+  .s-card { padding:11px 10px; }
+  .s-val  { font-size:22px; }
+  .s-icon { width:30px; height:30px; font-size:13px; }
+  .s-label { font-size:10px; }
+  .day-circle { width:30px; height:30px; font-size:11px; }
+  .day-name   { font-size:8px; }
+  .donut-outer { width:95px; height:95px; }
+  .donut-pct  { font-size:17px; }
+  .chart-wrapper { height:150px; }
+  .sch-teacher { display:none; }
+}
+
+/* ── ≥768px  تبلت ── */
+@media (min-width:768px) {
+  .main-content { padding:72px 22px 36px; }
+  .summary-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+  .s-card { padding:18px 15px 16px; }
+  .s-val  { font-size:30px; }
+  .mid-row { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); }
+  .donut-card { flex-direction:column; }
+  .donut-outer { width:min(150px,100%); margin:6px auto 14px; }
+  .bot-row { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .grade-bar  { display:block; }
+  .grade-date { display:block; }
+  .sch-teacher { display:block; max-width:110px; }
+}
+
+/* ── ≥1024px  دسکتاپ ── */
+@media (min-width:1024px) {
+  .main-content { padding:76px 28px 40px; }
+  .summary-grid { gap:13px; }
+  .s-card { padding:20px 16px 18px; }
+  .s-val  { font-size:32px; }
+  .s-icon { width:42px; height:42px; font-size:17px; }
 }
 </style>
-
 </head>
 <body>
 
 <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- ── سایدبار ── -->
 <div class="sidebar" id="sidebar">
-  <div class="logo">بوربور</div>
-
-  <div class="nav-item active">
-    <a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a>
+  <button class="sidebar-close-btn" id="sidebarCloseBtn"><i class="fas fa-times"></i></button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+  <div class="student-block">
+    <div class="student-avatar">ع</div>
+    <div>
+      <div class="student-name">علی مختاری</div>
+      <div class="student-role">دانش‌آموز</div>
+      <div class="student-badge">یازدهم تجربی ب</div>
+    </div>
   </div>
-  <div class="nav-item">
-    <a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
-  </div>
-  <div class="nav-item">
-    <a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a>
-  </div>
-  <div class="nav-item">
-    <a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a>
-  </div>
-  <div class="nav-item">
-    <a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a>
-  </div>
-  <div class="nav-item">
-    <a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a>
-  </div>
-  <div class="nav-item">
-    <a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a>
-  </div>
+  <div class="nav-section-label">منوی اصلی</div>
+  <div class="nav-item active"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
+  <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
+  <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
+  <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
+  <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_support.html"><i class="fas fa-headset"></i> پشتیبانی</a></div>
+  <div class="nav-item"><a href="../html/../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
+  <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
 </div>
 
-<!-- ── محتوا ── -->
 <div class="main-content">
 
-  <!-- هدر -->
   <div class="top-bar">
     <div class="greeting-block">
       <h1>سلام، <span>علی مختاری</span></h1>
-      <p id="todayDate">در حال بارگذاری...</p>
+      <p><span class="live-dot"></span> سه‌شنبه، ۲۶ اردیبهشت ۱۴۰۴</p>
     </div>
     <div class="top-actions">
-      <div class="notif-btn">
-        <i class="fas fa-bell"></i>
-        <div class="notif-dot"></div>
-      </div>
-      <div class="profile-avatar">ع</div>
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">ع</div>
     </div>
   </div>
 
-  <!-- کارت‌های خلاصه -->
   <div class="summary-grid">
-    <div class="summary-card blue">
-      <div class="card-change up">↑ ۰.۵</div>
-      <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
-      <div class="card-value">۱۷.۸</div>
-      <div class="card-label">معدل کل</div>
+    <div class="s-card c-blue">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-graduation-cap"></i></div><span class="s-badge">↑ ۰.۵</span></div>
+      <div class="s-val">۱۷.۸</div><div class="s-label">معدل کل</div>
     </div>
-    <div class="summary-card green">
-      <div class="card-change up">۹۲٪</div>
-      <div class="card-icon"><i class="fas fa-user-check"></i></div>
-      <div class="card-value">۴۶</div>
-      <div class="card-label">روز حاضر</div>
+    <div class="s-card c-green">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-user-check"></i></div><span class="s-badge">۹۲٪</span></div>
+      <div class="s-val">۴۶</div><div class="s-label">روز حاضر</div>
     </div>
-    <div class="summary-card red">
-      <div class="card-change down">این ترم</div>
-      <div class="card-icon"><i class="fas fa-user-times"></i></div>
-      <div class="card-value">۴</div>
-      <div class="card-label">روز غیبت</div>
+    <div class="s-card c-red">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-user-times"></i></div><span class="s-badge">این ترم</span></div>
+      <div class="s-val">۴</div><div class="s-label">روز غیبت</div>
     </div>
-    <div class="summary-card yellow">
-      <div class="card-change up">جدید</div>
-      <div class="card-icon"><i class="fas fa-bell"></i></div>
-      <div class="card-value">۳</div>
-      <div class="card-label">اطلاعیه خوانده‌نشده</div>
+    <div class="s-card c-purple">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-bell"></i></div><span class="s-badge">جدید</span></div>
+      <div class="s-val">۳</div><div class="s-label">اطلاعیه جدید</div>
     </div>
   </div>
 
-  <!-- برنامه امروز -->
-  <div class="today-schedule">
-    <div class="section-header">
-      <div class="section-title"><i class="fas fa-calendar-day"></i> برنامه امروز — سه‌شنبه</div>
-      <a class="section-link" href="#">مشاهده کامل</a>
+  <div class="today-card">
+    <div class="sec-hdr">
+      <div class="sec-title"><i class="fas fa-calendar-day"></i> برنامه امروز — سه‌شنبه</div>
+      <a class="sec-link" href="#">مشاهده کامل</a>
     </div>
     <div class="schedule-list">
       <div class="schedule-item">
@@ -731,7 +593,7 @@ body::before {
       </div>
       <div class="schedule-item now">
         <div class="sch-time">۸:۲۰<br>۹:۰۵</div>
-        <div class="sch-dot" style="background:#4f8ef7"></div>
+        <div class="sch-dot" style="background:#4a90d9"></div>
         <div class="sch-name">فیزیک</div>
         <div class="sch-teacher">خانم رضایی</div>
         <span class="now-tag">الان</span>
@@ -750,20 +612,18 @@ body::before {
       </div>
       <div class="schedule-item">
         <div class="sch-time">۱۱:۰۵<br>۱۱:۵۰</div>
-        <div class="sch-dot" style="background:#7c3aed"></div>
+        <div class="sch-dot" style="background:#8e5fd4"></div>
         <div class="sch-name">شیمی</div>
         <div class="sch-teacher">آقای صادقی</div>
       </div>
     </div>
   </div>
 
-  <!-- ردیف میانی -->
-  <div class="middle-row">
-
-    <div class="attendance-week">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-calendar-week"></i> حضور این هفته</div>
-        <a class="section-link" href="#">جزئیات</a>
+  <div class="mid-row">
+    <div class="mid-card att-week-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-calendar-week"></i> حضور این هفته</div>
+        <a class="sec-link" href="#">جزئیات</a>
       </div>
       <div class="week-days">
         <div class="day-item">
@@ -792,292 +652,159 @@ body::before {
           <div class="day-status holiday">تعطیل</div>
         </div>
       </div>
-      <div class="attendance-progress">
-        <div class="progress-info">
-          <div class="progress-label">درصد حضور این ترم</div>
-          <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width:0%"></div>
-          </div>
+      <div class="att-progress">
+        <div class="prog-info">
+          <div class="prog-label">درصد حضور این ترم</div>
+          <div class="prog-track"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
         </div>
-        <div class="progress-pct" id="progressPct">۰٪</div>
+        <div class="prog-pct" id="progressPct">۰٪</div>
       </div>
     </div>
 
-    <div class="donut-card">
-      <div class="section-header" style="margin-bottom:10px">
-        <div class="section-title"><i class="fas fa-chart-pie"></i> آمار حضور کل</div>
+    <div class="mid-card donut-card">
+      <div class="sec-hdr" style="margin-bottom:10px">
+        <div class="sec-title"><i class="fas fa-chart-pie"></i> آمار حضور کل</div>
       </div>
-      <div class="donut-wrapper">
-        <canvas id="donutChart"></canvas>
-        <div class="donut-center">
+      <div class="donut-outer">
+        <svg class="donut-svg" viewBox="0 0 150 150">
+          <circle class="donut-track" cx="75" cy="75" r="59"/>
+          <circle class="donut-seg" cx="75" cy="75" r="59" stroke="#2ecc71" stroke-dasharray="337.4 370.7" stroke-dashoffset="0"/>
+          <circle class="donut-seg" cx="75" cy="75" r="59" stroke="#e74c3c" stroke-dasharray="22.2 370.7" stroke-dashoffset="-337.4"/>
+          <circle class="donut-seg" cx="75" cy="75" r="59" stroke="#f39c12" stroke-dasharray="7.4 370.7" stroke-dashoffset="-359.6"/>
+          <circle class="donut-seg" cx="75" cy="75" r="59" stroke="#8e5fd4" stroke-dasharray="3.7 370.7" stroke-dashoffset="-367"/>
+        </svg>
+        <div class="donut-center-text">
           <div class="donut-pct">۹۲٪</div>
           <div class="donut-sub">حضور</div>
         </div>
       </div>
       <div class="donut-legend">
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--present)"></div>
-          <span style="color:var(--text-muted);font-size:10px">حاضر</span>
-          <span class="legend-val" style="color:var(--present)">۴۶</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--absent)"></div>
-          <span style="color:var(--text-muted);font-size:10px">غایب</span>
-          <span class="legend-val" style="color:var(--absent)">۴</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--late)"></div>
-          <span style="color:var(--text-muted);font-size:10px">تأخیر</span>
-          <span class="legend-val" style="color:var(--late)">۲</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--accent2)"></div>
-          <span style="color:var(--text-muted);font-size:10px">مرخصی</span>
-          <span class="legend-val" style="color:var(--accent2)">۱</span>
-        </div>
+        <div class="dl-row"><div class="dl-dot" style="background:#2ecc71"></div><span class="dl-label">حاضر</span><span class="dl-val" style="color:#2ecc71">۴۶</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#e74c3c"></div><span class="dl-label">غایب</span><span class="dl-val" style="color:#e74c3c">۴</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#f39c12"></div><span class="dl-label">تأخیر</span><span class="dl-val" style="color:#f39c12">۲</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#8e5fd4"></div><span class="dl-label">مرخصی</span><span class="dl-val" style="color:#8e5fd4">۱</span></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ردیف پایین -->
-  <div class="bottom-row">
-
-    <div class="grades-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-star"></i> آخرین نمرات</div>
-        <a class="section-link" href="#">همه نمرات</a>
+  <div class="bot-row">
+    <div class="bot-card grades-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-star"></i> آخرین نمرات</div>
+        <a class="sec-link" href="#">همه</a>
       </div>
-
       <div class="grade-item">
-        <div class="grade-subject-icon" style="background:rgba(79,142,247,0.15);color:var(--accent)"><i class="fas fa-calculator"></i></div>
-        <div class="grade-info">
-          <div class="grade-subject">ریاضی</div>
-          <div class="grade-date">۱۴۰۴/۰۲/۱۵</div>
-        </div>
+        <div class="grade-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-calculator"></i></div>
+        <div class="grade-info"><div class="grade-subject">ریاضی</div><div class="grade-date">۱۴۰۴/۰۲/۱۵</div></div>
         <div class="grade-bar"><div class="grade-bar-fill" style="width:95%;background:var(--present)"></div></div>
         <div class="grade-score excellent">۱۹</div>
       </div>
-
       <div class="grade-item">
-        <div class="grade-subject-icon" style="background:rgba(239,68,68,0.15);color:var(--absent)"><i class="fas fa-atom"></i></div>
-        <div class="grade-info">
-          <div class="grade-subject">فیزیک</div>
-          <div class="grade-date">۱۴۰۴/۰۲/۱۲</div>
-        </div>
+        <div class="grade-icon" style="background:rgba(231,76,60,.15);color:var(--absent)"><i class="fas fa-atom"></i></div>
+        <div class="grade-info"><div class="grade-subject">فیزیک</div><div class="grade-date">۱۴۰۴/۰۲/۱۲</div></div>
         <div class="grade-bar"><div class="grade-bar-fill" style="width:82%;background:var(--accent)"></div></div>
         <div class="grade-score good">۱۶.۵</div>
       </div>
-
       <div class="grade-item">
-        <div class="grade-subject-icon" style="background:rgba(6,214,160,0.15);color:var(--present)"><i class="fas fa-flask"></i></div>
-        <div class="grade-info">
-          <div class="grade-subject">شیمی</div>
-          <div class="grade-date">۱۴۰۴/۰۲/۱۰</div>
-        </div>
+        <div class="grade-icon" style="background:rgba(6,214,160,.15);color:var(--accent3)"><i class="fas fa-flask"></i></div>
+        <div class="grade-info"><div class="grade-subject">شیمی</div><div class="grade-date">۱۴۰۴/۰۲/۱۰</div></div>
         <div class="grade-bar"><div class="grade-bar-fill" style="width:90%;background:var(--present)"></div></div>
         <div class="grade-score excellent">۱۸</div>
       </div>
-
       <div class="grade-item">
-        <div class="grade-subject-icon" style="background:rgba(245,158,11,0.15);color:var(--accent4)"><i class="fas fa-book"></i></div>
-        <div class="grade-info">
-          <div class="grade-subject">ادبیات</div>
-          <div class="grade-date">۱۴۰۴/۰۲/۰۸</div>
-        </div>
+        <div class="grade-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-book"></i></div>
+        <div class="grade-info"><div class="grade-subject">ادبیات</div><div class="grade-date">۱۴۰۴/۰۲/۰۸</div></div>
         <div class="grade-bar"><div class="grade-bar-fill" style="width:70%;background:var(--accent4)"></div></div>
         <div class="grade-score average">۱۴</div>
       </div>
-
       <div class="grade-item">
-        <div class="grade-subject-icon" style="background:rgba(124,58,237,0.15);color:var(--accent2)"><i class="fas fa-language"></i></div>
-        <div class="grade-info">
-          <div class="grade-subject">زبان انگلیسی</div>
-          <div class="grade-date">۱۴۰۴/۰۲/۰۵</div>
-        </div>
+        <div class="grade-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-language"></i></div>
+        <div class="grade-info"><div class="grade-subject">زبان انگلیسی</div><div class="grade-date">۱۴۰۴/۰۲/۰۵</div></div>
         <div class="grade-bar"><div class="grade-bar-fill" style="width:88%;background:var(--accent2)"></div></div>
         <div class="grade-score good">۱۷.۵</div>
       </div>
     </div>
 
-    <div class="chart-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-line"></i> روند نمرات</div>
-        <a class="section-link" href="#">تحلیل</a>
+    <div class="bot-card chart-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-line"></i> روند نمرات</div>
+        <a class="sec-link" href="#">تحلیل</a>
       </div>
       <div class="chart-wrapper">
         <canvas id="gradesChart"></canvas>
       </div>
     </div>
 
-    <div class="notices-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-bell"></i> اطلاعیه‌ها</div>
-        <a class="section-link" href="#">همه</a>
+    <div class="bot-card notices-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-bell"></i> اطلاعیه‌ها</div>
+        <a class="sec-link" href="#">همه</a>
       </div>
-
       <div class="notice-item">
-        <div class="notice-dot" style="background:#ef4444"></div>
-        <div>
-          <div class="notice-title">امتحان ریاضی فردا</div>
-          <div class="notice-body">امتحان فصل سوم ریاضی فردا ساعت ۸ صبح برگزار می‌شود. آمادگی کامل داشته باشید.</div>
-          <div class="notice-time">۲ ساعت پیش</div>
-        </div>
+        <div class="notice-icon n-red"><i class="fas fa-exclamation"></i></div>
+        <div class="notice-content"><div class="notice-title">امتحان ریاضی فردا</div><div class="notice-body">امتحان فصل سوم ریاضی فردا ساعت ۸ صبح برگزار می‌شود. آمادگی کامل داشته باشید.</div><div class="notice-time">۲ ساعت پیش</div></div>
       </div>
-
       <div class="notice-item">
-        <div class="notice-dot" style="background:#4f8ef7"></div>
-        <div>
-          <div class="notice-title">تغییر ساعت کلاس فیزیک</div>
-          <div class="notice-body">کلاس فیزیک پنجشنبه به ساعت ۱۰ منتقل شد.</div>
-          <div class="notice-time">دیروز</div>
-        </div>
+        <div class="notice-icon n-blue"><i class="fas fa-info"></i></div>
+        <div class="notice-content"><div class="notice-title">تغییر ساعت کلاس فیزیک</div><div class="notice-body">کلاس فیزیک پنجشنبه به ساعت ۱۰ منتقل شد.</div><div class="notice-time">دیروز</div></div>
       </div>
-
       <div class="notice-item">
-        <div class="notice-dot" style="background:#06d6a0"></div>
-        <div>
-          <div class="notice-title">جشنواره علمی مدرسه</div>
-          <div class="notice-body">ثبت‌نام جشنواره علمی تا پایان هفته باز است. برای شرکت به دفتر مراجعه کنید.</div>
-          <div class="notice-time">۲ روز پیش</div>
-        </div>
+        <div class="notice-icon n-green"><i class="fas fa-flask"></i></div>
+        <div class="notice-content"><div class="notice-title">جشنواره علمی مدرسه</div><div class="notice-body">ثبت‌نام جشنواره علمی تا پایان هفته باز است.</div><div class="notice-time">۲ روز پیش</div></div>
       </div>
-
       <div class="notice-item">
-        <div class="notice-dot" style="background:#f59e0b"></div>
-        <div>
-          <div class="notice-title">تعطیلی چهارشنبه</div>
-          <div class="notice-body">چهارشنبه هفته آینده به مناسبت تعطیل رسمی مدرسه تعطیل است.</div>
-          <div class="notice-time">۳ روز پیش</div>
-        </div>
+        <div class="notice-icon n-yellow"><i class="fas fa-calendar-times"></i></div>
+        <div class="notice-content"><div class="notice-title">تعطیلی چهارشنبه</div><div class="notice-body">چهارشنبه هفته آینده به مناسبت تعطیل رسمی مدرسه تعطیل است.</div><div class="notice-time">۳ روز پیش</div></div>
       </div>
     </div>
-
   </div>
-</div><!-- end main-content -->
+
+</div>
 
 <script>
-// ── تاریخ ──
-document.getElementById('todayDate').textContent = 'سه‌شنبه، ۲۶ اردیبهشت ۱۴۰۴';
-
-// ── Progress bar ──
 setTimeout(()=>{
-  document.getElementById('progressFill').style.width = '92%';
-  document.getElementById('progressPct').textContent  = '۹۲٪';
-}, 400);
+  document.getElementById('progressFill').style.width='92%';
+  document.getElementById('progressPct').textContent='۹۲٪';
+},400);
 
-// ── دونات ──
-new Chart(document.getElementById('donutChart'), {
-  type: 'doughnut',
-  data: {
-    datasets: [{
-      data: [46, 4, 2, 1],
-      backgroundColor: [
-        'rgba(6,214,160,0.85)',
-        'rgba(239,68,68,0.85)',
-        'rgba(245,158,11,0.85)',
-        'rgba(124,58,237,0.85)',
-      ],
-      borderWidth: 0,
-      hoverOffset: 6,
-    }]
-  },
-  options: {
-    cutout: '70%',
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(15,22,40,0.95)',
-        titleFont: { family: 'Vazirmatn' },
-        bodyFont: { family: 'Vazirmatn' },
-        callbacks: {
-          label: ctx => ['حاضر','غایب','تأخیر','مرخصی'][ctx.dataIndex] + ': ' + ctx.raw + ' روز'
-        }
-      }
-    },
-    animation: { animateRotate: true, duration: 1000, easing: 'easeInOutQuart' },
-  }
-});
-
-// ── نمودار خطی ──
-new Chart(document.getElementById('gradesChart'), {
-  type: 'line',
-  data: {
-    labels: ['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'],
-    datasets: [
-      {
-        label: 'ریاضی',
-        data: [15, 16, 15.5, 17, 16, 18, 18.5, 19],
-        borderColor: 'rgba(79,142,247,0.9)',
-        backgroundColor: 'rgba(79,142,247,0.08)',
-        fill: true, tension: 0.4, pointRadius: 3,
-        pointBackgroundColor: 'rgba(79,142,247,1)', borderWidth: 2,
-      },
-      {
-        label: 'فیزیک',
-        data: [13, 14, 13, 15, 15.5, 16, 16, 16.5],
-        borderColor: 'rgba(6,214,160,0.9)',
-        backgroundColor: 'rgba(6,214,160,0.06)',
-        fill: true, tension: 0.4, pointRadius: 3,
-        pointBackgroundColor: 'rgba(6,214,160,1)', borderWidth: 2,
-      },
-      {
-        label: 'شیمی',
-        data: [14, 15, 16, 16, 17, 17.5, 18, 18],
-        borderColor: 'rgba(124,58,237,0.9)',
-        backgroundColor: 'rgba(124,58,237,0.06)',
-        fill: true, tension: 0.4, pointRadius: 3,
-        pointBackgroundColor: 'rgba(124,58,237,1)', borderWidth: 2,
-      }
+new Chart(document.getElementById('gradesChart'),{
+  type:'line',
+  data:{
+    labels:['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'],
+    datasets:[
+      {label:'ریاضی',data:[15,16,15.5,17,16,18,18.5,19],borderColor:'rgba(74,144,217,.9)',backgroundColor:'rgba(74,144,217,.07)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(74,144,217,1)',borderWidth:2},
+      {label:'فیزیک',data:[13,14,13,15,15.5,16,16,16.5],borderColor:'rgba(6,214,160,.9)',backgroundColor:'rgba(6,214,160,.05)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(6,214,160,1)',borderWidth:2},
+      {label:'شیمی',data:[14,15,16,16,17,17.5,18,18],borderColor:'rgba(142,95,212,.9)',backgroundColor:'rgba(142,95,212,.05)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(142,95,212,1)',borderWidth:2}
     ]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: 'rgba(232,237,248,0.7)',
-          font: { family: 'Vazirmatn', size: 10 },
-          boxWidth: 10, padding: 10,
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(15,22,40,0.95)',
-        titleFont: { family: 'Vazirmatn' },
-        bodyFont: { family: 'Vazirmatn' },
-      }
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'rgba(232,237,248,.7)',font:{family:'Vazirmatn',size:10},boxWidth:10,padding:8}},
+      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
     },
-    scales: {
-      x: {
-        ticks: { color: 'rgba(232,237,248,0.5)', font: { family: 'Vazirmatn', size: 9 } },
-        grid:  { color: 'rgba(255,255,255,0.04)' },
-      },
-      y: {
-        min: 10, max: 20,
-        ticks: { color: 'rgba(232,237,248,0.5)', font: { family: 'Vazirmatn', size: 9 }, stepSize: 2 },
-        grid:  { color: 'rgba(255,255,255,0.05)' },
-      }
+    scales:{
+      x:{ticks:{color:'rgba(232,237,248,.5)',font:{family:'Vazirmatn',size:9},maxRotation:0},grid:{color:'rgba(255,255,255,.04)'}},
+      y:{min:10,max:20,ticks:{color:'rgba(232,237,248,.5)',font:{family:'Vazirmatn',size:9},stepSize:2},grid:{color:'rgba(255,255,255,.05)'}}
     },
-    animation: { duration: 1200, easing: 'easeInOutQuart' },
+    animation:{duration:1200,easing:'easeInOutQuart'}
   }
 });
 
-// ── همبرگر ──
-const sidebar  = document.getElementById('sidebar');
-const overlay  = document.getElementById('sidebarOverlay');
-const toggle   = document.getElementById('menuToggle');
-
-toggle.addEventListener('click', ()=>{
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
-});
-overlay.addEventListener('click', ()=>{
-  sidebar.classList.remove('active');
-  overlay.classList.remove('active');
-});
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.getElementById('menuToggle').addEventListener('click',openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click',closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSidebar(); });
 </script>
 </body>
 </html>

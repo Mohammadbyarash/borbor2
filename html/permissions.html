@@ -1,293 +1,477 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>بوربور - مدیریت دسترسی‌ها</title>
-      <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="../style/permissions.css" />
-    <link rel="stylesheet" href="../style/menu.css" />
+    <title>بوربور — مدیریت دسترسی‌ها</title>
+    <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../css/all.min.css" />
     <link rel="stylesheet" href="../style/scrollbar.css" />
+    <link rel="stylesheet" href="../style/permissions.css" />
     <script src="../javaScript/auth.js"></script>
     <script src="../javaScript/permission-guard.js"></script>
     <script src="../javaScript/sidebar-permissions.js"></script>
-  
-    <style>
-      /* ── Search Bar ─────────────────────────────── */
-      .search-bar-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
-      .search-bar-icon {
-        position: absolute;
-        right: 16px;
-        color: rgba(255,255,255,0.4);
-        font-size: 15px;
-        pointer-events: none;
-        transition: color 0.2s;
-      }
-      .search-input {
-        width: 100%;
-        padding: 13px 44px 13px 44px;
-        background: #172047;
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 10px;
-        color: #fff;
-        font-size: 15px;
-        font-family: "Vazirmatn", sans-serif;
-        outline: none;
-        transition: border-color 0.25s, box-shadow 0.25s;
-      }
-      .search-input:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 3px rgba(52,152,219,0.18);
-      }
-      .search-input:focus ~ .search-bar-icon,
-      .search-bar-wrapper:focus-within .search-bar-icon {
-        color: #3498db;
-      }
-      .search-clear-btn {
-        position: absolute;
-        left: 12px;
-        background: none;
-        border: none;
-        color: rgba(255,255,255,0.35);
-        cursor: pointer;
-        padding: 4px 6px;
-        border-radius: 6px;
-        font-size: 13px;
-        display: none;
-        transition: color 0.2s, background 0.2s;
-      }
-      .search-clear-btn:hover { color: #e74c3c; background: rgba(231,76,60,0.12); }
-      .search-clear-btn.visible { display: flex; align-items: center; }
-    </style>
   </head>
   <body>
-    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    <!-- PAGE LOADER -->
+    <div id="pageLoader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">در حال بارگذاری...</div>
+      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+    </div>
+
+    <!-- HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" title="منو">
+      <i class="fas fa-bars"></i>
+    </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <div class="logo">بوربور</div>
-        <div class="menu-item">
-          <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="manager-block">
+        <div class="manager-avatar" id="managerAvatarLetter">م</div>
+        <div>
+          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
+          <div class="manager-role" id="managerRole">مدیر سیستم</div>
+          <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
-        <div class="menu-item has-submenu">
-          <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران <i class="fas fa-chevron-down submenu-arrow"></i></a>
-          <div class="submenu">
-            <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
-            <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
-            <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
-            <a href="../html/Parents.html" class="submenu-item"><i class="fas fa-users"></i> مدیریت اولیا</a>
-          </div>
-        </div>
-        <div class="menu-item has-submenu">
-          <a href="" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس ها <i class="fas fa-chevron-down submenu-arrow"></i></a>
-          <div class="submenu">
-            <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
-            <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
-            <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
-            <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
-          </div>
-        </div>
-        <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت نام ها</a></div>
-        <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش ها</a></div>
-        <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه ها</a></div>
-        <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> ارشیو</a></div>
-        <div class="menu-item active">
-          <a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a>
-        </div>
-        <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
-        <div class="menu-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
       </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="menu-item">
+        <a href="../html/dashbord.html"
+          ><i class="fas fa-chart-line"></i> داشبورد</a
+        >
+      </div>
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link">
+          <i class="fas fa-users"></i> مدیریت کاربران
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <div class="submenu">
+          <a href="../html/Assistant_management.html" class="submenu-item"
+            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
+          >
+          <a href="../html/Teacher_management.html" class="submenu-item"
+            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
+          >
+          <a href="../html/student.html" class="submenu-item"
+            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
+          >
 
-      <!-- Main Content -->
+        </div>
+      </div>
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link">
+          <i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <div class="submenu">
+          <a href="../html/Courses.html" class="submenu-item"
+            ><i class="fas fa-list"></i> مدیریت دروس</a
+          >
+          <a href="../html/Class-schedule.html" class="submenu-item"
+            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
+          >
+          <a href="../html/Attendance.html" class="submenu-item"
+            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
+          >
+          <a href="../html/grades.html" class="submenu-item"
+            ><i class="fas fa-star"></i> نمرات</a
+          >
+        </div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">مدیریت</div>
+      <div class="menu-item">
+        <a href="../html/Pre-registration.html"
+          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/reports.html"
+          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
+      </div>
+      <div class="menu-item">
+        <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">سیستم</div>
+      <div class="menu-item active">
+        <a href="../html/permissions.html"
+          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
+        >
+      </div>
+       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="menu-item">
+        <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="container">
       <div class="main-content">
+        <!-- TOP HEADER -->
         <div class="top-header">
-          <h1 class="page-title">مدیریت دسترسی‌ها</h1>
-          <div class="admin-info" id="adminInfoDisplay">در حال بارگذاری...</div>
+          <div>
+            <h1 class="page-title">مدیریت <span>دسترسی‌ها</span></h1>
+            <div class="admin-info" id="adminInfoDisplay">
+              <span class="live-dot"></span>در حال بارگذاری...
+            </div>
+          </div>
+          <div class="profile-btn" id="profileBtnLetter">م</div>
         </div>
 
-        <!-- Info Box -->
+        <!-- INFO BOX -->
         <div class="info-box">
           <i class="fas fa-info-circle"></i>
           <div class="info-text">
             <strong>راهنمای دسترسی‌ها:</strong>
-            در این صفحه می‌توانید دسترسی‌های مختلف سیستم را برای نقش‌های کاربری تعیین کنید. برای مشاهده توضیحات هر دسترسی، روی دکمه اطلاعات کلیک کنید.
+            در این صفحه می‌توانید دسترسی‌های سیستم را مدیریت کنید. تب
+            <strong>تعریف دسترسی‌ها</strong> برای تنظیم کلی نقش‌ها و تب
+            <strong>دسترسی کاربران</strong> برای تعیین دسترسی هر کاربر به صورت
+            جداگانه استفاده کنید.
           </div>
         </div>
 
-        <!-- Statistics Cards -->
+        <!-- STATS -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div
+              class="stat-icon"
+              style="background: linear-gradient(135deg, #667eea, #764ba2)"
+            >
               <i class="fas fa-shield-alt"></i>
             </div>
             <div class="stat-info">
               <div class="stat-label">کل دسترسی‌ها</div>
-              <div class="stat-value" id="totalPermissions">0</div>
+              <div class="stat-value" id="totalPermissions">—</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div
+              class="stat-icon"
+              style="background: linear-gradient(135deg, #f093fb, #f5576c)"
+            >
               <i class="fas fa-users"></i>
             </div>
             <div class="stat-info">
               <div class="stat-label">نقش‌های کاربری</div>
-              <div class="stat-value">4</div>
+              <div class="stat-value">۴</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div
+              class="stat-icon"
+              style="background: linear-gradient(135deg, #4facfe, #00f2fe)"
+            >
               <i class="fas fa-check-circle"></i>
             </div>
             <div class="stat-info">
               <div class="stat-label">دسترسی‌های فعال</div>
-              <div class="stat-value" id="activePermissions">0</div>
+              <div class="stat-value" id="activePermissions">—</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <div
+              class="stat-icon"
+              style="background: linear-gradient(135deg, #fa709a, #fee140)"
+            >
               <i class="fas fa-lock"></i>
             </div>
             <div class="stat-info">
               <div class="stat-label">دسترسی‌های محدود</div>
-              <div class="stat-value" id="restrictedPermissions">0</div>
+              <div class="stat-value" id="restrictedPermissions">—</div>
             </div>
           </div>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="search-section">
-          <div class="search-bar-wrapper">
-            <i class="fas fa-search search-bar-icon"></i>
-            <input class="search-input" type="text" id="permissionSearch" placeholder="جستجو در دسترسی‌ها..." autocomplete="off" />
-            <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="پاک کردن">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
+        <!-- ═══════════ TABS ═══════════ -->
+        <div class="tabs-bar">
+          <button
+            class="tab-btn active"
+            id="tabBtnPerms"
+            onclick="switchTab('perms')"
+          >
+            <i class="fas fa-shield-alt"></i> تعریف دسترسی‌ها
+          </button>
+          <button class="tab-btn" id="tabBtnUsers" onclick="switchTab('users')">
+            <i class="fas fa-user-cog"></i> دسترسی کاربران
+          </button>
         </div>
 
-        <div class="filter-section">
-          <div class="filter-group">
-            <label>نمایش بر اساس:</label>
-            <select class="filter-select" id="roleFilter">
-              <option value="">همه نقش‌ها</option>
-              <option value="teacher">معلمین</option>
-              <option value="vice_principal">معاونین</option>
-              <option value="student">دانش‌آموزان</option>
-              <option value="parent">اولیا</option>
-            </select>
-            <select class="filter-select" id="accessTypeFilter">
-              <option value="">همه سطوح دسترسی</option>
-              <option value="read">فقط خواندن</option>
-              <option value="write">فقط نوشتن</option>
-              <option value="both">خواندن و نوشتن</option>
-            </select>
-          </div>
-          <div class="action-buttons">
-            <button class="action-btn btn-reset" onclick="resetPermissions()">
-              <i class="fas fa-undo"></i> بازنشانی
-            </button>
-          </div>
-        </div>
-
-        <!-- Permissions Table -->
-        <div class="table-container">
-          <div class="action-row">
-            <button class="action-btn btn-add-permission" onclick="openCreatePermissionModal()">
-              <i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید
-            </button>
-          </div>
-
-          <div class="permissions-table">
-            <div class="table-header">
-              <div class="header-cell permission-name-col"><i class="fas fa-shield-alt"></i> نام دسترسی</div>
-              <div class="header-cell explanation-col"><i class="fas fa-cog"></i> عملیات</div>
-              <div class="header-cell role-col"><i class="fas fa-chalkboard-teacher"></i> معلمین</div>
-              <div class="header-cell role-col"><i class="fas fa-user-shield"></i> معاونین</div>
-              <div class="header-cell role-col"><i class="fas fa-user-graduate"></i> دانش‌آموزان</div>
-              <div class="header-cell role-col"><i class="fas fa-user-friends"></i> اولیا</div>
+        <!-- ══════ TAB 1: PERMISSIONS ══════ -->
+        <div class="tab-panel active" id="tabPerms">
+          <!-- SEARCH -->
+          <div class="search-section">
+            <div class="search-bar-wrapper">
+              <i class="fas fa-search search-bar-icon"></i>
+              <input
+                class="search-input"
+                type="text"
+                id="permissionSearch"
+                placeholder="جستجو در دسترسی‌ها..."
+                autocomplete="off"
+              />
+              <button
+                class="search-clear-btn"
+                id="searchClearBtn"
+                onclick="clearSearch()"
+                title="پاک کردن"
+              >
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-            <div class="table-body" id="permissionsTableBody"></div>
+          </div>
+
+          <!-- FILTER -->
+          <div class="filter-section">
+            <div class="filter-group">
+              <label>نمایش بر اساس:</label>
+              <select class="filter-select" id="roleFilter">
+                <option value="">همه نقش‌ها</option>
+                <option value="teacher">معلمین</option>
+                <option value="vice_principal">معاونین</option>
+                <option value="student">دانش‌آموزان</option>
+                <option value="parent">اولیا</option>
+              </select>
+              <select class="filter-select" id="accessTypeFilter">
+                <option value="">همه سطوح دسترسی</option>
+                <option value="read">فقط خواندن</option>
+                <option value="write">فقط نوشتن</option>
+                <option value="both">خواندن و نوشتن</option>
+              </select>
+            </div>
+            <div class="action-buttons">
+              <button class="action-btn btn-reset" onclick="openResetConfirm()">
+                <i class="fas fa-undo"></i> بازنشانی
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLE -->
+          <div class="table-container">
+            <div class="action-row">
+              <button
+                class="btn-add-permission"
+                id="createPermissionBtn"
+                onclick="openCreatePermissionModal()"
+              >
+                <i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید
+              </button>
+            </div>
+            <div class="permissions-table">
+              <div class="table-header">
+                <div class="header-cell permission-name-col">
+                  <i class="fas fa-shield-alt"></i> نام دسترسی
+                </div>
+                <div class="header-cell explanation-col">
+                  <i class="fas fa-cog"></i> عملیات
+                </div>
+                <div class="header-cell">
+                  <i class="fas fa-chalkboard-teacher"></i> معلمین
+                </div>
+                <div class="header-cell">
+                  <i class="fas fa-user-shield"></i> معاونین
+                </div>
+                <div class="header-cell">
+                  <i class="fas fa-user-graduate"></i> دانش‌آموزان
+                </div>
+                <div class="header-cell">
+                  <i class="fas fa-user-friends"></i> اولیا
+                </div>
+              </div>
+              <div class="table-body" id="permissionsTableBody"></div>
+            </div>
           </div>
         </div>
+        <!-- /tabPerms -->
+
+        <!-- ══════ TAB 2: USERS ══════ -->
+        <div class="tab-panel" id="tabUsers">
+          <div class="users-filter-bar">
+            <div class="role-filter-btns">
+              <button
+                class="role-filter-btn active"
+                data-role="all"
+                onclick="filterUserRole('all')"
+              >
+                <i class="fas fa-users"></i> همه
+              </button>
+              <button
+                class="role-filter-btn"
+                data-role="teacher"
+                onclick="filterUserRole('teacher')"
+              >
+                <i class="fas fa-chalkboard-teacher"></i> معلمین
+              </button>
+              <button
+                class="role-filter-btn"
+                data-role="vice_principal"
+                onclick="filterUserRole('vice_principal')"
+              >
+                <i class="fas fa-user-shield"></i> معاونان
+              </button>
+              <button
+                class="role-filter-btn"
+                data-role="student"
+                onclick="filterUserRole('student')"
+              >
+                <i class="fas fa-user-graduate"></i> دانش‌آموزان
+              </button>
+            </div>
+            <input
+              class="users-search"
+              type="text"
+              id="usersSearch"
+              placeholder="جستجوی نام کاربر..."
+              autocomplete="off"
+              oninput="renderUsersGrid()"
+            />
+          </div>
+
+          <div class="users-grid" id="usersGrid">
+            <div class="no-users-state">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>در حال بارگذاری کاربران...</p>
+            </div>
+          </div>
+        </div>
+        <!-- /tabUsers -->
       </div>
+      <!-- /main-content -->
     </div>
+    <!-- /container -->
+
+    <!-- ══════════════════ MODALS ══════════════════ -->
 
     <!-- Explanation Modal -->
     <div class="modal" id="explanationModal">
       <div class="modal-content explanation-modal-content">
-        <button class="close-btn" onclick="closeExplanationModal()"><i class="fas fa-times"></i></button>
-        <h2 class="modal-title"><i class="fas fa-question-circle"></i> توضیحات دسترسی</h2>
+        <button class="close-btn" onclick="closeExplanationModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">
+          <i class="fas fa-question-circle"></i> توضیحات دسترسی
+        </h2>
         <div class="explanation-content">
           <div class="explanation-header">
-            <div class="explanation-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="explanation-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
             <div>
               <h3 class="explanation-name" id="explanationName">نام دسترسی</h3>
-              <span class="explanation-category" id="explanationCategory">دسته‌بندی</span>
+              <span class="explanation-category" id="explanationCategory"
+                >دسته‌بندی</span
+              >
             </div>
           </div>
           <div class="explanation-section">
-            <div class="explanation-section-title"><i class="fas fa-info-circle"></i> این دسترسی چیست؟</div>
+            <div class="explanation-section-title">
+              <i class="fas fa-info-circle"></i> این دسترسی چیست؟
+            </div>
             <p class="explanation-text" id="explanationDescription"></p>
           </div>
           <div class="explanation-section">
-            <div class="explanation-section-title"><i class="fas fa-cogs"></i> چه کاری انجام می‌دهد؟</div>
+            <div class="explanation-section-title">
+              <i class="fas fa-cogs"></i> چه کاری انجام می‌دهد؟
+            </div>
             <p class="explanation-text" id="explanationFunction"></p>
           </div>
           <div class="explanation-section warning">
-            <div class="explanation-section-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم و هشدارها</div>
+            <div class="explanation-section-title">
+              <i class="fas fa-exclamation-triangle"></i> نکات مهم
+            </div>
             <p class="explanation-text" id="explanationWarning"></p>
           </div>
           <div class="explanation-section example">
-            <div class="explanation-section-title"><i class="fas fa-lightbulb"></i> مثال عملی</div>
+            <div class="explanation-section-title">
+              <i class="fas fa-lightbulb"></i> مثال عملی
+            </div>
             <p class="explanation-text" id="explanationExample"></p>
           </div>
-
-          <!-- ✅ NEW: Meta info (created_by, locked_by) -->
-          <div class="explanation-section meta-info" id="explanationMetaSection">
-            <div class="explanation-section-title"><i class="fas fa-info"></i> اطلاعات تکمیلی</div>
+          <div class="explanation-section meta-info">
+            <div class="explanation-section-title">
+              <i class="fas fa-info"></i> اطلاعات تکمیلی
+            </div>
             <div class="meta-info-grid">
               <div class="meta-item" id="explanationCreatedByWrap">
-                <span class="meta-label"><i class="fas fa-user-plus"></i> ایجادکننده:</span>
+                <span class="meta-label"
+                  ><i class="fas fa-user-plus"></i> ایجادکننده:</span
+                >
                 <span class="meta-value" id="explanationCreatedBy">-</span>
               </div>
-              <div class="meta-item" id="explanationLockedByWrap" style="display:none">
-                <span class="meta-label"><i class="fas fa-lock"></i> قفل‌کننده:</span>
+              <div
+                class="meta-item"
+                id="explanationLockedByWrap"
+                style="display: none"
+              >
+                <span class="meta-label"
+                  ><i class="fas fa-lock"></i> قفل‌کننده:</span
+                >
                 <span class="meta-value" id="explanationLockedBy">-</span>
               </div>
-              <div class="meta-item" id="explanationOwnerOnlyWrap" style="display:none">
-                <span class="meta-label"><i class="fas fa-crown"></i> وضعیت:</span>
+              <div
+                class="meta-item"
+                id="explanationOwnerOnlyWrap"
+                style="display: none"
+              >
+                <span class="meta-label"
+                  ><i class="fas fa-crown"></i> وضعیت:</span
+                >
                 <span class="meta-value owner-badge-text">فقط مدیر ارشد</span>
               </div>
             </div>
           </div>
         </div>
-        <button class="modal-btn-close" onclick="closeExplanationModal()"><i class="fas fa-check"></i> متوجه شدم</button>
+        <button class="modal-btn-close" onclick="closeExplanationModal()">
+          <i class="fas fa-check"></i> متوجه شدم
+        </button>
       </div>
     </div>
 
     <!-- Create Permission Modal -->
     <div class="modal" id="createPermissionModal">
       <div class="modal-content create-permission-content">
-        <button class="close-btn" onclick="closeCreatePermissionModal()"><i class="fas fa-times"></i></button>
-        <h2 class="modal-title"><i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید</h2>
-
+        <button class="close-btn" onclick="closeCreatePermissionModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">
+          <i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید
+        </h2>
         <div class="create-form">
           <div class="form-section">
-            <h3 class="form-section-title"><i class="fas fa-info"></i> اطلاعات اولیه</h3>
+            <div class="form-section-title">
+              <i class="fas fa-info"></i> اطلاعات اولیه
+            </div>
             <div class="form-grid">
               <div class="form-group full-width">
-                <label class="form-label">نام دسترسی: <span class="required">*</span></label>
-                <input type="text" class="form-input" id="newPermissionName" placeholder="مثال: مشاهده کارنامه" />
+                <label class="form-label"
+                  >نام دسترسی <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newPermissionName"
+                  placeholder="مثال: مشاهده کارنامه"
+                />
               </div>
               <div class="form-group full-width">
-                <label class="form-label">دسته‌بندی: <span class="required">*</span></label>
+                <label class="form-label"
+                  >دسته‌بندی <span class="required">*</span></label
+                >
                 <select class="form-input" id="newPermissionCategory">
                   <option value="">انتخاب کنید...</option>
                   <optgroup label="── صفحات ──">
@@ -296,7 +480,9 @@
                   <optgroup label="── مدیریت کاربران ──">
                     <option value="مدیریت معاونین">مدیریت معاونین</option>
                     <option value="مدیریت معلمین">مدیریت معلمین</option>
-                    <option value="مدیریت دانش‌آموزان">مدیریت دانش‌آموزان</option>
+                    <option value="مدیریت دانش‌آموزان">
+                      مدیریت دانش‌آموزان
+                    </option>
                     <option value="مدیریت اولیاء">مدیریت اولیاء</option>
                     <option value="مدیریت کاربران">مدیریت کاربران</option>
                   </optgroup>
@@ -323,42 +509,75 @@
                 </select>
               </div>
               <div class="form-group full-width">
-                <label class="form-label">توضیحات: <span class="required">*</span></label>
-                <textarea class="form-input" id="newPermissionDescription" rows="3" placeholder="توضیح کاملی از دسترسی و کاربرد آن..."></textarea>
+                <label class="form-label"
+                  >توضیحات <span class="required">*</span></label
+                >
+                <textarea
+                  class="form-input"
+                  id="newPermissionDescription"
+                  rows="3"
+                  placeholder="توضیح کاملی از دسترسی..."
+                ></textarea>
               </div>
               <div class="form-group full-width">
-                <label class="form-label">عملکرد:</label>
-                <textarea class="form-input" id="newPermissionFunction" rows="2" placeholder="این دسترسی چه کارهایی را امکان‌پذیر می‌کند؟"></textarea>
+                <label class="form-label">عملکرد</label>
+                <textarea
+                  class="form-input"
+                  id="newPermissionFunction"
+                  rows="2"
+                  placeholder="این دسترسی چه کارهایی را امکان‌پذیر می‌کند؟"
+                ></textarea>
               </div>
               <div class="form-group full-width">
-                <label class="form-label">نکات مهم:</label>
-                <textarea class="form-input" id="newPermissionWarning" rows="2" placeholder="هشدارها یا نکات امنیتی مهم..."></textarea>
+                <label class="form-label">نکات مهم</label>
+                <textarea
+                  class="form-input"
+                  id="newPermissionWarning"
+                  rows="2"
+                  placeholder="هشدارها یا نکات امنیتی..."
+                ></textarea>
               </div>
               <div class="form-group full-width">
-                <label class="form-label">مثال کاربردی:</label>
-                <textarea class="form-input" id="newPermissionExample" rows="2" placeholder="یک مثال عملی از استفاده از این دسترسی..."></textarea>
+                <label class="form-label">مثال کاربردی</label>
+                <textarea
+                  class="form-input"
+                  id="newPermissionExample"
+                  rows="2"
+                  placeholder="یک مثال عملی..."
+                ></textarea>
               </div>
-
-              <!-- ✅ NEW: Owner-only checkbox (فقط برای owner نمایش داده می‌شود) -->
-              <div class="form-group full-width owner-only-field" id="ownerOnlyFieldWrap" style="display:none">
-                <label class="form-label owner-only-label" id="newPermissionOwnerOnlyLabel">
-                  <i class="fas fa-crown"></i> ویژگی‌های مدیر ارشد:
-                </label>
+              <div
+                class="form-group full-width"
+                id="ownerOnlyFieldWrap"
+                style="display: none"
+              >
+                <label class="form-label"
+                  ><i class="fas fa-crown"></i> ویژگی‌های مدیر ارشد:</label
+                >
                 <label class="checkbox-toggle-label">
-                  <input type="checkbox" id="newPermissionOwnerOnly" class="checkbox-toggle" />
+                  <input
+                    type="checkbox"
+                    id="newPermissionOwnerOnly"
+                    class="checkbox-toggle"
+                  />
                   <span class="checkbox-toggle-track"></span>
-                  <span class="checkbox-toggle-text">فقط مدیر ارشد می‌تواند این دسترسی را ببیند و ویرایش کند</span>
+                  <span class="checkbox-toggle-text"
+                    >فقط مدیر ارشد می‌تواند این دسترسی را ببیند و ویرایش
+                    کند</span
+                  >
                 </label>
               </div>
-
             </div>
           </div>
-
           <div class="form-section">
-            <h3 class="form-section-title"><i class="fas fa-users"></i> تنظیم دسترسی‌های پیش‌فرض</h3>
+            <div class="form-section-title">
+              <i class="fas fa-users"></i> تنظیم دسترسی‌های پیش‌فرض
+            </div>
             <div class="default-access-grid">
               <div class="default-access-item">
-                <label class="access-role-label"><i class="fas fa-chalkboard-teacher"></i> معلمین</label>
+                <label class="access-role-label"
+                  ><i class="fas fa-chalkboard-teacher"></i> معلمین</label
+                >
                 <select class="form-input" id="defaultAccessTeacher">
                   <option value="none">بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -367,7 +586,9 @@
                 </select>
               </div>
               <div class="default-access-item">
-                <label class="access-role-label"><i class="fas fa-user-shield"></i> معاونین</label>
+                <label class="access-role-label"
+                  ><i class="fas fa-user-shield"></i> معاونین</label
+                >
                 <select class="form-input" id="defaultAccessVicePrincipal">
                   <option value="none">بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -376,7 +597,9 @@
                 </select>
               </div>
               <div class="default-access-item">
-                <label class="access-role-label"><i class="fas fa-user-graduate"></i> دانش‌آموزان</label>
+                <label class="access-role-label"
+                  ><i class="fas fa-user-graduate"></i> دانش‌آموزان</label
+                >
                 <select class="form-input" id="defaultAccessStudent">
                   <option value="none" selected>بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -385,7 +608,9 @@
                 </select>
               </div>
               <div class="default-access-item">
-                <label class="access-role-label"><i class="fas fa-user-friends"></i> اولیا</label>
+                <label class="access-role-label"
+                  ><i class="fas fa-user-friends"></i> اولیا</label
+                >
                 <select class="form-input" id="defaultAccessParent">
                   <option value="none" selected>بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -396,75 +621,494 @@
             </div>
           </div>
         </div>
-
         <div class="modal-buttons">
-          <button class="modal-btn modal-btn-confirm" onclick="createNewPermission()">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="createNewPermission()"
+          >
             <i class="fas fa-plus"></i> ایجاد دسترسی
           </button>
-          <button class="modal-btn modal-btn-cancel" onclick="closeCreatePermissionModal()">
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeCreatePermissionModal()"
+          >
             <i class="fas fa-times"></i> انصراف
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ✅ NEW: Delete Confirm Modal -->
+    <!-- Delete Confirm Modal -->
     <div class="modal" id="deleteConfirmModal">
       <div class="modal-content delete-confirm-content">
-        <button class="close-btn" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+        <button class="close-btn" onclick="closeDeleteModal()">
+          <i class="fas fa-times"></i>
+        </button>
         <div class="delete-confirm-icon">
           <i class="fas fa-exclamation-triangle"></i>
         </div>
         <h2 class="modal-title delete-title">حذف دسترسی</h2>
         <p class="delete-confirm-text">
-          آیا از حذف دسترسی <strong id="deletePermissionName">-</strong> مطمئن هستید؟
+          آیا از حذف دسترسی <strong id="deletePermissionName">-</strong> مطمئن
+          هستید؟
         </p>
         <p class="delete-confirm-warning">
-          <i class="fas fa-exclamation-circle"></i>
-          این عملیات برگشت‌پذیر نیست.
+          <i class="fas fa-exclamation-circle"></i> این عملیات برگشت‌پذیر نیست.
         </p>
         <div class="modal-buttons">
           <button class="modal-btn modal-btn-danger" id="deleteConfirmBtn">
             <i class="fas fa-trash"></i> بله، حذف شود
           </button>
-          <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeDeleteModal()"
+          >
             <i class="fas fa-times"></i> انصراف
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Success Toast -->
+    <!-- ▶ RESET CONFIRM MODAL (جدید) -->
+    <div class="modal" id="resetConfirmModal">
+      <div class="modal-content reset-confirm-content">
+        <button class="close-btn" onclick="closeResetConfirm()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="reset-confirm-icon"><i class="fas fa-undo"></i></div>
+        <div class="reset-confirm-title">بازنشانی اطلاعات</div>
+        <p class="reset-confirm-text">
+          آیا مطمئن هستید؟<br />
+          اطلاعات مجدداً از سرور بارگذاری می‌شود و تغییرات ذخیره‌نشده از بین
+          می‌روند.
+        </p>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-confirm" onclick="confirmReset()">
+            <i class="fas fa-undo"></i> بله، بازنشانی شود
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeResetConfirm()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
     <div class="toast-notification" id="successToast">
       <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
       <div class="toast-content">
         <div class="toast-title">موفقیت‌آمیز!</div>
-        <div class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد</div>
+        <div class="toast-message" id="toastMessage">
+          عملیات با موفقیت انجام شد
+        </div>
       </div>
-      <button class="toast-close" onclick="closeToast()"><i class="fas fa-times"></i></button>
+      <button class="toast-close" onclick="closeToast()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
     <script src="../javaScript/permissions.js"></script>
-    <script src="../javaScript/menu.js"></script>
     <script>
-      /* ── Search clear button visibility ─────────── */
-      document.addEventListener('DOMContentLoaded', function () {
-        var inp = document.getElementById('permissionSearch');
-        var btn = document.getElementById('searchClearBtn');
-        if (!inp || !btn) return;
-        inp.addEventListener('input', function () {
-          btn.classList.toggle('visible', inp.value.length > 0);
-        });
+      /* ═══════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════ */
+      var menuToggle = document.getElementById("menuToggle");
+      var sidebar = document.getElementById("sidebar");
+      var sidebarOverlay = document.getElementById("sidebarOverlay");
+      var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
+
+      function openSidebar() {
+        sidebar.classList.add("active");
+        sidebarOverlay.classList.add("active");
+        menuToggle.classList.add("sidebar-open"); // ← مخفی کردن دکمه همبرگر
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        sidebar.classList.remove("active");
+        sidebarOverlay.classList.remove("active");
+        menuToggle.classList.remove("sidebar-open"); // ← نمایش دوباره دکمه
+        document.body.style.overflow = "";
+      }
+
+      menuToggle.addEventListener("click", openSidebar);
+      sidebarCloseBtn.addEventListener("click", closeSidebar);
+      sidebarOverlay.addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSidebar();
       });
+
+      /* submenu accordion */
+      document
+        .querySelectorAll(".menu-item.has-submenu")
+        .forEach(function (item) {
+          item
+            .querySelector(".menu-link")
+            .addEventListener("click", function (e) {
+              e.preventDefault();
+              document
+                .querySelectorAll(".menu-item.has-submenu")
+                .forEach(function (o) {
+                  if (o !== item) o.classList.remove("open");
+                });
+              item.classList.toggle("open");
+            });
+        });
+
+      /* ═══════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════ */
+      function switchTab(tab) {
+        document.querySelectorAll(".tab-btn").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-panel").forEach(function (p) {
+          p.classList.remove("active");
+        });
+        document
+          .getElementById("tabBtn" + (tab === "perms" ? "Perms" : "Users"))
+          .classList.add("active");
+        document
+          .getElementById("tab" + (tab === "perms" ? "Perms" : "Users"))
+          .classList.add("active");
+        if (tab === "users" && window.usersLoaded === false) loadUsers();
+      }
+
+      /* ═══════════════════════════════════════════════
+   SEARCH CLEAR
+═══════════════════════════════════════════════ */
+      document
+        .getElementById("permissionSearch")
+        .addEventListener("input", function () {
+          document
+            .getElementById("searchClearBtn")
+            .classList.toggle("visible", this.value.length > 0);
+        });
       function clearSearch() {
-        var inp = document.getElementById('permissionSearch');
-        var btn = document.getElementById('searchClearBtn');
-        if (!inp) return;
-        inp.value = '';
-        btn.classList.remove('visible');
-        inp.dispatchEvent(new Event('input'));
+        var inp = document.getElementById("permissionSearch");
+        inp.value = "";
+        document.getElementById("searchClearBtn").classList.remove("visible");
+        inp.dispatchEvent(new Event("input"));
         inp.focus();
       }
+
+      /* ═══════════════════════════════════════════════
+   RESET CONFIRM MODAL
+═══════════════════════════════════════════════ */
+      function openResetConfirm() {
+        document.getElementById("resetConfirmModal").classList.add("active");
+      }
+      function closeResetConfirm() {
+        document.getElementById("resetConfirmModal").classList.remove("active");
+      }
+      function confirmReset() {
+        closeResetConfirm();
+        if (typeof fetchPermissions === "function") fetchPermissions();
+      }
+      document
+        .getElementById("resetConfirmModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeResetConfirm();
+        });
+
+      /* ═══════════════════════════════════════════════
+   USERS TAB
+═══════════════════════════════════════════════ */
+      window.usersLoaded = false;
+      window.usersData = []; // [{id, name, role, photo, username}]
+      window.currentRoleFilter = "all";
+      var USERS_API = "/borbor/api/users-list.php"; // باید این endpoint وجود داشته باشه
+
+      function loadUsers() {
+        var grid = document.getElementById("usersGrid");
+        grid.innerHTML =
+          '<div class="no-users-state"><i class="fas fa-spinner fa-spin"></i><p>در حال بارگذاری...</p></div>';
+
+        fetch(USERS_API, { credentials: "include" })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            if (!data.success) throw new Error(data.message || "خطا");
+            window.usersData = data.users || [];
+            window.usersLoaded = true;
+            renderUsersGrid();
+          })
+          .catch(function (err) {
+            grid.innerHTML =
+              '<div class="no-users-state"><i class="fas fa-exclamation-circle"></i><p>' +
+              (err.message || "خطا در بارگذاری کاربران") +
+              "</p></div>";
+          });
+      }
+
+      function filterUserRole(role) {
+        window.currentRoleFilter = role;
+        document.querySelectorAll(".role-filter-btn").forEach(function (b) {
+          b.classList.toggle("active", b.dataset.role === role);
+        });
+        renderUsersGrid();
+      }
+
+      function renderUsersGrid() {
+        var grid = document.getElementById("usersGrid");
+        var search = (document.getElementById("usersSearch").value || "")
+          .trim()
+          .toLowerCase();
+        var roleF = window.currentRoleFilter;
+        // اگر permissions هنوز لود نشده
+        var perms = typeof permissions !== "undefined" ? permissions : [];
+
+        var filtered = (window.usersData || []).filter(function (u) {
+          var matchRole = roleF === "all" || u.role === roleF;
+          var matchSearch =
+            !search ||
+            u.name.toLowerCase().includes(search) ||
+            (u.username || "").toLowerCase().includes(search);
+          return matchRole && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML =
+            '<div class="no-users-state"><i class="fas fa-users-slash"></i><p>کاربری یافت نشد</p></div>';
+          return;
+        }
+
+        var roleMap = {
+          teacher: "معلم",
+          vice_principal: "معاون",
+          student: "دانش‌آموز",
+          parent: "ولی",
+        };
+
+        // فیلتر پرمیشن‌های مرتبط با نقش کاربر
+        function permsForRole(role) {
+          return perms.filter(function (p) {
+            return p.roles && typeof p.roles[role] !== "undefined";
+          });
+        }
+
+        var html = "";
+        filtered.forEach(function (user) {
+          var letter = (user.name || "?").charAt(0);
+          var roleLbl = roleMap[user.role] || user.role;
+          var badgeCls = "badge-" + user.role;
+          var avatarCls = user.role + "-av";
+          var rolePerms = permsForRole(user.role);
+          var avatarHTML = user.photo
+            ? '<img src="' + user.photo + '" alt="عکس" />'
+            : letter;
+
+          var permRows = "";
+          if (rolePerms.length === 0) {
+            permRows =
+              '<div class="user-perms-empty"><i class="fas fa-shield-alt"></i><span>دسترسی‌ای تعریف نشده</span></div>';
+          } else {
+            rolePerms.forEach(function (p) {
+              var access =
+                p.roles && p.roles[user.role] ? p.roles[user.role] : "none";
+              var hasRead = access === "read" || access === "both";
+              var hasWrite = access === "write" || access === "both";
+              var locked =
+                p.is_locked ||
+                (p.is_owner_only &&
+                  !(typeof isOwner !== "undefined" && isOwner));
+              var dis = locked ? " disabled" : "";
+              var lockBadge = locked
+                ? '<i class="fas fa-lock" style="color:rgba(255,193,7,0.6);font-size:10px;margin-right:4px" title="قفل شده"></i>'
+                : "";
+
+              permRows +=
+                '<div class="user-perm-row">' +
+                '<div class="user-perm-name">' +
+                lockBadge +
+                "<strong>" +
+                p.name +
+                "</strong>" +
+                "<span>" +
+                (p.category || "") +
+                "</span>" +
+                "</div>" +
+                '<div class="mini-access-group">' +
+                '<button class="mini-btn read ' +
+                (hasRead ? "on" : "") +
+                '"' +
+                dis +
+                ' onclick="userToggleBit(' +
+                p.id +
+                ",'" +
+                user.role +
+                "','read'," +
+                user.id +
+                ')"' +
+                ' title="خواندن"><i class="fas fa-eye"></i></button>' +
+                '<button class="mini-btn write ' +
+                (hasWrite ? "on" : "") +
+                '"' +
+                dis +
+                ' onclick="userToggleBit(' +
+                p.id +
+                ",'" +
+                user.role +
+                "','write'," +
+                user.id +
+                ')"' +
+                ' title="نوشتن"><i class="fas fa-pen"></i></button>' +
+                '<button class="mini-btn both ' +
+                (access === "both" ? "on" : "") +
+                '"' +
+                dis +
+                ' onclick="userToggleBoth(' +
+                p.id +
+                ",'" +
+                user.role +
+                "'," +
+                user.id +
+                ')"' +
+                ' title="هر دو"><i class="fas fa-check-double"></i></button>' +
+                '<button class="mini-btn none ' +
+                (access === "none" ? "on" : "") +
+                '"' +
+                dis +
+                ' onclick="userSetNone(' +
+                p.id +
+                ",'" +
+                user.role +
+                "'," +
+                user.id +
+                ')"' +
+                ' title="بدون دسترسی"><i class="fas fa-ban"></i></button>' +
+                "</div>" +
+                "</div>";
+            });
+          }
+
+          html +=
+            '<div class="user-perm-card" id="ucard-' +
+            user.id +
+            '">' +
+            '<div class="user-card-header" onclick="toggleUserCard(' +
+            user.id +
+            ')">' +
+            '<div class="user-avatar ' +
+            avatarCls +
+            '">' +
+            avatarHTML +
+            "</div>" +
+            '<div class="user-info">' +
+            '<div class="user-name">' +
+            user.name +
+            "</div>" +
+            '<span class="user-role-badge ' +
+            badgeCls +
+            '">' +
+            '<i class="fas ' +
+            roleIcon(user.role) +
+            '"></i>' +
+            roleLbl +
+            "</span>" +
+            "</div>" +
+            '<div class="user-card-toggle"><i class="fas fa-chevron-down"></i></div>' +
+            "</div>" +
+            '<div class="user-perms-body">' +
+            '<div class="user-perms-list">' +
+            permRows +
+            "</div>" +
+            "</div>" +
+            "</div>";
+        });
+
+        grid.innerHTML = html;
+      }
+
+      function roleIcon(role) {
+        var icons = {
+          teacher: "fa-chalkboard-teacher",
+          vice_principal: "fa-user-shield",
+          student: "fa-user-graduate",
+          parent: "fa-user-friends",
+        };
+        return icons[role] || "fa-user";
+      }
+
+      function toggleUserCard(userId) {
+        var card = document.getElementById("ucard-" + userId);
+        if (!card) return;
+        card.classList.toggle("open");
+      }
+
+      /* تغییر دسترسی روی role (نه user خاص) — چون سیستم role-based است */
+      function userToggleBit(permId, role, bit, userId) {
+        if (typeof toggleBit === "function") {
+          toggleBit(permId, role, bit);
+          /* بعد از ذخیره، grid رو رفرش کن */
+          setTimeout(renderUsersGrid, 300);
+        }
+      }
+      function userToggleBoth(permId, role, userId) {
+        if (typeof toggleBoth === "function") {
+          toggleBoth(permId, role);
+          setTimeout(renderUsersGrid, 300);
+        }
+      }
+      function userSetNone(permId, role, userId) {
+        var perm = typeof getById === "function" ? getById(permId) : null;
+        if (!perm) return;
+        if (perm.roles[role] === "none") return;
+        if (!canWrite()) {
+          showToast("دسترسی ویرایش ندارید", "error");
+          return;
+        }
+        perm.roles[role] = "none";
+        if (typeof saveAccessChange === "function") saveAccessChange(perm);
+        setTimeout(renderUsersGrid, 300);
+      }
+
+      /* ═══════════════════════════════════════════════
+   PROFILE INFO
+═══════════════════════════════════════════════ */
+      fetch("../api/stats.php")
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (d) {
+          if (d.success && d.currentUser) {
+            var u = d.currentUser;
+            var letter = (u.name || "م").charAt(0);
+            var nm = document.getElementById("managerName");
+            var rl = document.getElementById("managerRole");
+            var av = document.getElementById("managerAvatarLetter");
+            var pb = document.getElementById("profileBtnLetter");
+            var ai = document.getElementById("adminInfoDisplay");
+            if (nm) nm.textContent = u.name || "";
+            if (rl) rl.textContent = u.role_label || u.role || "";
+            if (av) av.textContent = letter;
+            if (pb) pb.textContent = letter;
+            if (ai)
+              ai.innerHTML =
+                '<span class="live-dot"></span>' +
+                (u.role_label || "") +
+                ": " +
+                (u.name || "");
+          }
+        })
+        .catch(function () {});
+
+      /* بستن مودال‌ها با کلیک بیرون */
+      [
+        "explanationModal",
+        "createPermissionModal",
+        "deleteConfirmModal",
+        "resetConfirmModal",
+      ].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("click", function (e) {
+          if (e.target === this) this.classList.remove("active");
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

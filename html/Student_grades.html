@@ -3,244 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوربور - نمرات</title>
-    <link rel="icon" href="../image/iconB.png">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>بوربور — نمرات</title>
+<link rel="icon" href="../image/iconB.png">
+       
     <link rel="stylesheet" href="../style/scrollbar.css" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
 
 :root {
-  --bg-main: #202b59;
-  --bg-card: #1f285a;
-  --bg-card2: #1e2957;
-  --bg-sidebar: #172047;
-  --accent: #3498db;
-  --accent2: #9b59b6;
+  --bg-main: #0f1629;
+  --bg-card: #162040;
+  --bg-card2: #1a2650;
+  --bg-sidebar: #0b1120;
+  --accent: #4a90d9;
+  --accent2: #8e5fd4;
   --accent3: #06d6a0;
   --accent4: #f39c12;
   --accent5: #e74c3c;
-  --text: #ffffff;
-  --text-muted: rgba(255,255,255,0.58);
-  --border: rgba(255,255,255,0.09);
-  --present: #27ae60;
+  --present: #2ecc71;
   --absent: #e74c3c;
   --late: #f39c12;
-  --glow: 0 0 30px rgba(52,152,219,0.15);
-  --sidebar-w: 260px;
-  --radius: 14px;
+  --text: #e8f0ff;
+  --text-muted: rgba(180,200,255,0.48);
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(74,144,217,0.35);
+  --sidebar-w: 258px;
+  --radius: 18px;
+  --radius-sm: 11px;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Vazirmatn', sans-serif;
+  font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
   background: var(--bg-main);
   color: var(--text);
   direction: rtl;
-  overflow-x: hidden;
   min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 body::before {
   content: '';
   position: fixed; inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(124,58,237,0.07) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 60% at 10% 5%, rgba(74,144,217,0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,0.1) 0%, transparent 55%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(74,144,217,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,144,217,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
   pointer-events: none; z-index: 0;
 }
 
-/* ─── SIDEBAR ─── */
+/* ════ SIDEBAR ════ */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--bg-sidebar);
-  padding: 28px 16px;
+  padding: 26px 14px;
   border-left: 1px solid var(--border);
-  position: fixed;
-  right: 0; top: 0;
+  position: fixed; right: 0; top: 0;
   height: 100vh;
-  overflow-y: auto;
-  z-index: 200;
-  transition: transform .3s ease;
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 500;
+  display: flex; flex-direction: column;
+  transform: translateX(110%);
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
+}
+.sidebar.active { transform: translateX(0) !important; }
+
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 499;
+}
+.sidebar-overlay.active { display: block; }
+
+.logo {
+  text-align: center; margin-bottom: 4px;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -1px; color: #fff;
+  font-family: "Shabnam", sans-serif;
+}
+.logo span { color: var(--accent); }
+.logo-sub {
+  text-align: center; font-size: 10px;
+  color: var(--text-muted); margin-bottom: 18px;
+  letter-spacing: 1px; text-transform: uppercase;
 }
 
-.logo { color: white; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 40px; }
+.sidebar-close-btn {
+  position: absolute; top: 14px; left: 14px;
+  width: 32px; height: 32px;
+  background: rgba(231,76,60,0.12);
+  border: 1px solid rgba(231,76,60,0.2);
+  border-radius: 50%; color: var(--absent);
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.2s;
+}
+.sidebar-close-btn:hover { background: var(--absent); color: #fff; transform: rotate(90deg); }
 
-.nav-item { margin-bottom: 6px; }
+.student-block {
+  background: linear-gradient(135deg, rgba(74,144,217,0.14), rgba(142,95,212,0.10));
+  border: 1px solid rgba(74,144,217,0.2);
+  border-radius: var(--radius-sm);
+  padding: 15px 13px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+.student-block::before {
+  content: ''; position: absolute;
+  top: -20px; left: -20px; width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(74,144,217,0.15), transparent 70%);
+  pointer-events: none;
+}
+.student-avatar {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(74,144,217,0.35);
+}
+.student-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.student-role { font-size: 10px; color: var(--text-muted); }
+.student-badge {
+  margin-top: 7px; display: inline-block;
+  background: rgba(6,214,160,0.12); color: var(--accent3);
+  font-size: 9px; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px;
+  border: 1px solid rgba(6,214,160,0.2);
+}
+
+.nav-section-label {
+  font-size: 9px; font-weight: 700;
+  color: rgba(180,200,255,0.28);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 0 14px; margin: 14px 0 8px;
+}
+.nav-item { margin-bottom: 2px; }
 .nav-item a {
-  color: rgba(255,255,255,.72);
-  text-decoration: none;
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 10px;
-  border-radius: 10px; font-size: 14px; transition: all .25s;
+  color: rgba(180,200,255,0.58);
+  text-decoration: none; padding: 10px 14px;
+  display: flex; align-items: center; gap: 11px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 500;
+  transition: all .2s; position: relative;
 }
-.nav-item a i { font-size: 15px; width: 20px; text-align: center; }
-.nav-item a:hover, .nav-item.active a { background: var(--bg-main); color: #fff; }
-.nav-item.active a { font-weight: 600; }
-.nav-badge { margin-right: auto; background: var(--accent5); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+.nav-item a i { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; opacity: 0.75; }
+.nav-item a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.nav-item.active a {
+  background: linear-gradient(90deg, rgba(74,144,217,0.18), rgba(74,144,217,0.05));
+  color: #fff; font-weight: 700;
+  border: 1px solid rgba(74,144,217,0.22);
+}
+.nav-item.active a::before {
+  content: ''; position: absolute;
+  right: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 65%;
+  background: var(--accent); border-radius: 3px 0 0 3px;
+}
+.nav-badge {
+  margin-right: auto; background: var(--accent5); color: #fff;
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 20px; min-width: 20px; text-align: center;
+}
+.nav-divider { height: 1px; background: var(--border); margin: 10px 4px; }
+.sidebar-footer {
+  margin-top: auto; padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px; color: var(--text-muted);
+  text-align: center; line-height: 1.7;
+}
 
-/* ─── MAIN ─── */
+/* ════ HAMBURGER ════ */
+.menu-toggle {
+  position: fixed; top: 16px; right: 20px; z-index: 300;
+  width: 44px; height: 44px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  color: var(--text-muted); font-size: 18px;
+}
+.menu-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+
+/* ════ MAIN ════ */
 .main-content {
-  margin-right: var(--sidebar-w);
   min-height: 100vh;
-  padding: 28px 24px;
+  width: 100%;
+  padding: 72px 24px 36px;
   position: relative; z-index: 1;
 }
 
-/* ─── TOP BAR ─── */
-.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px; }
-.greeting-block h1 { font-size: 20px; font-weight: 700; }
+/* ════ TOP BAR ════ */
+.top-bar {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 22px; gap: 14px;
+  flex-wrap: wrap; animation: fadeUp .4s ease both;
+}
+.greeting-block h1 { font-size: 20px; font-weight: 800; line-height: 1.3; }
 .greeting-block h1 span { color: var(--accent); }
-.greeting-block p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-.top-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.notif-btn {
-  position: relative; width: 38px; height: 38px;
+.greeting-block p { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 7px; }
+.top-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.action-btn {
+  position: relative; width: 40px; height: 40px;
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s;
 }
-.notif-btn:hover { color: var(--text); background: var(--bg-card2); }
-.notif-dot { position: absolute; top: 7px; left: 7px; width: 7px; height: 7px; background: var(--accent5); border-radius: 50%; border: 2px solid var(--bg-main); }
-.profile-avatar {
-  width: 38px; height: 38px;
+.action-btn:hover { color: #fff; border-color: var(--border-hover); }
+.notif-dot {
+  position: absolute; top: 8px; left: 8px;
+  width: 7px; height: 7px;
+  background: var(--accent5); border-radius: 50%;
+  border: 2px solid var(--bg-main);
+}
+.profile-btn {
+  width: 40px; height: 40px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+  border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+  box-shadow: 0 3px 10px rgba(74,144,217,0.35);
 }
 
-/* ─── SECTION HEADER ─── */
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.section-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
-.section-title i { color: var(--accent); }
-.section-link { font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: none; white-space: nowrap; }
+/* ════ SEC HEADER ════ */
+.sec-hdr {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;
+}
+.sec-title { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.sec-title i { color: var(--accent); font-size: 14px; }
+.sec-link {
+  font-size: 11px; color: var(--accent); cursor: pointer;
+  text-decoration: none; padding: 3px 8px; border-radius: 6px; transition: background .2s;
+  white-space: nowrap;
+}
+.sec-link:hover { background: rgba(74,144,217,0.1); }
 
-/* ─── SUMMARY STRIP ─── */
+/* ════ SUMMARY STRIP ════ */
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px; margin-bottom: 20px;
 }
 
 .sum-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 20px 16px 18px;
   position: relative; overflow: hidden;
-  transition: transform .3s, box-shadow .3s, border-color .3s;
+  transition: transform .28s, box-shadow .28s, border-color .28s;
+  animation: fadeUp .45s ease both;
+  min-width: 0;
 }
 .sum-card::before {
-  content: ''; position: absolute; top: 0; right: 0;
-  width: 100%; height: 3px; border-radius: var(--radius) var(--radius) 0 0;
+  content: ''; position: absolute;
+  top: 0; right: 0; left: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 .sum-card.blue::before   { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
 .sum-card.green::before  { background: linear-gradient(90deg, var(--present), #0bc87c); }
 .sum-card.yellow::before { background: linear-gradient(90deg, var(--accent4), #fbbf24); }
 .sum-card.purple::before { background: linear-gradient(90deg, var(--accent2), #c084fc); }
+.sum-card:nth-child(1) { animation-delay: .04s; }
+.sum-card:nth-child(2) { animation-delay: .08s; }
+.sum-card:nth-child(3) { animation-delay: .12s; }
+.sum-card:nth-child(4) { animation-delay: .16s; }
+.sum-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); border-color: rgba(74,144,217,0.18); }
 
-.sum-card:hover { transform: translateY(-4px); border-color: rgba(79,142,247,.22); box-shadow: var(--glow); }
-
+.sum-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
 .sum-icon {
   width: 42px; height: 42px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 17px; margin-bottom: 12px;
+  font-size: 17px; flex-shrink: 0;
 }
-.blue   .sum-icon { background: rgba(79,142,247,.15); color: var(--accent); }
-.green  .sum-icon { background: rgba(6,214,160,.15);  color: var(--present); }
-.yellow .sum-icon { background: rgba(245,158,11,.15); color: var(--accent4); }
-.purple .sum-icon { background: rgba(155,89,182,.15); color: var(--accent2); }
+.blue   .sum-icon { background: rgba(74,144,217,0.15); color: var(--accent); }
+.green  .sum-icon { background: rgba(46,204,113,0.15); color: var(--present); }
+.yellow .sum-icon { background: rgba(243,156,18,0.15); color: var(--accent4); }
+.purple .sum-icon { background: rgba(142,95,212,0.15); color: var(--accent2); }
 
-.sum-value { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-.sum-label { font-size: 11px; color: var(--text-muted); }
 .sum-badge {
-  position: absolute; top: 14px; left: 14px;
-  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap;
 }
-.badge-up   { background: rgba(6,214,160,.15); color: var(--present); }
-.badge-down { background: rgba(239,68,68,.15); color: var(--absent); }
-.badge-neu  { background: rgba(79,142,247,.15); color: var(--accent); }
-.badge-yel  { background: rgba(245,158,11,.15); color: var(--accent4); }
+.badge-up   { background: rgba(46,204,113,0.15); color: var(--present); }
+.badge-down { background: rgba(231,76,60,0.15);  color: var(--absent); }
+.badge-neu  { background: rgba(74,144,217,0.15); color: var(--accent); }
+.badge-yel  { background: rgba(243,156,18,0.15); color: var(--accent4); }
 
-/* ─── TOP ROW: subject cards + radar ─── */
+.sum-value { font-size: 32px; font-weight: 900; line-height: 1; font-family: "Shabnam", sans-serif; margin-bottom: 4px; }
+.sum-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+
+/* ════ TOP ROW ════ */
 .top-row {
   display: grid;
   grid-template-columns: 1fr 340px;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 16px; margin-bottom: 20px;
 }
 
-/* ─── SUBJECT GRADES LIST ─── */
+/* ════ SUBJECTS CARD ════ */
 .subjects-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
+  animation: fadeUp .45s .20s ease both;
+  min-width: 0;
 }
 
-.subject-row {
-  display: grid;
-  grid-template-columns: 38px 1fr 110px 70px 58px;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  transition: background .2s;
-  border-radius: 8px;
-  cursor: default;
-}
-.subject-row:last-child { border-bottom: none; }
-.subject-row:hover { background: rgba(255,255,255,.03); }
-
-.subj-icon {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-}
-
-.subj-meta { min-width: 0; }
-.subj-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-.subj-teacher { font-size: 10px; color: var(--text-muted); }
-
-.subj-vs {
-  display: flex; flex-direction: column; gap: 4px;
-}
-.vs-row { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-muted); }
-.vs-bar {
-  flex: 1; height: 4px; background: rgba(255,255,255,.07);
-  border-radius: 4px; overflow: hidden; min-width: 50px;
-}
-.vs-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
-
-.subj-score {
-  font-size: 22px; font-weight: 800;
-  text-align: center; flex-shrink: 0;
-}
-.subj-score.excellent { color: var(--present); }
-.subj-score.good      { color: var(--accent); }
-.subj-score.average   { color: var(--accent4); }
-.subj-score.poor      { color: var(--absent); }
-
-.subj-diff {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 3px; flex-shrink: 0;
-}
-.diff-chip {
-  font-size: 10px; font-weight: 700;
-  padding: 3px 8px; border-radius: 20px;
-  white-space: nowrap;
-}
-.diff-pos { background: rgba(6,214,160,.15); color: var(--present); }
-.diff-neg { background: rgba(239,68,68,.15); color: var(--absent); }
-.diff-neu { background: rgba(255,255,255,.07); color: var(--text-muted); }
-.diff-label { font-size: 9px; color: var(--text-muted); }
-
-/* table header */
 .subj-header {
   display: grid;
   grid-template-columns: 38px 1fr 110px 70px 58px;
@@ -250,39 +352,81 @@ body::before {
   margin-bottom: 4px;
 }
 .subj-header span { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-.subj-header .sh-center { text-align: center; }
+.sh-center { text-align: center; }
 
-/* ─── RADAR / SPIDER ─── */
+.subject-row {
+  display: grid;
+  grid-template-columns: 38px 1fr 110px 70px 58px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: background .2s;
+  cursor: default;
+}
+.subject-row:last-child { border-bottom: none; }
+.subject-row:hover { background: rgba(255,255,255,.03); }
+
+.subj-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.subj-meta { min-width: 0; }
+.subj-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.subj-teacher { font-size: 10px; color: var(--text-muted); }
+
+.subj-vs { display: flex; flex-direction: column; gap: 4px; }
+.vs-row { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-muted); }
+.vs-bar { flex: 1; height: 4px; background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden; min-width: 40px; }
+.vs-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+.subj-score { font-size: 22px; font-weight: 900; text-align: center; flex-shrink: 0; font-family: "Shabnam", sans-serif; }
+.subj-score.excellent { color: var(--present); }
+.subj-score.good      { color: var(--accent); }
+.subj-score.average   { color: var(--accent4); }
+.subj-score.poor      { color: var(--absent); }
+
+.subj-diff { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+.diff-chip { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+.diff-pos { background: rgba(46,204,113,.15); color: var(--present); }
+.diff-neg { background: rgba(231,76,60,.15);  color: var(--absent); }
+.diff-neu { background: rgba(255,255,255,.07); color: var(--text-muted); }
+.diff-label { font-size: 9px; color: var(--text-muted); }
+
+/* ════ RADAR CARD ════ */
 .radar-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
   display: flex; flex-direction: column;
+  animation: fadeUp .45s .24s ease both;
+  min-width: 0;
 }
 .radar-wrap { position: relative; flex: 1; min-height: 240px; margin-top: 8px; }
 
-/* ─── MIDDLE ROW ─── */
+/* ════ MID ROW ════ */
 .mid-row {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 16px; margin-bottom: 20px;
 }
 
-/* ─── LINE CHART (progress) ─── */
+/* ════ PROGRESS CARD ════ */
 .progress-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
+  animation: fadeUp .45s .28s ease both;
+  min-width: 0;
 }
 
-.filter-tabs {
-  display: flex; gap: 6px; flex-wrap: wrap;
-}
+.filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tab-btn {
-  font-family: 'Vazirmatn', sans-serif;
+  font-family: "Vazirmatn", sans-serif;
   font-size: 11px; font-weight: 600;
   padding: 5px 12px; border-radius: 20px;
   border: 1px solid var(--border);
@@ -290,25 +434,23 @@ body::before {
   cursor: pointer; transition: all .2s;
 }
 .tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
-.tab-btn.active {
-  background: rgba(52,152,219,.2);
-  border-color: var(--accent); color: var(--accent);
-}
+.tab-btn.active { background: rgba(74,144,217,.2); border-color: var(--accent); color: var(--accent); }
 
 .chart-wrap { position: relative; height: 200px; margin-top: 14px; }
 
-/* ─── EXAM LOG ─── */
+/* ════ EXAM CARD ════ */
 .exam-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
+  animation: fadeUp .45s .32s ease both;
+  min-width: 0;
 }
 
 .exam-item {
   display: flex; align-items: center; gap: 11px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 0; border-bottom: 1px solid var(--border);
   transition: transform .2s; cursor: default;
 }
 .exam-item:last-child { border-bottom: none; }
@@ -319,225 +461,154 @@ body::before {
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; flex-shrink: 0;
 }
-
 .exam-info { flex: 1; min-width: 0; }
 .exam-name { font-size: 12px; font-weight: 700; }
 .exam-date { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 .exam-type { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 20px; margin-top: 3px; display: inline-block; }
-.type-written  { background: rgba(79,142,247,.15); color: var(--accent); }
-.type-oral     { background: rgba(155,89,182,.15); color: var(--accent2); }
-.type-project  { background: rgba(6,214,160,.15); color: var(--present); }
-.type-homework { background: rgba(245,158,11,.15); color: var(--accent4); }
+.type-written  { background: rgba(74,144,217,.15); color: var(--accent); }
+.type-oral     { background: rgba(142,95,212,.15); color: var(--accent2); }
+.type-project  { background: rgba(46,204,113,.15); color: var(--present); }
+.type-homework { background: rgba(243,156,18,.15); color: var(--accent4); }
 
-.exam-score {
-  font-size: 20px; font-weight: 800;
-  min-width: 38px; text-align: center; flex-shrink: 0;
-}
+.exam-score { font-size: 20px; font-weight: 900; min-width: 38px; text-align: center; flex-shrink: 0; font-family: "Shabnam", sans-serif; }
 
-/* ─── BOTTOM ROW ─── */
+/* ════ BOT ROW ════ */
 .bot-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-/* ─── RANK CARD ─── */
+/* ════ RANK CARD ════ */
 .rank-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
+  animation: fadeUp .45s .36s ease both;
+  min-width: 0;
 }
 
 .rank-podium {
   display: flex; align-items: flex-end; justify-content: center;
   gap: 10px; margin: 12px 0 16px;
 }
-
-.podium-item {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  flex: 1;
-}
+.podium-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
 .podium-name  { font-size: 10px; color: var(--text-muted); text-align: center; }
 .podium-score { font-size: 11px; font-weight: 700; }
 .podium-bar {
   width: 100%; border-radius: 6px 6px 0 0;
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; font-weight: 800; color: white;
-  transition: height 1s cubic-bezier(.4,0,.2,1);
 }
-.podium-rank { font-size: 9px; color: var(--text-muted); }
-
 .rank-info {
   background: rgba(255,255,255,.04);
-  border-radius: 10px; padding: 12px 14px;
+  border-radius: var(--radius-sm); padding: 12px 14px;
   display: flex; align-items: center; gap: 12px;
 }
-.rank-number { font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1; flex-shrink: 0; }
+.rank-number { font-size: 32px; font-weight: 900; color: var(--accent); line-height: 1; flex-shrink: 0; font-family: "Shabnam", sans-serif; }
 .rank-detail { flex: 1; min-width: 0; }
 .rank-detail p { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
 .rank-detail strong { font-size: 13px; }
 
-/* ─── GPA TREND ─── */
+/* ════ GPA CARD ════ */
 .gpa-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px;
+  animation: fadeUp .45s .40s ease both;
+  min-width: 0;
 }
 
-.gpa-big {
-  display: flex; align-items: baseline; gap: 6px;
-  margin: 12px 0 4px;
-}
-.gpa-num { font-size: 48px; font-weight: 800; color: var(--present); line-height: 1; }
+.gpa-big { display: flex; align-items: baseline; gap: 6px; margin: 12px 0 4px; }
+.gpa-num { font-size: 48px; font-weight: 900; color: var(--present); line-height: 1; font-family: "Shabnam", sans-serif; }
 .gpa-slash { font-size: 22px; color: var(--text-muted); }
 .gpa-max { font-size: 18px; color: var(--text-muted); }
 
-.gpa-change {
-  font-size: 12px; font-weight: 600;
-  display: flex; align-items: center; gap: 4px;
-  margin-bottom: 14px;
-}
-
+.gpa-change { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
 .gpa-mini-chart { position: relative; height: 80px; margin-top: 8px; }
 
-.gpa-stats {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 8px; margin-top: 12px;
-}
-.gpa-stat {
-  background: rgba(255,255,255,.04);
-  border-radius: 8px; padding: 10px 12px;
-}
+.gpa-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.gpa-stat { background: rgba(255,255,255,.04); border-radius: var(--radius-sm); padding: 10px 12px; }
 .gpa-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
-.gpa-stat-value { font-size: 16px; font-weight: 800; }
+.gpa-stat-value { font-size: 16px; font-weight: 900; font-family: "Shabnam", sans-serif; }
 
-/* ─── HEATMAP ─── */
-.heatmap-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px;
-}
-
-.heatmap-grid {
-  display: grid;
-  grid-template-columns: auto repeat(8, 1fr);
-  gap: 5px;
-  margin-top: 10px;
-}
-
-.hm-label { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; padding-left: 6px; white-space: nowrap; }
-.hm-col-label { font-size: 9px; color: var(--text-muted); text-align: center; padding-bottom: 2px; }
-
-.hm-cell {
-  aspect-ratio: 1;
-  border-radius: 5px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700;
-  transition: transform .15s;
-  cursor: default;
-  position: relative;
-}
-.hm-cell:hover { transform: scale(1.15); z-index: 5; }
-
-.hm-0  { background: rgba(255,255,255,.04); color: rgba(255,255,255,.25); }
-.hm-1  { background: rgba(245,158,11,.15);  color: var(--accent4); }
-.hm-2  { background: rgba(79,142,247,.15);  color: var(--accent); }
-.hm-3  { background: rgba(6,214,160,.2);    color: var(--present); }
-.hm-4  { background: rgba(6,214,160,.35);   color: #0bc87c; }
-
-.hm-legend {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 12px; font-size: 10px; color: var(--text-muted);
-}
-.hm-legend-cells { display: flex; gap: 3px; }
-.hm-legend-cell  { width: 12px; height: 12px; border-radius: 3px; }
-
-/* ─── ANIMATIONS ─── */
+/* ════ ANIMATIONS ════ */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.sum-card, .subjects-card, .radar-card,
-.progress-card, .exam-card,
-.rank-card, .gpa-card, .heatmap-card {
-  animation: fadeUp .5s ease both;
-}
-.sum-card:nth-child(1) { animation-delay: .04s; }
-.sum-card:nth-child(2) { animation-delay: .08s; }
-.sum-card:nth-child(3) { animation-delay: .12s; }
-.sum-card:nth-child(4) { animation-delay: .16s; }
-.subjects-card  { animation-delay: .20s; }
-.radar-card     { animation-delay: .24s; }
-.progress-card  { animation-delay: .28s; }
-.exam-card      { animation-delay: .32s; }
-.rank-card      { animation-delay: .36s; }
-.gpa-card       { animation-delay: .40s; }
-.heatmap-card   { animation-delay: .44s; }
-
-/* ─── HAMBURGER ─── */
-.menu-toggle {
-  display: none; position: fixed; top: 14px; right: 14px;
-  z-index: 300; background: var(--bg-card); border: 1px solid var(--border);
-  color: var(--text); width: 42px; height: 42px;
-  border-radius: 10px; cursor: pointer;
-  align-items: center; justify-content: center; font-size: 18px;
-}
-.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 199; }
-.sidebar-overlay.active { display: block; }
-
-/* ─── RESPONSIVE ─── */
+/* ════ RESPONSIVE — 1280px ════ */
 @media (max-width: 1280px) {
-  :root { --sidebar-w: 240px; }
   .top-row { grid-template-columns: 1fr 300px; }
 }
 
+/* ════ RESPONSIVE — 1100px ════ */
 @media (max-width: 1100px) {
   .top-row { grid-template-columns: 1fr; }
-  .radar-card { min-height: 320px; }
-  .bot-row { grid-template-columns: 1fr 1fr; }
-  .heatmap-card { grid-column: 1 / -1; }
+  .radar-card { min-height: 300px; }
 }
 
+/* ════ RESPONSIVE — 1024px ════ */
 @media (max-width: 1024px) {
-  :root { --sidebar-w: 220px; }
-  .main-content { padding: 22px 18px; }
-  .summary-strip { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .main-content { padding: 72px 18px 28px; }
+  .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .mid-row { grid-template-columns: 1fr; }
   .subj-header, .subject-row { grid-template-columns: 38px 1fr 90px 60px 50px; }
 }
 
+/* ════ RESPONSIVE — 768px ════ */
 @media (max-width: 768px) {
-  .menu-toggle { display: flex; }
-  .sidebar { transform: translateX(110%); box-shadow: -5px 0 20px rgba(0,0,0,.4); }
-  .sidebar.active { transform: translateX(0); }
-  .main-content { margin-right: 0; padding: 70px 16px 20px; }
-  .summary-strip { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .top-row, .mid-row { gap: 12px; }
+  .main-content { padding: 68px 14px 24px; }
+  .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .bot-row { grid-template-columns: 1fr; }
   .subj-header { display: none; }
-  .subject-row { grid-template-columns: 38px 1fr auto auto; }
+  .subject-row { grid-template-columns: 38px 1fr auto auto; gap: 10px; }
   .subj-vs { display: none; }
+  .chart-wrap { height: 175px; }
 }
 
-@media (max-width: 480px) {
-  .main-content { padding: 66px 12px 16px; }
-  .sum-card { padding: 14px 12px; }
-  .sum-value { font-size: 22px; }
-  .sum-icon  { width: 36px; height: 36px; font-size: 14px; margin-bottom: 10px; }
+/* ════ RESPONSIVE — 540px ════ */
+@media (max-width: 540px) {
+  .main-content { padding: 66px 12px 20px; }
+  .summary-strip { gap: 9px; }
+  .sum-card { padding: 14px 11px 12px; }
+  .sum-card-top { margin-bottom: 8px; }
+  .sum-icon { width: 36px; height: 36px; font-size: 14px; }
+  .sum-value { font-size: 24px; }
+  .sum-label { font-size: 10px; }
   .subject-row { grid-template-columns: 34px 1fr auto; gap: 8px; }
   .subj-diff { display: none; }
+  .subj-score { font-size: 18px; }
   .gpa-num { font-size: 38px; }
-  .bot-row { gap: 10px; }
-  .heatmap-grid { grid-template-columns: auto repeat(6, 1fr); gap: 4px; }
+  .subjects-card, .radar-card, .progress-card, .exam-card, .rank-card, .gpa-card { padding: 14px; }
+  .chart-wrap { height: 160px; }
+  .filter-tabs { gap: 4px; }
+  .tab-btn { padding: 4px 9px; font-size: 10px; }
 }
 
-@media (max-width: 360px) {
+/* ════ RESPONSIVE — 400px ════ */
+@media (max-width: 400px) {
+  .main-content { padding: 64px 10px 16px; }
   .summary-strip { gap: 7px; }
+  .sum-card { padding: 12px 10px 11px; border-radius: var(--radius-sm); }
   .sum-value { font-size: 20px; }
+  .sum-icon { width: 32px; height: 32px; font-size: 13px; border-radius: 9px; }
+  .gpa-num { font-size: 32px; }
+  .gpa-stats { gap: 6px; }
+  .gpa-stat-value { font-size: 14px; }
+  .rank-number { font-size: 26px; }
+  .sec-title { font-size: 12px; }
+  .exam-score { font-size: 17px; }
+}
+
+/* ════ RESPONSIVE — 360px ════ */
+@media (max-width: 360px) {
+  .summary-strip { gap: 6px; }
+  .sum-value { font-size: 18px; }
+  .sum-label { font-size: 9px; }
 }
 </style>
 </head>
@@ -546,70 +617,95 @@ body::before {
 <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- SIDEBAR -->
+<!-- ══ SIDEBAR ══ -->
 <div class="sidebar" id="sidebar">
-  <div class="logo">بوربور</div>
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
+  <div class="student-block">
+    <div class="student-avatar">ع</div>
+    <div>
+      <div class="student-name">علی مختاری</div>
+      <div class="student-role">دانش‌آموز</div>
+      <div class="student-badge">یازدهم تجربی</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">منوی اصلی</div>
   <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
   <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
   <div class="nav-item active"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
   <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
   <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_support.html"><i class="fas fa-headset"></i> پشتیبانی</a></div>
   <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
   <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
 </div>
 
-<!-- MAIN -->
+<!-- ══ MAIN ══ -->
 <div class="main-content">
 
   <!-- TOP BAR -->
   <div class="top-bar">
     <div class="greeting-block">
-      <h1>نمرات — <span>علی مختاری</span></h1>
+      <h1><i class="fas fa-star" style="color:var(--accent);font-size:16px;margin-left:6px"></i>نمرات — <span>علی مختاری</span></h1>
       <p>سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
     </div>
     <div class="top-actions">
-      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
-      <div class="profile-avatar">ع</div>
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">ع</div>
     </div>
   </div>
 
   <!-- SUMMARY STRIP -->
   <div class="summary-strip">
     <div class="sum-card blue">
-      <div class="sum-badge badge-up">↑ ۰.۴</div>
-      <div class="sum-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div class="sum-card-top">
+        <div class="sum-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span class="sum-badge badge-up">↑ ۰.۴</span>
+      </div>
       <div class="sum-value">۱۷.۸</div>
       <div class="sum-label">معدل کل</div>
     </div>
     <div class="sum-card green">
-      <div class="sum-badge badge-up">بهترین</div>
-      <div class="sum-icon"><i class="fas fa-trophy"></i></div>
+      <div class="sum-card-top">
+        <div class="sum-icon"><i class="fas fa-trophy"></i></div>
+        <span class="sum-badge badge-up">بهترین</span>
+      </div>
       <div class="sum-value">۱۹</div>
       <div class="sum-label">بالاترین نمره</div>
     </div>
     <div class="sum-card yellow">
-      <div class="sum-badge badge-neu">رتبه</div>
-      <div class="sum-icon"><i class="fas fa-medal"></i></div>
+      <div class="sum-card-top">
+        <div class="sum-icon"><i class="fas fa-medal"></i></div>
+        <span class="sum-badge badge-neu">رتبه</span>
+      </div>
       <div class="sum-value">۳</div>
       <div class="sum-label">رتبه در کلاس</div>
     </div>
     <div class="sum-card purple">
-      <div class="sum-badge badge-yel">میانگین</div>
-      <div class="sum-icon"><i class="fas fa-users"></i></div>
+      <div class="sum-card-top">
+        <div class="sum-icon"><i class="fas fa-users"></i></div>
+        <span class="sum-badge badge-yel">میانگین</span>
+      </div>
       <div class="sum-value">۱۵.۲</div>
       <div class="sum-label">میانگین کلاس</div>
     </div>
   </div>
 
-  <!-- TOP ROW: subject list + radar -->
+  <!-- TOP ROW -->
   <div class="top-row">
-
     <div class="subjects-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-list-ul"></i> نمرات هر درس</div>
-        <a class="section-link" href="#">صادر کردن PDF</a>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-list-ul"></i> نمرات هر درس</div>
+        <a class="sec-link" href="#">صادر کردن PDF</a>
       </div>
-
       <div class="subj-header">
         <span></span>
         <span>درس / استاد</span>
@@ -617,25 +713,22 @@ body::before {
         <span class="sh-center">نمره</span>
         <span class="sh-center">اختلاف</span>
       </div>
-
       <div id="subjectRows"></div>
     </div>
 
     <div class="radar-card">
-      <div class="section-header" style="margin-bottom:6px">
-        <div class="section-title"><i class="fas fa-spider"></i> نمای کلی دروس</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-spider"></i> نمای کلی دروس</div>
       </div>
       <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
     </div>
-
   </div>
 
-  <!-- MID ROW: progress chart + exam log -->
+  <!-- MID ROW -->
   <div class="mid-row">
-
     <div class="progress-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-line"></i> روند پیشرفت نمرات</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-line"></i> روند پیشرفت نمرات</div>
         <div class="filter-tabs">
           <button class="tab-btn active" data-ds="all" onclick="switchChart(this)">همه</button>
           <button class="tab-btn" data-ds="math" onclick="switchChart(this)">ریاضی</button>
@@ -647,21 +740,19 @@ body::before {
     </div>
 
     <div class="exam-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-file-alt"></i> آخرین آزمون‌ها</div>
-        <a class="section-link" href="#">همه</a>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-file-alt"></i> آخرین آزمون‌ها</div>
+        <a class="sec-link" href="#">همه</a>
       </div>
       <div id="examList"></div>
     </div>
-
   </div>
 
-  <!-- BOTTOM ROW -->
+  <!-- BOT ROW -->
   <div class="bot-row">
-
     <div class="rank-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-ranking-star"></i> رتبه‌بندی کلاس</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-ranking-star"></i> رتبه‌بندی کلاس</div>
       </div>
       <div class="rank-podium" id="rankPodium"></div>
       <div class="rank-info">
@@ -674,8 +765,8 @@ body::before {
     </div>
 
     <div class="gpa-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-star-half-alt"></i> معدل کل</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-star-half-alt"></i> معدل کل</div>
       </div>
       <div class="gpa-big">
         <div class="gpa-num">۱۷.۸</div>
@@ -705,34 +796,12 @@ body::before {
         </div>
       </div>
     </div>
-
-    <div class="heatmap-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-th"></i> نقشه حرارتی نمرات</div>
-        <span style="font-size:10px;color:var(--text-muted)">آزمون‌ها × دروس</span>
-      </div>
-      <div class="heatmap-grid" id="heatmapGrid"></div>
-      <div class="hm-legend">
-        <span>کمتر</span>
-        <div class="hm-legend-cells">
-          <div class="hm-legend-cell hm-0"></div>
-          <div class="hm-legend-cell hm-1"></div>
-          <div class="hm-legend-cell hm-2"></div>
-          <div class="hm-legend-cell hm-3"></div>
-          <div class="hm-legend-cell hm-4"></div>
-        </div>
-        <span>بیشتر</span>
-      </div>
-    </div>
-
   </div>
+
 </div>
 
 <script>
-/* ── HELPERS ── */
-function toF(n) {
-  return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-}
+function toF(n) { return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
 function scoreClass(s) {
   if(s >= 18) return 'excellent';
   if(s >= 16) return 'good';
@@ -746,33 +815,31 @@ function scoreColor(s) {
   return 'var(--absent)';
 }
 
-/* ── DATA ── */
 const subjects = [
-  { name:'ریاضی',     teacher:'آقای احمدی',  icon:'fa-calculator', color:'#4f8ef7', bg:'rgba(79,142,247,.15)',  score:19,   avg:14.2 },
-  { name:'فیزیک',    teacher:'خانم رضایی',   icon:'fa-atom',       color:'#ef4444', bg:'rgba(239,68,68,.15)',   score:16.5, avg:13.8 },
-  { name:'شیمی',     teacher:'آقای صادقی',   icon:'fa-flask',      color:'#06d6a0', bg:'rgba(6,214,160,.15)',   score:18,   avg:15.1 },
-  { name:'ادبیات',   teacher:'آقای موسوی',   icon:'fa-book',       color:'#f59e0b', bg:'rgba(245,158,11,.15)',  score:14,   avg:14.5 },
-  { name:'زبان',     teacher:'خانم کریمی',   icon:'fa-language',   color:'#7c3aed', bg:'rgba(124,58,237,.15)', score:17.5, avg:13.2 },
-  { name:'دین',      teacher:'آقای جوادی',   icon:'fa-star',       color:'#ec4899', bg:'rgba(236,72,153,.15)', score:18.5, avg:16.0 },
-  { name:'ورزش',     teacher:'آقای نوری',    icon:'fa-running',    color:'#14b8a6', bg:'rgba(20,184,166,.15)', score:20,   avg:18.3 },
+  { name:'ریاضی',   teacher:'آقای احمدی',  icon:'fa-calculator', color:'#4a90d9', bg:'rgba(74,144,217,.15)',  score:19,   avg:14.2 },
+  { name:'فیزیک',  teacher:'خانم رضایی',   icon:'fa-atom',       color:'#e74c3c', bg:'rgba(231,76,60,.15)',   score:16.5, avg:13.8 },
+  { name:'شیمی',   teacher:'آقای صادقی',   icon:'fa-flask',      color:'#06d6a0', bg:'rgba(6,214,160,.15)',   score:18,   avg:15.1 },
+  { name:'ادبیات', teacher:'آقای موسوی',   icon:'fa-book',       color:'#f39c12', bg:'rgba(243,156,18,.15)',  score:14,   avg:14.5 },
+  { name:'زبان',   teacher:'خانم کریمی',   icon:'fa-language',   color:'#8e5fd4', bg:'rgba(142,95,212,.15)',  score:17.5, avg:13.2 },
+  { name:'دین',    teacher:'آقای جوادی',   icon:'fa-star',       color:'#ec4899', bg:'rgba(236,72,153,.15)', score:18.5, avg:16.0 },
+  { name:'ورزش',   teacher:'آقای نوری',    icon:'fa-running',    color:'#06d6a0', bg:'rgba(6,214,160,.15)',  score:20,   avg:18.3 },
 ];
 
 const exams = [
-  { subject:'ریاضی',   date:'۱۴۰۴/۰۲/۱۵', type:'written',  typeLabel:'کتبی',    score:19,   icon:'fa-calculator', color:'#4f8ef7', bg:'rgba(79,142,247,.15)'  },
-  { subject:'فیزیک',  date:'۱۴۰۴/۰۲/۱۲', type:'oral',     typeLabel:'شفاهی',   score:16.5, icon:'fa-atom',       color:'#ef4444', bg:'rgba(239,68,68,.15)'   },
+  { subject:'ریاضی',   date:'۱۴۰۴/۰۲/۱۵', type:'written',  typeLabel:'کتبی',    score:19,   icon:'fa-calculator', color:'#4a90d9', bg:'rgba(74,144,217,.15)'  },
+  { subject:'فیزیک',  date:'۱۴۰۴/۰۲/۱۲', type:'oral',     typeLabel:'شفاهی',   score:16.5, icon:'fa-atom',       color:'#e74c3c', bg:'rgba(231,76,60,.15)'   },
   { subject:'شیمی',   date:'۱۴۰۴/۰۲/۱۰', type:'project',  typeLabel:'پروژه',   score:18,   icon:'fa-flask',      color:'#06d6a0', bg:'rgba(6,214,160,.15)'   },
-  { subject:'ادبیات', date:'۱۴۰۴/۰۲/۰۸', type:'written',  typeLabel:'کتبی',    score:14,   icon:'fa-book',       color:'#f59e0b', bg:'rgba(245,158,11,.15)'  },
-  { subject:'زبان',   date:'۱۴۰۴/۰۲/۰۵', type:'homework', typeLabel:'تکلیف',   score:17.5, icon:'fa-language',   color:'#7c3aed', bg:'rgba(124,58,237,.15)' },
+  { subject:'ادبیات', date:'۱۴۰۴/۰۲/۰۸', type:'written',  typeLabel:'کتبی',    score:14,   icon:'fa-book',       color:'#f39c12', bg:'rgba(243,156,18,.15)'  },
+  { subject:'زبان',   date:'۱۴۰۴/۰۲/۰۵', type:'homework', typeLabel:'تکلیف',   score:17.5, icon:'fa-language',   color:'#8e5fd4', bg:'rgba(142,95,212,.15)' },
   { subject:'دین',    date:'۱۴۰۴/۰۱/۲۸', type:'oral',     typeLabel:'شفاهی',   score:18.5, icon:'fa-star',       color:'#ec4899', bg:'rgba(236,72,153,.15)' },
 ];
 
-/* ── SUBJECT ROWS ── */
+/* Subject Rows */
 const subjectRows = document.getElementById('subjectRows');
 subjects.forEach(s => {
-  const diff  = +(s.score - s.avg).toFixed(1);
+  const diff = +(s.score - s.avg).toFixed(1);
   const diffCls = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-neu';
   const diffSign = diff > 0 ? '+' : '';
-
   const el = document.createElement('div');
   el.className = 'subject-row';
   el.innerHTML = `
@@ -800,12 +867,9 @@ subjects.forEach(s => {
     </div>`;
   subjectRows.appendChild(el);
 });
+setTimeout(() => { document.querySelectorAll('.vs-fill').forEach(el => { el.style.width = el.dataset.w + '%'; }); }, 300);
 
-setTimeout(() => {
-  document.querySelectorAll('.vs-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
-}, 300);
-
-/* ── EXAM LIST ── */
+/* Exam List */
 const examList = document.getElementById('examList');
 exams.forEach(e => {
   const el = document.createElement('div');
@@ -821,80 +885,52 @@ exams.forEach(e => {
   examList.appendChild(el);
 });
 
-/* ── RADAR ── */
+/* Radar */
 new Chart(document.getElementById('radarChart'), {
   type: 'radar',
   data: {
     labels: subjects.map(s => s.name),
     datasets: [
-      {
-        label: 'علی',
-        data: subjects.map(s => s.score),
-        borderColor: 'rgba(79,142,247,0.9)',
-        backgroundColor: 'rgba(79,142,247,0.12)',
-        borderWidth: 2, pointRadius: 4,
-        pointBackgroundColor: 'rgba(79,142,247,1)',
-      },
-      {
-        label: 'میانگین کلاس',
-        data: subjects.map(s => s.avg),
-        borderColor: 'rgba(255,255,255,0.25)',
-        backgroundColor: 'rgba(255,255,255,0.04)',
-        borderWidth: 1.5, pointRadius: 3,
-        pointBackgroundColor: 'rgba(255,255,255,0.4)',
-        borderDash: [4,3],
-      }
+      { label:'علی', data:subjects.map(s => s.score), borderColor:'rgba(74,144,217,0.9)', backgroundColor:'rgba(74,144,217,0.12)', borderWidth:2, pointRadius:4, pointBackgroundColor:'rgba(74,144,217,1)' },
+      { label:'میانگین کلاس', data:subjects.map(s => s.avg), borderColor:'rgba(255,255,255,0.25)', backgroundColor:'rgba(255,255,255,0.04)', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'rgba(255,255,255,0.4)', borderDash:[4,3] }
     ]
   },
   options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      r: {
-        min: 8, max: 20, ticks: { stepSize: 4, display: false },
-        grid: { color: 'rgba(255,255,255,0.07)' },
-        angleLines: { color: 'rgba(255,255,255,0.07)' },
-        pointLabels: { color: 'rgba(232,237,248,0.75)', font: { family: 'Vazirmatn', size: 11 } }
-      }
-    },
+    responsive:true, maintainAspectRatio:false,
+    scales: { r: { min:8, max:20, ticks:{stepSize:4,display:false}, grid:{color:'rgba(255,255,255,0.07)'}, angleLines:{color:'rgba(255,255,255,0.07)'}, pointLabels:{color:'rgba(232,237,248,0.75)',font:{family:'Vazirmatn',size:11}} } },
     plugins: {
-      legend: { labels: { color: 'rgba(232,237,248,0.65)', font: { family: 'Vazirmatn', size: 11 }, boxWidth: 10 } },
-      tooltip: { backgroundColor: 'rgba(15,22,40,.95)', titleFont: { family: 'Vazirmatn' }, bodyFont: { family: 'Vazirmatn' } }
+      legend:{labels:{color:'rgba(232,237,248,0.65)',font:{family:'Vazirmatn',size:11},boxWidth:10}},
+      tooltip:{backgroundColor:'rgba(11,17,32,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
     },
-    animation: { duration: 1100, easing: 'easeInOutQuart' }
+    animation:{duration:1100,easing:'easeInOutQuart'}
   }
 });
 
-/* ── PROGRESS CHART ── */
+/* Progress Chart */
 const months = ['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'];
 const ds = {
-  math: { label:'ریاضی', data:[15,16,15.5,17,16,18,18.5,19], color:'rgba(79,142,247,' },
-  phys: { label:'فیزیک', data:[13,14,13,15,15.5,16,16,16.5], color:'rgba(6,214,160,' },
-  chem: { label:'شیمی',  data:[14,15,16,16,17,17.5,18,18], color:'rgba(124,58,237,' },
+  math:{ label:'ریاضی', data:[15,16,15.5,17,16,18,18.5,19],   color:'rgba(74,144,217,' },
+  phys:{ label:'فیزیک', data:[13,14,13,15,15.5,16,16,16.5],   color:'rgba(6,214,160,' },
+  chem:{ label:'شیمی',  data:[14,15,16,16,17,17.5,18,18],      color:'rgba(142,95,212,' },
 };
 
 let progressChart = new Chart(document.getElementById('progressChart'), {
-  type: 'line',
-  data: {
-    labels: months,
-    datasets: Object.values(ds).map(d => ({
-      label: d.label, data: d.data,
-      borderColor: d.color + '0.9)',
-      backgroundColor: d.color + '0.07)',
-      fill: true, tension: 0.4, pointRadius: 3.5,
-      pointBackgroundColor: d.color + '1)', borderWidth: 2,
-    }))
+  type:'line',
+  data:{
+    labels:months,
+    datasets:Object.values(ds).map(d => ({ label:d.label, data:d.data, borderColor:d.color+'0.9)', backgroundColor:d.color+'0.07)', fill:true, tension:0.4, pointRadius:3.5, pointBackgroundColor:d.color+'1)', borderWidth:2 }))
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { labels: { color: 'rgba(232,237,248,.65)', font: { family: 'Vazirmatn', size: 11 }, boxWidth: 10, padding: 12 } },
-      tooltip: { backgroundColor: 'rgba(15,22,40,.95)', titleFont: { family: 'Vazirmatn' }, bodyFont: { family: 'Vazirmatn' } }
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'rgba(232,240,255,.6)',font:{family:'Vazirmatn',size:11},boxWidth:10,padding:12}},
+      tooltip:{backgroundColor:'rgba(11,17,32,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
     },
-    scales: {
-      x: { ticks: { color: 'rgba(232,237,248,.45)', font: { family: 'Vazirmatn', size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
-      y: { min: 10, max: 20, ticks: { color: 'rgba(232,237,248,.45)', font: { family: 'Vazirmatn', size: 10 }, stepSize: 2 }, grid: { color: 'rgba(255,255,255,.05)' } }
+    scales:{
+      x:{ticks:{color:'rgba(180,200,255,.45)',font:{family:'Vazirmatn',size:10}},grid:{color:'rgba(255,255,255,.03)'}},
+      y:{min:10,max:20,ticks:{color:'rgba(180,200,255,.45)',font:{family:'Vazirmatn',size:10},stepSize:2},grid:{color:'rgba(255,255,255,.04)'}}
     },
-    animation: { duration: 1000, easing: 'easeInOutQuart' }
+    animation:{duration:1000,easing:'easeInOutQuart'}
   }
 });
 
@@ -902,34 +938,22 @@ function switchChart(btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const key = btn.dataset.ds;
-
   if(key === 'all') {
-    progressChart.data.datasets = Object.values(ds).map(d => ({
-      label: d.label, data: d.data,
-      borderColor: d.color+'0.9)', backgroundColor: d.color+'0.07)',
-      fill: true, tension: 0.4, pointRadius: 3.5,
-      pointBackgroundColor: d.color+'1)', borderWidth: 2,
-    }));
+    progressChart.data.datasets = Object.values(ds).map(d => ({ label:d.label, data:d.data, borderColor:d.color+'0.9)', backgroundColor:d.color+'0.07)', fill:true, tension:0.4, pointRadius:3.5, pointBackgroundColor:d.color+'1)', borderWidth:2 }));
   } else {
     const d = ds[key];
-    progressChart.data.datasets = [{
-      label: d.label, data: d.data,
-      borderColor: d.color+'0.9)', backgroundColor: d.color+'0.15)',
-      fill: true, tension: 0.4, pointRadius: 4,
-      pointBackgroundColor: d.color+'1)', borderWidth: 2.5,
-    }];
+    progressChart.data.datasets = [{ label:d.label, data:d.data, borderColor:d.color+'0.9)', backgroundColor:d.color+'0.15)', fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:d.color+'1)', borderWidth:2.5 }];
   }
   progressChart.update();
 }
 
-/* ── RANK PODIUM ── */
+/* Rank Podium */
 const top3 = [
-  { name:'سارا رضایی', score:18.9, height:100, color:'rgba(245,158,11,.7)', rank:'#۱' },
-  { name:'محمد حسینی', score:18.4, height:80, color:'rgba(148,163,184,.5)', rank:'#۲' },
-  { name:'علی مختاری', score:17.8, height:65, color:'rgba(79,142,247,.7)',  rank:'#۳' },
+  { name:'سارا رضایی', score:18.9, height:100, color:'rgba(243,156,18,.7)',  rank:'#۱' },
+  { name:'محمد حسینی', score:18.4, height:80,  color:'rgba(180,200,255,.35)', rank:'#۲' },
+  { name:'علی مختاری', score:17.8, height:65,  color:'rgba(74,144,217,.7)',   rank:'#۳' },
 ];
 const podium = document.getElementById('rankPodium');
-// reorder for podium: 2nd, 1st, 3rd
 [top3[1], top3[0], top3[2]].forEach(p => {
   const el = document.createElement('div');
   el.className = 'podium-item';
@@ -940,88 +964,36 @@ const podium = document.getElementById('rankPodium');
   podium.appendChild(el);
 });
 
-/* ── GPA SPARKLINE ── */
+/* GPA Sparkline */
 new Chart(document.getElementById('gpaSparkline'), {
-  type: 'line',
-  data: {
-    labels: ['پایه نهم','پایه دهم ترم۱','پایه دهم ترم۲','پایه یازدهم ترم۱','پایه یازدهم ترم۲'],
-    datasets: [{
-      data: [16.4, 16.9, 17.4, 17.8, null],
-      borderColor: 'rgba(6,214,160,0.8)',
-      backgroundColor: 'rgba(6,214,160,0.1)',
-      fill: true, tension: 0.4, pointRadius: 3,
-      pointBackgroundColor: 'rgba(6,214,160,1)', borderWidth: 2,
-    }]
+  type:'line',
+  data:{
+    labels:['پایه نهم','دهم ت۱','دهم ت۲','یازدهم ت۱','یازدهم ت۲'],
+    datasets:[{ data:[16.4,16.9,17.4,17.8,null], borderColor:'rgba(6,214,160,0.8)', backgroundColor:'rgba(6,214,160,0.1)', fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'rgba(6,214,160,1)', borderWidth:2 }]
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15,22,40,.95)', bodyFont: { family: 'Vazirmatn' }, titleFont: { family: 'Vazirmatn' } } },
-    scales: {
-      x: { display: false },
-      y: { display: false, min: 15, max: 20 }
-    },
-    animation: { duration: 1000 }
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(11,17,32,.95)',bodyFont:{family:'Vazirmatn'},titleFont:{family:'Vazirmatn'}}},
+    scales:{ x:{display:false}, y:{display:false,min:15,max:20} },
+    animation:{duration:1000}
   }
 });
 
-/* ── HEATMAP ── */
-const hmSubjects = ['ریاضی','فیزیک','شیمی','ادبیات','زبان','دین'];
-const hmExams = ['آزمون۱','آزمون۲','آزمون۳','آزمون۴','آزمون۵','آزمون۶','آزمون۷','آزمون۸'];
-const hmData = [
-  [3,4,3,4,4,3,4,4], // ریاضی
-  [2,3,2,3,3,2,3,3], // فیزیک
-  [3,3,4,3,4,3,4,4], // شیمی
-  [2,2,1,2,2,1,2,2], // ادبیات
-  [3,3,3,4,3,3,3,4], // زبان
-  [4,4,3,4,3,4,4,3], // دین
-];
-
-function scoreToHmClass(v) {
-  if(v === 0) return 'hm-0';
-  if(v === 1) return 'hm-1';
-  if(v === 2) return 'hm-2';
-  if(v === 3) return 'hm-3';
-  return 'hm-4';
+/* Sidebar */
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
 }
-
-const grid = document.getElementById('heatmapGrid');
-// header row
-const emptyHeader = document.createElement('div');
-grid.appendChild(emptyHeader);
-hmExams.forEach(e => {
-  const el = document.createElement('div');
-  el.className = 'hm-col-label';
-  el.textContent = e;
-  grid.appendChild(el);
-});
-
-hmSubjects.forEach((sub, ri) => {
-  const label = document.createElement('div');
-  label.className = 'hm-label';
-  label.textContent = sub;
-  grid.appendChild(label);
-
-  hmData[ri].forEach(v => {
-    const cell = document.createElement('div');
-    cell.className = `hm-cell ${scoreToHmClass(v)}`;
-    // score range labels
-    const scoreMap = {0:'—',1:'کم',2:'متوسط',3:'خوب',4:'عالی'};
-    cell.title = scoreMap[v];
-    grid.appendChild(cell);
-  });
-});
-
-/* ── HAMBURGER ── */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-document.getElementById('menuToggle').addEventListener('click', () => {
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
-});
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('active');
-  overlay.classList.remove('active');
-});
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.getElementById('menuToggle').addEventListener('click', openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click', closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeSidebar(); });
 </script>
 </body>
 </html>

@@ -3,195 +3,594 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوربور - حضور و غیاب</title>
-    <link rel="icon" href="../image/iconB.png">
-
+<title>بوربور — حضور و غیاب</title>
+<link rel="icon" href="../image/iconB.png">
+        <link rel="icon" href="../image/iconB.png" />
+   
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../style/scrollbar.css" />
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
-
-:root{
-  --bg-main:#202b59;--bg-card:#1f285a;--bg-card2:#1e2957;--bg-sidebar:#172047;
-  --accent:#3498db;--accent2:#9b59b6;--accent4:#f39c12;--accent5:#e74c3c;
-  --present:#27ae60;--absent:#e74c3c;--late:#f39c12;--leave:#9b59b6;
-  --text:#fff;--text-muted:rgba(255,255,255,.55);--border:rgba(255,255,255,.09);
-  --glow:0 0 28px rgba(52,152,219,.14);--sidebar-w:260px;--radius:14px;
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400; font-display: swap;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;overflow-x:hidden;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 10%,rgba(79,142,247,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 85% 90%,rgba(124,58,237,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
 
-/* SIDEBAR */
-.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:28px 16px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .3s ease;}
-.logo{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:40px;}
-.nav-item{margin-bottom:6px;}
-.nav-item a{color:rgba(255,255,255,.72);text-decoration:none;padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:10px;font-size:14px;font-weight:400;transition:all .25s;}
-.nav-item a i{font-size:15px;width:20px;text-align:center;}
-.nav-item a:hover,.nav-item.active a{background:var(--bg-main);color:#fff;}
-.nav-item.active a{font-weight:600;}
-.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+:root {
+  --bg-main: #0f1629;
+  --bg-card: #162040;
+  --bg-card2: #1a2650;
+  --bg-sidebar: #0b1120;
+  --accent: #4a90d9;
+  --accent2: #8e5fd4;
+  --accent3: #06d6a0;
+  --accent4: #f39c12;
+  --accent5: #e74c3c;
+  --present: #2ecc71;
+  --absent: #e74c3c;
+  --late: #f39c12;
+  --leave: #8e5fd4;
+  --text: #e8f0ff;
+  --text-muted: rgba(180,200,255,0.48);
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(74,144,217,0.35);
+  --sidebar-w: 258px;
+  --radius: 18px;
+  --radius-sm: 11px;
+}
 
-/* MAIN */
-.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:28px 24px;position:relative;z-index:1;}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%, rgba(74,144,217,0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,0.1) 0%, transparent 55%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(74,144,217,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,144,217,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ════ SIDEBAR ════ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  padding: 26px 14px;
+  border-left: 1px solid var(--border);
+  position: fixed; right: 0; top: 0;
+  height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 500;
+  display: flex; flex-direction: column;
+  transform: translateX(110%);
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
+}
+.sidebar.active { transform: translateX(0) !important; }
+
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 499;
+}
+.sidebar-overlay.active { display: block; }
+
+.logo {
+  text-align: center; margin-bottom: 4px;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -1px; color: #fff;
+  font-family: "Shabnam", sans-serif;
+}
+.logo span { color: var(--accent); }
+.logo-sub {
+  text-align: center; font-size: 10px;
+  color: var(--text-muted); margin-bottom: 18px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.sidebar-close-btn {
+  position: absolute; top: 14px; left: 14px;
+  width: 32px; height: 32px;
+  background: rgba(231,76,60,0.12);
+  border: 1px solid rgba(231,76,60,0.2);
+  border-radius: 50%; color: var(--absent);
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.2s;
+}
+.sidebar-close-btn:hover { background: var(--absent); color: #fff; transform: rotate(90deg); }
+
+.student-block {
+  background: linear-gradient(135deg, rgba(74,144,217,0.14), rgba(142,95,212,0.10));
+  border: 1px solid rgba(74,144,217,0.2);
+  border-radius: var(--radius-sm);
+  padding: 15px 13px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+.student-block::before {
+  content: ''; position: absolute;
+  top: -20px; left: -20px; width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(74,144,217,0.15), transparent 70%);
+  pointer-events: none;
+}
+.student-avatar {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(74,144,217,0.35);
+}
+.student-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.student-role { font-size: 10px; color: var(--text-muted); }
+.student-badge {
+  margin-top: 7px; display: inline-block;
+  background: rgba(6,214,160,0.12); color: var(--accent3);
+  font-size: 9px; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px;
+  border: 1px solid rgba(6,214,160,0.2);
+}
+
+.nav-section-label {
+  font-size: 9px; font-weight: 700;
+  color: rgba(180,200,255,0.28);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 0 14px; margin: 14px 0 8px;
+}
+.nav-item { margin-bottom: 2px; }
+.nav-item a {
+  color: rgba(180,200,255,0.58);
+  text-decoration: none; padding: 10px 14px;
+  display: flex; align-items: center; gap: 11px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 500;
+  transition: all .2s; position: relative;
+}
+.nav-item a i { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; opacity: 0.75; }
+.nav-item a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.nav-item.active a {
+  background: linear-gradient(90deg, rgba(74,144,217,0.18), rgba(74,144,217,0.05));
+  color: #fff; font-weight: 700;
+  border: 1px solid rgba(74,144,217,0.22);
+}
+.nav-item.active a::before {
+  content: ''; position: absolute;
+  right: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 65%;
+  background: var(--accent); border-radius: 3px 0 0 3px;
+}
+.nav-badge {
+  margin-right: auto; background: var(--accent5); color: #fff;
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 20px; min-width: 20px; text-align: center;
+}
+.nav-divider { height: 1px; background: var(--border); margin: 10px 4px; }
+.sidebar-footer {
+  margin-top: auto; padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px; color: var(--text-muted);
+  text-align: center; line-height: 1.7;
+}
+
+/* ════ HAMBURGER ════ */
+.menu-toggle {
+  position: fixed; top: 16px; right: 20px; z-index: 300;
+  width: 44px; height: 44px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  color: var(--text-muted); font-size: 18px;
+}
+.menu-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+
+/* ════ MAIN ════ */
+.main-content {
+  min-height: 100vh;
+  width: 100%;
+  padding: 72px 24px 36px;
+  position: relative; z-index: 1;
+}
 
 /* TOP BAR */
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;}
-.greeting-block h1{font-size:20px;font-weight:700;}
-.greeting-block h1 span{color:var(--accent);}
-.greeting-block p{font-size:12px;color:var(--text-muted);margin-top:3px;}
-.top-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.notif-btn{position:relative;width:38px;height:38px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
-.notif-btn:hover{color:var(--text);background:var(--bg-card2);}
-.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
-.profile-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;}
-
-/* STAT ROW */
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
-.stat-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
-.stat-card.blue::before{background:linear-gradient(90deg,var(--accent),var(--accent2));}
-.stat-card.green::before{background:linear-gradient(90deg,var(--present),#0bc87c);}
-.stat-card.red::before{background:linear-gradient(90deg,var(--absent),#f97316);}
-.stat-card.yellow::before{background:linear-gradient(90deg,var(--late),#fbbf24);}
-.stat-card:hover{transform:translateY(-4px);border-color:rgba(79,142,247,.22);box-shadow:var(--glow);}
-.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
-.blue   .stat-icon{background:rgba(79,142,247,.15);color:var(--accent);}
-.green  .stat-icon{background:rgba(6,214,160,.15);color:var(--present);}
-.red    .stat-icon{background:rgba(239,68,68,.15);color:var(--absent);}
-.yellow .stat-icon{background:rgba(245,158,11,.15);color:var(--late);}
-.stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;}
-.stat-label{font-size:11px;color:var(--text-muted);}
-.stat-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
-.badge-green{background:rgba(6,214,160,.15);color:var(--present);}
-.badge-red{background:rgba(239,68,68,.15);color:var(--absent);}
-.badge-blue{background:rgba(52,152,219,.15);color:var(--accent);}
-.badge-yel{background:rgba(245,158,11,.15);color:var(--late);}
-
-/* SECTION HEADER */
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
-.section-title i{color:var(--accent);}
-.section-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap;}
-
-/* CALENDAR CARD */
-.calendar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.cal-nav-btn{width:32px;height:32px;border-radius:8px;background:var(--bg-card2);border:1px solid var(--border);color:var(--text-muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.cal-nav-btn:hover{color:var(--text);background:rgba(52,152,219,.15);border-color:var(--accent);}
-.cal-nav-btn:disabled{opacity:.3;cursor:default;}
-.cal-month-name{font-size:15px;font-weight:700;}
-.cal-year-label{font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;}
-.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;}
-.cal-head-cell{text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);padding:4px 0;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:default;border:1.5px solid transparent;transition:all .2s;position:relative;}
-.cal-day.empty{background:transparent;border-color:transparent;}
-.cal-day.normal{background:rgba(255,255,255,.04);color:var(--text-muted);}
-.cal-day.normal:hover{background:rgba(255,255,255,.08);}
-.cal-day.present{background:rgba(39,174,96,.15);border-color:rgba(39,174,96,.35);color:var(--present);}
-.cal-day.absent{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.35);color:var(--absent);}
-.cal-day.late{background:rgba(243,156,18,.15);border-color:rgba(243,156,18,.35);color:var(--late);}
-.cal-day.leave{background:rgba(155,89,182,.15);border-color:rgba(155,89,182,.35);color:var(--accent2);}
-.cal-day.holiday{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border-color:transparent;}
-.cal-day.future{background:rgba(255,255,255,.02);color:rgba(255,255,255,.15);border-color:transparent;}
-.cal-day.today{box-shadow:0 0 0 2px var(--accent);}
-.cal-day-dot{width:4px;height:4px;border-radius:50%;margin-top:2px;}
-.present .cal-day-dot{background:var(--present);}
-.absent  .cal-day-dot{background:var(--absent);}
-.late    .cal-day-dot{background:var(--late);}
-.leave   .cal-day-dot{background:var(--accent2);}
-.cal-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
-.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);}
-.cal-legend-box{width:12px;height:12px;border-radius:3px;}
-
-/* MIDDLE ROW */
-.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
-
-/* SUBJECT BARS */
-.subject-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.subject-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
-.subject-item:last-child{border-bottom:none;}
-.subj-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.subj-info{flex:1;min-width:0;}
-.subj-name{font-size:13px;font-weight:600;margin-bottom:5px;}
-.subj-bar-wrap{height:5px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;}
-.subj-bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
-.subj-pct{font-size:13px;font-weight:700;min-width:36px;text-align:left;flex-shrink:0;}
-.subj-counts{display:flex;gap:6px;flex-shrink:0;}
-.subj-count-chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
-
-/* TREND CHART */
-.trend-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.chart-wrap{position:relative;height:210px;margin-top:10px;}
-
-/* BOTTOM ROW */
-.bot-row{display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;}
-
-/* ABSENCE LOG */
-.absence-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.absence-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);transition:transform .2s;}
-.absence-item:last-child{border-bottom:none;}
-.absence-item:hover{transform:translateX(3px);}
-.absence-date{font-size:11px;color:var(--text-muted);min-width:80px;line-height:1.5;}
-.absence-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1;}
-.absence-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
-.tag-absent{background:rgba(231,76,60,.15);color:var(--absent);}
-.tag-late{background:rgba(243,156,18,.15);color:var(--late);}
-.tag-leave{background:rgba(155,89,182,.15);color:var(--accent2);}
-.absence-type-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
-
-/* DONUT */
-.summary-donut-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;}
-.donut-wrap{position:relative;width:160px;height:160px;margin:8px auto 16px;}
-.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.donut-pct{font-size:28px;font-weight:800;color:var(--present);}
-.donut-sub{font-size:10px;color:var(--text-muted);}
-.donut-legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto;}
-.dl-item{display:flex;align-items:center;gap:7px;font-size:11px;}
-.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.dl-val{margin-right:auto;font-weight:700;font-size:13px;}
-
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.stat-card,.calendar-card,.subject-card,.trend-card,.absence-card,.summary-donut-card{animation:fadeUp .5s ease both;}
-.stat-card:nth-child(1){animation-delay:.04s;}.stat-card:nth-child(2){animation-delay:.08s;}
-.stat-card:nth-child(3){animation-delay:.12s;}.stat-card:nth-child(4){animation-delay:.16s;}
-.calendar-card{animation-delay:.2s;}.subject-card{animation-delay:.24s;}.trend-card{animation-delay:.28s;}
-.absence-card{animation-delay:.32s;}.summary-donut-card{animation-delay:.36s;}
-
-/* HAMBURGER */
-.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;}
-.sidebar-overlay.active{display:block;}
-
-/* RESPONSIVE */
-@media(max-width:1280px){:root{--sidebar-w:240px;}}
-@media(max-width:1024px){
-  :root{--sidebar-w:220px;}
-  .main-content{padding:22px 18px;}
-  .stat-row{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .mid-row{grid-template-columns:1fr;}
-  .bot-row{grid-template-columns:1fr;}
+.top-bar {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 22px; gap: 14px;
+  flex-wrap: wrap; animation: fadeUp .4s ease both;
 }
-@media(max-width:768px){
-  .menu-toggle{display:flex;}
-  .sidebar{transform:translateX(110%);box-shadow:-5px 0 20px rgba(0,0,0,.4);}
-  .sidebar.active{transform:translateX(0);}
-  .main-content{margin-right:0;padding:70px 16px 20px;}
-  .stat-row{grid-template-columns:repeat(2,1fr);gap:10px;}
-  .mid-row,.bot-row{grid-template-columns:1fr;gap:12px;}
+.greeting-block h1 {
+  font-size: 20px;
+  font-weight: 800; line-height: 1.3;
 }
-@media(max-width:480px){
-  .main-content{padding:66px 12px 16px;}
-  .stat-card{padding:14px 12px;}.stat-value{font-size:22px;}
-  .stat-icon{width:36px;height:36px;font-size:14px;margin-bottom:10px;}
-  .cal-head-cell{font-size:9px;}.cal-day{font-size:9px;border-radius:6px;}
-  .subj-counts{display:none;}.absence-date{min-width:64px;}
+.greeting-block h1 span { color: var(--accent); }
+.greeting-block p {
+  font-size: 11.5px; color: var(--text-muted);
+  margin-top: 5px; display: flex; align-items: center; gap: 7px;
 }
-@media(max-width:360px){.stat-row{gap:7px;}.stat-value{font-size:20px;}}
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--accent3); border-radius: 50%;
+  animation: pulse 2s infinite; flex-shrink: 0;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(6,214,160,0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(6,214,160,0); }
+}
+.top-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.action-btn {
+  position: relative; width: 40px; height: 40px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s;
+}
+.action-btn:hover { color: #fff; border-color: var(--border-hover); }
+.notif-dot {
+  position: absolute; top: 8px; left: 8px;
+  width: 7px; height: 7px;
+  background: var(--accent5); border-radius: 50%;
+  border: 2px solid var(--bg-main);
+}
+.profile-btn {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+  box-shadow: 0 3px 10px rgba(74,144,217,0.35);
+}
+
+/* ════ STAT CARDS ════ */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px 16px;
+  position: relative; overflow: hidden;
+  transition: transform .28s, box-shadow .28s, border-color .28s;
+  animation: fadeUp .45s ease both;
+  min-width: 0;
+}
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; right: 0; left: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.stat-card.green::before  { background: linear-gradient(90deg, #2ecc71, #0bc87c); }
+.stat-card.red::before    { background: linear-gradient(90deg, #e74c3c, #f97316); }
+.stat-card.yellow::before { background: linear-gradient(90deg, #f39c12, #fbbf24); }
+.stat-card.blue::before   { background: linear-gradient(90deg, #4a90d9, #8e5fd4); }
+.stat-card:nth-child(1) { animation-delay: .04s; }
+.stat-card:nth-child(2) { animation-delay: .08s; }
+.stat-card:nth-child(3) { animation-delay: .12s; }
+.stat-card:nth-child(4) { animation-delay: .16s; }
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  border-color: rgba(74,144,217,0.18);
+}
+.stat-card-top {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 12px;
+  flex-wrap: wrap; gap: 6px;
+}
+.stat-icon {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.green  .stat-icon { background: rgba(46,204,113,0.15); color: var(--present); }
+.red    .stat-icon { background: rgba(231,76,60,0.15);  color: var(--absent); }
+.yellow .stat-icon { background: rgba(243,156,18,0.15); color: var(--late); }
+.blue   .stat-icon { background: rgba(74,144,217,0.15); color: var(--accent); }
+.stat-badge {
+  font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap;
+}
+.green  .stat-badge { background: rgba(46,204,113,0.15); color: var(--present); }
+.red    .stat-badge { background: rgba(231,76,60,0.15);  color: var(--absent); }
+.yellow .stat-badge { background: rgba(243,156,18,0.15); color: var(--late); }
+.blue   .stat-badge { background: rgba(74,144,217,0.15); color: var(--accent); }
+.stat-value {
+  font-size: 32px;
+  font-weight: 900; line-height: 1;
+  font-family: "Shabnam", sans-serif; margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+/* ════ SECTION HEADER ════ */
+.sec-hdr {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 15px;
+}
+.sec-title { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.sec-title i { color: var(--accent); font-size: 14px; }
+.sec-link {
+  font-size: 11px; color: var(--accent); cursor: pointer;
+  text-decoration: none; padding: 3px 8px; border-radius: 6px; transition: background .2s;
+}
+.sec-link:hover { background: rgba(74,144,217,0.1); }
+
+/* ════ CALENDAR CARD ════ */
+.calendar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px; margin-bottom: 20px;
+  animation: fadeUp .45s .2s ease both;
+}
+.cal-nav {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 18px;
+}
+.cal-nav-btn {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  background: var(--bg-card2); border: 1px solid var(--border);
+  color: var(--text-muted); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.cal-nav-btn:hover { color: var(--accent); border-color: rgba(74,144,217,0.3); }
+.cal-nav-btn:disabled { opacity: .3; cursor: default; }
+.cal-month-name { font-size: 15px; font-weight: 700; }
+.cal-year-label { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 2px; }
+
+.cal-head {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  gap: 3px; margin-bottom: 5px;
+}
+.cal-head-cell {
+  text-align: center; font-size: 10px; font-weight: 700;
+  color: var(--text-muted); padding: 4px 0;
+}
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.cal-day {
+  aspect-ratio: 1; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: clamp(9px, 1.5vw, 12px); font-weight: 600;
+  cursor: default; border: 1.5px solid transparent;
+  transition: all .2s; position: relative;
+}
+.cal-day.empty   { background: transparent; border-color: transparent; }
+.cal-day.normal  { background: rgba(255,255,255,.04); color: var(--text-muted); }
+.cal-day.normal:hover { background: rgba(255,255,255,.08); }
+.cal-day.present { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.3); color: var(--present); }
+.cal-day.absent  { background: rgba(231,76,60,.14);  border-color: rgba(231,76,60,.3);  color: var(--absent); }
+.cal-day.late    { background: rgba(243,156,18,.14); border-color: rgba(243,156,18,.3); color: var(--late); }
+.cal-day.leave   { background: rgba(142,95,212,.14); border-color: rgba(142,95,212,.3); color: var(--leave); }
+.cal-day.holiday { background: rgba(255,255,255,.03); color: rgba(255,255,255,.18); border-color: transparent; }
+.cal-day.future  { background: rgba(255,255,255,.02); color: rgba(255,255,255,.12); border-color: transparent; }
+.cal-day.today   { box-shadow: 0 0 0 2px var(--accent); }
+.cal-day-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 2px; }
+.present .cal-day-dot { background: var(--present); }
+.absent  .cal-day-dot { background: var(--absent); }
+.late    .cal-day-dot { background: var(--late); }
+.leave   .cal-day-dot { background: var(--leave); }
+
+.cal-legend {
+  display: flex; flex-wrap: wrap; gap: 10px 16px;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+.cal-legend-box  { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* ════ MIDDLE ROW ════ */
+.mid-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 20px;
+}
+
+/* Subject Bars */
+.subject-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  animation: fadeUp .45s .24s ease both;
+  min-width: 0;
+}
+.subject-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  flex-wrap: nowrap;
+}
+.subject-item:last-child { border-bottom: none; }
+.subj-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.subj-info { flex: 1; min-width: 0; }
+.subj-name { font-size: 12px; font-weight: 600; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.subj-bar-wrap { height: 5px; background: rgba(255,255,255,.07); border-radius: 5px; overflow: hidden; }
+.subj-bar-fill { height: 100%; border-radius: 5px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.subj-pct { font-size: 13px; font-weight: 700; min-width: 36px; text-align: left; flex-shrink: 0; }
+.subj-counts { display: flex; gap: 5px; flex-shrink: 0; }
+.subj-count-chip { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 20px; white-space: nowrap; }
+
+/* Trend Chart */
+.trend-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  animation: fadeUp .45s .28s ease both;
+  min-width: 0;
+}
+.chart-wrap { position: relative; height: 210px; margin-top: 10px; }
+
+/* ════ BOTTOM ROW ════ */
+.bot-row {
+  display: grid; grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+}
+
+/* Absence Log */
+.absence-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  animation: fadeUp .45s .32s ease both;
+  min-width: 0;
+}
+.absence-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  transition: transform .2s;
+}
+.absence-item:last-child { border-bottom: none; }
+.absence-item:hover { transform: translateX(3px); }
+.absence-date { font-size: 11px; color: var(--text-muted); min-width: 72px; line-height: 1.5; flex-shrink: 0; }
+.absence-tags { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; min-width: 0; }
+.absence-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+.tag-absent { background: rgba(231,76,60,.14); color: var(--absent); }
+.tag-late   { background: rgba(243,156,18,.14); color: var(--late); }
+.tag-leave  { background: rgba(142,95,212,.14); color: var(--leave); }
+.absence-type-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0;
+}
+
+/* Donut */
+.summary-donut-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  display: flex; flex-direction: column;
+  animation: fadeUp .45s .36s ease both;
+  min-width: 0;
+}
+.donut-wrap {
+  position: relative; width: 150px; height: 150px;
+  margin: 8px auto 14px;
+}
+.donut-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.donut-pct { font-size: 26px; font-weight: 800; color: var(--present); font-family: "Shabnam", sans-serif; }
+.donut-sub { font-size: 10px; color: var(--text-muted); }
+.donut-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: auto; }
+.dl-item { display: flex; align-items: center; gap: 7px; font-size: 11px; min-width: 0; }
+.dl-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.dl-val  { margin-right: auto; font-weight: 700; font-size: 13px; }
+
+/* ════ ANIMATIONS ════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════ RESPONSIVE — 1024px ════ */
+@media (max-width: 1024px) {
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .mid-row  { grid-template-columns: 1fr; }
+  .bot-row  { grid-template-columns: 1fr; }
+  .subj-counts { display: flex; }
+}
+
+/* ════ RESPONSIVE — 768px ════ */
+@media (max-width: 768px) {
+  .main-content { padding: 68px 14px 24px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .mid-row, .bot-row { grid-template-columns: 1fr; gap: 12px; }
+  .chart-wrap { height: 180px; }
+  .donut-wrap { width: 130px; height: 130px; }
+  .donut-pct { font-size: 22px; }
+  .absence-date { min-width: 60px; font-size: 10px; }
+}
+
+/* ════ RESPONSIVE — 540px ════ */
+@media (max-width: 540px) {
+  .main-content { padding: 66px 12px 20px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat-card { padding: 14px 11px 12px; }
+  .stat-card-top { margin-bottom: 8px; }
+  .stat-icon { width: 34px; height: 34px; font-size: 13px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+  .stat-badge { font-size: 9px; padding: 2px 6px; }
+  .subj-counts { display: none; }
+  .cal-head-cell { font-size: 9px; }
+  .cal-day { border-radius: 6px; }
+  .cal-day-dot { display: none; }
+  .calendar-card { padding: 14px; }
+  .subject-card, .trend-card, .absence-card, .summary-donut-card { padding: 14px; }
+  .chart-wrap { height: 160px; }
+  .donut-wrap { width: 120px; height: 120px; }
+  .donut-pct { font-size: 20px; }
+  .donut-legend { gap: 7px; }
+  .dl-val { font-size: 12px; }
+  .greeting-block h1 { font-size: 13px; }
+  .greeting-block p { font-size: 10px; }
+}
+
+/* ════ RESPONSIVE — 400px ════ */
+@media (max-width: 400px) {
+  .main-content { padding: 64px 10px 16px; }
+  .stat-row { gap: 7px; }
+  .stat-card { padding: 12px 10px 11px; border-radius: var(--radius-sm); }
+  .stat-value { font-size: 19px; }
+  .stat-icon { width: 30px; height: 30px; font-size: 12px; border-radius: 9px; }
+  .calendar-card, .subject-card, .trend-card, .absence-card, .summary-donut-card {
+    padding: 12px; border-radius: var(--radius-sm);
+  }
+  .cal-month-name { font-size: 13px; }
+  .absence-item { gap: 7px; }
+  .absence-date { min-width: 55px; }
+  .subj-name { font-size: 11px; }
+  .sec-title { font-size: 12px; }
+}
+
+/* ════ RESPONSIVE — 360px ════ */
+@media (max-width: 360px) {
+  .stat-row { gap: 6px; }
+  .stat-value { font-size: 17px; }
+  .stat-label { font-size: 9px; }
+  .absence-date { display: none; }
+  .chart-wrap { height: 140px; }
+}
 </style>
 </head>
 <body>
@@ -200,50 +599,78 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="sidebar" id="sidebar">
-  <div class="logo">بوربور</div>
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
+  <div class="student-block">
+    <div class="student-avatar">ع</div>
+    <div>
+      <div class="student-name">علی مختاری</div>
+      <div class="student-role">دانش‌آموز</div>
+      <div class="student-badge">یازدهم تجربی</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">منوی اصلی</div>
   <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
   <div class="nav-item active"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
   <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
   <div class="nav-item"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
   <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_support.html"><i class="fas fa-headset"></i> پشتیبانی</a></div>
   <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
   <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
 </div>
 
 <div class="main-content">
+
   <div class="top-bar">
     <div class="greeting-block">
-      <h1>حضور و غیاب — <span>علی مختاری</span></h1>
-      <p id="termLabel">سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
+      <h1><i class="fas fa-clipboard-check" style="color:var(--accent);font-size:16px;margin-left:6px"></i>حضور و غیاب — <span>علی مختاری</span></h1>
+      <p><span class="live-dot"></span> سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی</p>
     </div>
     <div class="top-actions">
-      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
-      <div class="profile-avatar">ع</div>
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">ع</div>
     </div>
   </div>
 
   <div class="stat-row">
     <div class="stat-card green">
-      <div class="stat-badge badge-green" id="pctBadge">۹۲٪</div>
-      <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+        <span class="stat-badge" id="pctBadge">۹۲٪</span>
+      </div>
       <div class="stat-value" id="statPresent">—</div>
       <div class="stat-label">روز حاضر</div>
     </div>
     <div class="stat-card red">
-      <div class="stat-badge badge-red">این ترم</div>
-      <div class="stat-icon"><i class="fas fa-user-times"></i></div>
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-user-times"></i></div>
+        <span class="stat-badge">این ترم</span>
+      </div>
       <div class="stat-value" id="statAbsent">—</div>
       <div class="stat-label">روز غیبت</div>
     </div>
     <div class="stat-card yellow">
-      <div class="stat-badge badge-yel">تأخیر</div>
-      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <span class="stat-badge">تأخیر</span>
+      </div>
       <div class="stat-value" id="statLate">—</div>
       <div class="stat-label">تأخیر</div>
     </div>
     <div class="stat-card blue">
-      <div class="stat-badge badge-blue">کل</div>
-      <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <span class="stat-badge">کل</span>
+      </div>
       <div class="stat-value" id="statTotal">—</div>
       <div class="stat-label">روز درسی</div>
     </div>
@@ -266,24 +693,24 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-legend">
-      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(39,174,96,.55)"></div>حاضر</div>
-      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(231,76,60,.55)"></div>غیبت</div>
-      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(243,156,18,.55)"></div>تأخیر</div>
-      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(155,89,182,.55)"></div>مرخصی</div>
-      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(255,255,255,.1)"></div>تعطیل / آینده</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(46,204,113,.5)"></div>حاضر</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(231,76,60,.5)"></div>غیبت</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(243,156,18,.5)"></div>تأخیر</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(142,95,212,.5)"></div>مرخصی</div>
+      <div class="cal-legend-item"><div class="cal-legend-box" style="background:rgba(255,255,255,.08)"></div>تعطیل / آینده</div>
     </div>
   </div>
 
   <div class="mid-row">
     <div class="subject-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-bar"></i> درصد حضور هر درس</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-bar"></i> درصد حضور هر درس</div>
       </div>
       <div id="subjectList"></div>
     </div>
     <div class="trend-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-line"></i> روند ماهانه حضور</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-line"></i> روند ماهانه حضور</div>
       </div>
       <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
     </div>
@@ -291,14 +718,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="bot-row">
     <div class="absence-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-list-ul"></i> سوابق غیبت و تأخیر</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-list-ul"></i> سوابق غیبت و تأخیر</div>
       </div>
       <div id="absenceList"></div>
     </div>
     <div class="summary-donut-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-pie"></i> خلاصه ترم</div>
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-pie"></i> خلاصه ترم</div>
       </div>
       <div class="donut-wrap">
         <canvas id="donutChart"></canvas>
@@ -311,88 +738,38 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         <div class="dl-item"><div class="dl-dot" style="background:var(--present)"></div><span style="color:var(--text-muted)">حاضر</span><span class="dl-val" style="color:var(--present)" id="dlPresent">—</span></div>
         <div class="dl-item"><div class="dl-dot" style="background:var(--absent)"></div><span style="color:var(--text-muted)">غایب</span><span class="dl-val" style="color:var(--absent)" id="dlAbsent">—</span></div>
         <div class="dl-item"><div class="dl-dot" style="background:var(--late)"></div><span style="color:var(--text-muted)">تأخیر</span><span class="dl-val" style="color:var(--late)" id="dlLate">—</span></div>
-        <div class="dl-item"><div class="dl-dot" style="background:var(--accent2)"></div><span style="color:var(--text-muted)">مرخصی</span><span class="dl-val" style="color:var(--accent2)" id="dlLeave">—</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--leave)"></div><span style="color:var(--text-muted)">مرخصی</span><span class="dl-val" style="color:var(--leave)" id="dlLeave">—</span></div>
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   CALENDAR METADATA — محاسبه‌شده از تقویم واقعی
-═══════════════════════════════════════════════ */
 const MONTH_NAMES = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const DAY_NAMES   = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
 
-// offset روز اول (شنبه=0..جمعه=6) و تعداد روز — محاسبه‌شده با Python از تاریخ میلادی واقعی
 const META = {
-  1404: {
-    offset: [6,2,5,1,4,0,3,5,0,2,4,6],
-    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
-  },
-  1405: {
-    offset: [0,3,6,2,5,1,4,6,1,3,5,0],
-    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
-  },
-  1406: {
-    // فقط برای محاسبه future — offset مهر 1406 لازم نیست تا خرداد
-    offset: [0,3,6,2,5,1,4,6,1,3,5,0], // تقریبی، لازم نیست دقیق باشد
-    days:   [31,31,31,31,31,31,30,30,30,30,30,29]
-  }
+  1404: { offset:[6,2,5,1,4,0,3,5,0,2,4,6], days:[31,31,31,31,31,31,30,30,30,30,30,29] },
+  1405: { offset:[0,3,6,2,5,1,4,6,1,3,5,0], days:[31,31,31,31,31,31,30,30,30,30,30,29] },
+  1406: { offset:[0,3,6,2,5,1,4,6,1,3,5,0], days:[31,31,31,31,31,31,30,30,30,30,30,29] }
 };
 
-// تعطیلات رسمی ثابت: {year: { month(1-12): [days] }}
 const FIXED_HOLIDAYS = {
-  1404: {
-    1:  [1,2,3,4,12,13],   // فروردین
-    3:  [14,15],            // خرداد
-    11: [22],               // بهمن
-    12: [29]                // اسفند
-  },
-  1405: {
-    1:  [1,2,3,4,12,13],
-    3:  [14,15],
-    11: [22],
-    12: [29]
-  }
+  1404: { 1:[1,2,3,4,12,13], 3:[14,15], 11:[22], 12:[29] },
+  1405: { 1:[1,2,3,4,12,13], 3:[14,15], 11:[22], 12:[29] }
 };
 
-// جمعه‌ها همیشه تعطیل (col index 6)
-function isFriday(offset, day) {
-  return (offset + day - 1) % 7 === 6;
-}
+function isFriday(offset, day) { return (offset + day - 1) % 7 === 6; }
+function isFixedHoliday(year, month, day) { return (FIXED_HOLIDAYS[year]?.[month] || []).includes(day); }
 
-// آیا روز تعطیل رسمی است؟
-function isFixedHoliday(year, month, day) {
-  return (FIXED_HOLIDAYS[year]?.[month] || []).includes(day);
-}
+const TODAY = { year:1404, month:2, day:26 };
 
-/* ═══════════════════════════════════════════════
-   TODAY: 26 اردیبهشت 1404
-═══════════════════════════════════════════════ */
-const TODAY = { year: 1404, month: 2, day: 26 };
-
-function compareDates(y1,m1,d1, y2,m2,d2){
-  if(y1!==y2) return y1-y2;
-  if(m1!==m2) return m1-m2;
-  return d1-d2;
+function compareDates(y1,m1,d1,y2,m2,d2){
+  if(y1!==y2) return y1-y2; if(m1!==m2) return m1-m2; return d1-d2;
 }
+function isFuture(y,m,d){ return compareDates(y,m,d,TODAY.year,TODAY.month,TODAY.day)>0; }
+function isToday(y,m,d){ return y===TODAY.year&&m===TODAY.month&&d===TODAY.day; }
 
-function isFuture(year, month, day){
-  return compareDates(year,month,day, TODAY.year,TODAY.month,TODAY.day) > 0;
-}
-function isToday(year, month, day){
-  return year===TODAY.year && month===TODAY.month && day===TODAY.day;
-}
-
-/* ═══════════════════════════════════════════════
-   سال تحصیلی: مهر → خرداد (دو سال پشت سرهم)
-   ماه‌های درسی: مهر(7)..اسفند(12) از سال اول
-                 فروردین(1)..خرداد(3) از سال دوم
-═══════════════════════════════════════════════ */
-// ساختار ماه‌های تقویم: [{year, month}]
-// سال تحصیلی 1: مهر1404..خرداد1405
-// سال تحصیلی 2: مهر1405..خرداد1406
 const SCHOOL_MONTHS_1 = [
   {year:1404,month:7},{year:1404,month:8},{year:1404,month:9},
   {year:1404,month:10},{year:1404,month:11},{year:1404,month:12},
@@ -403,194 +780,102 @@ const SCHOOL_MONTHS_2 = [
   {year:1405,month:10},{year:1405,month:11},{year:1405,month:12},
   {year:1406,month:1},{year:1406,month:2},{year:1406,month:3}
 ];
+const ALL_MONTHS = [...SCHOOL_MONTHS_1,...SCHOOL_MONTHS_2];
 
-// همه ماه‌های قابل نمایش
-const ALL_MONTHS = [...SCHOOL_MONTHS_1, ...SCHOOL_MONTHS_2];
-
-/* ═══════════════════════════════════════════════
-   وضعیت‌سازی تصادفی — نمایشی
-   (در پروژه واقعی از API می‌آید)
-═══════════════════════════════════════════════ */
-const rng = (seed) => {
-  let s = seed;
-  return () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 4294967296; };
-};
+const rng = (seed) => { let s=seed; return ()=>{ s=(s*1664525+1013904223)&0xffffffff; return (s>>>0)/4294967296; }; };
 const rand = rng(42);
-
-// برای هر ماه، وضعیت هر روز را تولید می‌کنیم
-// P=حاضر, A=غیبت, L=تأخیر, V=مرخصی, H=تعطیل, F=آینده
 const monthStatusCache = {};
 
-function getMonthStatuses(year, month) {
-  const key = `${year}-${month}`;
+function getMonthStatuses(year,month){
+  const key=`${year}-${month}`;
   if(monthStatusCache[key]) return monthStatusCache[key];
-
-  const meta = META[year] || META[1405];
-  const offset = meta.offset[month-1];
-  const days   = meta.days[month-1];
-  const result = [];
-
-  for(let d=1; d<=days; d++){
-    if(isFixedHoliday(year, month, d) || isFriday(offset, d)){
-      result.push('H');
-    } else if(isFuture(year, month, d)){
-      result.push('F');
-    } else {
-      const r = rand();
-      if(r < 0.78)      result.push('P');
-      else if(r < 0.87) result.push('L');
-      else if(r < 0.94) result.push('A');
-      else               result.push('V');
-    }
+  const meta=META[year]||META[1405];
+  const offset=meta.offset[month-1], days=meta.days[month-1];
+  const result=[];
+  for(let d=1;d<=days;d++){
+    if(isFixedHoliday(year,month,d)||isFriday(offset,d)) result.push('H');
+    else if(isFuture(year,month,d)) result.push('F');
+    else { const r=rand(); if(r<.78)result.push('P'); else if(r<.87)result.push('L'); else if(r<.94)result.push('A'); else result.push('V'); }
   }
-
-  monthStatusCache[key] = result;
-  return result;
+  monthStatusCache[key]=result; return result;
 }
 
-/* ═══════════════════════════════════════════════
-   NAVIGATOR STATE
-═══════════════════════════════════════════════ */
-// پیدا کردن ایندکس ماه جاری در لیست (اردیبهشت 1404 = index 1 در SCHOOL_MONTHS_1)
-// ولی ما ALL_MONTHS داریم
-let currentIdx = ALL_MONTHS.findIndex(m => m.year===TODAY.year && m.month===TODAY.month);
-if(currentIdx < 0) currentIdx = 0;
+let currentIdx = ALL_MONTHS.findIndex(m=>m.year===TODAY.year&&m.month===TODAY.month);
+if(currentIdx<0) currentIdx=0;
 
-/* ═══════════════════════════════════════════════
-   RENDER CALENDAR
-═══════════════════════════════════════════════ */
 function renderCalendar(idx){
-  const {year, month} = ALL_MONTHS[idx];
-  const meta    = META[year] || META[1405];
-  const offset  = meta.offset[month-1];
-  const days    = meta.days[month-1];
-  const statuses = getMonthStatuses(year, month);
-
-  document.getElementById('calMonthName').textContent = MONTH_NAMES[month-1];
-  document.getElementById('calYearLabel').textContent = toF(year);
-
-  // nav buttons
-  document.getElementById('prevMonth').disabled = (idx === 0);
-  document.getElementById('nextMonth').disabled = (idx === ALL_MONTHS.length - 1);
-
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-
-  // empty cells
-  for(let i=0; i<offset; i++){
-    const el = document.createElement('div');
-    el.className = 'cal-day empty';
-    grid.appendChild(el);
-  }
-
-  statuses.forEach((st, i) => {
-    const day = i + 1;
-    const el  = document.createElement('div');
-    const cls = st === 'H' ? 'holiday'
-              : st === 'F' ? 'future'
-              : st === 'P' ? 'present'
-              : st === 'A' ? 'absent'
-              : st === 'L' ? 'late'
-              : st === 'V' ? 'leave'
-              : 'normal';
-
-    el.className = 'cal-day ' + cls;
-    if(isToday(year, month, day)) el.classList.add('today');
-    el.textContent = toF(day);
-
-    if(['P','A','L','V'].includes(st)){
-      const dot = document.createElement('div');
-      dot.className = 'cal-day-dot';
-      el.appendChild(dot);
-    }
+  const {year,month}=ALL_MONTHS[idx];
+  const meta=META[year]||META[1405];
+  const offset=meta.offset[month-1], days=meta.days[month-1];
+  const statuses=getMonthStatuses(year,month);
+  document.getElementById('calMonthName').textContent=MONTH_NAMES[month-1];
+  document.getElementById('calYearLabel').textContent=toF(year);
+  document.getElementById('prevMonth').disabled=(idx===0);
+  document.getElementById('nextMonth').disabled=(idx===ALL_MONTHS.length-1);
+  const grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  for(let i=0;i<offset;i++){ const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
+  statuses.forEach((st,i)=>{
+    const day=i+1, el=document.createElement('div');
+    const cls=st==='H'?'holiday':st==='F'?'future':st==='P'?'present':st==='A'?'absent':st==='L'?'late':st==='V'?'leave':'normal';
+    el.className='cal-day '+cls;
+    if(isToday(year,month,day)) el.classList.add('today');
+    el.textContent=toF(day);
+    if(['P','A','L','V'].includes(st)){ const dot=document.createElement('div'); dot.className='cal-day-dot'; el.appendChild(dot); }
     grid.appendChild(el);
   });
-
   updateStats();
 }
 
-/* ═══════════════════════════════════════════════
-   STATS — جمع کل از تمام ماه‌های گذشته + جاری
-═══════════════════════════════════════════════ */
 function computeTotals(){
-  let P=0, A=0, L=0, V=0;
-  // فقط ماه‌های سال تحصیلی 1 (مهر1404..اردیبهشت1404 = تا امروز)
+  let P=0,A=0,L=0,V=0;
   for(const {year,month} of SCHOOL_MONTHS_1){
-    if(compareDates(year,month,1, TODAY.year,TODAY.month,TODAY.day) > 0) break;
-    const st = getMonthStatuses(year, month);
-    st.forEach(s => {
-      if(s==='P') P++;
-      else if(s==='A') A++;
-      else if(s==='L') L++;
-      else if(s==='V') V++;
-    });
+    if(compareDates(year,month,1,TODAY.year,TODAY.month,TODAY.day)>0) break;
+    getMonthStatuses(year,month).forEach(s=>{ if(s==='P')P++; else if(s==='A')A++; else if(s==='L')L++; else if(s==='V')V++; });
   }
   return {P,A,L,V,total:P+A+L+V};
 }
 
-let donutChart = null;
+let donutChart=null;
 
 function updateStats(){
-  const {P,A,L,V,total} = computeTotals();
-  const pct = total > 0 ? Math.round(P/total*100) : 0;
-
-  document.getElementById('statPresent').textContent = toF(P);
-  document.getElementById('statAbsent').textContent  = toF(A);
-  document.getElementById('statLate').textContent    = toF(L);
-  document.getElementById('statTotal').textContent   = toF(total);
-  document.getElementById('pctBadge').textContent    = toF(pct) + '٪';
-  document.getElementById('donutPct').textContent    = toF(pct) + '٪';
-  document.getElementById('dlPresent').textContent   = toF(P);
-  document.getElementById('dlAbsent').textContent    = toF(A);
-  document.getElementById('dlLate').textContent      = toF(L);
-  document.getElementById('dlLeave').textContent     = toF(V);
-
-  if(donutChart){
-    donutChart.data.datasets[0].data = [P,A,L,V];
-    donutChart.update();
-  }
+  const {P,A,L,V,total}=computeTotals();
+  const pct=total>0?Math.round(P/total*100):0;
+  document.getElementById('statPresent').textContent=toF(P);
+  document.getElementById('statAbsent').textContent=toF(A);
+  document.getElementById('statLate').textContent=toF(L);
+  document.getElementById('statTotal').textContent=toF(total);
+  document.getElementById('pctBadge').textContent=toF(pct)+'٪';
+  document.getElementById('donutPct').textContent=toF(pct)+'٪';
+  document.getElementById('dlPresent').textContent=toF(P);
+  document.getElementById('dlAbsent').textContent=toF(A);
+  document.getElementById('dlLate').textContent=toF(L);
+  document.getElementById('dlLeave').textContent=toF(V);
+  if(donutChart){ donutChart.data.datasets[0].data=[P,A,L,V]; donutChart.update(); }
 }
 
-/* ═══════════════════════════════════════════════
-   NAV BUTTONS
-═══════════════════════════════════════════════ */
-document.getElementById('prevMonth').addEventListener('click',()=>{
-  if(currentIdx>0){ currentIdx--; renderCalendar(currentIdx); }
-});
-document.getElementById('nextMonth').addEventListener('click',()=>{
-  if(currentIdx<ALL_MONTHS.length-1){ currentIdx++; renderCalendar(currentIdx); }
-});
+document.getElementById('prevMonth').addEventListener('click',()=>{ if(currentIdx>0){currentIdx--;renderCalendar(currentIdx);} });
+document.getElementById('nextMonth').addEventListener('click',()=>{ if(currentIdx<ALL_MONTHS.length-1){currentIdx++;renderCalendar(currentIdx);} });
 
-/* ═══════════════════════════════════════════════
-   SUBJECT BARS
-═══════════════════════════════════════════════ */
-const subjects = [
-  {name:'ریاضی',   icon:'fa-calculator',color:'#4f8ef7',bg:'rgba(79,142,247,.15)', pct:96,absent:1,late:2},
-  {name:'فیزیک',  icon:'fa-atom',      color:'#ef4444',bg:'rgba(239,68,68,.15)',   pct:90,absent:3,late:1},
-  {name:'شیمی',   icon:'fa-flask',     color:'#06d6a0',bg:'rgba(6,214,160,.15)',   pct:94,absent:2,late:2},
-  {name:'ادبیات', icon:'fa-book',      color:'#f59e0b',bg:'rgba(245,158,11,.15)',  pct:88,absent:4,late:3},
-  {name:'زبان',   icon:'fa-language',  color:'#7c3aed',bg:'rgba(124,58,237,.15)',  pct:92,absent:2,late:2},
-  {name:'دین',    icon:'fa-star',      color:'#ec4899',bg:'rgba(236,72,153,.15)',  pct:100,absent:0,late:1},
+const subjects=[
+  {name:'ریاضی',   icon:'fa-calculator',color:'#4a90d9',bg:'rgba(74,144,217,.15)', pct:96,absent:1,late:2},
+  {name:'فیزیک',   icon:'fa-atom',       color:'#e74c3c',bg:'rgba(231,76,60,.15)',  pct:90,absent:3,late:1},
+  {name:'شیمی',    icon:'fa-flask',      color:'#06d6a0',bg:'rgba(6,214,160,.15)',  pct:94,absent:2,late:2},
+  {name:'ادبیات',  icon:'fa-book',       color:'#f39c12',bg:'rgba(243,156,18,.15)', pct:88,absent:4,late:3},
+  {name:'زبان',    icon:'fa-language',   color:'#8e5fd4',bg:'rgba(142,95,212,.15)', pct:92,absent:2,late:2},
+  {name:'دین',     icon:'fa-star',       color:'#2ecc71',bg:'rgba(46,204,113,.15)', pct:100,absent:0,late:1},
 ];
 
-function pctColor(p){
-  if(p>=95) return 'var(--present)';
-  if(p>=85) return 'var(--accent)';
-  if(p>=75) return 'var(--late)';
-  return 'var(--absent)';
-}
+function pctColor(p){ if(p>=95)return'var(--present)'; if(p>=85)return'var(--accent)'; if(p>=75)return'var(--late)'; return'var(--absent)'; }
 
-const subjectList = document.getElementById('subjectList');
+const subjectList=document.getElementById('subjectList');
 subjects.forEach(s=>{
-  const el = document.createElement('div');
-  el.className = 'subject-item';
-  el.innerHTML = `
+  const el=document.createElement('div'); el.className='subject-item';
+  el.innerHTML=`
     <div class="subj-icon" style="background:${s.bg};color:${s.color}"><i class="fas ${s.icon}"></i></div>
     <div class="subj-info">
       <div class="subj-name">${s.name}</div>
-      <div class="subj-bar-wrap">
-        <div class="subj-bar-fill" style="width:0%;background:${pctColor(s.pct)}" data-w="${s.pct}"></div>
-      </div>
+      <div class="subj-bar-wrap"><div class="subj-bar-fill" style="width:0%;background:${pctColor(s.pct)}" data-w="${s.pct}"></div></div>
     </div>
     <div class="subj-pct" style="color:${pctColor(s.pct)}">${toF(s.pct)}٪</div>
     <div class="subj-counts">
@@ -599,113 +884,97 @@ subjects.forEach(s=>{
     </div>`;
   subjectList.appendChild(el);
 });
-setTimeout(()=>{
-  document.querySelectorAll('.subj-bar-fill').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
-},300);
-
-/* ═══════════════════════════════════════════════
-   MONTHLY TREND CHART
-═══════════════════════════════════════════════ */
-// برچسب‌های ماه‌های درسی (مهر تا اردیبهشت = ۸ ماه گذشته + جاری)
-const trendLabels = ['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'];
-const trendPresent= [22,18,20,19,21,17,20,18];
-const trendAbsent = [0,2,1,2,0,3,1,1];
-const trendLate   = [1,2,1,0,2,1,3,2];
+setTimeout(()=>{ document.querySelectorAll('.subj-bar-fill').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); },300);
 
 new Chart(document.getElementById('trendChart'),{
   type:'bar',
   data:{
-    labels: trendLabels,
+    labels:['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'],
     datasets:[
-      {label:'حاضر',data:trendPresent,backgroundColor:'rgba(39,174,96,.75)',borderRadius:5,borderSkipped:false},
-      {label:'غایب',data:trendAbsent, backgroundColor:'rgba(231,76,60,.75)',borderRadius:5,borderSkipped:false},
-      {label:'تأخیر',data:trendLate,  backgroundColor:'rgba(243,156,18,.75)',borderRadius:5,borderSkipped:false}
+      {label:'حاضر', data:[22,18,20,19,21,17,20,18],backgroundColor:'rgba(46,204,113,.75)',borderRadius:5,borderSkipped:false},
+      {label:'غایب', data:[0,2,1,2,0,3,1,1],        backgroundColor:'rgba(231,76,60,.75)', borderRadius:5,borderSkipped:false},
+      {label:'تأخیر',data:[1,2,1,0,2,1,3,2],        backgroundColor:'rgba(243,156,18,.75)',borderRadius:5,borderSkipped:false}
     ]
   },
   options:{
     responsive:true,maintainAspectRatio:false,
     plugins:{
-      legend:{labels:{color:'rgba(232,237,248,.65)',font:{family:'Vazirmatn',size:11},boxWidth:10,padding:12}},
-      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
+      legend:{labels:{color:'rgba(232,240,255,.6)',font:{family:'Vazirmatn',size:11},boxWidth:10,padding:12}},
+      tooltip:{backgroundColor:'rgba(11,17,32,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'}}
     },
     scales:{
-      x:{stacked:true,ticks:{color:'rgba(232,237,248,.45)',font:{family:'Vazirmatn',size:10}},grid:{color:'rgba(255,255,255,.03)'}},
-      y:{stacked:true,min:0,ticks:{color:'rgba(232,237,248,.45)',font:{family:'Vazirmatn',size:10},stepSize:5},grid:{color:'rgba(255,255,255,.04)'}}
+      x:{stacked:true,ticks:{color:'rgba(180,200,255,.45)',font:{family:'Vazirmatn',size:10}},grid:{color:'rgba(255,255,255,.03)'}},
+      y:{stacked:true,min:0,ticks:{color:'rgba(180,200,255,.45)',font:{family:'Vazirmatn',size:10},stepSize:5},grid:{color:'rgba(255,255,255,.04)'}}
     },
     animation:{duration:1100,easing:'easeInOutQuart'}
   }
 });
 
-/* ═══════════════════════════════════════════════
-   ABSENCE LOG
-═══════════════════════════════════════════════ */
 const absences=[
-  {date:'شنبه ۲۶ اردیبهشت ۱۴۰۴',type:'late',  label:'تأخیر',subjects:['ریاضی']},
-  {date:'سه‌شنبه ۲۳ اردیبهشت ۱۴۰۴',type:'absent',label:'غیبت',subjects:['فیزیک','شیمی']},
-  {date:'شنبه ۱۲ اردیبهشت ۱۴۰۴',type:'absent',label:'غیبت',subjects:['زبان','دین']},
-  {date:'یکشنبه ۱۷ فروردین ۱۴۰۴',type:'late',  label:'تأخیر',subjects:['ادبیات']},
-  {date:'شنبه ۱۵ اسفند ۱۴۰۳',type:'leave',  label:'مرخصی',subjects:['همه دروس']},
-  {date:'دوشنبه ۳ آذر ۱۴۰۴',   type:'absent',label:'غیبت',subjects:['ریاضی','فیزیک']},
+  {date:'شنبه ۲۶ اردیبهشت ۱۴۰۴',  type:'late',   label:'تأخیر', subjects:['ریاضی']},
+  {date:'سه‌شنبه ۲۳ اردیبهشت ۱۴۰۴',type:'absent', label:'غیبت',  subjects:['فیزیک','شیمی']},
+  {date:'شنبه ۱۲ اردیبهشت ۱۴۰۴',  type:'absent', label:'غیبت',  subjects:['زبان','دین']},
+  {date:'یکشنبه ۱۷ فروردین ۱۴۰۴',  type:'late',   label:'تأخیر', subjects:['ادبیات']},
+  {date:'شنبه ۱۵ اسفند ۱۴۰۳',     type:'leave',  label:'مرخصی', subjects:['همه دروس']},
+  {date:'دوشنبه ۳ آذر ۱۴۰۴',      type:'absent', label:'غیبت',  subjects:['ریاضی','فیزیک']},
 ];
 const icons={absent:'<i class="fas fa-user-times"></i>',late:'<i class="fas fa-clock"></i>',leave:'<i class="fas fa-door-open"></i>'};
-const colors={absent:'rgba(231,76,60,.2)',late:'rgba(243,156,18,.2)',leave:'rgba(155,89,182,.2)'};
-const textCol={absent:'var(--absent)',late:'var(--late)',leave:'var(--accent2)'};
+const colors_abs={absent:'rgba(231,76,60,.2)',late:'rgba(243,156,18,.2)',leave:'rgba(142,95,212,.2)'};
+const textCol={absent:'var(--absent)',late:'var(--late)',leave:'var(--leave)'};
 const tagCls={absent:'tag-absent',late:'tag-late',leave:'tag-leave'};
 
-const absenceList = document.getElementById('absenceList');
+const absenceList=document.getElementById('absenceList');
 absences.forEach(a=>{
-  const el = document.createElement('div');
-  el.className='absence-item';
+  const el=document.createElement('div'); el.className='absence-item';
   el.innerHTML=`
-    <div class="absence-type-icon" style="background:${colors[a.type]};color:${textCol[a.type]}">${icons[a.type]}</div>
+    <div class="absence-type-icon" style="background:${colors_abs[a.type]};color:${textCol[a.type]}">${icons[a.type]}</div>
     <div class="absence-date">${a.date}</div>
     <div class="absence-tags">
       <span class="absence-tag ${tagCls[a.type]}">${a.label}</span>
-      ${a.subjects.map(s=>`<span class="absence-tag" style="background:rgba(255,255,255,.06);color:var(--text-muted)">${s}</span>`).join('')}
+      ${a.subjects.map(s=>`<span class="absence-tag" style="background:rgba(255,255,255,.05);color:var(--text-muted)">${s}</span>`).join('')}
     </div>`;
   absenceList.appendChild(el);
 });
 
-/* ═══════════════════════════════════════════════
-   DONUT
-═══════════════════════════════════════════════ */
-donutChart = new Chart(document.getElementById('donutChart'),{
+donutChart=new Chart(document.getElementById('donutChart'),{
   type:'doughnut',
-  data:{datasets:[{data:[1,0,0,0],backgroundColor:['rgba(39,174,96,.85)','rgba(231,76,60,.85)','rgba(243,156,18,.85)','rgba(155,89,182,.85)'],borderWidth:0,hoverOffset:6}]},
+  data:{datasets:[{
+    data:[1,0,0,0],
+    backgroundColor:['rgba(46,204,113,.85)','rgba(231,76,60,.85)','rgba(243,156,18,.85)','rgba(142,95,212,.85)'],
+    borderWidth:0,hoverOffset:6
+  }]},
   options:{
     cutout:'70%',responsive:true,maintainAspectRatio:true,
     plugins:{
       legend:{display:false},
-      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'},
-        callbacks:{label:ctx=>['حاضر','غایب','تأخیر','مرخصی'][ctx.dataIndex]+': '+ctx.raw+' روز'}}
+      tooltip:{
+        backgroundColor:'rgba(11,17,32,.95)',
+        titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'},
+        callbacks:{label:ctx=>['حاضر','غایب','تأخیر','مرخصی'][ctx.dataIndex]+': '+ctx.raw+' روز'}
+      }
     },
     animation:{animateRotate:true,duration:1000,easing:'easeInOutQuart'}
   }
 });
 
-/* ═══════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════ */
 renderCalendar(currentIdx);
 
-/* ═══════════════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════════════ */
-function toF(n){
-  return String(n).replace(/\d/g, d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-}
+function toF(n){ return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
 
-// hamburger
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-document.getElementById('menuToggle').addEventListener('click',()=>{
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
-});
-overlay.addEventListener('click',()=>{
-  sidebar.classList.remove('active');
-  overlay.classList.remove('active');
-});
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.getElementById('menuToggle').addEventListener('click', openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click', closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSidebar(); });
 </script>
 </body>
 </html>

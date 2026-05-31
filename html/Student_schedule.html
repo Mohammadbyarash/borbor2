@@ -3,255 +3,640 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوربور - برنامه هفتگی</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="../image/iconB.png">
+<title>بوربور — برنامه هفتگی</title>
+<link rel="icon" href="../image/iconB.png">
+       
     <link rel="stylesheet" href="../style/scrollbar.css" />
-
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Bold.woff2") format("woff2");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "Shabnam";
+  src: url("../font/Shabnam-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
 
 :root {
-  --bg-main:    #202b59;
-  --bg-card:    #1f285a;
-  --bg-card2:   #1e2957;
-  --bg-sidebar: #172047;
-  --accent:     #3498db;
-  --accent2:    #9b59b6;
+  --bg-main:    #0f1629;
+  --bg-card:    #162040;
+  --bg-card2:   #1a2650;
+  --bg-sidebar: #0b1120;
+  --accent:     #4a90d9;
+  --accent2:    #8e5fd4;
   --accent3:    #06d6a0;
   --accent4:    #f39c12;
   --accent5:    #e74c3c;
-  --text:       #ffffff;
-  --text-muted: rgba(255,255,255,.58);
-  --border:     rgba(255,255,255,.09);
-  --glow:       0 0 30px rgba(52,152,219,.15);
-  --sidebar-w:  260px;
-  --radius:     14px;
+  --present:    #2ecc71;
+  --absent:     #e74c3c;
+  --late:       #f39c12;
+  --leave:      #8e5fd4;
+  --text:       #e8f0ff;
+  --text-muted: rgba(180,200,255,0.48);
+  --border:     rgba(255,255,255,0.07);
+  --border-hover: rgba(74,144,217,0.35);
+  --sidebar-w:  258px;
+  --radius:     18px;
+  --radius-sm:  11px;
 
-  /* درس‌ها */
-  --c-math:  #4f8ef7; --c-math-bg:  rgba(79,142,247,.14);
-  --c-phys:  #ef4444; --c-phys-bg:  rgba(239,68,68,.14);
-  --c-chem:  #06d6a0; --c-chem-bg:  rgba(6,214,160,.14);
-  --c-lit:   #f59e0b; --c-lit-bg:   rgba(245,158,11,.14);
-  --c-lang:  #7c3aed; --c-lang-bg:  rgba(124,58,237,.14);
-  --c-rel:   #ec4899; --c-rel-bg:   rgba(236,72,153,.14);
-  --c-sport: #14b8a6; --c-sport-bg: rgba(20,184,166,.14);
-  --c-art:   #f97316; --c-art-bg:   rgba(249,115,22,.14);
+  /* subject colors */
+  --c-math:  #4f8ef7; --c-math-bg:  rgba(79,142,247,.15);
+  --c-phys:  #ef4444; --c-phys-bg:  rgba(239,68,68,.15);
+  --c-chem:  #06d6a0; --c-chem-bg:  rgba(6,214,160,.15);
+  --c-lit:   #f59e0b; --c-lit-bg:   rgba(245,158,11,.15);
+  --c-lang:  #a78bfa; --c-lang-bg:  rgba(167,139,250,.15);
+  --c-rel:   #ec4899; --c-rel-bg:   rgba(236,72,153,.15);
+  --c-sport: #14b8a6; --c-sport-bg: rgba(20,184,166,.15);
+  --c-art:   #f97316; --c-art-bg:   rgba(249,115,22,.15);
 }
 
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Vazirmatn',sans-serif;background:var(--bg-main);color:var(--text);direction:rtl;overflow-x:hidden;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(79,142,247,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 90%,rgba(124,58,237,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: "Vazirmatn","Shabnam",Tahoma,sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  direction: rtl;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ══ SIDEBAR ══ */
-.sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);padding:28px 16px;border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .3s ease;}
-.logo{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:40px;}
-.nav-item{margin-bottom:6px;}
-.nav-item a{color:rgba(255,255,255,.72);text-decoration:none;padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:10px;font-size:14px;transition:all .25s;}
-.nav-item a i{font-size:15px;width:20px;text-align:center;}
-.nav-item a:hover,.nav-item.active a{background:var(--bg-main);color:#fff;}
-.nav-item.active a{font-weight:600;}
-.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+/* ── BACKGROUND EFFECTS ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%,  rgba(74,144,217,.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,.10) 0%, transparent 55%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(74,144,217,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,144,217,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
 
-/* ══ MAIN ══ */
-.main-content{margin-right:var(--sidebar-w);min-height:100vh;padding:28px 24px;position:relative;z-index:1;}
+/* ════ SIDEBAR ════ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  padding: 26px 14px;
+  border-left: 1px solid var(--border);
+  position: fixed; right: 0; top: 0;
+  height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 500;
+  display: flex; flex-direction: column;
+  transform: translateX(110%);
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,.5);
+}
+.sidebar.active { transform: translateX(0) !important; }
 
-/* ══ TOP BAR ══ */
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;}
-.greeting-block h1{font-size:20px;font-weight:700;}
-.greeting-block h1 span{color:var(--accent);}
-.greeting-block p{font-size:12px;color:var(--text-muted);margin-top:3px;}
-.top-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.notif-btn{position:relative;width:38px;height:38px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;}
-.notif-btn:hover{color:var(--text);background:var(--bg-card2);}
-.notif-dot{position:absolute;top:7px;left:7px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
-.profile-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.65); z-index: 499;
+}
+.sidebar-overlay.active { display: block; }
 
-/* ══ SECTION HEADER ══ */
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.section-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
-.section-title i{color:var(--accent);}
-.section-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;}
+.logo {
+  text-align: center; margin-bottom: 4px;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -1px; color: #fff;
+  font-family: "Shabnam",sans-serif;
+}
+.logo span { color: var(--accent); }
+.logo-sub {
+  text-align: center; font-size: 10px;
+  color: var(--text-muted); margin-bottom: 18px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
 
-/* ══ SUMMARY STRIP ══ */
-.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-.sum-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
-.sum-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
-.sum-card.blue::before  {background:linear-gradient(90deg,var(--accent),var(--accent2));}
-.sum-card.green::before {background:linear-gradient(90deg,var(--accent3),#0bc87c);}
-.sum-card.yellow::before{background:linear-gradient(90deg,var(--accent4),#fbbf24);}
-.sum-card.red::before   {background:linear-gradient(90deg,var(--accent5),#f97316);}
-.sum-card:hover{transform:translateY(-4px);border-color:rgba(79,142,247,.22);box-shadow:var(--glow);}
-.sum-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
-.blue   .sum-icon{background:rgba(79,142,247,.15);color:var(--accent);}
-.green  .sum-icon{background:rgba(6,214,160,.15); color:var(--accent3);}
-.yellow .sum-icon{background:rgba(245,158,11,.15);color:var(--accent4);}
-.red    .sum-icon{background:rgba(239,68,68,.15); color:var(--accent5);}
-.sum-value{font-size:26px;font-weight:800;line-height:1;margin-bottom:4px;}
-.sum-label{font-size:11px;color:var(--text-muted);}
-.sum-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
-.badge-blue  {background:rgba(79,142,247,.15);color:var(--accent);}
-.badge-green {background:rgba(6,214,160,.15); color:var(--accent3);}
-.badge-yel   {background:rgba(245,158,11,.15);color:var(--accent4);}
-.badge-red   {background:rgba(239,68,68,.15); color:var(--accent5);}
+.sidebar-close-btn {
+  position: absolute; top: 14px; left: 14px;
+  width: 32px; height: 32px;
+  background: rgba(231,76,60,.12);
+  border: 1px solid rgba(231,76,60,.2);
+  border-radius: 50%; color: var(--absent);
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 14px; transition: all .2s;
+}
+.sidebar-close-btn:hover { background: var(--absent); color: #fff; transform: rotate(90deg); }
 
-/* ══ TODAY HIGHLIGHT ══ */
-.today-strip{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
-.today-strip::after{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:linear-gradient(180deg,var(--accent),var(--accent2));}
+.student-block {
+  background: linear-gradient(135deg, rgba(74,144,217,.14), rgba(142,95,212,.10));
+  border: 1px solid rgba(74,144,217,.2);
+  border-radius: var(--radius-sm);
+  padding: 15px 13px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+.student-block::before {
+  content: ''; position: absolute;
+  top: -20px; left: -20px; width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(74,144,217,.15), transparent 70%);
+  pointer-events: none;
+}
+.student-avatar {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(74,144,217,.35);
+}
+.student-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.student-role { font-size: 10px; color: var(--text-muted); }
+.student-badge {
+  margin-top: 7px; display: inline-block;
+  background: rgba(6,214,160,.12); color: var(--accent3);
+  font-size: 9px; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px;
+  border: 1px solid rgba(6,214,160,.2);
+}
 
-.today-classes{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
-.today-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:30px;border:1px solid var(--border);background:var(--bg-card2);font-size:12px;font-weight:600;transition:all .2s;cursor:default;position:relative;}
-.today-pill:hover{transform:translateY(-2px);box-shadow:var(--glow);}
-.today-pill .pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.today-pill .pill-time{font-size:10px;color:var(--text-muted);font-weight:400;}
-.today-pill.now-class{border-color:rgba(79,142,247,.5);background:rgba(79,142,247,.1);box-shadow:0 0 14px rgba(79,142,247,.15);}
-.now-badge{position:absolute;top:-5px;left:8px;background:var(--accent);color:#fff;font-size:8px;font-weight:800;padding:1px 6px;border-radius:20px;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.nav-section-label {
+  font-size: 9px; font-weight: 700;
+  color: rgba(180,200,255,.28);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 0 14px; margin: 14px 0 8px;
+}
+.nav-item { margin-bottom: 2px; }
+.nav-item a {
+  color: rgba(180,200,255,.58);
+  text-decoration: none; padding: 10px 14px;
+  display: flex; align-items: center; gap: 11px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 500;
+  transition: all .2s; position: relative;
+}
+.nav-item a i { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; opacity: .75; }
+.nav-item a:hover { background: rgba(255,255,255,.05); color: #fff; }
+.nav-item.active a {
+  background: linear-gradient(90deg, rgba(74,144,217,.18), rgba(74,144,217,.05));
+  color: #fff; font-weight: 700;
+  border: 1px solid rgba(74,144,217,.22);
+}
+.nav-item.active a::before {
+  content: ''; position: absolute;
+  right: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 65%;
+  background: var(--accent); border-radius: 3px 0 0 3px;
+}
+.nav-badge {
+  margin-right: auto; background: var(--accent5); color: #fff;
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 20px; min-width: 20px; text-align: center;
+}
+.nav-divider { height: 1px; background: var(--border); margin: 10px 4px; }
+.sidebar-footer {
+  margin-top: auto; padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px; color: var(--text-muted);
+  text-align: center; line-height: 1.7;
+}
 
-/* ══ WEEK TABLE WRAPPER ══ */
-.table-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px;overflow-x:auto;}
+/* ════ HAMBURGER ════ */
+.menu-toggle {
+  position: fixed; top: 16px; right: 20px; z-index: 300;
+  width: 44px; height: 44px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  color: var(--text-muted); font-size: 18px;
+}
+.menu-toggle:hover { border-color: var(--border-hover); color: var(--text); }
 
-/* ══ WEEK TABLE ══ */
-.week-table{width:100%;border-collapse:separate;border-spacing:0;min-width:680px;}
+/* ════ MAIN ════ */
+.main-content {
+  min-height: 100vh;
+  width: 100%;
+  padding: 72px 24px 36px;
+  position: relative; z-index: 1;
+}
 
-/* time column */
-.week-table .time-col{width:72px;}
-.week-table .day-col {width:calc((100% - 72px)/5);}
+/* ── TOP BAR ── */
+.top-bar {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 22px; gap: 14px;
+  flex-wrap: wrap; animation: fadeUp .4s ease both;
+}
+.greeting-block h1 {
+  font-size: 20px; font-weight: 800; line-height: 1.3;
+}
+.greeting-block h1 span { color: var(--accent); }
+.greeting-block p {
+  font-size: 11.5px; color: var(--text-muted);
+  margin-top: 5px; display: flex; align-items: center; gap: 7px;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--accent3); border-radius: 50%;
+  animation: pulse 2s infinite; flex-shrink: 0;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(6,214,160,.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(6,214,160,0); }
+}
+.top-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.action-btn {
+  position: relative; width: 40px; height: 40px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 15px; transition: all .2s;
+}
+.action-btn:hover { color: #fff; border-color: var(--border-hover); }
+.notif-dot {
+  position: absolute; top: 8px; left: 8px;
+  width: 7px; height: 7px;
+  background: var(--accent5); border-radius: 50%;
+  border: 2px solid var(--bg-main);
+}
+.profile-btn {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+  box-shadow: 0 3px 10px rgba(74,144,217,.35);
+}
 
-/* header row */
-.week-table thead th{padding:0 6px 14px;font-size:12px;font-weight:700;text-align:center;color:var(--text-muted);}
-.week-table thead th.day-header{position:relative;}
-.week-table thead th.day-header.today-col{color:var(--text);}
-.today-col-bar{position:absolute;bottom:0;right:50%;transform:translateX(50%);width:36px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
-.day-date{display:block;font-size:10px;color:var(--text-muted);margin-top:2px;font-weight:400;}
-.today-col .day-date{color:var(--accent);}
+/* ════ STAT CARDS ════ */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 13px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px 16px;
+  position: relative; overflow: hidden;
+  transition: transform .28s, box-shadow .28s, border-color .28s;
+  animation: fadeUp .45s ease both;
+  min-width: 0;
+}
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; right: 0; left: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.stat-card.blue::before   { background: linear-gradient(90deg,#4a90d9,#8e5fd4); }
+.stat-card.green::before  { background: linear-gradient(90deg,#06d6a0,#2ecc71); }
+.stat-card.yellow::before { background: linear-gradient(90deg,#f39c12,#fbbf24); }
+.stat-card.red::before    { background: linear-gradient(90deg,#e74c3c,#f97316); }
+.stat-card:nth-child(1){animation-delay:.04s}
+.stat-card:nth-child(2){animation-delay:.08s}
+.stat-card:nth-child(3){animation-delay:.12s}
+.stat-card:nth-child(4){animation-delay:.16s}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.3);
+  border-color: rgba(74,144,217,.18);
+}
+.stat-card-top {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;
+}
+.stat-icon {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.blue   .stat-icon { background: rgba(74,144,217,.15);  color: var(--accent);  }
+.green  .stat-icon { background: rgba(6,214,160,.15);   color: var(--accent3); }
+.yellow .stat-icon { background: rgba(243,156,18,.15);  color: var(--accent4); }
+.red    .stat-icon { background: rgba(231,76,60,.15);   color: var(--accent5); }
+.stat-badge {
+  font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap;
+}
+.blue   .stat-badge { background: rgba(74,144,217,.15);  color: var(--accent);  }
+.green  .stat-badge { background: rgba(6,214,160,.15);   color: var(--accent3); }
+.yellow .stat-badge { background: rgba(243,156,18,.15);  color: var(--accent4); }
+.red    .stat-badge { background: rgba(231,76,60,.15);   color: var(--accent5); }
+.stat-value {
+  font-size: 32px; font-weight: 900; line-height: 1;
+  font-family: "Shabnam",sans-serif; margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+/* ════ SECTION HEADER ════ */
+.sec-hdr {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 15px;
+}
+.sec-title { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.sec-title i { color: var(--accent); font-size: 14px; }
+.sec-link {
+  font-size: 11px; color: var(--accent); cursor: pointer;
+  text-decoration: none; padding: 3px 8px; border-radius: 6px; transition: background .2s;
+}
+.sec-link:hover { background: rgba(74,144,217,.1); }
+
+/* ════ TODAY STRIP ════ */
+.today-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .45s .18s ease both;
+}
+.today-card::after {
+  content: ''; position: absolute;
+  top: 0; right: 0; width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+}
+.today-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+}
+.today-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 30px;
+  border: 1px solid var(--border);
+  background: var(--bg-card2);
+  font-size: 12px; font-weight: 600;
+  transition: all .2s; cursor: default; position: relative;
+}
+.today-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+.today-pill.now {
+  border-color: rgba(74,144,217,.5);
+  background: rgba(74,144,217,.1);
+  box-shadow: 0 0 14px rgba(74,144,217,.15);
+}
+.pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pill-time { font-size: 10px; color: var(--text-muted); font-weight: 400; }
+.now-badge {
+  position: absolute; top: -6px; left: 8px;
+  background: var(--accent); color: #fff;
+  font-size: 8px; font-weight: 800;
+  padding: 1px 6px; border-radius: 20px;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.55} }
+
+/* ════ VIEW TOGGLE ════ */
+.view-toggle { display: flex; gap: 6px; }
+.view-btn {
+  font-family: "Vazirmatn",sans-serif;
+  font-size: 11px; font-weight: 600;
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.view-btn:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+.view-btn.active {
+  background: rgba(74,144,217,.15);
+  border-color: rgba(74,144,217,.4);
+  color: var(--accent);
+}
+
+/* ════ TABLE CARD ════ */
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px; margin-bottom: 20px;
+  overflow-x: auto;
+  animation: fadeUp .45s .22s ease both;
+}
+
+/* ── WEEK TABLE ── */
+.week-table {
+  width: 100%; border-collapse: separate; border-spacing: 0 4px;
+  min-width: 640px;
+}
+.week-table thead th {
+  padding: 0 5px 14px;
+  font-size: 12px; font-weight: 700;
+  text-align: center; color: var(--text-muted);
+}
+.week-table thead th.time-th { width: 68px; }
+.week-table thead th.day-th  { position: relative; }
+.week-table thead th.today-th { color: var(--text); }
+
+.today-bar {
+  position: absolute; bottom: 0; right: 50%; transform: translateX(50%);
+  width: 32px; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.day-date {
+  display: block; font-size: 10px; color: var(--text-muted);
+  margin-top: 2px; font-weight: 400;
+}
+.today-th .day-date { color: var(--accent); }
 
 /* time cell */
-.time-cell{text-align:center;padding:4px 6px;vertical-align:middle;}
-.time-inner{display:inline-flex;flex-direction:column;align-items:center;gap:1px;}
-.time-start{font-size:11px;font-weight:700;color:var(--text);}
-.time-end  {font-size:9px; color:var(--text-muted);}
-.time-sep  {width:1px;height:14px;background:var(--border);}
+.time-cell {
+  text-align: center; padding: 3px 5px; vertical-align: middle;
+}
+.time-inner { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; }
+.time-s { font-size: 11px; font-weight: 700; color: var(--text); }
+.time-e { font-size: 9px; color: var(--text-muted); }
+.time-sep { width: 1px; height: 12px; background: var(--border); }
 
 /* break row */
-.break-row td{padding:4px 6px;text-align:center;}
-.break-label{font-size:9px;color:var(--text-muted);background:rgba(255,255,255,.03);border-radius:6px;padding:2px 10px;display:inline-block;}
+.break-row td {
+  padding: 3px 5px; text-align: center;
+}
+.break-label {
+  font-size: 9px; color: var(--text-muted);
+  background: rgba(255,255,255,.03);
+  border-radius: 6px; padding: 2px 12px;
+  display: inline-block; border: 1px solid var(--border);
+}
 
 /* class cell */
-.class-cell{padding:4px 6px;vertical-align:top;}
-.class-block{border-radius:10px;padding:10px 11px;height:100%;min-height:72px;display:flex;flex-direction:column;gap:4px;border:1px solid transparent;transition:transform .2s,box-shadow .2s;cursor:default;position:relative;}
-.class-block:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
-
-.class-block .cb-subject{font-size:12px;font-weight:800;line-height:1.2;}
-.class-block .cb-teacher{font-size:10px;font-weight:500;opacity:.75;margin-top:1px;}
-.class-block .cb-room   {font-size:9px; opacity:.6;}
-.class-block .cb-icon   {position:absolute;bottom:8px;left:10px;font-size:13px;opacity:.45;}
-
-/* empty cell */
-.empty-block{border-radius:10px;height:72px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.06);}
-
-/* free / holiday */
-.free-block{border-radius:10px;height:72px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.04);}
-.free-block span{font-size:10px;color:rgba(255,255,255,.18);}
-
+.class-cell { padding: 3px 4px; vertical-align: top; }
+.class-block {
+  border-radius: var(--radius-sm);
+  padding: 10px 11px; min-height: 76px;
+  display: flex; flex-direction: column; gap: 3px;
+  border: 1px solid transparent;
+  transition: transform .2s, box-shadow .2s;
+  cursor: default; position: relative; overflow: hidden;
+}
+.class-block:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+.class-block.today-cell { border-color-opacity: 0.4 !important; }
+.cb-subject { font-size: 12px; font-weight: 800; line-height: 1.2; }
+.cb-teacher { font-size: 10px; font-weight: 500; opacity: .75; margin-top: 1px; }
+.cb-room    { font-size: 9px; opacity: .6; }
+.cb-icon    { position: absolute; bottom: 7px; left: 9px; font-size: 14px; opacity: .3; }
+.cb-now-tag {
+  position: absolute; top: 6px; left: 8px;
+  font-size: 8px; font-weight: 800;
+  padding: 1px 6px; border-radius: 20px; color: #fff;
+  animation: blink 2s infinite;
+}
+.empty-block {
+  border-radius: var(--radius-sm); min-height: 76px;
+  background: rgba(255,255,255,.02);
+  border: 1px dashed rgba(255,255,255,.06);
+}
 /* today column highlight */
-.today-col-cell .class-block{border-color:rgba(79,142,247,.2)!important;}
-.today-col-cell .empty-block{border-color:rgba(79,142,247,.12)!important;}
+.today-col .class-block { border-color: rgba(74,144,217,.25) !important; }
+.today-col .empty-block  { border-color: rgba(74,144,217,.12) !important; }
 
-/* ══ BOTTOM ROW ══ */
-.bot-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
-
-/* ══ TEACHER LIST ══ */
-.teacher-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.teacher-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);transition:transform .2s;cursor:default;}
-.teacher-item:last-child{border-bottom:none;}
-.teacher-item:hover{transform:translateX(3px);}
-.teacher-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
-.teacher-info{flex:1;min-width:0;}
-.teacher-name{font-size:13px;font-weight:700;}
-.teacher-subject{font-size:10px;color:var(--text-muted);margin-top:2px;}
-.teacher-hours{font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;}
-.teacher-contact{font-size:9px;color:var(--text-muted);margin-top:2px;}
-
-/* ══ SUBJECT HOURS ══ */
-.hours-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.hours-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
-.hours-item:last-child{border-bottom:none;}
-.hours-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.hours-name{font-size:12px;font-weight:700;flex:1;}
-.hours-bar-wrap{width:80px;height:5px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;flex-shrink:0;}
-.hours-bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
-.hours-count{font-size:12px;font-weight:700;min-width:28px;text-align:left;flex-shrink:0;}
-
-/* ══ UPCOMING ══ */
-.upcoming-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
-.upcoming-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:default;transition:transform .2s;}
-.upcoming-item:last-child{border-bottom:none;}
-.upcoming-item:hover{transform:translateX(3px);}
-.upcoming-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
-.upcoming-body{flex:1;min-width:0;}
-.upcoming-title{font-size:12px;font-weight:700;margin-bottom:2px;}
-.upcoming-meta{font-size:10px;color:var(--text-muted);}
-.upcoming-when{font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;}
-
-/* ══ VIEW TOGGLE ══ */
-.view-toggle{display:flex;gap:6px;}
-.view-btn{font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
-.view-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
-.view-btn.active{background:rgba(52,152,219,.2);border-color:var(--accent);color:var(--accent);}
-
-/* ══ ANIMATIONS ══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.sum-card,.today-strip,.table-card,
-.teacher-card,.hours-card,.upcoming-card{animation:fadeUp .5s ease both;}
-.sum-card:nth-child(1){animation-delay:.04s;}.sum-card:nth-child(2){animation-delay:.08s;}
-.sum-card:nth-child(3){animation-delay:.12s;}.sum-card:nth-child(4){animation-delay:.16s;}
-.today-strip{animation-delay:.18s;}.table-card{animation-delay:.22s;}
-.teacher-card{animation-delay:.28s;}.hours-card{animation-delay:.32s;}.upcoming-card{animation-delay:.36s;}
-
-/* ══ HAMBURGER ══ */
-.menu-toggle{display:none;position:fixed;top:14px;right:14px;z-index:300;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;}
-.sidebar-overlay.active{display:block;}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:1280px){:root{--sidebar-w:240px;}}
-@media(max-width:1024px){
-  :root{--sidebar-w:220px;}
-  .main-content{padding:22px 18px;}
-  .summary-strip{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .bot-row{grid-template-columns:1fr 1fr;gap:12px;}
-  .upcoming-card{grid-column:1/-1;}
+/* ════ BOTTOM ROW ════ */
+.bot-row {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr 1fr;
+  gap: 16px;
 }
-@media(max-width:768px){
-  .menu-toggle{display:flex;}
-  .sidebar{transform:translateX(110%);box-shadow:-5px 0 20px rgba(0,0,0,.4);}
-  .sidebar.active{transform:translateX(0);}
-  .main-content{margin-right:0;padding:70px 16px 20px;}
-  .summary-strip{grid-template-columns:repeat(2,1fr);gap:10px;}
-  .bot-row{grid-template-columns:1fr;gap:12px;}
-  .upcoming-card{grid-column:auto;}
-  .today-classes{gap:7px;}
-  .today-pill{font-size:11px;padding:7px 11px;}
+
+/* card base */
+.bot-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px; min-width: 0;
 }
-@media(max-width:480px){
-  .main-content{padding:66px 12px 16px;}
-  .sum-card{padding:14px 12px;}.sum-value{font-size:22px;}
-  .sum-icon{width:36px;height:36px;font-size:14px;margin-bottom:10px;}
-  .table-card{padding:16px 10px;}
-  .class-block{min-height:60px;padding:8px 9px;}
-  .class-block .cb-subject{font-size:11px;}
-  .class-block .cb-teacher{display:none;}
-  .class-block .cb-room{display:none;}
-  .class-block .cb-icon{display:none;}
-  .empty-block,.free-block{height:60px;}
-  .time-start{font-size:10px;}.time-end{font-size:8px;}
-  .today-pill .pill-time{display:none;}
+.teacher-card  { animation: fadeUp .45s .28s ease both; }
+.hours-card    { animation: fadeUp .45s .32s ease both; }
+.upcoming-card { animation: fadeUp .45s .36s ease both; }
+
+/* ── TEACHERS ── */
+.teacher-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  transition: transform .2s; cursor: default;
 }
-@media(max-width:360px){
-  .summary-strip{gap:7px;}.sum-value{font-size:20px;}
-  .class-block .cb-subject{font-size:10px;}
+.teacher-item:last-child { border-bottom: none; }
+.teacher-item:hover { transform: translateX(3px); }
+.teacher-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+.teacher-info { flex: 1; min-width: 0; }
+.teacher-name    { font-size: 13px; font-weight: 700; }
+.teacher-subject { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.teacher-contact { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+.teacher-hours   { font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+
+/* ── HOURS BARS ── */
+.hours-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+}
+.hours-item:last-child { border-bottom: none; }
+.hours-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.hours-name { font-size: 12px; font-weight: 600; flex: 1; min-width: 0; }
+.hours-bar-wrap {
+  width: 72px; height: 5px;
+  background: rgba(255,255,255,.07); border-radius: 5px; overflow: hidden; flex-shrink: 0;
+}
+.hours-bar-fill {
+  height: 100%; border-radius: 5px;
+  transition: width 1.2s cubic-bezier(.4,0,.2,1);
+}
+.hours-count { font-size: 12px; font-weight: 700; min-width: 26px; text-align: left; flex-shrink: 0; }
+
+/* ── UPCOMING ── */
+.upcoming-item {
+  display: flex; gap: 11px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: default; transition: transform .2s;
+}
+.upcoming-item:last-child { border-bottom: none; }
+.upcoming-item:hover { transform: translateX(3px); }
+.upcoming-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
+}
+.upcoming-body { flex: 1; min-width: 0; }
+.upcoming-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.upcoming-meta  { font-size: 10px; color: var(--text-muted); }
+.upcoming-when  { font-size: 10px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+
+/* ════ ANIMATIONS ════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════ RESPONSIVE — 1024px ════ */
+@media (max-width: 1024px) {
+  .stat-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+  .bot-row  { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .upcoming-card { grid-column: 1 / -1; }
+}
+
+/* ════ RESPONSIVE — 768px ════ */
+@media (max-width: 768px) {
+  .main-content { padding: 68px 14px 24px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  .bot-row  { grid-template-columns: 1fr; gap: 12px; }
+  .upcoming-card { grid-column: auto; }
+  .today-pills { gap: 6px; }
+  .today-pill  { font-size: 11px; padding: 7px 11px; }
+  .week-table { min-width: 560px; }
+}
+
+/* ════ RESPONSIVE — 540px ════ */
+@media (max-width: 540px) {
+  .main-content { padding: 66px 12px 20px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+  .stat-card { padding: 14px 11px 12px; }
+  .stat-value { font-size: 24px; }
+  .stat-icon  { width: 34px; height: 34px; font-size: 13px; }
+  .stat-label { font-size: 10px; }
+  .stat-badge { font-size: 9px; padding: 2px 6px; }
+  .table-card { padding: 14px 10px; }
+  .class-block { min-height: 64px; padding: 8px 9px; }
+  .cb-subject  { font-size: 11px; }
+  .cb-teacher, .cb-room, .cb-icon { display: none; }
+  .empty-block { min-height: 64px; }
+  .greeting-block h1 { font-size: 14px; }
+  .greeting-block p  { font-size: 10px; }
+  .today-pill .pill-time { display: none; }
+}
+
+/* ════ RESPONSIVE — 400px ════ */
+@media (max-width: 400px) {
+  .main-content { padding: 64px 10px 16px; }
+  .stat-row { gap: 7px; }
+  .stat-card { padding: 12px 10px 11px; border-radius: var(--radius-sm); }
+  .stat-value { font-size: 20px; }
+  .stat-icon  { width: 30px; height: 30px; font-size: 12px; border-radius: 9px; }
+  .today-card, .table-card, .bot-card { padding: 12px; border-radius: var(--radius-sm); }
+  .cb-subject { font-size: 10px; }
+  .sec-title  { font-size: 12px; }
+}
+
+/* ════ RESPONSIVE — 360px ════ */
+@media (max-width: 360px) {
+  .stat-value { font-size: 18px; }
+  .stat-label { font-size: 9px; }
+  .week-table { min-width: 480px; }
 }
 </style>
 </head>
@@ -260,75 +645,103 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- SIDEBAR -->
+<!-- ════ SIDEBAR ════ -->
 <div class="sidebar" id="sidebar">
-  <div class="logo">بوربور</div>
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
+  <div class="student-block">
+    <div class="student-avatar">ع</div>
+    <div>
+      <div class="student-name">علی مختاری</div>
+      <div class="student-role">دانش‌آموز</div>
+      <div class="student-badge">یازدهم تجربی</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">منوی اصلی</div>
   <div class="nav-item"><a href="../html/Student_dashboard.html"><i class="fas fa-home"></i> داشبورد</a></div>
   <div class="nav-item"><a href="../html/Student_attendance.html"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a></div>
   <div class="nav-item"><a href="../html/Student_grades.html"><i class="fas fa-star"></i> نمرات</a></div>
   <div class="nav-item active"><a href="../html/Student_schedule.html"><i class="fas fa-calendar-week"></i> برنامه هفتگی</a></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
   <div class="nav-item"><a href="../html/Student_notifications.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۳</span></a></div>
+  <div class="nav-item"><a href="../html/Student_support.html"><i class="fas fa-headset"></i> پشتیبانی</a></div>
   <div class="nav-item"><a href="../html/Student_profile.html"><i class="fas fa-user"></i> پروفایل</a></div>
   <div class="nav-item"><a href="#"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
 </div>
 
-<!-- MAIN -->
+<!-- ════ MAIN ════ -->
 <div class="main-content">
 
+  <!-- TOP BAR -->
   <div class="top-bar">
     <div class="greeting-block">
-      <h1>برنامه هفتگی — <span>علی مختاری</span></h1>
-      <p>سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی | نیم‌سال دوم</p>
+      <h1><i class="fas fa-calendar-week" style="color:var(--accent);font-size:16px;margin-left:6px"></i>برنامه هفتگی — <span>علی مختاری</span></h1>
+      <p><span class="live-dot"></span> سال تحصیلی ۱۴۰۴–۱۴۰۵ | پایه یازدهم تجربی | نیم‌سال دوم</p>
     </div>
     <div class="top-actions">
-      <div class="notif-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
-      <div class="profile-avatar">ع</div>
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">ع</div>
     </div>
   </div>
 
-  <!-- SUMMARY -->
-  <div class="summary-strip">
-    <div class="sum-card blue">
-      <div class="sum-badge badge-blue">هفتگی</div>
-      <div class="sum-icon"><i class="fas fa-book-open"></i></div>
-      <div class="sum-value">۲۵</div>
-      <div class="sum-label">ساعت کلاس در هفته</div>
+  <!-- STAT CARDS -->
+  <div class="stat-row">
+    <div class="stat-card blue">
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+        <span class="stat-badge">هفتگی</span>
+      </div>
+      <div class="stat-value">۲۵</div>
+      <div class="stat-label">ساعت کلاس در هفته</div>
     </div>
-    <div class="sum-card green">
-      <div class="sum-badge badge-green">امروز</div>
-      <div class="sum-icon"><i class="fas fa-calendar-day"></i></div>
-      <div class="sum-value">۵</div>
-      <div class="sum-label">کلاس امروز</div>
+    <div class="stat-card green">
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+        <span class="stat-badge">امروز</span>
+      </div>
+      <div class="stat-value">۵</div>
+      <div class="stat-label">کلاس امروز</div>
     </div>
-    <div class="sum-card yellow">
-      <div class="sum-badge badge-yel">درس</div>
-      <div class="sum-icon"><i class="fas fa-layer-group"></i></div>
-      <div class="sum-value">۸</div>
-      <div class="sum-label">درس در برنامه</div>
+    <div class="stat-card yellow">
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+        <span class="stat-badge">درس</span>
+      </div>
+      <div class="stat-value">۸</div>
+      <div class="stat-label">درس در برنامه</div>
     </div>
-    <div class="sum-card red">
-      <div class="sum-badge badge-red">بعدی</div>
-      <div class="sum-icon"><i class="fas fa-hourglass-half"></i></div>
-      <div class="sum-value">۱۲</div>
-      <div class="sum-label">دقیقه تا کلاس بعد</div>
+    <div class="stat-card red">
+      <div class="stat-card-top">
+        <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+        <span class="stat-badge">بعدی</span>
+      </div>
+      <div class="stat-value">۱۲</div>
+      <div class="stat-label">دقیقه تا کلاس بعد</div>
     </div>
   </div>
 
-  <!-- TODAY HIGHLIGHT -->
-  <div class="today-strip">
-    <div class="section-header" style="margin-bottom:12px">
-      <div class="section-title"><i class="fas fa-sun"></i> امروز — سه‌شنبه ۲۶ اردیبهشت</div>
+  <!-- TODAY STRIP -->
+  <div class="today-card">
+    <div class="sec-hdr" style="margin-bottom:0">
+      <div class="sec-title"><i class="fas fa-sun"></i> امروز — سه‌شنبه ۲۶ اردیبهشت</div>
     </div>
-    <div class="today-classes" id="todayClasses"></div>
+    <div class="today-pills" id="todayPills"></div>
   </div>
 
-  <!-- WEEKLY TABLE -->
+  <!-- WEEK TABLE -->
   <div class="table-card">
-    <div class="section-header">
-      <div class="section-title"><i class="fas fa-table"></i> جدول هفتگی</div>
+    <div class="sec-hdr">
+      <div class="sec-title"><i class="fas fa-table"></i> جدول هفتگی</div>
       <div class="view-toggle">
-        <button class="view-btn active" onclick="setView('full',this)"><i class="fas fa-table"></i> کامل</button>
-        <button class="view-btn" onclick="setView('compact',this)"><i class="fas fa-list"></i> فشرده</button>
+        <button class="view-btn active" id="btnFull"   onclick="setView('full',this)"><i class="fas fa-table"></i> کامل</button>
+        <button class="view-btn"        id="btnCompact" onclick="setView('compact',this)"><i class="fas fa-list"></i> فشرده</button>
       </div>
     </div>
     <table class="week-table" id="weekTable"></table>
@@ -336,195 +749,169 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <!-- BOTTOM ROW -->
   <div class="bot-row">
-
-    <div class="teacher-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chalkboard-teacher"></i> معلمان</div>
+    <div class="bot-card teacher-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chalkboard-teacher"></i> معلمان</div>
       </div>
       <div id="teacherList"></div>
     </div>
 
-    <div class="hours-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-chart-bar"></i> ساعت هر درس در هفته</div>
+    <div class="bot-card hours-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-bar"></i> ساعت هر درس در هفته</div>
       </div>
       <div id="hoursList"></div>
     </div>
 
-    <div class="upcoming-card">
-      <div class="section-header">
-        <div class="section-title"><i class="fas fa-bell"></i> رویدادهای پیش‌رو</div>
-        <a class="section-link">همه</a>
+    <div class="bot-card upcoming-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-bell"></i> رویدادهای پیش‌رو</div>
+        <a class="sec-link" href="#">همه</a>
       </div>
       <div id="upcomingList"></div>
     </div>
-
   </div>
+
 </div><!-- /main-content -->
 
 <script>
-/* ══════════════════════════════
-   DATA
-══════════════════════════════ */
+/* ─── DATA ─── */
 const SUBJECTS = {
-  math:  { name:'ریاضی',     icon:'fa-calculator', color:'var(--c-math)',  bg:'var(--c-math-bg)',  teacher:'آقای احمدی',  room:'کلاس ۲۰۱' },
-  phys:  { name:'فیزیک',    icon:'fa-atom',       color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  teacher:'خانم رضایی', room:'آزمایشگاه ۱' },
-  chem:  { name:'شیمی',     icon:'fa-flask',      color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  teacher:'آقای صادقی',  room:'آزمایشگاه ۲' },
-  lit:   { name:'ادبیات',   icon:'fa-book',       color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   teacher:'آقای موسوی',  room:'کلاس ۱۰۵' },
-  lang:  { name:'زبان',     icon:'fa-language',   color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  teacher:'خانم کریمی', room:'کلاس ۳۰۲' },
-  rel:   { name:'دین',      icon:'fa-star',       color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   teacher:'آقای جوادی',  room:'کلاس ۱۰۲' },
-  sport: { name:'ورزش',     icon:'fa-running',    color:'var(--c-sport)', bg:'var(--c-sport-bg)', teacher:'آقای نوری',   room:'سالن ورزش' },
-  art:   { name:'هنر',      icon:'fa-palette',    color:'var(--c-art)',   bg:'var(--c-art-bg)',   teacher:'خانم امیری', room:'کارگاه هنر' },
+  math:  { name:'ریاضی',   icon:'fa-calculator', color:'var(--c-math)',  bg:'var(--c-math-bg)',  teacher:'آقای احمدی',  room:'کلاس ۲۰۱' },
+  phys:  { name:'فیزیک',   icon:'fa-atom',       color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  teacher:'خانم رضایی', room:'آزمایشگاه ۱' },
+  chem:  { name:'شیمی',    icon:'fa-flask',      color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  teacher:'آقای صادقی',  room:'آزمایشگاه ۲' },
+  lit:   { name:'ادبیات',  icon:'fa-book',       color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   teacher:'آقای موسوی',  room:'کلاس ۱۰۵' },
+  lang:  { name:'زبان',    icon:'fa-language',   color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  teacher:'خانم کریمی', room:'کلاس ۳۰۲' },
+  rel:   { name:'دین',     icon:'fa-star',       color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   teacher:'آقای جوادی',  room:'کلاس ۱۰۲' },
+  sport: { name:'ورزش',    icon:'fa-running',    color:'var(--c-sport)', bg:'var(--c-sport-bg)', teacher:'آقای نوری',   room:'سالن ورزش' },
+  art:   { name:'هنر',     icon:'fa-palette',    color:'var(--c-art)',   bg:'var(--c-art-bg)',   teacher:'خانم امیری', room:'کارگاه هنر' },
 };
 
-// slots = زنگ‌ها
 const SLOTS = [
-  { start:'۷:۳۰', end:'۸:۱۵' },
-  { start:'۸:۲۰', end:'۹:۰۵' },
-  { start:'۹:۱۵', end:'۱۰:۰۰' },
-  { start:'۱۰:۱۵', end:'۱۱:۰۰' },
-  { start:'۱۱:۰۵', end:'۱۱:۵۰' },
+  { s:'۷:۳۰',  e:'۸:۱۵' },
+  { s:'۸:۲۰',  e:'۹:۰۵' },
+  { s:'۹:۱۵',  e:'۱۰:۰۰' },
+  { s:'۱۰:۱۵', e:'۱۱:۰۰' },
+  { s:'۱۱:۰۵', e:'۱۱:۵۰' },
 ];
 
-const BREAKS = [
-  null,            // after slot 0 → no break label (normal 5min)
-  { label:'زنگ تفریح ۱۰ دقیقه' },   // after slot 1
-  null,
-  { label:'زنگ تفریح ۱۵ دقیقه' },   // after slot 3
-  null,
-];
+const BREAKS = [null, { label:'زنگ تفریح ۱۰ دقیقه' }, null, { label:'زنگ تفریح ۱۵ دقیقه' }, null];
 
-// DAYS: شنبه=0..چهارشنبه=4  (جمعه تعطیل)
-const DAY_NAMES  = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه'];
-const DAY_DATES  = ['۲۴ اردیبهشت','۲۵ اردیبهشت','۲۶ اردیبهشت','۲۷ اردیبهشت','۲۸ اردیبهشت'];
-const TODAY_COL  = 2; // دوشنبه = index 2  (سه‌شنبه بر اساس داده‌های داشبورد)
+const DAY_NAMES = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه'];
+const DAY_DATES = ['۲۴ اردیبهشت','۲۵ اردیبهشت','۲۶ اردیبهشت','۲۷ اردیبهشت','۲۸ اردیبهشت'];
+const TODAY_COL = 2;   // دوشنبه
+const NOW_SLOT  = 1;   // ۸:۲۰ فیزیک
 
-// grid[slot][day] = subjectKey | null
+// grid[slot][day]
 const GRID = [
-  // slot 0: ۷:۳۰–۸:۱۵
-  ['math',  'lit',  'math', 'phys', 'art'],
-  // slot 1: ۸:۲۰–۹:۰۵
-  ['phys',  'math', 'phys', 'lit',  'math'],
-  // slot 2: ۹:۱۵–۱۰:۰۰
-  ['lit',   'lang', 'chem', 'math', 'lang'],
-  // slot 3: ۱۰:۱۵–۱۱:۰۰
-  ['lang',  'phys', 'lang', 'chem', 'phys'],
-  // slot 4: ۱۱:۰۵–۱۱:۵۰
-  ['sport', 'rel',  'sport','lang', 'rel'],
+  ['math',  'lit',  'math',  'phys', 'art'],
+  ['phys',  'math', 'phys',  'lit',  'math'],
+  ['lit',   'lang', 'chem',  'math', 'lang'],
+  ['lang',  'phys', 'lang',  'chem', 'phys'],
+  ['sport', 'rel',  'sport', 'lang', 'rel'],
 ];
 
-/* TODAY classes = column TODAY_COL */
-const todayKeys = GRID.map(row => row[TODAY_COL]);
-const NOW_SLOT  = 1; // فیزیک الان
-
-/* ══════════════════════════════
-   TODAY PILLS
-══════════════════════════════ */
-const todayClasses = document.getElementById('todayClasses');
-todayKeys.forEach((key, si) => {
-  if(!key) return;
-  const s  = SUBJECTS[key];
-  const sl = SLOTS[si];
+/* ─── TODAY PILLS ─── */
+const todayPills = document.getElementById('todayPills');
+GRID.forEach((row, si) => {
+  const key = row[TODAY_COL];
+  if (!key) return;
+  const s = SUBJECTS[key];
   const isNow = si === NOW_SLOT;
   const el = document.createElement('div');
-  el.className = 'today-pill' + (isNow ? ' now-class' : '');
+  el.className = 'today-pill' + (isNow ? ' now' : '');
   el.innerHTML = `
     ${isNow ? '<span class="now-badge">الان</span>' : ''}
     <div class="pill-dot" style="background:${s.color}"></div>
     <span>${s.name}</span>
-    <span class="pill-time">${sl.start}</span>`;
-  todayClasses.appendChild(el);
+    <span class="pill-time">${SLOTS[si].s}</span>`;
+  todayPills.appendChild(el);
 });
 
-/* ══════════════════════════════
-   WEEK TABLE
-══════════════════════════════ */
+/* ─── WEEK TABLE ─── */
 let currentView = 'full';
 
 function buildTable(view) {
   const tbl = document.getElementById('weekTable');
   tbl.innerHTML = '';
 
-  // THEAD
+  // thead
   const thead = tbl.createTHead();
   const hr = thead.insertRow();
-  // time header
-  const th0 = document.createElement('th');
-  th0.className = 'time-col';
-  th0.innerHTML = `<span style="font-size:10px;color:var(--text-muted)">ساعت</span>`;
-  hr.appendChild(th0);
+
+  const thTime = document.createElement('th');
+  thTime.className = 'time-th';
+  thTime.innerHTML = `<span style="font-size:10px;color:var(--text-muted)">ساعت</span>`;
+  hr.appendChild(thTime);
 
   DAY_NAMES.forEach((d, di) => {
     const th = document.createElement('th');
-    th.className = 'day-col day-header' + (di === TODAY_COL ? ' today-col' : '');
-    th.innerHTML = `${d}<span class="day-date">${DAY_DATES[di]}</span>${di === TODAY_COL ? '<div class="today-col-bar"></div>' : ''}`;
+    th.className = 'day-th' + (di === TODAY_COL ? ' today-th' : '');
+    th.innerHTML = `${d}<span class="day-date">${DAY_DATES[di]}</span>${di === TODAY_COL ? '<div class="today-bar"></div>' : ''}`;
     hr.appendChild(th);
   });
 
-  // TBODY
+  // tbody
   const tbody = tbl.createTBody();
-
   SLOTS.forEach((slot, si) => {
     const tr = tbody.insertRow();
 
-    // time cell
     const tc = tr.insertCell();
     tc.className = 'time-cell';
-    tc.innerHTML = `<div class="time-inner"><span class="time-start">${slot.start}</span><div class="time-sep"></div><span class="time-end">${slot.end}</span></div>`;
+    tc.innerHTML = `<div class="time-inner">
+      <span class="time-s">${slot.s}</span>
+      <div class="time-sep"></div>
+      <span class="time-e">${slot.e}</span>
+    </div>`;
 
-    // class cells
     GRID[si].forEach((key, di) => {
       const td = tr.insertCell();
-      td.className = 'class-cell' + (di === TODAY_COL ? ' today-col-cell' : '');
-      if(!key) {
+      td.className = 'class-cell' + (di === TODAY_COL ? ' today-col' : '');
+      if (!key) {
         td.innerHTML = `<div class="empty-block"></div>`;
       } else {
         const s = SUBJECTS[key];
-        const isNow = (si === NOW_SLOT && di === TODAY_COL);
+        const isNow = si === NOW_SLOT && di === TODAY_COL;
         td.innerHTML = `
-          <div class="class-block" style="background:${s.bg};border-color:${s.color}22;${isNow?'box-shadow:0 0 18px '+s.color+'40;border-color:'+s.color+'66!important;':''}" title="${s.name} — ${s.teacher} — ${s.room}">
+          <div class="class-block" style="background:${s.bg};border-color:${isNow ? s.color+'88' : s.color+'22'};${isNow ? 'box-shadow:0 0 18px '+s.color+'33;' : ''}">
             <span class="cb-subject" style="color:${s.color}">${s.name}</span>
-            ${view==='full' ? `<span class="cb-teacher">${s.teacher}</span><span class="cb-room">${s.room}</span>` : ''}
+            ${view === 'full' ? `<span class="cb-teacher">${s.teacher}</span><span class="cb-room">${s.room}</span>` : ''}
             <i class="fas ${s.icon} cb-icon" style="color:${s.color}"></i>
-            ${isNow ? '<span style="position:absolute;top:6px;left:8px;font-size:8px;font-weight:800;background:'+s.color+';color:#fff;padding:1px 6px;border-radius:20px;animation:pulse 2s infinite">الان</span>' : ''}
+            ${isNow ? `<span class="cb-now-tag" style="background:${s.color}">الان</span>` : ''}
           </div>`;
       }
     });
 
-    // break row
-    if(BREAKS[si]) {
+    if (BREAKS[si]) {
       const br = tbody.insertRow();
       const btd = br.insertCell();
       btd.colSpan = 6;
       btd.className = 'break-row';
-      btd.innerHTML = `<span class="break-label"><i class="fas fa-coffee" style="margin-left:5px;opacity:.6"></i>${BREAKS[si].label}</span>`;
+      btd.innerHTML = `<span class="break-label"><i class="fas fa-coffee" style="margin-left:5px;opacity:.5"></i>${BREAKS[si].label}</span>`;
     }
   });
 }
-
 buildTable('full');
 
 function setView(v, btn) {
-  currentView = v;
   document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   buildTable(v);
 }
 
-/* ══════════════════════════════
-   TEACHER LIST
-══════════════════════════════ */
+/* ─── TEACHERS ─── */
 const teachers = [
-  { name:'آقای احمدی',  subject:'ریاضی',   color:'var(--c-math)',  bg:'var(--c-math-bg)',  hours:6, contact:'داخلی ۲۰۱' },
-  { name:'خانم رضایی', subject:'فیزیک',   color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  hours:5, contact:'داخلی ۱۰۱' },
-  { name:'آقای صادقی',  subject:'شیمی',    color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  hours:4, contact:'داخلی ۱۰۳' },
-  { name:'آقای موسوی',  subject:'ادبیات',  color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   hours:4, contact:'داخلی ۱۰۵' },
-  { name:'خانم کریمی', subject:'زبان',    color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  hours:4, contact:'داخلی ۳۰۲' },
-  { name:'آقای جوادی',  subject:'دین',     color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   hours:2, contact:'داخلی ۱۰۲' },
+  { name:'آقای احمدی',  subject:'ریاضی',  color:'var(--c-math)',  bg:'var(--c-math-bg)',  hours:6, contact:'داخلی ۲۰۱' },
+  { name:'خانم رضایی', subject:'فیزیک',  color:'var(--c-phys)',  bg:'var(--c-phys-bg)',  hours:5, contact:'داخلی ۱۰۱' },
+  { name:'آقای صادقی',  subject:'شیمی',   color:'var(--c-chem)',  bg:'var(--c-chem-bg)',  hours:4, contact:'داخلی ۱۰۳' },
+  { name:'آقای موسوی',  subject:'ادبیات', color:'var(--c-lit)',   bg:'var(--c-lit-bg)',   hours:4, contact:'داخلی ۱۰۵' },
+  { name:'خانم کریمی', subject:'زبان',   color:'var(--c-lang)',  bg:'var(--c-lang-bg)',  hours:4, contact:'داخلی ۳۰۲' },
+  { name:'آقای جوادی',  subject:'دین',    color:'var(--c-rel)',   bg:'var(--c-rel-bg)',   hours:2, contact:'داخلی ۱۰۲' },
 ];
 const teacherList = document.getElementById('teacherList');
 teachers.forEach(t => {
-  const initials = t.name.split(' ').map(w=>w[0]).join('');
+  const parts = t.name.split(' ');
+  const initials = parts.map(w => w[0]).join('');
   const el = document.createElement('div');
   el.className = 'teacher-item';
   el.innerHTML = `
@@ -532,26 +919,20 @@ teachers.forEach(t => {
     <div class="teacher-info">
       <div class="teacher-name">${t.name}</div>
       <div class="teacher-subject">${t.subject}</div>
-      <div class="teacher-contact"><i class="fas fa-phone-alt" style="font-size:8px;margin-left:3px"></i>${t.contact}</div>
+      <div class="teacher-contact"><i class="fas fa-phone-alt" style="font-size:8px;margin-left:3px;opacity:.6"></i>${t.contact}</div>
     </div>
     <div class="teacher-hours" style="color:${t.color}">${toF(t.hours)} ساعت</div>`;
   teacherList.appendChild(el);
 });
 
-/* ══════════════════════════════
-   HOURS PER SUBJECT
-══════════════════════════════ */
+/* ─── HOURS BARS ─── */
 const hoursData = [
-  { key:'math',  hours:6 },
-  { key:'phys',  hours:5 },
-  { key:'chem',  hours:4 },
-  { key:'lit',   hours:4 },
-  { key:'lang',  hours:4 },
-  { key:'sport', hours:2 },
-  { key:'rel',   hours:2 },
-  { key:'art',   hours:1 },
+  { key:'math', hours:6 }, { key:'phys', hours:5 },
+  { key:'chem', hours:4 }, { key:'lit',  hours:4 },
+  { key:'lang', hours:4 }, { key:'sport',hours:2 },
+  { key:'rel',  hours:2 }, { key:'art',  hours:1 },
 ];
-const maxH = Math.max(...hoursData.map(h=>h.hours));
+const maxH = Math.max(...hoursData.map(h => h.hours));
 const hoursList = document.getElementById('hoursList');
 hoursData.forEach(h => {
   const s = SUBJECTS[h.key];
@@ -568,15 +949,13 @@ setTimeout(() => {
   document.querySelectorAll('.hours-bar-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
 }, 400);
 
-/* ══════════════════════════════
-   UPCOMING EVENTS
-══════════════════════════════ */
+/* ─── UPCOMING ─── */
 const upcoming = [
-  { title:'امتحان ریاضی', meta:'فصل سوم — کلاس ۲۰۱', when:'فردا ۸:۰۰', color:'var(--c-math)' },
-  { title:'تغییر ساعت فیزیک', meta:'کلاس پنجشنبه به ۱۰:۰۰ منتقل شد', when:'پنجشنبه', color:'var(--c-phys)' },
-  { title:'پروژه شیمی', meta:'تحویل گزارش آزمایشگاه', when:'هفته بعد', color:'var(--c-chem)' },
-  { title:'کلاس جبرانی زبان', meta:'خانم کریمی — کلاس ۳۰۲', when:'جمعه ۱۰:۰۰', color:'var(--c-lang)' },
-  { title:'اردوی علمی', meta:'بازدید از دانشگاه صنعتی', when:'۲ هفته دیگر', color:'var(--c-chem)' },
+  { title:'امتحان ریاضی',         meta:'فصل سوم — کلاس ۲۰۱',       when:'فردا ۸:۰۰',    color:'var(--c-math)' },
+  { title:'تغییر ساعت فیزیک',     meta:'پنجشنبه به ساعت ۱۰:۰۰',   when:'پنجشنبه',      color:'var(--c-phys)' },
+  { title:'پروژه شیمی',           meta:'تحویل گزارش آزمایشگاه',    when:'هفته بعد',     color:'var(--c-chem)' },
+  { title:'کلاس جبرانی زبان',     meta:'خانم کریمی — کلاس ۳۰۲',   when:'جمعه ۱۰:۰۰',   color:'var(--c-lang)' },
+  { title:'اردوی علمی',           meta:'بازدید از دانشگاه صنعتی',  when:'۲ هفته دیگر', color:'var(--c-chem)' },
 ];
 const upcomingList = document.getElementById('upcomingList');
 upcoming.forEach(u => {
@@ -592,26 +971,26 @@ upcoming.forEach(u => {
   upcomingList.appendChild(el);
 });
 
-/* ══════════════════════════════
-   HELPERS
-══════════════════════════════ */
+/* ─── HELPERS ─── */
 function toF(n) {
   return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 }
 
-/* ══════════════════════════════
-   HAMBURGER
-══════════════════════════════ */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-document.getElementById('menuToggle').addEventListener('click', () => {
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
-});
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('active');
-  overlay.classList.remove('active');
-});
+/* ─── SIDEBAR ─── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('menuToggle').addEventListener('click', openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click', closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 </script>
 </body>
 </html>

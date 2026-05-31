@@ -1,710 +1,2297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوربر - گزارشات</title>
-    <link rel="icon" href="../image/iconB.png">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="../style/reports.css">
-    <link rel="stylesheet" href="../style/menu.css">
-    <link rel="stylesheet" href="../style/scrollbar.css">
-    <script src="../js/chart.umd.min.js"></script>
-    <script src="../js/xlsx.full.min.js"></script>
-    <script src="../javaScript/auth.js"></script>
-    <script src="../javaScript/permission-guard.js"></script>
-    <script src="../javaScript/sidebar-permissions.js"></script>
-    <script src="../javaScript/reports.js"></script>
-</head>
-<body>
-    <button class="menu-toggle" id="menuToggle">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — گزارشات</title>
+    <link rel="stylesheet" href="../css/all.min.css" />
+        <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <style>
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* PAGE LOADER */
+      #pageLoader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        gap: 18px;
+        transition: opacity 0.5s ease;
+      }
+      #pageLoader.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loader-spinner {
+        width: 58px;
+        height: 58px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.85s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loader-text {
+        color: var(--text);
+        font-size: 15px;
+      }
+      .loader-sub {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: -8px;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 500;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.active {
+        transform: translateX(0) !important;
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 499;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 4px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #fff;
+        font-family: "Shabnam", sans-serif;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 18px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .sidebar-close-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 32px;
+        height: 32px;
+        background: rgba(231, 76, 60, 0.12);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: 50%;
+        color: var(--absent);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .sidebar-close-btn:hover {
+        background: var(--absent);
+        color: #fff;
+        transform: rotate(90deg);
+      }
+      .manager-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .manager-avatar {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .manager-name {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .manager-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .manager-badge {
+        margin-top: 7px;
+        display: inline-block;
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .menu-item {
+        margin-bottom: 2px;
+      }
+      .menu-item a,
+      .menu-item .menu-link {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+      .menu-item a i,
+      .menu-item .menu-link i:first-child {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .menu-item a:hover,
+      .menu-item .menu-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .menu-item:not(.has-submenu).active > a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .menu-item:not(.has-submenu).active > a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .menu-item.has-submenu {
+        position: relative;
+      }
+      .submenu-arrow {
+        margin-right: auto;
+        font-size: 12px !important;
+        transition: transform 0.3s;
+      }
+      .menu-item.has-submenu.open .submenu-arrow {
+        transform: rotate(180deg);
+      }
+      .menu-item.has-submenu.open > .menu-link {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-sm);
+        margin-top: 4px;
+      }
+      .menu-item.has-submenu.open .submenu {
+        max-height: 500px;
+      }
+      .submenu-item {
+        color: rgba(180, 200, 255, 0.6);
+        text-decoration: none;
+        padding: 10px 14px 10px 44px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 12px;
+        font-weight: 400;
+        transition: all 0.2s;
+        border-radius: 8px;
+        margin: 4px;
+      }
+      .submenu-item i {
+        font-size: 13px;
+        width: 18px;
+        text-align: center;
+        opacity: 0.75;
+      }
+      .submenu-item:hover {
+        background: rgba(74, 144, 217, 0.1);
+        color: #fff;
+      }
+      .submenu-item.active {
+        background: rgba(74, 144, 217, 0.14);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* HAMBURGER */
+      .menu-toggle {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        color: var(--text-muted);
+        font-size: 18px;
+      }
+      .menu-toggle:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      /* MAIN */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 26px;
+        gap: 14px;
+        animation: fadeUp 0.4s ease both;
+      }
+      .page-title-wrap h1 {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+      .page-title-wrap h1 span {
+        color: var(--accent);
+      }
+      .admin-info {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        flex-shrink: 0;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
+        }
+      }
+      .profile-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
+        color: #fff;
+      }
+
+      /* FILTER SECTION */
+      .filter-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 18px;
+        animation: fadeUp 0.45s 0.04s ease both;
+      }
+      .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        font-family: "Shabnam", sans-serif;
+      }
+      .section-title i {
+        color: var(--accent);
+      }
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        margin-bottom: 16px;
+      }
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .filter-label {
+        color: var(--text-muted);
+        font-size: 11.5px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-select {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .filter-select:focus {
+        border-color: var(--border-hover);
+      }
+      .filter-select option {
+        background: #1a2650;
+        color: var(--text);
+      }
+      .filter-btns {
+        display: flex;
+        gap: 9px;
+      }
+      .btn-filter-primary {
+        padding: 10px 18px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.2);
+      }
+      .btn-filter-primary:hover {
+        background: rgba(6, 214, 160, 0.24);
+      }
+      .btn-filter-reset {
+        padding: 10px 18px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+      .btn-filter-reset:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text);
+      }
+
+      /* STATS GRID */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 13px;
+        margin-bottom: 18px;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 14px 16px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.28s,
+          box-shadow 0.28s,
+          border-color 0.28s;
+        animation: fadeUp 0.45s ease both;
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .stat-card:nth-child(1)::before {
+        background: linear-gradient(90deg, #4a90d9, #8e5fd4);
+      }
+      .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #06d6a0, #2ecc71);
+      }
+      .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+      }
+      .stat-card:nth-child(4)::before {
+        background: linear-gradient(90deg, #8e5fd4, #c85fe8);
+      }
+      .stat-card:nth-child(5)::before {
+        background: linear-gradient(90deg, #2ecc71, #06d6a0);
+      }
+      .stat-card:nth-child(6)::before {
+        background: linear-gradient(90deg, #e74c3c, #c0392b);
+      }
+      .stat-card:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .stat-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .stat-card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .stat-card:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+      .stat-card:nth-child(5) {
+        animation-delay: 0.25s;
+      }
+      .stat-card:nth-child(6) {
+        animation-delay: 0.3s;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        border-color: rgba(74, 144, 217, 0.18);
+      }
+      .stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+      .stat-card:nth-child(1) .stat-icon {
+        background: rgba(74, 144, 217, 0.16);
+        color: var(--accent);
+      }
+      .stat-card:nth-child(2) .stat-icon {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+      }
+      .stat-card:nth-child(3) .stat-icon {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .stat-card:nth-child(4) .stat-icon {
+        background: rgba(142, 95, 212, 0.15);
+        color: var(--accent2);
+      }
+      .stat-card:nth-child(5) .stat-icon {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .stat-card:nth-child(6) .stat-icon {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+      .stat-value {
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 6px;
+        font-family: "Shabnam", sans-serif;
+      }
+      .stat-change {
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .stat-change.up {
+        color: var(--present);
+      }
+      .stat-change.down {
+        color: var(--absent);
+      }
+      .stat-change.neutral {
+        color: var(--text-muted);
+      }
+
+      /* CHARTS GRID */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .chart-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        animation: fadeUp 0.45s ease both;
+      }
+      .chart-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .chart-card:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .chart-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .chart-card:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      .chart-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      .chart-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "Shabnam", sans-serif;
+      }
+      .chart-title i {
+        color: var(--accent);
+      }
+      .btn-chart-export {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(74, 144, 217, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+      }
+      .btn-chart-export:hover {
+        background: rgba(74, 144, 217, 0.24);
+        color: #fff;
+      }
+      .chart-container {
+        width: 100%;
+        height: 240px;
+        position: relative;
+      }
+
+      /* TABLES GRID */
+      .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .table-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        animation: fadeUp 0.45s 0.18s ease both;
+      }
+      .table-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .table-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "Shabnam", sans-serif;
+      }
+      .table-title i {
+        color: var(--accent);
+      }
+      .btn-view-more {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+      .btn-view-more:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text);
+      }
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .report-table thead tr {
+        border-bottom: 1px solid var(--border);
+      }
+      .report-table th {
+        color: var(--text-muted);
+        padding: 10px 12px;
+        text-align: center;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .report-table td {
+        color: var(--text);
+        padding: 11px 12px;
+        text-align: center;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s;
+      }
+      .report-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .report-table tbody tr:hover td {
+        background: rgba(74, 144, 217, 0.06);
+      }
+      .rank-badge {
+        display: inline-flex;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        margin: 0 auto;
+        font-family: "Shabnam", sans-serif;
+      }
+      .rank-1 {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        color: #000;
+      }
+      .rank-2 {
+        background: linear-gradient(135deg, #c0c0c0, #808080);
+        color: #000;
+      }
+      .rank-3 {
+        background: linear-gradient(135deg, #cd7f32, #8b4513);
+        color: #fff;
+      }
+      .status-active {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .status-inactive {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+
+      /* ACTIVITY LOG */
+      .activity-log {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 18px;
+        animation: fadeUp 0.45s 0.22s ease both;
+      }
+      .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--border);
+        transition: all 0.2s;
+      }
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+      .activity-item:hover {
+        background: rgba(74, 144, 217, 0.04);
+        border-radius: var(--radius-sm);
+        padding-right: 10px;
+        padding-left: 10px;
+      }
+      .activity-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+      }
+      .activity-icon.add {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .activity-icon.edit {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+      }
+      .activity-icon.delete {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+      }
+      .activity-text {
+        color: var(--text);
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .activity-time {
+        color: var(--text-muted);
+        font-size: 11.5px;
+      }
+
+      /* EXPORT SECTION */
+      .export-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 18px;
+        animation: fadeUp 0.45s 0.26s ease both;
+      }
+      .export-btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      }
+      .export-btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .export-btn.pdf {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+      }
+      .export-btn.pdf:hover {
+        background: rgba(231, 76, 60, 0.26);
+      }
+      .export-btn.excel {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.2);
+      }
+      .export-btn.excel:hover {
+        background: rgba(6, 214, 160, 0.26);
+      }
+      .export-btn.print {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .export-btn.print:hover {
+        background: rgba(74, 144, 217, 0.26);
+      }
+      .export-btn.share {
+        background: rgba(142, 95, 212, 0.14);
+        color: var(--accent2);
+        border: 1px solid rgba(142, 95, 212, 0.2);
+      }
+      .export-btn.share:hover {
+        background: rgba(142, 95, 212, 0.26);
+      }
+
+      /* MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+        border-radius: var(--radius);
+        padding: 30px;
+        max-width: 460px;
+        width: 100%;
+        text-align: center;
+        animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 12px;
+      }
+      .modal-text {
+        color: var(--text-muted);
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+      }
+      .modal-close-btn {
+        padding: 10px 22px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+      .modal-close-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--text);
+      }
+
+      /* TOAST */
+      .toast-notification {
+        position: fixed;
+        top: -180px;
+        right: 24px;
+        background: var(--bg-card2);
+        border: 1px solid rgba(46, 204, 113, 0.3);
+        color: var(--text);
+        padding: 16px 20px;
+        border-radius: var(--radius-sm);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        max-width: 420px;
+        z-index: 9999;
+        transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+      .toast-notification.show {
+        top: 24px;
+      }
+      .toast-notification.hide {
+        top: -180px;
+        transition: top 0.35s ease-in;
+      }
+      .toast-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+      }
+      .toast-content {
+        flex: 1;
+      }
+      .toast-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .toast-message {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px;
+        border-radius: 50%;
+        transition: all 0.2s;
+      }
+      .toast-close:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* ANIMATIONS */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 1200px) {
+        .stats-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .filter-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+        .tables-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 600px) {
+        .main-content {
+          padding: 68px 12px 24px;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 9px;
+        }
+        .filter-grid {
+          grid-template-columns: 1fr;
+        }
+        .filter-btns {
+          flex-direction: column;
+        }
+        .btn-filter-primary,
+        .btn-filter-reset {
+          width: 100%;
+          justify-content: center;
+        }
+        .export-btns {
+          flex-direction: column;
+        }
+        .export-btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .toast-notification {
+          right: 12px;
+          left: 12px;
+          min-width: unset;
+          max-width: unset;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="pageLoader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">در حال بارگذاری...</div>
+      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+    </div>
+
+    <!-- HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" title="منو">
       <i class="fas fa-bars"></i>
     </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container">
-      <div class="sidebar" id="sidebar">
-        <div class="logo">بوربور</div>
-
-        <div class="menu-item">
-          <a href="../html/dashbord.html">
-            <i class="fas fa-chart-line"></i>
-            داشبورد
-          </a>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="manager-block">
+        <div class="manager-avatar" id="managerAvatarLetter">م</div>
+        <div>
+          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
+          <div class="manager-role" id="managerRole">مدیر سیستم</div>
+          <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="menu-item">
+        <a href="../html/dashbord.html"
+          ><i class="fas fa-chart-line"></i> داشبورد</a
+        >
+      </div>
+      <div class="menu-item has-submenu" id="userMgmtMenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-users"></i> مدیریت کاربران<i
+            class="fas fa-chevron-down submenu-arrow"
+          ></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Assistant_management.html" class="submenu-item"
+            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
+          >
+          <a href="../html/Teacher_management.html" class="submenu-item"
+            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
+          >
+          <a href="../html/student.html" class="submenu-item"
+            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
+          >
 
-        <div class="menu-item has-submenu">
-          <a href="#" class="menu-link">
-            <i class="fas fa-users"></i>
-            مدیریت کاربران
-            <i class="fas fa-chevron-down submenu-arrow"></i>
-          </a>
-          <div class="submenu">
-            <a href="../html/Assistant_management.html" class="submenu-item">
-              <i class="fas fa-user-tie"></i>
-              مدیریت معاونان
-            </a>
-            <a href="../html/Teacher_management.html" class="submenu-item">
-              <i class="fas fa-chalkboard-teacher"></i>
-              مدیریت معلمین
-            </a>
-            <a href="../html/student.html" class="submenu-item">
-              <i class="fas fa-user-graduate"></i>
-              مدیریت دانش‌آموزان
-            </a>
-            <a href="../html/Parents.html" class="submenu-item">
-              <i class="fas fa-users"></i>
-              مدیریت اولیا
-            </a>
+        </div>
+      </div>
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها<i
+            class="fas fa-chevron-down submenu-arrow"
+          ></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Courses.html" class="submenu-item"
+            ><i class="fas fa-list"></i> مدیریت دروس</a
+          >
+          <a href="../html/Class-schedule.html" class="submenu-item"
+            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
+          >
+          <a href="../html/Attendance.html" class="submenu-item"
+            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
+          >
+          <a href="../html/grades.html" class="submenu-item"
+            ><i class="fas fa-star"></i> نمرات</a
+          >
+        </div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">مدیریت</div>
+      <div class="menu-item">
+        <a href="../html/Pre-registration.html"
+          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
+        >
+      </div>
+      <div class="menu-item active">
+        <a href="../html/reports.html"
+          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
+      </div>
+      <div class="menu-item">
+        <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">سیستم</div>
+      <div class="menu-item">
+        <a href="../html/permissions.html"
+          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
+        >
+      </div>
+       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="menu-item">
+        <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="page-title-wrap">
+          <h1>گزارشات <span>مدرسه</span></h1>
+          <div class="admin-info" id="adminInfo">
+            <span class="live-dot"></span>در حال بارگذاری...
           </div>
         </div>
+        <div class="profile-btn" id="profileBtnLetter">م</div>
+      </div>
 
-        <div class="menu-item has-submenu">
-          <a href="" class="menu-link">
-            <i class="fas fa-chalkboard-teacher"></i>
-            مدیریت کلاس ها
-            <i class="fas fa-chevron-down submenu-arrow"></i>
-          </a>
-          <div class="submenu">
-            <a href="../html/Courses.html" class="submenu-item">
-              <i class="fas fa-list"></i>
-              مدیریت دروس
-            </a>
-            <a href="../html/Class-schedule.html" class="submenu-item">
-              <i class="fas fa-calendar-alt"></i>
-              برنامه و لیست کلاسی
-            </a>
-            <a href="../html/Attendance.html" class="submenu-item">
-              <i class="fas fa-clipboard-check"></i>
-              حضور و غیاب
-            </a>
-            <a href="../html/grades.html" class="submenu-item">
-              <i class="fas fa-star"></i>
-              نمرات
-            </a>
+      <!-- FILTER SECTION -->
+      <div class="filter-section">
+        <div class="section-title">
+          <i class="fas fa-filter"></i> فیلترهای گزارش
+        </div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="filter-label"
+              ><i class="fas fa-calendar-alt"></i> بازه زمانی</label
+            >
+            <select class="filter-select" id="timeRange">
+              <option value="today">امروز</option>
+              <option value="week">این هفته</option>
+              <option value="month">این ماه</option>
+              <option value="term" selected>این ترم</option>
+              <option value="year">سال تحصیلی</option>
+              <option value="custom">بازه دلخواه</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label"
+              ><i class="fas fa-chart-bar"></i> نوع گزارش</label
+            >
+            <select class="filter-select" id="reportType">
+              <option value="all" selected>همه گزارش‌ها</option>
+              <option value="educational">تحصیلی</option>
+              <option value="financial">مالی</option>
+              <option value="attendance">حضور و غیاب</option>
+              <option value="performance">عملکرد</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label"
+              ><i class="fas fa-graduation-cap"></i> پایه تحصیلی</label
+            >
+            <select class="filter-select" id="gradeFilter">
+              <option value="all" selected>همه پایه‌ها</option>
+              <option value="10">دهم</option>
+              <option value="11">یازدهم</option>
+              <option value="12">دوازدهم</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label"
+              ><i class="fas fa-school"></i> کلاس</label
+            >
+            <select class="filter-select" id="classFilter">
+              <option value="all" selected>همه کلاس‌ها</option>
+              <option value="10-1">دهم-۱</option>
+              <option value="10-2">دهم-۲</option>
+              <option value="11-1">یازدهم-۱</option>
+              <option value="11-2">یازدهم-۲</option>
+              <option value="12-1">دوازدهم-۱</option>
+              <option value="12-2">دوازدهم-۲</option>
+            </select>
           </div>
         </div>
-
-        <div class="menu-item">
-          <a href="../html/Pre-registration.html">
-            <i class="fas fa-clipboard-list"></i>
-            پیش ثبت نام ها
-          </a>
-        </div>
-
-        <div class="menu-item active">
-          <a href="../html/reports.html">
-            <i class="fas fa-file-alt"></i>
-            گزارش ها
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="../html/notife.html">
-            <i class="fas fa-bell"></i>
-            اطلاعیه ها
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="../html/archive.html">
-            <i class="fas fa-archive"></i>
-            ارشیو
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="../html/permissions.html">
-            <i class="fas fa-shield-alt"></i>
-            مدیریت دسترسی‌ها
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="../html/settings.html">
-            <i class="fas fa-cog"></i>
-            تنظیمات
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a href="../api/logout.php">
-            <i class="fas fa-sign-out-alt"></i>
-            خروج
-          </a>
+        <div class="filter-btns">
+          <button class="btn-filter-primary" onclick="applyFilters()">
+            <i class="fas fa-check"></i> اعمال فیلتر
+          </button>
+          <button class="btn-filter-reset" onclick="resetFilters()">
+            <i class="fas fa-redo"></i> بازنشانی
+          </button>
         </div>
       </div>
 
-        <main class="main-content">
-            <div class="top-header">
-                <h1 class="page-title">گزارشات</h1>
-                <div class="admin-info">مدیر: آقای بیارش</div>
-            </div>
-
-            <div class="filter-section">
-                <h2 class="filter-title">
-                    <i class="fas fa-filter"></i>
-                    فیلترهای گزارش
-                </h2>
-                <div class="filter-options">
-                    <div class="filter-group">
-                        <label class="filter-label">
-                            <i class="fas fa-calendar-alt"></i>
-                            بازه زمانی
-                        </label>
-                        <select class="filter-select" id="timeRange">
-                            <option value="today">امروز</option>
-                            <option value="week">این هفته</option>
-                            <option value="month">این ماه</option>
-                            <option value="term" selected>این ترم</option>
-                            <option value="year">سال تحصیلی</option>
-                            <option value="custom">بازه دلخواه</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">
-                            <i class="fas fa-chart-bar"></i>
-                            نوع گزارش
-                        </label>
-                        <select class="filter-select" id="reportType">
-                            <option value="all" selected>همه گزارش‌ها</option>
-                            <option value="educational">تحصیلی</option>
-                            <option value="financial">مالی</option>
-                            <option value="attendance">حضور و غیاب</option>
-                            <option value="performance">عملکرد</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">
-                            <i class="fas fa-graduation-cap"></i>
-                            پایه تحصیلی
-                        </label>
-                        <select class="filter-select" id="gradeFilter">
-                            <option value="all" selected>همه پایه‌ها</option>
-                            <option value="10">دهم</option>
-                            <option value="11">یازدهم</option>
-                            <option value="12">دوازدهم</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">
-                            <i class="fas fa-school"></i>
-                            کلاس
-                        </label>
-                        <select class="filter-select" id="classFilter">
-                            <option value="all" selected>همه کلاس‌ها</option>
-                            <option value="10-1">دهم-1</option>
-                            <option value="10-2">دهم-2</option>
-                            <option value="11-1">یازدهم-1</option>
-                            <option value="11-2">یازدهم-2</option>
-                            <option value="12-1">دوازدهم-1</option>
-                            <option value="12-2">دوازدهم-2</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="filter-buttons">
-                    <button class="filter-btn primary" onclick="applyFilters()">
-                        <i class="fas fa-check"></i>
-                        اعمال فیلتر
-                    </button>
-                    <button class="filter-btn" onclick="resetFilters()">
-                        <i class="fas fa-redo"></i>
-                        بازنشانی
-                    </button>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">کل دانش‌آموزان</div>
-                    <div class="stat-value" id="totalStudents">342</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        12 نفر نسبت به ماه قبل
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon green">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">کل معلمان</div>
-                    <div class="stat-value" id="totalTeachers">28</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        3 نفر نسبت به ماه قبل
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon orange">
-                            <i class="fas fa-school"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">تعداد کلاس‌ها</div>
-                    <div class="stat-value" id="totalClasses">18</div>
-                    <div class="stat-change">
-                        <i class="fas fa-minus"></i>
-                        بدون تغییر
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">پیش ثبت نام جدید</div>
-                    <div class="stat-value" id="newRegistrations">45</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        8 نفر نسبت به هفته قبل
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon green">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">نرخ حضور امروز</div>
-                    <div class="stat-value" id="attendanceRate">94%</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        2% نسبت به دیروز
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon red">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                    </div>
-                    <div class="stat-label">غیبت امروز</div>
-                    <div class="stat-value" id="absences">21</div>
-                    <div class="stat-change negative">
-                        <i class="fas fa-arrow-down"></i>
-                        5 نفر نسبت به دیروز
-                    </div>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-chart-line"></i>
-                            روند ثبت نام در 6 ماه اخیر
-                        </h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn" onclick="exportChart('enrollment')">
-                                <i class="fas fa-download"></i>
-                                خروجی
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="enrollmentChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-chart-pie"></i>
-                            توزیع دانش‌آموزان به تفکیک پایه
-                        </h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn" onclick="exportChart('distribution')">
-                                <i class="fas fa-download"></i>
-                                خروجی
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="distributionChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-chart-bar"></i>
-                            نرخ حضور و غیاب هفتگی
-                        </h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn" onclick="exportChart('attendance')">
-                                <i class="fas fa-download"></i>
-                                خروجی
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="attendanceChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-chart-area"></i>
-                            معدل کلاس‌ها
-                        </h3>
-                        <div class="chart-actions">
-                            <button class="chart-btn" onclick="exportChart('grades')">
-                                <i class="fas fa-download"></i>
-                                خروجی
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="gradesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tables-grid">
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3 class="table-title">
-                            <i class="fas fa-trophy"></i>
-                            برترین دانش‌آموزان
-                        </h3>
-                        <button class="chart-btn" onclick="viewMore('students')">
-                            <i class="fas fa-eye"></i>
-                            مشاهده همه
-                        </button>
-                    </div>
-                    <table class="report-table" id="topStudentsTable">
-                        <thead>
-                            <tr>
-                                <th>رتبه</th>
-                                <th>نام و نام خانوادگی</th>
-                                <th>پایه</th>
-                                <th>معدل</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><div class="rank-badge rank-1">1</div></td>
-                                <td>علی احمدی</td>
-                                <td>دوازدهم</td>
-                                <td>19.85</td>
-                            </tr>
-                            <tr>
-                                <td><div class="rank-badge rank-2">2</div></td>
-                                <td>محمد رضایی</td>
-                                <td>یازدهم</td>
-                                <td>19.72</td>
-                            </tr>
-                            <tr>
-                                <td><div class="rank-badge rank-3">3</div></td>
-                                <td>حسین کریمی</td>
-                                <td>دوازدهم</td>
-                                <td>19.65</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>رضا محمدی</td>
-                                <td>دهم</td>
-                                <td>19.50</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>امیر حسینی</td>
-                                <td>یازدهم</td>
-                                <td>19.45</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3 class="table-title">
-                            <i class="fas fa-list"></i>
-                            وضعیت کلاس‌ها
-                        </h3>
-                        <button class="chart-btn" onclick="viewMore('classes')">
-                            <i class="fas fa-eye"></i>
-                            مشاهده همه
-                        </button>
-                    </div>
-                    <table class="report-table" id="classesTable">
-                        <thead>
-                            <tr>
-                                <th>کلاس</th>
-                                <th>تعداد دانش‌آموز</th>
-                                <th>معدل کلاس</th>
-                                <th>وضعیت</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>دهم-1</td>
-                                <td>25</td>
-                                <td>18.50</td>
-                                <td><span class="status-active">فعال</span></td>
-                            </tr>
-                            <tr>
-                                <td>دهم-2</td>
-                                <td>28</td>
-                                <td>18.25</td>
-                                <td><span class="status-active">فعال</span></td>
-                            </tr>
-                            <tr>
-                                <td>یازدهم-1</td>
-                                <td>30</td>
-                                <td>17.90</td>
-                                <td><span class="status-active">فعال</span></td>
-                            </tr>
-                            <tr>
-                                <td>یازدهم-2</td>
-                                <td>27</td>
-                                <td>18.10</td>
-                                <td><span class="status-active">فعال</span></td>
-                            </tr>
-                            <tr>
-                                <td>دوازدهم-1</td>
-                                <td>26</td>
-                                <td>18.75</td>
-                                <td><span class="status-active">فعال</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="activity-log">
-                <div class="table-header">
-                    <h3 class="table-title">
-                        <i class="fas fa-history"></i>
-                        آخرین فعالیت‌ها
-                    </h3>
-                    <button class="chart-btn" onclick="viewMore('activities')">
-                        <i class="fas fa-eye"></i>
-                        مشاهده همه
-                    </button>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon add">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">دانش‌آموز جدید اضافه شد: محمد رضایی</div>
-                        <div class="activity-time">2 ساعت پیش</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon edit">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">معدل کلاس دهم-1 بروزرسانی شد</div>
-                        <div class="activity-time">5 ساعت پیش</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon add">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">پیش ثبت نام جدید: امیر احمدی</div>
-                        <div class="activity-time">1 روز پیش</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon delete">
-                        <i class="fas fa-trash"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">دانش‌آموز حذف شد: علی کریمی</div>
-                        <div class="activity-time">2 روز پیش</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon edit">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">اطلاعات معلم ویرایش شد: حسن حسینی</div>
-                        <div class="activity-time">3 روز پیش</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="export-section">
-                <h2 class="export-title">
-                    <i class="fas fa-file-export"></i>
-                    خروجی گزارش
-                </h2>
-                <div class="export-buttons">
-                    <button class="export-btn pdf" onclick="exportReport('pdf')">
-                        <i class="fas fa-file-pdf"></i>
-                        خروجی PDF
-                    </button>
-                    <button class="export-btn excel" onclick="exportReport('excel')">
-                        <i class="fas fa-file-excel"></i>
-                        خروجی Excel
-                    </button>
-                    <button class="export-btn print" onclick="printReport()">
-                        <i class="fas fa-print"></i>
-                        چاپ گزارش
-                    </button>
-                    <button class="export-btn" onclick="shareReport()">
-                        <i class="fas fa-share-alt"></i>
-                        اشتراک‌گذاری
-                    </button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <div id="exportModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">
-                <i class="fas fa-spinner fa-spin"></i>
-                در حال آماده‌سازی گزارش...
-            </h3>
-            <p class="modal-text">لطفاً صبر کنید، گزارش شما در حال تهیه است.</p>
-            <div class="modal-buttons">
-                <button class="modal-btn-cancel" onclick="closeExportModal()">
-                    <i class="fas fa-times"></i>
-                    لغو
-                </button>
-            </div>
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-label">کل دانش‌آموزان</div>
+          <div class="stat-value" id="totalStudents">۳۴۲</div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> ۱۲ نفر نسبت به ماه قبل
+          </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="stat-label">کل معلمان</div>
+          <div class="stat-value" id="totalTeachers">۲۸</div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> ۳ نفر نسبت به ماه قبل
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-school"></i></div>
+          <div class="stat-label">تعداد کلاس‌ها</div>
+          <div class="stat-value" id="totalClasses">۱۸</div>
+          <div class="stat-change neutral">
+            <i class="fas fa-minus"></i> بدون تغییر
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+          <div class="stat-label">پیش ثبت‌نام جدید</div>
+          <div class="stat-value" id="newRegistrations">۴۵</div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> ۸ نفر نسبت به هفته قبل
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-label">نرخ حضور امروز</div>
+          <div class="stat-value" id="attendanceRate">۹۴٪</div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> ۲٪ نسبت به دیروز
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-label">غیبت امروز</div>
+          <div class="stat-value" id="absences">۲۱</div>
+          <div class="stat-change down">
+            <i class="fas fa-arrow-down"></i> ۵ نفر نسبت به دیروز
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header-row">
+            <div class="chart-title">
+              <i class="fas fa-chart-line"></i> روند ثبت‌نام ۶ ماه اخیر
+            </div>
+            <button
+              class="btn-chart-export"
+              onclick="exportChart('enrollment')"
+            >
+              <i class="fas fa-download"></i> خروجی
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="enrollmentChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header-row">
+            <div class="chart-title">
+              <i class="fas fa-chart-pie"></i> توزیع دانش‌آموزان به تفکیک پایه
+            </div>
+            <button
+              class="btn-chart-export"
+              onclick="exportChart('distribution')"
+            >
+              <i class="fas fa-download"></i> خروجی
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="distributionChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header-row">
+            <div class="chart-title">
+              <i class="fas fa-chart-bar"></i> نرخ حضور و غیاب هفتگی
+            </div>
+            <button
+              class="btn-chart-export"
+              onclick="exportChart('attendance')"
+            >
+              <i class="fas fa-download"></i> خروجی
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header-row">
+            <div class="chart-title">
+              <i class="fas fa-chart-area"></i> معدل کلاس‌ها
+            </div>
+            <button class="btn-chart-export" onclick="exportChart('grades')">
+              <i class="fas fa-download"></i> خروجی
+            </button>
+          </div>
+          <div class="chart-container"><canvas id="gradesChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TABLES -->
+      <div class="tables-grid">
+        <div class="table-card">
+          <div class="table-header-row">
+            <div class="table-title">
+              <i class="fas fa-trophy"></i> برترین دانش‌آموزان
+            </div>
+            <button class="btn-view-more" onclick="viewMore('students')">
+              <i class="fas fa-eye"></i> مشاهده همه
+            </button>
+          </div>
+          <table class="report-table" id="topStudentsTable">
+            <thead>
+              <tr>
+                <th>رتبه</th>
+                <th>نام و نام خانوادگی</th>
+                <th>پایه</th>
+                <th>معدل</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="rank-badge rank-1">۱</div></td>
+                <td>علی احمدی</td>
+                <td>دوازدهم</td>
+                <td>۱۹.۸۵</td>
+              </tr>
+              <tr>
+                <td><div class="rank-badge rank-2">۲</div></td>
+                <td>محمد رضایی</td>
+                <td>یازدهم</td>
+                <td>۱۹.۷۲</td>
+              </tr>
+              <tr>
+                <td><div class="rank-badge rank-3">۳</div></td>
+                <td>حسین کریمی</td>
+                <td>دوازدهم</td>
+                <td>۱۹.۶۵</td>
+              </tr>
+              <tr>
+                <td>۴</td>
+                <td>رضا محمدی</td>
+                <td>دهم</td>
+                <td>۱۹.۵۰</td>
+              </tr>
+              <tr>
+                <td>۵</td>
+                <td>امیر حسینی</td>
+                <td>یازدهم</td>
+                <td>۱۹.۴۵</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-card">
+          <div class="table-header-row">
+            <div class="table-title">
+              <i class="fas fa-list"></i> وضعیت کلاس‌ها
+            </div>
+            <button class="btn-view-more" onclick="viewMore('classes')">
+              <i class="fas fa-eye"></i> مشاهده همه
+            </button>
+          </div>
+          <table class="report-table" id="classesTable">
+            <thead>
+              <tr>
+                <th>کلاس</th>
+                <th>تعداد دانش‌آموز</th>
+                <th>معدل</th>
+                <th>وضعیت</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>دهم-۱</td>
+                <td>۲۵</td>
+                <td>۱۸.۵۰</td>
+                <td>
+                  <span class="status-active"
+                    ><i class="fas fa-circle" style="font-size: 7px"></i>
+                    فعال</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>دهم-۲</td>
+                <td>۲۸</td>
+                <td>۱۸.۲۵</td>
+                <td>
+                  <span class="status-active"
+                    ><i class="fas fa-circle" style="font-size: 7px"></i>
+                    فعال</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>یازدهم-۱</td>
+                <td>۳۰</td>
+                <td>۱۷.۹۰</td>
+                <td>
+                  <span class="status-active"
+                    ><i class="fas fa-circle" style="font-size: 7px"></i>
+                    فعال</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>یازدهم-۲</td>
+                <td>۲۷</td>
+                <td>۱۸.۱۰</td>
+                <td>
+                  <span class="status-active"
+                    ><i class="fas fa-circle" style="font-size: 7px"></i>
+                    فعال</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>دوازدهم-۱</td>
+                <td>۲۶</td>
+                <td>۱۸.۷۵</td>
+                <td>
+                  <span class="status-active"
+                    ><i class="fas fa-circle" style="font-size: 7px"></i>
+                    فعال</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACTIVITY LOG -->
+      <div class="activity-log">
+        <div class="table-header-row">
+          <div class="table-title">
+            <i class="fas fa-history"></i> آخرین فعالیت‌ها
+          </div>
+          <button class="btn-view-more" onclick="viewMore('activities')">
+            <i class="fas fa-eye"></i> مشاهده همه
+          </button>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon add"><i class="fas fa-plus"></i></div>
+          <div>
+            <div class="activity-text">دانش‌آموز جدید اضافه شد: محمد رضایی</div>
+            <div class="activity-time">۲ ساعت پیش</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon edit"><i class="fas fa-edit"></i></div>
+          <div>
+            <div class="activity-text">معدل کلاس دهم-۱ بروزرسانی شد</div>
+            <div class="activity-time">۵ ساعت پیش</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon add"><i class="fas fa-plus"></i></div>
+          <div>
+            <div class="activity-text">پیش ثبت‌نام جدید: امیر احمدی</div>
+            <div class="activity-time">۱ روز پیش</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon delete"><i class="fas fa-trash"></i></div>
+          <div>
+            <div class="activity-text">دانش‌آموز حذف شد: علی کریمی</div>
+            <div class="activity-time">۲ روز پیش</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon edit"><i class="fas fa-edit"></i></div>
+          <div>
+            <div class="activity-text">اطلاعات معلم ویرایش شد: حسن حسینی</div>
+            <div class="activity-time">۳ روز پیش</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="export-section">
+        <div class="section-title">
+          <i class="fas fa-file-export"></i> خروجی گزارش
+        </div>
+        <div class="export-btns">
+          <button class="export-btn pdf" onclick="exportReport('pdf')">
+            <i class="fas fa-file-pdf"></i> خروجی PDF
+          </button>
+          <button class="export-btn excel" onclick="exportReport('excel')">
+            <i class="fas fa-file-excel"></i> خروجی Excel
+          </button>
+          <button class="export-btn print" onclick="window.print()">
+            <i class="fas fa-print"></i> چاپ گزارش
+          </button>
+          <button class="export-btn share" onclick="shareReport()">
+            <i class="fas fa-share-alt"></i> اشتراک‌گذاری
+          </button>
+        </div>
+      </div>
     </div>
 
-    <script src="../javaScript/menu.js"></script>
+    <!-- EXPORT MODAL -->
+    <div class="modal" id="exportModal">
+      <div class="modal-card">
+        <div class="modal-title">
+          <i class="fas fa-spinner fa-spin"></i> در حال آماده‌سازی گزارش...
+        </div>
+        <div class="modal-text">لطفاً صبر کنید، گزارش شما در حال تهیه است.</div>
+        <button class="modal-close-btn" onclick="closeExportModal()">
+          <i class="fas fa-times"></i> لغو
+        </button>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-notification" id="successToast">
+      <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="toast-content">
+        <div class="toast-title">موفقیت‌آمیز!</div>
+        <div class="toast-message" id="toastMessage">
+          عملیات با موفقیت انجام شد
+        </div>
+      </div>
+      <button class="toast-close" onclick="closeToast()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <script src="../js/chart.umd.min.js"></script>
     <script>
-        function waitForChart(callback, maxAttempts = 100) {
-            if (window.Chart) {
-                callback();
-            } else if (maxAttempts > 0) {
-                setTimeout(() => waitForChart(callback, maxAttempts - 1), 50);
-            } else {
-                console.warn('Chart.js بارگذاری نشد');
+      /* ══════════ SIDEBAR ══════════ */
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("active");
+        document.getElementById("sidebarOverlay").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+        document.body.style.overflow = "";
+      }
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", openSidebar);
+      document
+        .getElementById("sidebarCloseBtn")
+        .addEventListener("click", closeSidebar);
+      document
+        .getElementById("sidebarOverlay")
+        .addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      /* submenu accordion */
+      document
+        .querySelectorAll(".menu-item.has-submenu")
+        .forEach(function (item) {
+          item
+            .querySelector(".menu-link")
+            .addEventListener("click", function (e) {
+              e.preventDefault();
+              document
+                .querySelectorAll(".menu-item.has-submenu")
+                .forEach(function (o) {
+                  if (o !== item) o.classList.remove("open");
+                });
+              item.classList.toggle("open");
+            });
+        });
+
+      /* ══════════ LOADER ══════════ */
+      window.addEventListener("load", function () {
+        fetch("../api/stats.php")
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (d) {
+            if (d.success && d.currentUser) {
+              var u = d.currentUser;
+              var letter = (u.name || "م").charAt(0);
+              var el = document.getElementById("managerName"),
+                rl = document.getElementById("managerRole"),
+                av = document.getElementById("managerAvatarLetter"),
+                pb = document.getElementById("profileBtnLetter");
+              if (el) el.textContent = u.name || "";
+              if (rl) rl.textContent = u.role_label || u.role || "";
+              if (av) av.textContent = letter;
+              if (pb) pb.textContent = letter;
+              var info = document.getElementById("adminInfo");
+              if (info)
+                info.innerHTML =
+                  '<span class="live-dot"></span>' +
+                  (u.role_label || "") +
+                  ": " +
+                  (u.name || "");
             }
+          })
+          .catch(function () {})
+          .finally(function () {
+            var loader = document.getElementById("pageLoader");
+            if (loader) {
+              loader.classList.add("hide");
+              setTimeout(function () {
+                loader.remove();
+              }, 550);
+            }
+          });
+      });
+
+      /* ══════════ CHART CONFIG ══════════ */
+      var chartDefaults = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: "rgba(180,200,255,0.7)",
+              font: { family: "Vazirmatn", size: 12 },
+              padding: 12,
+            },
+          },
+          tooltip: {
+            backgroundColor: "rgba(11,17,32,0.95)",
+            titleColor: "#fff",
+            bodyColor: "rgba(180,200,255,0.8)",
+            borderColor: "rgba(74,144,217,0.4)",
+            borderWidth: 1,
+            padding: 10,
+          },
+        },
+        scales: {
+          y: {
+            ticks: {
+              color: "rgba(180,200,255,0.5)",
+              font: { family: "Vazirmatn" },
+            },
+            grid: { color: "rgba(255,255,255,0.05)" },
+          },
+          x: {
+            ticks: {
+              color: "rgba(180,200,255,0.5)",
+              font: { family: "Vazirmatn" },
+            },
+            grid: { color: "rgba(255,255,255,0.05)" },
+          },
+        },
+      };
+
+      var charts = {};
+
+      function waitForChart(cb, n) {
+        n = n === undefined ? 100 : n;
+        if (window.Chart) cb();
+        else if (n > 0)
+          setTimeout(function () {
+            waitForChart(cb, n - 1);
+          }, 50);
+      }
+
+      var allData = {
+        students: [
+          { name: "علی احمدی", grade: "12", class: "12-1", average: 19.85 },
+          { name: "محمد رضایی", grade: "11", class: "11-1", average: 19.72 },
+          { name: "حسین کریمی", grade: "12", class: "12-2", average: 19.65 },
+          { name: "رضا محمدی", grade: "10", class: "10-1", average: 19.5 },
+          { name: "امیر حسینی", grade: "11", class: "11-2", average: 19.45 },
+          { name: "مهدی جعفری", grade: "10", class: "10-2", average: 19.3 },
+          { name: "سعید نوری", grade: "12", class: "12-1", average: 19.15 },
+          { name: "حمید صادقی", grade: "11", class: "11-1", average: 19.0 },
+        ],
+        classes: [
+          {
+            name: "دهم-۱",
+            grade: "10",
+            students: 25,
+            average: 18.5,
+            status: "active",
+          },
+          {
+            name: "دهم-۲",
+            grade: "10",
+            students: 28,
+            average: 18.25,
+            status: "active",
+          },
+          {
+            name: "یازدهم-۱",
+            grade: "11",
+            students: 30,
+            average: 17.9,
+            status: "active",
+          },
+          {
+            name: "یازدهم-۲",
+            grade: "11",
+            students: 27,
+            average: 18.1,
+            status: "active",
+          },
+          {
+            name: "دوازدهم-۱",
+            grade: "12",
+            students: 26,
+            average: 18.75,
+            status: "active",
+          },
+          {
+            name: "دوازدهم-۲",
+            grade: "12",
+            students: 24,
+            average: 18.6,
+            status: "active",
+          },
+        ],
+        enrollment: [
+          { month: "مهر", count: 45 },
+          { month: "آبان", count: 58 },
+          { month: "آذر", count: 72 },
+          { month: "دی", count: 68 },
+          { month: "بهمن", count: 55 },
+          { month: "اسفند", count: 44 },
+        ],
+        attendance: [
+          { day: "شنبه", present: 320, absent: 22 },
+          { day: "یکشنبه", present: 315, absent: 27 },
+          { day: "دوشنبه", present: 325, absent: 17 },
+          { day: "سه‌شنبه", present: 318, absent: 24 },
+          { day: "چهارشنبه", present: 322, absent: 20 },
+        ],
+      };
+
+      function initCharts() {
+        /* Enrollment — line */
+        var ctx1 = document.getElementById("enrollmentChart").getContext("2d");
+        charts.enrollment = new Chart(ctx1, {
+          type: "line",
+          data: {
+            labels: allData.enrollment.map(function (d) {
+              return d.month;
+            }),
+            datasets: [
+              {
+                label: "تعداد ثبت‌نام",
+                data: allData.enrollment.map(function (d) {
+                  return d.count;
+                }),
+                borderColor: "#4a90d9",
+                backgroundColor: "rgba(74,144,217,0.12)",
+                borderWidth: 3,
+                pointRadius: 5,
+                pointBackgroundColor: "#4a90d9",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: Object.assign({}, chartDefaults),
+        });
+
+        /* Distribution — doughnut */
+        var ctx2 = document
+          .getElementById("distributionChart")
+          .getContext("2d");
+        var gradeCount = {
+          10: allData.classes
+            .filter(function (c) {
+              return c.grade === "10";
+            })
+            .reduce(function (s, c) {
+              return s + c.students;
+            }, 0),
+          11: allData.classes
+            .filter(function (c) {
+              return c.grade === "11";
+            })
+            .reduce(function (s, c) {
+              return s + c.students;
+            }, 0),
+          12: allData.classes
+            .filter(function (c) {
+              return c.grade === "12";
+            })
+            .reduce(function (s, c) {
+              return s + c.students;
+            }, 0),
+        };
+        charts.distribution = new Chart(ctx2, {
+          type: "doughnut",
+          data: {
+            labels: ["دهم", "یازدهم", "دوازدهم"],
+            datasets: [
+              {
+                data: [gradeCount["10"], gradeCount["11"], gradeCount["12"]],
+                backgroundColor: ["#4a90d9", "#8e5fd4", "#06d6a0"],
+                borderColor: "rgba(255,255,255,0.07)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: "rgba(180,200,255,0.7)",
+                  font: { family: "Vazirmatn", size: 12 },
+                  padding: 14,
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(11,17,32,0.95)",
+                titleColor: "#fff",
+                bodyColor: "rgba(180,200,255,0.8)",
+                borderColor: "rgba(74,144,217,0.4)",
+                borderWidth: 1,
+                padding: 10,
+              },
+            },
+          },
+        });
+
+        /* Attendance — grouped bar */
+        var ctx3 = document.getElementById("attendanceChart").getContext("2d");
+        charts.attendance = new Chart(ctx3, {
+          type: "bar",
+          data: {
+            labels: allData.attendance.map(function (d) {
+              return d.day;
+            }),
+            datasets: [
+              {
+                label: "حاضر",
+                data: allData.attendance.map(function (d) {
+                  return d.present;
+                }),
+                backgroundColor: "rgba(46,204,113,0.75)",
+                borderRadius: 6,
+              },
+              {
+                label: "غایب",
+                data: allData.attendance.map(function (d) {
+                  return d.absent;
+                }),
+                backgroundColor: "rgba(231,76,60,0.75)",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: Object.assign({}, chartDefaults, {
+            plugins: Object.assign({}, chartDefaults.plugins, {
+              legend: {
+                labels: {
+                  color: "rgba(180,200,255,0.7)",
+                  font: { family: "Vazirmatn", size: 12 },
+                  padding: 12,
+                },
+              },
+            }),
+          }),
+        });
+
+        /* Grades — bar */
+        var ctx4 = document.getElementById("gradesChart").getContext("2d");
+        charts.grades = new Chart(ctx4, {
+          type: "bar",
+          data: {
+            labels: allData.classes.map(function (c) {
+              return c.name;
+            }),
+            datasets: [
+              {
+                label: "معدل",
+                data: allData.classes.map(function (c) {
+                  return c.average;
+                }),
+                backgroundColor: "rgba(142,95,212,0.7)",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: Object.assign({}, chartDefaults, {
+            scales: {
+              y: Object.assign({}, chartDefaults.scales.y, {
+                min: 17,
+                max: 20,
+              }),
+              x: chartDefaults.scales.x,
+            },
+          }),
+        });
+      }
+
+      waitForChart(initCharts);
+
+      /* ══════════ FILTER ══════════ */
+      function applyFilters() {
+        var grade = document.getElementById("gradeFilter").value;
+        var cls = document.getElementById("classFilter").value;
+        var filtered = allData.students.filter(function (s) {
+          return (
+            (grade === "all" || s.grade === grade) &&
+            (cls === "all" || s.class === cls)
+          );
+        });
+        var filteredCls = allData.classes.filter(function (c) {
+          return (
+            (grade === "all" || c.grade === grade) &&
+            (cls === "all" || c.name.replace("-", "‑") === cls)
+          );
+        });
+        updateStudentsTable(filtered);
+        updateClassesTable(filteredCls);
+        showToast("فیلترها با موفقیت اعمال شدند");
+      }
+
+      function resetFilters() {
+        document.getElementById("timeRange").value = "term";
+        document.getElementById("reportType").value = "all";
+        document.getElementById("gradeFilter").value = "all";
+        document.getElementById("classFilter").value = "all";
+        updateStudentsTable(allData.students);
+        updateClassesTable(allData.classes);
+        showToast("فیلترها بازنشانی شدند");
+      }
+
+      var faDigit = function (n) {
+        return String(n).replace(/\d/g, function (d) {
+          return "۰۱۲۳۴۵۶۷۸۹"[d];
+        });
+      };
+
+      function updateStudentsTable(students) {
+        var tbody = document.querySelector("#topStudentsTable tbody");
+        tbody.innerHTML = "";
+        students.slice(0, 5).forEach(function (s, i) {
+          var rank =
+            i === 0
+              ? '<div class="rank-badge rank-1">۱</div>'
+              : i === 1
+                ? '<div class="rank-badge rank-2">۲</div>'
+                : i === 2
+                  ? '<div class="rank-badge rank-3">۳</div>'
+                  : faDigit(i + 1);
+          var grade =
+            s.grade === "10" ? "دهم" : s.grade === "11" ? "یازدهم" : "دوازدهم";
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            rank +
+            "</td><td>" +
+            s.name +
+            "</td><td>" +
+            grade +
+            "</td><td>" +
+            s.average +
+            "</td>";
+          tbody.appendChild(tr);
+        });
+      }
+
+      function updateClassesTable(classes) {
+        var tbody = document.querySelector("#classesTable tbody");
+        tbody.innerHTML = "";
+        classes.forEach(function (c) {
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            c.name +
+            "</td><td>" +
+            c.students +
+            "</td><td>" +
+            c.average +
+            '</td><td><span class="status-active"><i class="fas fa-circle" style="font-size:7px"></i> فعال</span></td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      /* ══════════ EXPORT ══════════ */
+      function exportChart(name) {
+        showToast("خروجی نمودار در حال آماده‌سازی است...");
+      }
+
+      function exportReport(fmt) {
+        if (fmt === "excel") {
+          showToast("گزارش Excel در حال دانلود...");
+          return;
         }
+        document.getElementById("exportModal").classList.add("active");
+        setTimeout(function () {
+          closeExportModal();
+          showToast("گزارش PDF با موفقیت دانلود شد!");
+        }, 2000);
+      }
 
-        function initCharts() {
-            const enrollmentCtx = document.getElementById('enrollmentChart')?.getContext('2d');
-            if (enrollmentCtx) {
-                new Chart(enrollmentCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
-                        datasets: [{
-                            label: 'ثبت نام',
-                            data: [320, 328, 335, 340, 342, 345],
-                            borderColor: '#4CAF50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
-                        },
-                        scales: {
-                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                        }
-                    }
-                });
-            }
+      function closeExportModal() {
+        document.getElementById("exportModal").classList.remove("active");
+      }
 
-            const distributionCtx = document.getElementById('distributionChart')?.getContext('2d');
-            if (distributionCtx) {
-                new Chart(distributionCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['دهم', 'یازدهم', 'دوازدهم'],
-                        datasets: [{
-                            data: [120, 115, 107],
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
-                        }
-                    }
-                });
-            }
-
-            const attendanceCtx = document.getElementById('attendanceChart')?.getContext('2d');
-            if (attendanceCtx) {
-                new Chart(attendanceCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه'],
-                        datasets: [{
-                            label: 'حضور (%)',
-                            data: [92, 95, 88, 94, 90],
-                            backgroundColor: '#2196F3'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
-                        },
-                        scales: {
-                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                        }
-                    }
-                });
-            }
-
-            const gradesCtx = document.getElementById('gradesChart')?.getContext('2d');
-            if (gradesCtx) {
-                new Chart(gradesCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['دهم-1', 'دهم-2', 'یازدهم-1', 'یازدهم-2', 'دوازدهم-1'],
-                        datasets: [{
-                            label: 'معدل',
-                            data: [18.5, 18.25, 17.9, 18.1, 18.75],
-                            backgroundColor: '#9C27B0'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: 'white', font: { family: 'Vazirmatn' } } }
-                        },
-                        scales: {
-                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                        }
-                    }
-                });
-            }
+      function shareReport() {
+        var url =
+          "https://bourbour.ir/report/" +
+          Math.random().toString(36).substr(2, 9);
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function () {
+            showToast("لینک اشتراک‌گذاری کپی شد!");
+          });
         }
+      }
 
-        waitForChart(initCharts);
+      function viewMore(sec) {
+        showToast("در حال بارگذاری...");
+      }
+
+      /* ══════════ TOAST ══════════ */
+      var _toastTimer = null;
+      function showToast(msg) {
+        var toast = document.getElementById("successToast");
+        document.getElementById("toastMessage").textContent = msg;
+        toast.classList.remove("hide");
+        toast.classList.add("show");
+        clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(function () {
+          closeToast();
+        }, 3500);
+      }
+      function closeToast() {
+        var toast = document.getElementById("successToast");
+        toast.classList.remove("show");
+        toast.classList.add("hide");
+      }
+
+      /* close export modal on backdrop */
+      document
+        .getElementById("exportModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeExportModal();
+        });
     </script>
-</body>
+  </body>
 </html>

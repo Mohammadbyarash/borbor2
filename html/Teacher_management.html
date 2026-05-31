@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>بوربور — مدیریت معاونین</title>
+    <title>بوربور - مدیریت معلمان</title>
     <link rel="icon" href="../image/iconB.png" />
-    <link rel="stylesheet" href="../css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    
     <link rel="stylesheet" href="../style/scrollbar.css" />
-    <script src="../javaScript/auth.js"></script>
-    <script src="../javaScript/permission-guard.js"></script>
-    <script src="../javaScript/sidebar-permissions.js"></script>
+
     <style>
+      /* ========================= FONTS ========================= */
       @font-face {
         font-family: "Vazirmatn";
         src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
@@ -36,6 +39,7 @@
         font-display: swap;
       }
 
+      /* ========================= ROOT ========================= */
       :root {
         --bg-main: #0f1629;
         --bg-card: #162040;
@@ -57,6 +61,8 @@
         --radius: 18px;
         --radius-sm: 11px;
       }
+
+      /* ========================= GLOBAL ========================= */
       *,
       *::before,
       *::after {
@@ -106,101 +112,40 @@
         z-index: 0;
       }
 
-      /* PAGE LOADER */
-      #pageLoader {
+      /* ========================= SIDEBAR ========================= */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
         position: fixed;
-        inset: 0;
-        background: var(--bg-main);
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 500;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        gap: 18px;
-        transition: opacity 0.5s ease;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
       }
-      #pageLoader.hide {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .loader-spinner {
-        width: 58px;
-        height: 58px;
-        border: 5px solid rgba(255, 255, 255, 0.1);
-        border-top-color: var(--accent);
-        border-radius: 50%;
-        animation: spin 0.85s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      .loader-text {
-        color: var(--text);
-        font-size: 15px;
-      }
-      .loader-sub {
-        color: var(--text-muted);
-        font-size: 12px;
-        margin-top: -8px;
-      }
-
-      /* SIDEBAR */
-      .sidebar {
-  width: var(--sidebar-w);
-  background: var(--bg-sidebar);
-  padding: 26px 14px;
-  border-left: 1px solid var(--border);
-  position: fixed;
-  right: 0;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;   /* ← تغییر کرد */
-  overflow-x: hidden; /* ← اضافه شد */
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(110%);
-  transition: transform .38s cubic-bezier(.4,0,.2,1);
-  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
-}
-
       .sidebar.active {
-        transform: translateX(0) !important;
+        transform: translateX(0);
       }
+
       .sidebar-overlay {
         display: none;
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.65);
-        z-index: 499;
+        z-index: 199;
       }
       .sidebar-overlay.active {
         display: block;
       }
-      .logo {
-        text-align: center;
-        margin-bottom: 4px;
-        font-size: 28px;
-        font-weight: 900;
-        letter-spacing: -1px;
-        color: #fff;
-        font-family: "Shabnam", sans-serif;
-      }
-      .logo span {
-        color: var(--accent);
-      }
-      .logo-sub {
-        text-align: center;
-        font-size: 10px;
-        color: var(--text-muted);
-        margin-bottom: 18px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
 
-      /* sidebar close btn */
       .sidebar-close-btn {
         position: absolute;
         top: 14px;
@@ -224,20 +169,44 @@
         transform: rotate(90deg);
       }
 
-.manager-block {
-  background: linear-gradient(135deg,rgba(74,144,217,0.14),rgba(142,95,212,0.10));
-  border: 1px solid rgba(74,144,217,0.2);
-  border-radius: var(--radius-sm);
-  padding: 15px 13px;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0; /* ← اضافه شد */
-}
+      .logo {
+        text-align: center;
+        margin-bottom: 4px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #fff;
+        font-family: "Shabnam", sans-serif;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
 
+      .manager-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
       .manager-block::before {
         content: "";
         position: absolute;
@@ -269,6 +238,7 @@
         font-size: 13px;
         font-weight: 700;
         margin-bottom: 2px;
+        color: #fff;
       }
       .manager-role {
         font-size: 10px;
@@ -285,6 +255,7 @@
         border-radius: 20px;
         border: 1px solid rgba(74, 144, 217, 0.22);
       }
+
       .nav-section-label {
         font-size: 9px;
         font-weight: 700;
@@ -294,6 +265,7 @@
         padding: 0 14px;
         margin: 14px 0 8px;
       }
+
       .menu-item {
         margin-bottom: 2px;
       }
@@ -325,7 +297,7 @@
         background: rgba(255, 255, 255, 0.05);
         color: #fff;
       }
-      .menu-item:not(.has-submenu).active > a {
+      .menu-item.active > a {
         background: linear-gradient(
           90deg,
           rgba(74, 144, 217, 0.18),
@@ -335,7 +307,7 @@
         font-weight: 700;
         border: 1px solid rgba(74, 144, 217, 0.22);
       }
-      .menu-item:not(.has-submenu).active > a::before {
+      .menu-item.active > a::before {
         content: "";
         position: absolute;
         right: 0;
@@ -346,6 +318,7 @@
         background: var(--accent);
         border-radius: 3px 0 0 3px;
       }
+
       .menu-item.has-submenu {
         position: relative;
       }
@@ -361,6 +334,7 @@
         background: rgba(255, 255, 255, 0.05);
         color: #fff;
       }
+
       .submenu {
         max-height: 0;
         overflow: hidden;
@@ -372,6 +346,7 @@
       .menu-item.has-submenu.open .submenu {
         max-height: 500px;
       }
+
       .submenu-item {
         color: rgba(180, 200, 255, 0.6);
         text-decoration: none;
@@ -400,6 +375,7 @@
         color: #fff;
         font-weight: 600;
       }
+
       .nav-divider {
         height: 1px;
         background: var(--border);
@@ -415,7 +391,7 @@
         line-height: 1.7;
       }
 
-      /* HAMBURGER */
+      /* ========================= HAMBURGER ========================= */
       .menu-toggle {
         position: fixed;
         top: 16px;
@@ -440,35 +416,36 @@
         color: var(--text);
       }
 
-      /* MAIN */
+      /* ========================= MAIN ========================= */
+      .container {
+        display: block;
+      }
       .main-content {
+        margin-right: 0 !important;
         min-height: 100vh;
-        padding: 72px 24px 36px;
+        padding: 72px 24px 36px !important;
         position: relative;
         z-index: 1;
       }
 
-      /* TOP BAR */
-      .top-bar {
+      /* TOP HEADER */
+      .top-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 26px;
-        gap: 14px;
-        animation: fadeUp 0.4s ease both;
       }
-      .page-title-wrap h1 {
+      .page-title {
         font-size: 20px;
         font-weight: 800;
-        line-height: 1.3;
+        color: #fff;
       }
-      .page-title-wrap h1 span {
+      .page-title span {
         color: var(--accent);
       }
       .admin-info {
         font-size: 11.5px;
         color: var(--text-muted);
-        margin-top: 5px;
         display: flex;
         align-items: center;
         gap: 7px;
@@ -490,139 +467,17 @@
           box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
         }
       }
-      .profile-btn {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 50%;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 800;
-        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
-        color: #fff;
-      }
 
-      /* STATS */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 13px;
-        margin-bottom: 22px;
-      }
-      .stat-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 20px 16px 18px;
-        position: relative;
-        overflow: hidden;
-        transition:
-          transform 0.28s,
-          box-shadow 0.28s,
-          border-color 0.28s;
-        animation: fadeUp 0.45s ease both;
-      }
-      .stat-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 3px;
-        border-radius: var(--radius) var(--radius) 0 0;
-      }
-      .stat-card:nth-child(1)::before {
-        background: linear-gradient(90deg, #4a90d9, #8e5fd4);
-      }
-      .stat-card:nth-child(2)::before {
-        background: linear-gradient(90deg, #06d6a0, #2ecc71);
-      }
-      .stat-card:nth-child(3)::before {
-        background: linear-gradient(90deg, #f39c12, #e67e22);
-      }
-      .stat-card:nth-child(4)::before {
-        background: linear-gradient(90deg, #8e5fd4, #c85fe8);
-      }
-      .stat-card:nth-child(1) {
-        animation-delay: 0.04s;
-      }
-      .stat-card:nth-child(2) {
-        animation-delay: 0.09s;
-      }
-      .stat-card:nth-child(3) {
-        animation-delay: 0.14s;
-      }
-      .stat-card:nth-child(4) {
-        animation-delay: 0.19s;
-      }
-      .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        border-color: rgba(74, 144, 217, 0.18);
-      }
-      .stat-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px;
-        margin-bottom: 14px;
-      }
-      .stat-card:nth-child(1) .stat-icon {
-        background: rgba(74, 144, 217, 0.16);
-        color: var(--accent);
-      }
-      .stat-card:nth-child(2) .stat-icon {
-        background: rgba(6, 214, 160, 0.14);
-        color: var(--accent3);
-      }
-      .stat-card:nth-child(3) .stat-icon {
-        background: rgba(243, 156, 18, 0.15);
-        color: var(--accent4);
-      }
-      .stat-card:nth-child(4) .stat-icon {
-        background: rgba(142, 95, 212, 0.15);
-        color: var(--accent2);
-      }
-      .stat-label {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-      .stat-value {
-        font-size: 32px;
-        font-weight: 900;
-        line-height: 1;
-        font-family: "Shabnam", sans-serif;
-      }
-
-      /* SEARCH & FILTER */
-      .search-filter-bar {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 18px 20px;
+      /* ========================= SEARCH & FILTER ========================= */
+      .search-section {
         margin-bottom: 16px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-        animation: fadeUp 0.45s 0.22s ease both;
       }
       .search-input {
-        flex: 1;
-        min-width: 180px;
+        width: 100%;
         background: var(--bg-card2);
         border: 1px solid var(--border);
         color: var(--text);
-        padding: 10px 14px;
+        padding: 12px 16px;
         border-radius: var(--radius-sm);
         font-size: 13px;
         font-family: "Vazirmatn", sans-serif;
@@ -636,19 +491,41 @@
         border-color: var(--border-hover);
         box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
       }
+
+      .filter-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 14px;
+        flex-wrap: wrap;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+      }
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .filter-group label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 500;
+      }
       .filter-select {
         background: var(--bg-card2);
         border: 1px solid var(--border);
         color: var(--text);
-        padding: 10px 14px;
+        padding: 9px 13px;
         border-radius: var(--radius-sm);
-        font-size: 13px;
+        font-size: 12.5px;
         font-family: "Vazirmatn", sans-serif;
         outline: none;
         cursor: pointer;
         transition: all 0.2s;
-        -webkit-appearance: none;
-        appearance: none;
       }
       .filter-select:focus {
         border-color: var(--border-hover);
@@ -657,13 +534,13 @@
         background: #1a2650;
         color: var(--text);
       }
-      .action-btns {
+
+      .action-buttons {
         display: flex;
         gap: 9px;
         flex-wrap: wrap;
       }
-      .btn-excel,
-      .btn-add {
+      .action-btn {
         padding: 10px 16px;
         border: none;
         border-radius: var(--radius-sm);
@@ -694,17 +571,12 @@
         color: #fff;
       }
 
-      /* TABLE */
-      .table-section {
+      /* ========================= TABLE ========================= */
+      .table-container {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 22px;
-        animation: fadeUp 0.45s 0.28s ease both;
-      }
-      .table-scroll {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
       }
       .data-grid {
         width: 100%;
@@ -723,7 +595,6 @@
         font-size: 11.5px;
         font-weight: 600;
         text-align: center;
-        letter-spacing: 0.3px;
       }
       .grid-body {
         display: flex;
@@ -756,13 +627,14 @@
         gap: 6px;
         flex-wrap: wrap;
       }
-      .assistant-info {
+
+      .teacher-info {
         display: flex;
         align-items: center;
         gap: 10px;
         justify-content: flex-start;
       }
-      .assistant-avatar {
+      .teacher-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -773,23 +645,23 @@
         color: #fff;
         font-weight: 700;
         font-size: 16px;
-        font-family: "Shabnam", sans-serif;
         border: 2px solid rgba(255, 255, 255, 0.15);
         flex-shrink: 0;
         overflow: hidden;
       }
-      .assistant-avatar img {
+      .teacher-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 50%;
       }
-      .assistant-name {
+      .teacher-name {
         color: var(--text);
         font-size: 13px;
         font-weight: 600;
         text-align: right;
       }
+
       .status-badge {
         padding: 4px 12px;
         border-radius: 20px;
@@ -809,13 +681,7 @@
         color: var(--absent);
         border: 1px solid rgba(231, 76, 60, 0.2);
       }
-      .status-leave {
-        background: rgba(243, 156, 18, 0.14);
-        color: var(--late);
-        border: 1px solid rgba(243, 156, 18, 0.2);
-      }
 
-      /* action buttons in table rows — این کلاس توسط JS استفاده می‌شه */
       .action-btns-vertical {
         display: flex;
         flex-direction: column;
@@ -858,7 +724,7 @@
         color: #fff;
       }
 
-      /* PAGINATION */
+      /* ========================= PAGINATION ========================= */
       .pagination {
         display: flex;
         justify-content: center;
@@ -887,7 +753,7 @@
         cursor: not-allowed;
       }
 
-      /* MODAL BASE */
+      /* ========================= MODAL BASE ========================= */
       .modal {
         display: none;
         position: fixed;
@@ -905,14 +771,17 @@
       .modal.active {
         display: flex;
       }
-      .modal-card {
+
+      /* ========================= INFO MODAL ========================= */
+      .specs-modal-content {
         background: var(--bg-card);
         border: 1px solid rgba(74, 144, 217, 0.18);
         border-radius: var(--radius);
         padding: 30px;
-        position: relative;
         width: 100%;
+        max-width: 520px;
         margin: auto;
+        position: relative;
         animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       }
       @keyframes modalIn {
@@ -925,7 +794,8 @@
           transform: translateY(0);
         }
       }
-      .modal-title {
+
+      .specs-modal-title {
         color: #fff;
         font-size: 18px;
         font-weight: 700;
@@ -959,15 +829,65 @@
         transform: rotate(90deg);
       }
 
-      /* INFO MODAL */
-      .info-modal-card {
-        max-width: 520px;
-      }
-      .info-avatar-wrap {
+      .specs-info {
         display: flex;
-        justify-content: center;
-        margin-bottom: 18px;
+        flex-direction: column;
+        gap: 0;
       }
+      .specs-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        margin-bottom: 6px;
+        background: var(--bg-card2);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        transition: border-color 0.2s;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .specs-row:hover {
+        border-color: var(--border-hover);
+      }
+      .specs-label {
+        color: var(--text-muted);
+        font-size: 12.5px;
+        font-weight: 500;
+        flex-shrink: 0;
+      }
+      .specs-value {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: left;
+      }
+
+      .edit-input {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+        max-width: 260px;
+        width: 100%;
+      }
+      .edit-input:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+      }
+      .edit-input.error {
+        border-color: var(--accent5) !important;
+        box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15) !important;
+      }
+      .edit-input.success {
+        border-color: rgba(46, 204, 113, 0.45) !important;
+      }
+
       .info-avatar-large {
         width: 90px;
         height: 90px;
@@ -990,69 +910,7 @@
         object-fit: cover;
         border-radius: 50%;
       }
-      .specs-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        margin-bottom: 6px;
-        background: var(--bg-card2);
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border);
-        transition: border-color 0.2s;
-        gap: 10px;
-      }
-      .specs-row:hover {
-        border-color: var(--border-hover);
-      }
-      .specs-label {
-        color: var(--text-muted);
-        font-size: 12.5px;
-        font-weight: 500;
-        flex-shrink: 0;
-      }
-      .specs-value {
-        color: var(--text);
-        font-size: 13px;
-        font-weight: 600;
-        text-align: left;
-      }
-      .edit-input {
-        background: var(--bg-main);
-        border: 1px solid var(--border);
-        color: var(--text);
-        padding: 9px 12px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-family: "Vazirmatn", sans-serif;
-        outline: none;
-        transition: all 0.2s;
-        max-width: 260px;
-        width: 100%;
-      }
-      .edit-input:focus {
-        border-color: var(--border-hover);
-        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
-      }
-      .date-input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        max-width: 260px;
-      }
-      .date-icon {
-        position: absolute;
-        left: 10px;
-        color: var(--accent);
-        font-size: 13px;
-        pointer-events: none;
-        z-index: 2;
-      }
-      .date-input-wrapper .edit-input,
-      .date-input-wrapper .form-input {
-        padding-left: 32px !important;
-        cursor: pointer;
-      }
+
       .modal-btns-row {
         display: flex;
         gap: 9px;
@@ -1113,9 +971,61 @@
         background: rgba(231, 76, 60, 0.22);
       }
 
-      /* ADD MODAL */
-      .add-modal-card {
+      /* photo upload */
+      .photo-upload-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 4px;
+      }
+      .photo-upload-btn {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        padding: 8px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-family: "Vazirmatn", sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .photo-upload-btn:hover {
+        background: rgba(74, 144, 217, 0.26);
+      }
+      .photo-hint {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      /* ========================= ADD MODAL ========================= */
+      .add-teacher-content {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+        border-radius: var(--radius);
+        padding: 30px;
+        width: 100%;
         max-width: 780px;
+        margin: auto;
+        position: relative;
+        animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .modal-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
       }
       .form-section {
         background: var(--bg-card2);
@@ -1185,46 +1095,150 @@
         color: var(--text);
       }
 
-      /* PHOTO */
-      .photo-upload-area {
+      .modal-buttons {
+        display: flex;
+        gap: 9px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .modal-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 11px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .modal-btn-confirm {
+        background: rgba(46, 204, 113, 0.14);
+        color: var(--present);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+      }
+      .modal-btn-confirm:hover:not(:disabled) {
+        background: rgba(46, 204, 113, 0.26);
+      }
+      .modal-btn-confirm:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .modal-btn-cancel {
+        background: rgba(231, 76, 60, 0.12);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.16);
+      }
+      .modal-btn-cancel:hover {
+        background: rgba(231, 76, 60, 0.22);
+      }
+
+      /* ========================= TAGS ========================= */
+      .tags-input-container {
         display: flex;
         flex-direction: column;
-        align-items: center;
         gap: 10px;
-        padding: 16px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 4px;
       }
-      .photo-upload-btn {
+      .tags-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 42px;
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 8px;
+      }
+      .tag-item {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(74, 144, 217, 0.3);
+      }
+      .tag-remove {
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        color: var(--text-muted);
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .tag-remove:hover {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .tag-input-wrapper {
+        display: flex;
+        gap: 8px;
+      }
+      .tag-input {
+        flex: 1;
+      }
+      .tag-add-btn {
         background: rgba(74, 144, 217, 0.14);
         color: var(--accent);
         border: 1px solid rgba(74, 144, 217, 0.2);
-        padding: 8px 18px;
+        padding: 0 16px;
         border-radius: var(--radius-sm);
-        font-size: 12px;
-        font-family: "Vazirmatn", sans-serif;
-        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
+        font-size: 14px;
       }
-      .photo-upload-btn:hover {
+      .tag-add-btn:hover {
         background: rgba(74, 144, 217, 0.26);
       }
-      .photo-hint {
-        font-size: 10.5px;
+      .tag-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .suggestion-btn {
+        background: rgba(74, 144, 217, 0.08);
         color: var(--text-muted);
-        text-align: center;
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        padding: 4px 10px;
+        border-radius: 14px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .suggestion-btn:hover {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
       }
 
-      /* CONFIRM MODAL */
-      .confirm-modal-card {
+      /* ========================= CONFIRM MODAL ========================= */
+      .confirm-modal-content {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+        border-radius: var(--radius);
+        padding: 36px;
+        width: 100%;
         max-width: 460px;
+        margin: auto;
         text-align: center;
+        animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .confirm-icon-wrap {
+      .confirm-icon {
         width: 72px;
         height: 72px;
         border-radius: 50%;
@@ -1233,26 +1247,16 @@
         justify-content: center;
         margin: 0 auto 18px;
         font-size: 28px;
-        animation: pulseAnim 2s ease-in-out infinite;
       }
-      .confirm-icon-wrap.delete {
-        background: rgba(231, 76, 60, 0.14);
-        color: var(--absent);
-        border: 2px solid rgba(231, 76, 60, 0.3);
-      }
-      .confirm-icon-wrap.warning {
+      .confirm-icon.warning {
         background: rgba(243, 156, 18, 0.14);
         color: var(--accent4);
         border: 2px solid rgba(243, 156, 18, 0.3);
       }
-      @keyframes pulseAnim {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.35);
-        }
-        50% {
-          box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
-        }
+      .confirm-icon.delete {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 2px solid rgba(231, 76, 60, 0.3);
       }
       .confirm-title {
         color: #fff;
@@ -1265,7 +1269,7 @@
         color: var(--text-muted);
         font-size: 13.5px;
         line-height: 1.7;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
       .confirm-message strong {
         color: var(--accent4);
@@ -1284,12 +1288,12 @@
         font-size: 12.5px;
         text-align: right;
       }
-      .confirm-btns {
+      .confirm-buttons {
         display: flex;
         gap: 10px;
         justify-content: center;
       }
-      .confirm-btns button {
+      .confirm-btn {
         flex: 1;
         padding: 12px;
         border: none;
@@ -1323,7 +1327,55 @@
         color: var(--text);
       }
 
-      /* TOAST */
+      /* ========================= OPTIONS MODAL ========================= */
+      .options-modal-content {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.18);
+        border-radius: var(--radius);
+        padding: 30px;
+        width: 100%;
+        max-width: 420px;
+        margin: auto;
+        animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .options-modal-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .option-btn {
+        background: var(--bg-card2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .option-btn:hover {
+        background: rgba(74, 144, 217, 0.12);
+        border-color: var(--border-hover);
+        color: #fff;
+      }
+
+      /* ========================= TOAST ========================= */
       .toast-notification {
         position: fixed;
         top: -180px;
@@ -1367,8 +1419,6 @@
         justify-content: center;
         font-size: 18px;
         flex-shrink: 0;
-      }
-      .toast-notification:not(.error):not(.warning):not(.info) .toast-icon {
         background: rgba(46, 204, 113, 0.14);
         color: var(--present);
       }
@@ -1411,7 +1461,59 @@
         background: rgba(255, 255, 255, 0.08);
       }
 
-      /* JALALI PICKER */
+      /* ========================= VALIDATION ========================= */
+      .t-field-err {
+        display: block;
+        color: #e74c3c;
+        font-size: 12px;
+        font-family: "Vazirmatn", sans-serif;
+        font-weight: 500;
+        margin-top: 5px;
+        padding: 4px 10px;
+        background: rgba(231, 76, 60, 0.08);
+        border-right: 3px solid #e74c3c;
+        border-radius: 0 4px 4px 0;
+        animation: tErrIn 0.2s ease;
+        line-height: 1.5;
+      }
+      @keyframes tErrIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes tShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-5px);
+        }
+        40% {
+          transform: translateX(5px);
+        }
+        60% {
+          transform: translateX(-4px);
+        }
+        80% {
+          transform: translateX(4px);
+        }
+      }
+      .t-shaking {
+        animation: tShake 0.4s ease !important;
+        border-color: #e74c3c !important;
+      }
+      #saveTeacherBtn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* ========================= JALALI PICKER ========================= */
       #jdp-custom-overlay {
         display: none;
         position: fixed;
@@ -1430,7 +1532,6 @@
         font-family: "Vazirmatn", Tahoma, sans-serif;
         direction: rtl;
         overflow: hidden;
-        user-select: none;
         padding: 0;
       }
       .jdp-header {
@@ -1601,31 +1702,13 @@
         background: rgba(231, 76, 60, 0.2);
       }
 
-      /* ANIMATIONS */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(18px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* RESPONSIVE — mobile first */
+      /* ========================= RESPONSIVE ========================= */
       @media (max-width: 900px) {
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
         .grid-header {
           display: none;
         }
         .data-grid {
           min-width: unset;
-        }
-        .table-scroll {
-          overflow-x: visible;
         }
         .grid-row {
           grid-template-columns: 1fr;
@@ -1638,7 +1721,6 @@
           background: rgba(255, 255, 255, 0.025);
           border-radius: 8px;
           text-align: right;
-          font-size: 13px;
         }
         .grid-cell::before {
           content: attr(data-label);
@@ -1647,7 +1729,7 @@
           font-size: 11px;
           flex-shrink: 0;
         }
-        .assistant-info {
+        .teacher-info {
           justify-content: flex-start;
           width: 100%;
         }
@@ -1663,16 +1745,9 @@
       }
       @media (max-width: 600px) {
         .main-content {
-          padding: 68px 12px 24px;
+          padding: 68px 12px 24px !important;
         }
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 9px;
-        }
-        .stat-value {
-          font-size: 26px;
-        }
-        .search-filter-bar {
+        .filter-section {
           flex-direction: column;
           align-items: stretch;
         }
@@ -1680,7 +1755,7 @@
         .search-input {
           width: 100%;
         }
-        .action-btns {
+        .action-buttons {
           width: 100%;
         }
         .btn-excel,
@@ -1691,7 +1766,7 @@
         .form-grid {
           grid-template-columns: 1fr;
         }
-        .confirm-btns {
+        .confirm-buttons {
           flex-direction: column;
         }
         .modal-btns-row {
@@ -1704,20 +1779,9 @@
           max-width: unset;
         }
       }
-      @media (max-width: 400px) {
-        .stats-grid {
-          grid-template-columns: 1fr;
-        }
-      }
     </style>
   </head>
   <body>
-    <div id="pageLoader">
-      <div class="loader-spinner"></div>
-      <div class="loader-text">در حال بارگذاری...</div>
-      <div class="loader-sub">در حال دریافت اطلاعات...</div>
-    </div>
-
     <!-- JDP POPUP -->
     <div id="jdp-custom-overlay"></div>
     <div id="jdp-custom-popup">
@@ -1744,17 +1808,17 @@
       </div>
       <div id="jdpMonthView" style="display: none">
         <div class="jdp-year-nav">
-          <button class="jdp-nav-btn" id="jdpYearPrev">‹</button
-          ><span class="jdp-year-range" id="jdpYearLabel"></span
-          ><button class="jdp-nav-btn" id="jdpYearNext">›</button>
+          <button class="jdp-nav-btn" id="jdpYearPrev">‹</button>
+          <span class="jdp-year-range" id="jdpYearLabel"></span>
+          <button class="jdp-nav-btn" id="jdpYearNext">›</button>
         </div>
         <div class="jdp-year-month-grid" id="jdpMonthGrid"></div>
       </div>
       <div id="jdpYearView" style="display: none">
         <div class="jdp-year-nav">
-          <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button
-          ><span class="jdp-year-range" id="jdpYearRangeLabel"></span
-          ><button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
+          <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button>
+          <span class="jdp-year-range" id="jdpYearRangeLabel"></span>
+          <button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
         </div>
         <div class="jdp-year-month-grid" id="jdpYearGrid"></div>
       </div>
@@ -1777,6 +1841,7 @@
       </button>
       <div class="logo">بور<span>بور</span></div>
       <div class="logo-sub">سامانه مدیریت مدرسه</div>
+
       <div class="manager-block">
         <div class="manager-avatar" id="managerAvatarLetter">م</div>
         <div>
@@ -1785,24 +1850,24 @@
           <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
       </div>
+
       <div class="nav-section-label">منوی اصلی</div>
       <div class="menu-item">
         <a href="../html/dashbord.html"
           ><i class="fas fa-chart-line"></i> داشبورد</a
         >
       </div>
+
       <div class="menu-item has-submenu" id="userMgmtMenu">
         <a href="#" class="menu-link"
           ><i class="fas fa-users"></i> مدیریت کاربران
           <i class="fas fa-chevron-down submenu-arrow"></i
         ></a>
         <div class="submenu">
-          <a
-            href="../html/Assistant_management.html"
-            class="submenu-item active"
+          <a href="../html/Assistant_management.html" class="submenu-item"
             ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
           >
-          <a href="../html/Teacher_management.html" class="submenu-item"
+          <a href="../html/Teacher_management.html" class="submenu-item active"
             ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
           >
           <a href="../html/student.html" class="submenu-item"
@@ -1811,6 +1876,7 @@
 
         </div>
       </div>
+
       <div class="menu-item has-submenu">
         <a href="#" class="menu-link"
           ><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
@@ -1831,6 +1897,7 @@
           >
         </div>
       </div>
+
       <div class="nav-divider"></div>
       <div class="nav-section-label">مدیریت</div>
       <div class="menu-item">
@@ -1866,251 +1933,261 @@
       <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
     </div>
 
-    <!-- MAIN -->
-    <div class="main-content">
-      <div class="top-bar">
-        <div class="page-title-wrap">
-          <h1>مدیریت <span>معاونین</span></h1>
-          <div class="admin-info" id="adminInfo">
-            <span class="live-dot"></span>در حال بارگذاری...
+    <!-- MAIN CONTENT -->
+    <div class="container">
+      <div class="main-content">
+        <div class="top-header">
+          <div>
+            <h1 class="page-title">مدیریت <span>معلمان</span></h1>
+            <div class="admin-info" id="adminInfo">
+              <span class="live-dot"></span>در حال بارگذاری...
+            </div>
           </div>
         </div>
-        <div>
-          <div class="profile-btn" id="profileBtnLetter">م</div>
-        </div>
-      </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
-          <div class="stat-label">مجموع معاونین</div>
-          <div class="stat-value" id="totalAssistants">—</div>
+        <div class="search-section">
+          <input
+            class="search-input"
+            type="text"
+            id="teacherSearch"
+            placeholder="جستجوی معلم (نام، کد ملی، موبایل، ...)"
+          />
         </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-          <div class="stat-label">حاضر امروز</div>
-          <div class="stat-value" id="presentAssistants">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-calendar-times"></i></div>
-          <div class="stat-label">در مرخصی</div>
-          <div class="stat-value" id="onLeaveAssistants">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-tasks"></i></div>
-          <div class="stat-label">وظایف فعال</div>
-          <div class="stat-value" id="activeTasks">—</div>
-        </div>
-      </div>
 
-      <div class="search-filter-bar">
-        <input
-          class="search-input"
-          type="text"
-          id="assistantSearch"
-          placeholder="جستجوی معاون (نام، کد ملی، موبایل، ...)"
-        />
-        <select class="filter-select" id="positionFilter">
-          <option value="">همه سمت‌ها</option>
-          <option value="educational">معاون آموزشی</option>
-          <option value="student_affairs">معاون پرورشی</option>
-          <option value="administrative">معاون اداری/مالی</option>
-        </select>
-        <select class="filter-select" id="statusFilter">
-          <option value="">همه وضعیت‌ها</option>
-          <option value="present">حاضر</option>
-          <option value="absent">غایب</option>
-          <option value="leave">مرخصی</option>
-        </select>
-        <div class="action-btns">
-          <button class="btn-excel" onclick="exportAssistantsExcel()">
-            <i class="fas fa-file-excel"></i> Excel
-          </button>
-          <button class="btn-add" onclick="openAddAssistantModal()">
-            <i class="fas fa-user-plus"></i> افزودن معاون
-          </button>
+        <div class="filter-section">
+          <div class="filter-group">
+            <label>فیلتر:</label>
+            <select class="filter-select" id="gradeFilter">
+              <option value="">همه پایه‌ها</option>
+              <option value="دهم">دهم</option>
+              <option value="یازدهم">یازدهم</option>
+              <option value="دوازدهم">دوازدهم</option>
+            </select>
+            <select class="filter-select" id="workloadFilter">
+              <option value="">همه وضعیت‌ها</option>
+              <option value="normal">نرمال</option>
+              <option value="low">کم‌کار</option>
+              <option value="high">پرکار</option>
+            </select>
+          </div>
+          <div class="action-buttons">
+            <button
+              class="action-btn btn-excel"
+              onclick="exportTeachersExcel()"
+            >
+              <i class="fas fa-file-excel"></i> Excel
+            </button>
+            <button class="action-btn btn-add" onclick="openAddTeacherModal()">
+              <i class="fas fa-user-plus"></i> افزودن معلم
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="table-section">
-        <div class="table-scroll">
+        <div class="table-container">
           <div class="data-grid">
             <div class="grid-header">
-              <div class="grid-cell">معاون</div>
-              <div class="grid-cell">کد ملی</div>
+              <div class="grid-cell">معلم</div>
               <div class="grid-cell">موبایل</div>
+              <div class="grid-cell">کد ملی</div>
               <div class="grid-cell">نام کاربری</div>
               <div class="grid-cell">وضعیت</div>
               <div class="grid-cell">عملیات</div>
             </div>
-            <div class="grid-body" id="assistantsTableBody"></div>
+            <div class="grid-body" id="teachersTableBody"></div>
           </div>
-        </div>
-        <div dir="ltr" class="pagination">
-          <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
-            ‹
-          </button>
-          <span id="pageInfo">صفحه ۱ از ۱</span>
-          <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
-            ›
-          </button>
+          <div dir="ltr" class="pagination">
+            <button
+              class="pagination-btn"
+              id="prevBtn"
+              onclick="changePage(-1)"
+            >
+              ‹
+            </button>
+            <span id="pageInfo">صفحه ۱ از ۱</span>
+            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+              ›
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- INFO MODAL -->
-    <div class="modal" id="assistantInfoModal">
-      <div class="modal-card info-modal-card">
-        <button class="close-btn" onclick="closeAssistantInfoModal()">
+    <!-- ═══════════ INFO MODAL ═══════════ -->
+    <div class="modal" id="teacherInfoModal">
+      <div class="specs-modal-content">
+        <button class="close-btn" onclick="closeTeacherInfoModal()">
           <i class="fas fa-times"></i>
         </button>
-        <h2 class="modal-title">اطلاعات معاون</h2>
+        <h2 class="specs-modal-title">اطلاعات معلم</h2>
+
+        <!-- VIEW MODE -->
         <div id="infoViewMode" style="display: flex; flex-direction: column">
-          <div class="info-avatar-wrap">
-            <div id="infoAssistantAvatar">
+          <div
+            style="display: flex; justify-content: center; margin-bottom: 18px"
+          >
+            <div id="infoTeacherAvatar">
               <div class="info-avatar-large">؟</div>
             </div>
           </div>
           <div class="specs-row">
             <span class="specs-label">نام و نام خانوادگی</span
-            ><span class="specs-value" id="infoAssistantName">-</span>
+            ><span class="specs-value" id="infoTeacherName">-</span>
           </div>
           <div class="specs-row">
-            <span class="specs-label">کد ملی</span
-            ><span class="specs-value" id="infoAssistantNationalId">-</span>
+            <span class="specs-label">دروس تدریس</span
+            ><span class="specs-value" id="infoTeacherSubjects">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">پایه‌های تدریس</span
+            ><span class="specs-value" id="infoTeacherGrades">-</span>
           </div>
           <div class="specs-row">
             <span class="specs-label">موبایل</span
-            ><span class="specs-value" id="infoAssistantPhone">-</span>
+            ><span class="specs-value" id="infoTeacherPhone">-</span>
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">کد ملی</span
+            ><span class="specs-value" id="infoTeacherNationalId">-</span>
           </div>
           <div class="specs-row">
             <span class="specs-label">نام کاربری</span
-            ><span class="specs-value" id="infoAssistantUsername">-</span>
-          </div>
-          <div class="specs-row">
-            <span class="specs-label">سمت</span
-            ><span class="specs-value" id="infoAssistantPosition">-</span>
-          </div>
-          <div class="specs-row">
-            <span class="specs-label">مدرک تحصیلی</span
-            ><span class="specs-value" id="infoAssistantDegree">-</span>
-          </div>
-          <div class="specs-row">
-            <span class="specs-label">ایمیل</span
-            ><span class="specs-value" id="infoAssistantEmail">-</span>
+            ><span class="specs-value" id="infoTeacherUsername">-</span>
           </div>
           <div class="specs-row">
             <span class="specs-label">تاریخ تولد</span
-            ><span class="specs-value" id="infoAssistantBirthDate">-</span>
+            ><span class="specs-value" id="infoTeacherBirthDate">-</span>
           </div>
           <div class="specs-row">
-            <span class="specs-label">شروع همکاری</span
-            ><span class="specs-value" id="infoAssistantCoopDate">-</span>
+            <span class="specs-label">زنگ‌های هفتگی</span
+            ><span class="specs-value" id="infoTeacherWeeklyHours">-</span>
           </div>
           <div class="specs-row">
-            <span class="specs-label">سابقه کار</span
-            ><span class="specs-value" id="infoAssistantExperience">-</span>
+            <span class="specs-label">تعداد کلاس‌ها</span
+            ><span class="specs-value" id="infoTeacherClassCount">-</span>
           </div>
         </div>
+
+        <!-- EDIT MODE -->
         <div id="infoEditMode" style="display: none; flex-direction: column">
           <div
-            class="info-avatar-wrap"
-            style="flex-direction: column; align-items: center; gap: 10px"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 10px;
+              padding: 16px;
+              border-bottom: 1px solid var(--border);
+              margin-bottom: 8px;
+            "
           >
-            <div id="infoAssistantAvatarEdit">
+            <div id="infoTeacherAvatarEdit">
               <div class="info-avatar-large">؟</div>
             </div>
             <input
               type="file"
-              id="editAssistantPhotoInput"
+              id="infoPhotoUpload"
               style="display: none"
               accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-              onchange="handleAssistantPhotoUpload(this)"
+              onchange="handleInfoPhotoUpload(this)"
             />
             <label
-              for="editAssistantPhotoInput"
+              for="infoPhotoUpload"
               class="photo-upload-btn"
               style="cursor: pointer"
-              ><i class="fas fa-camera"></i> تغییر عکس (اختیاری)</label
+              ><i class="fas fa-camera"></i> تغییر عکس</label
             >
             <p class="photo-hint">JPG · PNG · WEBP · GIF | حداکثر ۱ مگابایت</p>
           </div>
+
           <div class="specs-row">
             <span class="specs-label">نام</span
-            ><input type="text" class="edit-input" id="editAssistantName" />
+            ><input type="text" class="edit-input" id="editTeacherFirstName" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نام خانوادگی</span
+            ><input type="text" class="edit-input" id="editTeacherLastName" />
           </div>
           <div class="specs-row">
             <span class="specs-label">موبایل</span
-            ><input type="text" class="edit-input" id="editAssistantPhone" />
+            ><input type="text" class="edit-input" id="editTeacherPhone" />
           </div>
           <div class="specs-row">
             <span class="specs-label">کد ملی</span
+            ><input type="text" class="edit-input" id="editTeacherNationalId" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">نام کاربری</span
+            ><input type="text" class="edit-input" id="editTeacherUsername" />
+          </div>
+          <div class="specs-row">
+            <span class="specs-label">رمز عبور</span
             ><input
-              type="text"
+              type="password"
               class="edit-input"
-              id="editAssistantNationalId"
+              id="editTeacherPassword"
+              placeholder="خالی = بدون تغییر"
             />
           </div>
           <div class="specs-row">
-            <span class="specs-label">سمت</span>
-            <select
-              class="edit-input"
-              id="editAssistantPosition"
-              style="
-                max-width: 260px;
-                background: var(--bg-main);
-                border: 1px solid var(--border);
-                color: var(--text);
-                padding: 9px 12px;
-                border-radius: 8px;
-                font-family: Vazirmatn, sans-serif;
-                font-size: 13px;
-                outline: none;
-              "
-            >
-              <option value="">—</option>
-              <option value="educational">معاون آموزشی</option>
-              <option value="student_affairs">معاون پرورشی</option>
-              <option value="administrative">معاون اداری/مالی</option>
-            </select>
-          </div>
-          <div class="specs-row">
-            <span class="specs-label">مدرک</span
-            ><input type="text" class="edit-input" id="editAssistantDegree" />
-          </div>
-          <div class="specs-row">
-            <span class="specs-label">ایمیل</span
-            ><input type="email" class="edit-input" id="editAssistantEmail" />
-          </div>
-          <div class="specs-row">
             <span class="specs-label">تاریخ تولد</span>
-            <div class="date-input-wrapper">
-              <i class="fas fa-calendar-alt date-icon"></i
-              ><input
+            <input
+              type="text"
+              class="edit-input jdp-input"
+              id="editTeacherBirthDate"
+              placeholder="1370/05/12"
+              readonly
+              style="cursor: pointer"
+            />
+          </div>
+
+          <div
+            class="specs-row"
+            style="flex-direction: column; align-items: flex-start; gap: 8px"
+          >
+            <span class="specs-label">دروس تدریس</span>
+            <div class="tags-display" id="editSubjectsDisplay"></div>
+            <div class="tag-input-wrapper" style="width: 100%">
+              <input
                 type="text"
-                class="edit-input jdp-input"
-                id="editAssistantBirthDate"
-                placeholder="1370/05/12"
-                autocomplete="off"
-                readonly
+                class="edit-input tag-input"
+                id="editSubjectInput"
+                placeholder="درس را وارد کنید..."
+                style="max-width: unset"
               />
+              <button
+                type="button"
+                class="tag-add-btn"
+                onclick="editAddSubject()"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
             </div>
           </div>
-          <div class="specs-row">
-            <span class="specs-label">شروع همکاری</span>
-            <div class="date-input-wrapper">
-              <i class="fas fa-calendar-alt date-icon"></i
-              ><input
+          <div
+            class="specs-row"
+            style="flex-direction: column; align-items: flex-start; gap: 8px"
+          >
+            <span class="specs-label">پایه‌های تدریس</span>
+            <div class="tags-display" id="editGradesDisplay"></div>
+            <div class="tag-input-wrapper" style="width: 100%">
+              <input
                 type="text"
-                class="edit-input jdp-input"
-                id="editAssistantCoopDate"
-                placeholder="1398/01/01"
-                autocomplete="off"
-                readonly
+                class="edit-input tag-input"
+                id="editGradeInput"
+                placeholder="پایه را وارد کنید..."
+                style="max-width: unset"
               />
+              <button
+                type="button"
+                class="tag-add-btn"
+                onclick="editAddGrade()"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
             </div>
           </div>
         </div>
+
         <div class="modal-btns-row">
           <button
             class="btn-edit-modal"
@@ -2135,26 +2212,121 @@
           >
             <i class="fas fa-times"></i> لغو
           </button>
-          <button class="btn-close-modal" onclick="closeAssistantInfoModal()">
+          <button class="btn-close-modal" onclick="closeTeacherInfoModal()">
             بستن
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ADD MODAL -->
-    <div class="modal" id="addAssistantModal">
-      <div class="modal-card add-modal-card">
-        <h2 class="modal-title">افزودن معاون جدید</h2>
-        <div class="add-assistant-form">
+    <!-- ═══════════ DELETE MODAL ═══════════ -->
+    <div class="modal" id="deletePermanentModal">
+      <div class="confirm-modal-content">
+        <div class="confirm-icon delete"><i class="fas fa-archive"></i></div>
+        <div class="confirm-title">انتقال به آرشیو</div>
+        <p class="confirm-message">
+          آیا مطمئن هستید که می‌خواهید
+          <strong id="deleteTeacherName">این معلم</strong> را آرشیو کنید؟
+        </p>
+        <div class="confirm-info">
+          <i class="fas fa-info-circle"></i
+          ><span>معلم از لیست فعال حذف و به آرشیو منتقل می‌شود.</span>
+        </div>
+        <div class="confirm-buttons">
+          <button
+            class="confirm-btn btn-danger"
+            onclick="confirmDeletePermanent()"
+          >
+            <i class="fas fa-archive"></i> آرشیو
+          </button>
+          <button
+            class="confirm-btn btn-secondary"
+            onclick="closeDeletePermanentModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ DISABLE MODAL ═══════════ -->
+    <div class="modal" id="disableConfirmModal">
+      <div class="confirm-modal-content">
+        <div class="confirm-icon warning">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="confirm-title">غیرفعال کردن معلم</div>
+        <p class="confirm-message">
+          آیا مطمئن هستید که می‌خواهید
+          <strong id="disableTeacherName">این معلم</strong> را غیرفعال کنید؟
+        </p>
+        <div class="confirm-buttons">
+          <button
+            class="confirm-btn btn-danger"
+            onclick="confirmDisableTeacher()"
+          >
+            <i class="fas fa-ban"></i> غیرفعال
+          </button>
+          <button
+            class="confirm-btn btn-secondary"
+            onclick="closeDisableModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ CHOOSE METHOD MODAL ═══════════ -->
+    <div class="modal" id="chooseMethodModal">
+      <div class="options-modal-content">
+        <h2 class="options-modal-title">افزودن معلم جدید</h2>
+        <div class="option-list">
+          <button class="option-btn" onclick="openManualAddModal()">
+            <i class="fas fa-pen"></i> افزودن دستی
+          </button>
+          <button class="option-btn" onclick="openExcelImportModal()">
+            <i class="fas fa-file-excel"></i> افزودن از طریق Excel
+          </button>
+        </div>
+        <div style="margin-top: 12px">
+          <button
+            class="modal-btn modal-btn-cancel"
+            style="width: 100%"
+            onclick="closeChooseMethodModal()"
+          >
+            <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ MANUAL ADD MODAL ═══════════ -->
+    <div class="modal" id="manualAddModal">
+      <div class="add-teacher-content">
+        <h2 class="modal-title">افزودن معلم جدید</h2>
+
+        <div class="add-teacher-form">
+          <!-- اطلاعات شخصی -->
           <div class="form-section">
             <div class="form-section-title">
               <i class="fas fa-user"></i> اطلاعات شخصی
             </div>
-            <div class="photo-upload-area">
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid var(--border);
+              "
+            >
               <div style="position: relative">
                 <div
-                  id="newAssistantPhotoPH"
+                  id="newTeacherPhotoPH"
                   style="
                     width: 90px;
                     height: 90px;
@@ -2175,7 +2347,7 @@
                   <i class="fas fa-camera"></i>
                 </div>
                 <img
-                  id="newAssistantPhotoPreview"
+                  id="newTeacherPhotoPreview"
                   src=""
                   alt="عکس"
                   style="
@@ -2190,13 +2362,13 @@
               </div>
               <input
                 type="file"
-                id="newAssistantPhotoInput"
+                id="newTeacherPhotoInput"
                 style="display: none"
                 accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                onchange="handleNewAssistantPhoto(this)"
+                onchange="handleNewTeacherPhoto(this)"
               />
               <label
-                for="newAssistantPhotoInput"
+                for="newTeacherPhotoInput"
                 class="photo-upload-btn"
                 style="cursor: pointer"
                 ><i class="fas fa-upload"></i> انتخاب عکس (اختیاری)</label
@@ -2205,24 +2377,38 @@
                 JPG · PNG · WEBP · GIF | حداکثر ۱ مگابایت
               </p>
             </div>
+
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label"
-                  >نام و نام خانوادگی <span class="required">*</span></label
-                ><input
+                  >نام <span class="required">*</span></label
+                >
+                <input
                   type="text"
                   class="form-input"
-                  id="addAssistantName"
-                  placeholder="مثال: احمد محمدی"
+                  id="addTeacherFirstName"
+                  placeholder="مثال: احمد"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >نام خانوادگی <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="addTeacherLastName"
+                  placeholder="مثال: محمدی"
                 />
               </div>
               <div class="form-group">
                 <label class="form-label"
                   >شماره موبایل <span class="required">*</span></label
-                ><input
+                >
+                <input
                   type="tel"
                   class="form-input"
-                  id="addAssistantPhone"
+                  id="addTeacherPhone"
                   placeholder="09123456789"
                   maxlength="11"
                 />
@@ -2230,98 +2416,36 @@
               <div class="form-group">
                 <label class="form-label"
                   >کد ملی <span class="required">*</span></label
-                ><input
+                >
+                <input
                   type="text"
                   class="form-input"
-                  id="addAssistantNationalId"
+                  id="addTeacherNationalId"
                   placeholder="0123456789"
                   maxlength="10"
                 />
               </div>
               <div class="form-group">
-                <label class="form-label">ایمیل</label
-                ><input
-                  type="email"
-                  class="form-input"
-                  id="addAssistantEmail"
-                  placeholder="example@email.com"
+                <label class="form-label"
+                  >تاریخ تولد <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input jdp-input"
+                  id="addTeacherBirthDate"
+                  placeholder="1370/05/12"
+                  readonly
+                  style="cursor: pointer"
                 />
-              </div>
-              <div class="form-group">
-                <label class="form-label">تاریخ تولد</label>
-                <div
-                  class="date-input-wrapper"
-                  style="
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    width: 100%;
-                    max-width: unset;
-                  "
-                >
-                  <i
-                    class="fas fa-calendar-alt"
-                    style="
-                      position: absolute;
-                      left: 11px;
-                      color: var(--accent);
-                      font-size: 13px;
-                      pointer-events: none;
-                      z-index: 2;
-                    "
-                  ></i
-                  ><input
-                    type="text"
-                    class="form-input jdp-input"
-                    id="addAssistantBirthDate"
-                    placeholder="1370/05/12"
-                    autocomplete="off"
-                    readonly
-                    style="padding-left: 34px !important; cursor: pointer"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">شروع همکاری</label>
-                <div
-                  class="date-input-wrapper"
-                  style="
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    width: 100%;
-                    max-width: unset;
-                  "
-                >
-                  <i
-                    class="fas fa-calendar-alt"
-                    style="
-                      position: absolute;
-                      left: 11px;
-                      color: var(--accent);
-                      font-size: 13px;
-                      pointer-events: none;
-                      z-index: 2;
-                    "
-                  ></i
-                  ><input
-                    type="text"
-                    class="form-input jdp-input"
-                    id="addAssistantCoopDate"
-                    placeholder="1398/01/01"
-                    autocomplete="off"
-                    readonly
-                    style="padding-left: 34px !important; cursor: pointer"
-                  />
-                </div>
               </div>
               <div class="form-group">
                 <label class="form-label"
                   >نام کاربری <span class="required">*</span></label
-                ><input
+                >
+                <input
                   type="text"
                   class="form-input"
-                  id="addAssistantUsername"
+                  id="addTeacherUsername"
                   placeholder="نام کاربری"
                   autocomplete="off"
                 />
@@ -2329,119 +2453,162 @@
               <div class="form-group">
                 <label class="form-label"
                   >رمز عبور <span class="required">*</span></label
-                ><input
+                >
+                <input
                   type="password"
                   class="form-input"
-                  id="addAssistantPassword"
+                  id="addTeacherPassword"
                   placeholder="حداقل ۶ کاراکتر"
                   autocomplete="new-password"
                 />
               </div>
             </div>
           </div>
+
+          <!-- اطلاعات آموزشی -->
           <div class="form-section">
             <div class="form-section-title">
-              <i class="fas fa-briefcase"></i> اطلاعات شغلی
+              <i class="fas fa-book"></i> اطلاعات آموزشی
             </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">سمت معاونت</label>
-                <select class="form-input" id="addAssistantPosition">
-                  <option value="">انتخاب کنید</option>
-                  <option value="educational">معاون آموزشی</option>
-                  <option value="student_affairs">معاون پرورشی</option>
-                  <option value="administrative">معاون اداری/مالی</option>
-                </select>
+            <div class="form-group" style="margin-bottom: 14px">
+              <label class="form-label">دروس تدریس</label>
+              <div class="tags-input-container">
+                <div class="tags-display" id="subjectsDisplay"></div>
+                <div class="tag-input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input tag-input"
+                    id="subjectInput"
+                    placeholder="درس را تایپ کنید..."
+                  />
+                  <button
+                    type="button"
+                    class="tag-add-btn"
+                    onclick="addSubject()"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">مدرک تحصیلی</label>
-                <select class="form-input" id="addAssistantDegree">
-                  <option value="">انتخاب کنید</option>
-                  <option value="کارشناسی">کارشناسی</option>
-                  <option value="کارشناسی ارشد">کارشناسی ارشد</option>
-                  <option value="دکتری">دکتری</option>
-                </select>
+              <div class="tag-suggestions">
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('ریاضی')"
+                >
+                  ریاضی
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('فیزیک')"
+                >
+                  فیزیک
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('شیمی')"
+                >
+                  شیمی
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('زیست')"
+                >
+                  زیست
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('زبان انگلیسی')"
+                >
+                  زبان انگلیسی
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('ادبیات')"
+                >
+                  ادبیات
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('عربی')"
+                >
+                  عربی
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addSubjectFromSuggestion('دین و زندگی')"
+                >
+                  دین و زندگی
+                </button>
               </div>
-              <div class="form-group">
-                <label class="form-label">رشته تحصیلی</label
-                ><input
-                  type="text"
-                  class="form-input"
-                  id="addAssistantField"
-                  placeholder="مدیریت آموزشی"
-                />
+            </div>
+            <div class="form-group">
+              <label class="form-label">پایه‌های تدریس</label>
+              <div class="tags-input-container">
+                <div class="tags-display" id="gradesDisplay"></div>
+                <div class="tag-input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input tag-input"
+                    id="gradeInput"
+                    placeholder="پایه را تایپ کنید..."
+                  />
+                  <button
+                    type="button"
+                    class="tag-add-btn"
+                    onclick="addGrade()"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">سابقه کار (سال)</label
-                ><input
-                  type="number"
-                  class="form-input"
-                  id="addAssistantExperience"
-                  placeholder="5"
-                  min="0"
-                />
+              <div class="tag-suggestions">
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addGradeFromSuggestion('دهم')"
+                >
+                  دهم
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addGradeFromSuggestion('یازدهم')"
+                >
+                  یازدهم
+                </button>
+                <button
+                  type="button"
+                  class="suggestion-btn"
+                  onclick="addGradeFromSuggestion('دوازدهم')"
+                >
+                  دوازدهم
+                </button>
               </div>
             </div>
           </div>
         </div>
-        <div class="modal-btns-row">
+
+        <div class="modal-buttons">
           <button
-            class="btn-save-modal"
-            id="saveAssistantBtn"
-            onclick="saveNewAssistant()"
+            class="modal-btn modal-btn-confirm"
+            id="saveTeacherBtn"
+            onclick="saveNewTeacher()"
             disabled
           >
-            <i class="fas fa-plus"></i> افزودن معاون
+            <i class="fas fa-plus"></i> افزودن معلم
           </button>
-          <button class="btn-close-modal" onclick="closeAddAssistantModal()">
-            <i class="fas fa-times"></i> انصراف
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- DELETE CONFIRM -->
-    <div class="modal" id="deletePermanentModal">
-      <div class="modal-card confirm-modal-card">
-        <div class="confirm-icon-wrap delete">
-          <i class="fas fa-archive"></i>
-        </div>
-        <div class="confirm-title">انتقال به آرشیو</div>
-        <p class="confirm-message">
-          آیا مطمئن هستید که می‌خواهید
-          <strong id="deleteAssistantName">این معاون</strong> را آرشیو کنید؟
-        </p>
-        <div class="confirm-info">
-          <i class="fas fa-info-circle"></i
-          ><span>این عملیات قابل بازگشت نیست.</span>
-        </div>
-        <div class="confirm-btns">
-          <button class="btn-danger" onclick="confirmDeletePermanent()">
-            <i class="fas fa-archive"></i> آرشیو
-          </button>
-          <button class="btn-secondary" onclick="closeDeletePermanentModal()">
-            <i class="fas fa-times"></i> انصراف
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- DISABLE CONFIRM -->
-    <div class="modal" id="disableConfirmModal">
-      <div class="modal-card confirm-modal-card">
-        <div class="confirm-icon-wrap warning">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="confirm-title">غیرفعال کردن معاون</div>
-        <p class="confirm-message">
-          آیا مطمئن هستید که می‌خواهید
-          <strong id="disableAssistantName">این معاون</strong> را غیرفعال کنید؟
-        </p>
-        <div class="confirm-btns">
-          <button class="btn-danger" onclick="confirmDisableAssistant()">
-            <i class="fas fa-ban"></i> غیرفعال
-          </button>
-          <button class="btn-secondary" onclick="closeDisableModal()">
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeManualAddModal()"
+          >
             <i class="fas fa-times"></i> انصراف
           </button>
         </div>
@@ -2462,72 +2629,71 @@
       </button>
     </div>
 
-    <script src="../javaScript/Assistant_management.js"></script>
+    <script src="../javaScript/Teacher_management.js"></script>
     <script>
-      /* ════════════ SIDEBAR ════════════ */
-      function openSidebar() {
-        document.getElementById("sidebar").classList.add("active");
-        document.getElementById("sidebarOverlay").classList.add("active");
-        document.body.style.overflow = "hidden";
-      }
-      function closeSidebar() {
-        document.getElementById("sidebar").classList.remove("active");
-        document.getElementById("sidebarOverlay").classList.remove("active");
-        document.body.style.overflow = "";
-      }
+      /* ════════ SIDEBAR ════════ */
+      (function () {
+        var toggle = document.getElementById("menuToggle");
+        var sidebar = document.getElementById("sidebar");
+        var overlay = document.getElementById("sidebarOverlay");
+        var closeBtn = document.getElementById("sidebarCloseBtn");
 
-      document
-        .getElementById("menuToggle")
-        .addEventListener("click", openSidebar);
-      document
-        .getElementById("sidebarCloseBtn")
-        .addEventListener("click", closeSidebar);
-      document
-        .getElementById("sidebarOverlay")
-        .addEventListener("click", closeSidebar);
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") closeSidebar();
-      });
+        function open() {
+          sidebar.classList.add("active");
+          overlay.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+        function close() {
+          sidebar.classList.remove("active");
+          overlay.classList.remove("active");
+          document.body.style.overflow = "";
+        }
 
-      /* submenu accordion */
-      document
-        .querySelectorAll(".menu-item.has-submenu")
-        .forEach(function (item) {
-          item
-            .querySelector(".menu-link")
-            .addEventListener("click", function (e) {
-              e.preventDefault();
-              document
-                .querySelectorAll(".menu-item.has-submenu")
-                .forEach(function (o) {
-                  if (o !== item) o.classList.remove("open");
-                });
-              item.classList.toggle("open");
-            });
+        if (toggle) toggle.addEventListener("click", open);
+        if (overlay) overlay.addEventListener("click", close);
+        if (closeBtn) closeBtn.addEventListener("click", close);
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") close();
         });
-      /* open current submenu on load */
-      document.getElementById("userMgmtMenu").classList.add("open");
 
-      /* ════════════ STATS / PROFILE INFO ════════════ */
+        /* submenu accordion */
+        document
+          .querySelectorAll(".menu-item.has-submenu")
+          .forEach(function (item) {
+            var link = item.querySelector(".menu-link");
+            if (link)
+              link.addEventListener("click", function (e) {
+                e.preventDefault();
+                document
+                  .querySelectorAll(".menu-item.has-submenu")
+                  .forEach(function (o) {
+                    if (o !== item) o.classList.remove("open");
+                  });
+                item.classList.toggle("open");
+              });
+          });
+        /* باز کردن زیرمنوی جاری */
+        document.getElementById("userMgmtMenu").classList.add("open");
+      })();
+
+      /* ════════ STATS / PROFILE ════════ */
       fetch("../api/stats.php")
         .then(function (r) {
           return r.json();
         })
         .then(function (d) {
           if (d.success && d.currentUser) {
-            var u = d.currentUser;
-            var letter = (u.name || "م").charAt(0);
-            var el = document.getElementById("managerName"),
-              rl = document.getElementById("managerRole"),
-              av = document.getElementById("managerAvatarLetter"),
-              pb = document.getElementById("profileBtnLetter");
-            if (el) el.textContent = u.name || "";
+            var u = d.currentUser,
+              letter = (u.name || "م").charAt(0);
+            var nm = document.getElementById("managerName");
+            var rl = document.getElementById("managerRole");
+            var av = document.getElementById("managerAvatarLetter");
+            var ai = document.getElementById("adminInfo");
+            if (nm) nm.textContent = u.name || "";
             if (rl) rl.textContent = u.role_label || u.role || "";
             if (av) av.textContent = letter;
-            if (pb) pb.textContent = letter;
-            var info = document.getElementById("adminInfo");
-            if (info)
-              info.innerHTML =
+            if (ai)
+              ai.innerHTML =
                 '<span class="live-dot"></span>' +
                 (u.role_label || "") +
                 ": " +

@@ -1,1133 +1,4289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوربور - پیش ثبت نام ها</title>
-    <link rel="icon" href="../image/iconB.png">
-      <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="../Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="../style/Pre-registration.css">
-    <link rel="stylesheet" href="../style/menu.css">
-    <link rel="stylesheet" href="../style/scrollbar.css">
-<script src="../javaScript/auth.js" defer></script>
-    <script src="../javaScript/permission-guard.js" defer></script>
-    <script src="../javaScript/sidebar-permissions.js" defer></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوربور — پیش ثبت‌نام‌ها</title>
+
+        <link rel="icon" href="../image/iconB.png" />
+    <link rel="stylesheet" href="../style/scrollbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <style>
-        
-        .reg-status-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 14px;
-    padding: 10px 18px;
-    flex-wrap: wrap;
-}
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Vazirmatn";
+        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Shabnam";
+        src: url("../font/Shabnam-Medium.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
 
-.reg-status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+      :root {
+        --bg-main: #0f1629;
+        --bg-card: #162040;
+        --bg-card2: #1a2650;
+        --bg-sidebar: #0b1120;
+        --accent: #4a90d9;
+        --accent2: #8e5fd4;
+        --accent3: #06d6a0;
+        --accent4: #f39c12;
+        --accent5: #e74c3c;
+        --present: #2ecc71;
+        --absent: #e74c3c;
+        --late: #f39c12;
+        --text: #e8f0ff;
+        --text-muted: rgba(180, 200, 255, 0.48);
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(74, 144, 217, 0.35);
+        --sidebar-w: 258px;
+        --radius: 18px;
+        --radius-sm: 11px;
+      }
 
-.reg-status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #27ae60;
-    transition: background 0.3s;
-    animation: regDotPulse 2s infinite;
-    flex-shrink: 0;
-}
-.reg-status-dot.closed {
-    background: #e74c3c;
-    animation: regDotPulseClosed 2s infinite;
-}
-@keyframes regDotPulse {
-    0%   { box-shadow: 0 0 0 0   rgba(39,174,96,0.5); }
-    70%  { box-shadow: 0 0 0 8px rgba(39,174,96,0);   }
-    100% { box-shadow: 0 0 0 0   rgba(39,174,96,0);   }
-}
-@keyframes regDotPulseClosed {
-    0%   { box-shadow: 0 0 0 0   rgba(231,76,60,0.5); }
-    70%  { box-shadow: 0 0 0 8px rgba(231,76,60,0);   }
-    100% { box-shadow: 0 0 0 0   rgba(231,76,60,0);   }
-}
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
 
-.reg-status-text {
-    color: rgba(255,255,255,0.55);
-    font-size: 13px;
-    white-space: nowrap;
-}
+      body {
+        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
 
-.reg-status-badge {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 3px 12px;
-    border-radius: 20px;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-.reg-status-badge.open {
-    background: rgba(39,174,96,0.2);
-    color: #27ae60;
-    border: 1px solid rgba(39,174,96,0.4);
-}
-.reg-status-badge.closed {
-    background: rgba(231,76,60,0.2);
-    color: #e74c3c;
-    border: 1px solid rgba(231,76,60,0.4);
-}
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 10% 5%,
+            rgba(74, 144, 217, 0.13) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 85% 90%,
+            rgba(142, 95, 212, 0.1) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 45% 45% at 55% 45%,
+            rgba(6, 214, 160, 0.04) 0%,
+            transparent 65%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-/* ─── دکمه toggle ─── */
-.reg-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 18px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: "Vazirmatn", sans-serif;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    color: #fff;
-}
-.reg-toggle-btn.is-open {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    box-shadow: 0 4px 14px rgba(231,76,60,0.4);
-}
-.reg-toggle-btn.is-open:hover {
-    box-shadow: 0 6px 20px rgba(231,76,60,0.6);
-    transform: translateY(-1px);
-}
-.reg-toggle-btn.is-closed {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    box-shadow: 0 4px 14px rgba(39,174,96,0.4);
-}
-.reg-toggle-btn.is-closed:hover {
-    box-shadow: 0 6px 20px rgba(39,174,96,0.6);
-    transform: translateY(-1px);
-}
-.reg-toggle-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-}
+      /* ── SIDEBAR ── */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--bg-sidebar);
+        padding: 26px 14px;
+        border-left: 1px solid var(--border);
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 199;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
 
-/* ─── مودال تأیید باز/بستن ─── */
-.reg-confirm-modal {
-    background: #1e2957;
-    border-radius: 20px;
-    padding: 40px 36px;
-    width: 420px;
-    max-width: 90vw;
-    border: 1px solid rgba(255,255,255,0.12);
-    text-align: center;
-    animation: regModalIn 0.25s ease;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-}
-@keyframes regModalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(-14px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-}
+      .logo {
+        text-align: center;
+        margin-bottom: 4px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #fff;
+        font-family: "Shabnam", sans-serif;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      .logo-sub {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
 
-.reg-confirm-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
-    color: #fff;
-    transition: all 0.3s;
-}
-.reg-confirm-icon.open-action {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    box-shadow: 0 8px 24px rgba(39,174,96,0.4);
-}
-.reg-confirm-icon.close-action {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    box-shadow: 0 8px 24px rgba(231,76,60,0.4);
-}
-
-#regConfirmTitle {
-    color: #fff;
-    font-size: 19px;
-    font-weight: 700;
-    font-family: "Shabnam", sans-serif;
-    margin-bottom: 10px;
-}
-#regConfirmDesc {
-    color: rgba(255,255,255,0.6);
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 28px;
-}
-
-.reg-confirm-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-.reg-confirm-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 11px 28px;
-    border-radius: 11px;
-    border: none;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: "Vazirmatn", sans-serif;
-    cursor: pointer;
-    transition: all 0.25s;
-}
-.reg-confirm-btn.cancel {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.7);
-    border: 1px solid rgba(255,255,255,0.12);
-}
-.reg-confirm-btn.cancel:hover {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-}
-.reg-confirm-btn.ok {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(39,174,96,0.3);
-}
-.reg-confirm-btn.ok.danger {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    box-shadow: 0 4px 14px rgba(231,76,60,0.3);
-}
-.reg-confirm-btn.ok:hover { transform: translateY(-2px); }
-
-/* ─── ریسپانسیو ─── */
-@media (max-width: 768px) {
-    .reg-status-wrap {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
-@media (max-width: 480px) {
-    .reg-confirm-modal {
-        padding: 28px 20px;
-    }
-    .reg-confirm-actions {
-        flex-direction: column-reverse;
-    }
-    .reg-confirm-btn {
-        width: 100%;
+      .sidebar-close-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 32px;
+        height: 32px;
+        background: rgba(231, 76, 60, 0.12);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        border-radius: 50%;
+        color: var(--absent);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
         justify-content: center;
-    }
-}
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .sidebar-close-btn:hover {
+        background: var(--absent);
+        color: #fff;
+        transform: rotate(90deg);
+      }
 
+      .manager-block {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.14),
+          rgba(142, 95, 212, 0.1)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 15px 13px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .manager-avatar {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
+      }
+      .manager-name {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .manager-role {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .manager-badge {
+        margin-top: 7px;
+        display: inline-block;
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
 
+      .nav-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(180, 200, 255, 0.28);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin: 14px 0 8px;
+      }
+      .menu-item {
+        margin-bottom: 2px;
+      }
+      .menu-item a,
+      .menu-item .menu-link {
+        color: rgba(180, 200, 255, 0.58);
+        text-decoration: none;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+      .menu-item a i,
+      .menu-item .menu-link i:first-child {
+        font-size: 14px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.75;
+      }
+      .menu-item a:hover,
+      .menu-item .menu-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .menu-item:not(.has-submenu).active > a {
+        background: linear-gradient(
+          90deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(74, 144, 217, 0.05)
+        );
+        color: #fff;
+        font-weight: 700;
+        border: 1px solid rgba(74, 144, 217, 0.22);
+      }
+      .menu-item:not(.has-submenu).active > a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 65%;
+        background: var(--accent);
+        border-radius: 3px 0 0 3px;
+      }
+      .menu-item.has-submenu {
+        position: relative;
+      }
+      .submenu-arrow {
+        margin-right: auto;
+        font-size: 12px !important;
+        transition: transform 0.3s;
+      }
+      .menu-item.has-submenu.open .submenu-arrow {
+        transform: rotate(180deg);
+      }
+      .menu-item.has-submenu.open > .menu-link {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-sm);
+        margin-top: 4px;
+      }
+      .menu-item.has-submenu.open .submenu {
+        max-height: 500px;
+      }
+      .submenu-item {
+        color: rgba(180, 200, 255, 0.6);
+        text-decoration: none;
+        padding: 10px 14px 10px 44px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 12px;
+        font-weight: 400;
+        transition: all 0.2s;
+        border-radius: 8px;
+        margin: 4px;
+      }
+      .submenu-item i {
+        font-size: 13px;
+        width: 18px;
+        text-align: center;
+        opacity: 0.75;
+      }
+      .submenu-item:hover {
+        background: rgba(74, 144, 217, 0.1);
+        color: #fff;
+      }
+      .submenu-item.active {
+        background: rgba(74, 144, 217, 0.14);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 4px;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      /* ── HAMBURGER ── */
+      .menu-toggle {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 300;
+        width: 44px;
+        height: 44px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        color: var(--text-muted);
+        font-size: 16px;
+      }
+      .menu-toggle:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      /* ── MAIN ── */
+      .main-content {
+        min-height: 100vh;
+        padding: 72px 24px 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ── TOP BAR ── */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 26px;
+        gap: 14px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.4s 0.02s ease both;
+      }
+      .page-title-wrap h1 {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+      .page-title-wrap h1 span {
+        color: var(--accent);
+      }
+      .admin-info {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        flex-shrink: 0;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── TOP RIGHT AREA ── */
+      .top-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .profile-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
+        color: #fff;
+      }
+
+      /* ── REG STATUS WRAP ── */
+      .reg-status-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        flex-wrap: wrap;
+      }
+      .reg-status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .reg-status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--accent3);
+        animation: regPulse 2s infinite;
+        flex-shrink: 0;
+        transition: background 0.3s;
+      }
+      .reg-status-dot.closed {
+        background: var(--accent5);
+        animation: regPulseClosed 2s infinite;
+      }
+      @keyframes regPulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+        }
+        70% {
+          box-shadow: 0 0 0 7px rgba(6, 214, 160, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0);
+        }
+      }
+      @keyframes regPulseClosed {
+        0% {
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5);
+        }
+        70% {
+          box-shadow: 0 0 0 7px rgba(231, 76, 60, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+        }
+      }
+      .reg-status-text {
+        color: var(--text-muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .reg-status-badge {
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 3px 11px;
+        border-radius: 20px;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+      .reg-status-badge.open {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.3);
+      }
+      .reg-status-badge.closed {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--accent5);
+        border: 1px solid rgba(231, 76, 60, 0.3);
+      }
+      .reg-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: "Vazirmatn", sans-serif;
+        transition: all 0.3s;
+        white-space: nowrap;
+        color: #fff;
+      }
+      .reg-toggle-btn.is-open {
+        background: linear-gradient(135deg, var(--accent5), #c0392b);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.35);
+      }
+      .reg-toggle-btn.is-open:hover {
+        box-shadow: 0 6px 18px rgba(231, 76, 60, 0.5);
+        transform: translateY(-1px);
+      }
+      .reg-toggle-btn.is-closed {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        box-shadow: 0 4px 12px rgba(6, 214, 160, 0.3);
+      }
+      .reg-toggle-btn.is-closed:hover {
+        box-shadow: 0 6px 18px rgba(6, 214, 160, 0.45);
+        transform: translateY(-1px);
+      }
+      .reg-toggle-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      /* ── SMS BALANCE ── */
+      .sms-balance-box {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 144, 217, 0.18),
+          rgba(142, 95, 212, 0.14)
+        );
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        padding: 12px 18px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        transition: all 0.3s;
+      }
+      .sms-balance-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(74, 144, 217, 0.2);
+      }
+      .sms-balance-box.low-balance {
+        background: linear-gradient(
+          135deg,
+          rgba(231, 76, 60, 0.2),
+          rgba(192, 57, 43, 0.15)
+        );
+        border-color: rgba(231, 76, 60, 0.3);
+        animation: balancePulse 2s infinite;
+      }
+      .sms-balance-box.medium-balance {
+        background: linear-gradient(
+          135deg,
+          rgba(243, 156, 18, 0.2),
+          rgba(230, 126, 34, 0.14)
+        );
+        border-color: rgba(243, 156, 18, 0.3);
+      }
+      @keyframes balancePulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+        }
+      }
+      .balance-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .balance-label i {
+        color: var(--accent);
+        font-size: 15px;
+      }
+      .balance-amount {
+        color: var(--text);
+        font-size: 20px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+      .balance-unit {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .btn-charge-account {
+        background: rgba(74, 144, 217, 0.15);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.25);
+        padding: 7px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-charge-account:hover {
+        background: rgba(74, 144, 217, 0.28);
+        color: #fff;
+      }
+
+      /* ── STATS GRID ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        margin-bottom: 22px;
+        animation: fadeUp 0.45s 0.08s ease both;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 16px 18px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.28s,
+          box-shadow 0.28s,
+          border-color 0.28s;
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .stat-card:nth-child(1)::before {
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+      }
+      .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #06d6a0, #2ecc71);
+      }
+      .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #e74c3c, #f97316);
+      }
+      .stat-card:nth-child(4)::before {
+        background: linear-gradient(90deg, #4a90d9, #8e5fd4);
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        border-color: rgba(74, 144, 217, 0.18);
+      }
+      .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        margin-bottom: 14px;
+      }
+      .stat-card:nth-child(1) .stat-icon {
+        background: rgba(243, 156, 18, 0.15);
+        color: var(--accent4);
+      }
+      .stat-card:nth-child(2) .stat-icon {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+      }
+      .stat-card:nth-child(3) .stat-icon {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--accent5);
+      }
+      .stat-card:nth-child(4) .stat-icon {
+        background: rgba(74, 144, 217, 0.16);
+        color: var(--accent);
+      }
+      .stat-label {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .stat-value {
+        font-size: 32px;
+        font-weight: 900;
+        line-height: 1;
+        font-family: "Shabnam", sans-serif;
+      }
+
+      /* ── FILTER BAR ── */
+      .filter-bar {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        animation: fadeUp 0.45s 0.14s ease both;
+      }
+      .search-wrap {
+        flex: 1;
+        min-width: 180px;
+        position: relative;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px 10px 38px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+      }
+      .search-input::placeholder {
+        color: var(--text-muted);
+      }
+      .search-input:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+      }
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 14px;
+        pointer-events: none;
+      }
+      .filter-select {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .filter-select:focus {
+        border-color: var(--border-hover);
+      }
+      .filter-select option {
+        background: #1a2650;
+        color: var(--text);
+      }
+
+      .auto-archive-group {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: rgba(243, 156, 18, 0.07);
+        border: 1px solid rgba(243, 156, 18, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 8px 14px;
+      }
+      .auto-archive-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .auto-archive-label i {
+        color: var(--accent4);
+      }
+      .auto-archive-days {
+        width: 62px;
+        background: var(--bg-main);
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        padding: 6px 8px;
+        text-align: center;
+        outline: none;
+        transition: border 0.2s;
+        direction: ltr;
+      }
+      .auto-archive-days:focus {
+        border-color: var(--accent4);
+        box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.18);
+      }
+      .auto-archive-days-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .auto-archive-save-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 13px;
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        white-space: nowrap;
+        box-shadow: 0 3px 10px rgba(243, 156, 18, 0.28);
+      }
+      .auto-archive-save-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 16px rgba(243, 156, 18, 0.42);
+      }
+      .auto-archive-save-btn.saved {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
+      .btn-excel {
+        padding: 10px 15px;
+        background: rgba(6, 214, 160, 0.12);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.2);
+        border-radius: var(--radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .btn-excel:hover {
+        background: rgba(6, 214, 160, 0.22);
+      }
+
+      /* ── CARDS GRID ── */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+        animation: fadeUp 0.45s 0.2s ease both;
+      }
+      .reg-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.28s,
+          box-shadow 0.28s,
+          border-color 0.28s;
+      }
+      .reg-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .reg-card.pending::before {
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+      }
+      .reg-card.accepted::before {
+        background: linear-gradient(90deg, #06d6a0, #2ecc71);
+      }
+      .reg-card.rejected::before {
+        background: linear-gradient(90deg, #e74c3c, #f97316);
+      }
+      .reg-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+      }
+      .reg-card.pending {
+        border-color: rgba(243, 156, 18, 0.25);
+      }
+      .reg-card.accepted {
+        border-color: rgba(6, 214, 160, 0.2);
+      }
+      .reg-card.rejected {
+        border-color: rgba(231, 76, 60, 0.22);
+      }
+
+      /* Archive btn */
+      .card-archive-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        transition: all 0.25s;
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-muted);
+      }
+      .card-archive-btn:hover {
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        color: #fff;
+        transform: scale(1.15);
+      }
+      .card-archive-btn.archived {
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        color: #fff;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 18px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border);
+      }
+      .card-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 18px;
+        font-family: "Shabnam", sans-serif;
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      .card-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .card-name {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .card-code {
+        color: var(--accent);
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+
+      .card-details {
+        margin-bottom: 16px;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 0;
+        color: var(--text-muted);
+        font-size: 12.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-value {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .status-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .status-badge {
+        padding: 4px 11px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .status-badge.pending {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        border: 1px solid rgba(243, 156, 18, 0.25);
+      }
+      .status-badge.accepted {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 1px solid rgba(6, 214, 160, 0.25);
+      }
+      .status-badge.rejected {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--accent5);
+        border: 1px solid rgba(231, 76, 60, 0.25);
+      }
+
+      .btn-change-status {
+        padding: 5px 10px;
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .btn-change-status:hover {
+        background: rgba(74, 144, 217, 0.28);
+        color: #fff;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 9px;
+      }
+      .card-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-family: "Vazirmatn", sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #fff;
+      }
+      .btn-details {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .btn-details:hover {
+        background: rgba(74, 144, 217, 0.3);
+        color: #fff;
+      }
+      .btn-sms {
+        background: rgba(243, 156, 18, 0.16);
+        color: var(--accent4);
+        border: 1px solid rgba(243, 156, 18, 0.2);
+      }
+      .btn-sms:hover {
+        background: rgba(243, 156, 18, 0.28);
+        color: #fff;
+      }
+      .btn-sms:disabled {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        border-color: var(--border);
+        cursor: not-allowed;
+      }
+
+      /* ── EMPTY STATE ── */
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--text-muted);
+        display: none;
+      }
+      .empty-state i {
+        font-size: 64px;
+        margin-bottom: 18px;
+        display: block;
+        opacity: 0.3;
+      }
+      .empty-state h3 {
+        font-size: 20px;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+      .empty-state p {
+        font-size: 14px;
+      }
+
+      /* ── PAGINATION ── */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+        padding: 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-top: 8px;
+        animation: fadeUp 0.45s 0.25s ease both;
+      }
+      .pagination-btn {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 7px 16px;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s;
+        font-family: "Vazirmatn", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+      }
+      .pagination-btn:hover:not(:disabled) {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .pagination-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .pagination-info {
+        color: var(--text-muted);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .pagination-info strong {
+        color: var(--accent);
+        font-family: "Shabnam", sans-serif;
+        font-size: 16px;
+      }
+
+      /* ══════════════ MODALS ══════════════ */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.78);
+        z-index: 2000;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px;
+        overflow-y: auto;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+        border-radius: var(--radius);
+        padding: 28px;
+        position: relative;
+        width: 100%;
+        margin: auto;
+        animation: modalIn 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal-title {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        text-align: center;
+        margin-bottom: 22px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+      }
+      .modal-title i {
+        color: var(--accent);
+      }
+      .close-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 1px solid rgba(231, 76, 60, 0.2);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      .close-btn:hover {
+        background: var(--absent);
+        color: #fff;
+        transform: rotate(90deg);
+      }
+
+      /* ── SPECS MODAL ── */
+      .specs-modal-card {
+        max-width: 900px;
+      }
+      .specs-header {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-bottom: 24px;
+      }
+      .specs-photo {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: 3px solid rgba(74, 144, 217, 0.3);
+        flex-shrink: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        color: #fff;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+      }
+      .specs-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .specs-name {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        color: #fff;
+      }
+      .specs-code {
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .specs-sections {
+        display: grid;
+        gap: 18px;
+      }
+      .specs-section {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 18px;
+      }
+      .specs-section-title {
+        color: var(--accent4);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 13px;
+      }
+      .spec-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .spec-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .spec-value {
+        color: var(--text);
+        font-size: 13.5px;
+        font-weight: 600;
+        background: var(--bg-main);
+        padding: 9px 12px;
+        border-radius: 8px;
+      }
+      .docs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+      }
+      .doc-item {
+        text-align: center;
+      }
+      .doc-item img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid var(--border);
+      }
+      .doc-item img:hover {
+        transform: scale(1.04);
+        border-color: var(--accent);
+      }
+      .doc-placeholder {
+        width: 100%;
+        height: 180px;
+        background: var(--bg-main);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--text-muted);
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+      }
+      .doc-placeholder i {
+        font-size: 36px;
+      }
+      .doc-placeholder span {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      /* ── STATUS MODAL ── */
+      .status-modal-card {
+        max-width: 440px;
+      }
+      .status-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .status-opt-btn {
+        padding: 14px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.28s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: #fff;
+      }
+      .status-opt-btn.pending {
+        background: linear-gradient(
+          135deg,
+          rgba(243, 156, 18, 0.2),
+          rgba(230, 126, 34, 0.15)
+        );
+        border-color: rgba(243, 156, 18, 0.35);
+        color: var(--accent4);
+      }
+      .status-opt-btn.pending:hover {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        border-color: #e67e22;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(243, 156, 18, 0.35);
+      }
+      .status-opt-btn.accepted {
+        background: linear-gradient(
+          135deg,
+          rgba(6, 214, 160, 0.16),
+          rgba(46, 204, 113, 0.12)
+        );
+        border-color: rgba(6, 214, 160, 0.3);
+        color: var(--accent3);
+      }
+      .status-opt-btn.accepted:hover {
+        background: linear-gradient(135deg, #06d6a0, #2ecc71);
+        border-color: #2ecc71;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(6, 214, 160, 0.3);
+      }
+      .status-opt-btn.rejected {
+        background: linear-gradient(
+          135deg,
+          rgba(231, 76, 60, 0.16),
+          rgba(192, 57, 43, 0.12)
+        );
+        border-color: rgba(231, 76, 60, 0.3);
+        color: var(--accent5);
+      }
+      .status-opt-btn.rejected:hover {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border-color: #c0392b;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(231, 76, 60, 0.3);
+      }
+
+      /* ── SMS MODAL ── */
+      .sms-modal-card {
+        max-width: 680px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .sms-student-info {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-right: 3px solid var(--accent4);
+      }
+      .sms-student-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 20px;
+        font-family: "Shabnam", sans-serif;
+        flex-shrink: 0;
+      }
+      .sms-student-name {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .sms-student-code {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .parent-phones {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+      .phone-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 13px;
+        background: var(--bg-main);
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+      .phone-item i {
+        color: var(--accent);
+        font-size: 15px;
+      }
+      .form-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .form-label i {
+        color: var(--accent4);
+      }
+      .sms-section {
+        margin-bottom: 20px;
+      }
+      .recipient-btns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .recipient-btn {
+        padding: 12px 10px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .recipient-btn:hover {
+        border-color: rgba(243, 156, 18, 0.3);
+        color: var(--text);
+      }
+      .recipient-btn.active {
+        background: linear-gradient(
+          135deg,
+          rgba(243, 156, 18, 0.2),
+          rgba(230, 126, 34, 0.14)
+        );
+        border-color: var(--accent4);
+        color: var(--accent4);
+      }
+      .sms-reason-btns {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 9px;
+        margin-top: 8px;
+      }
+      .sms-reason-btn {
+        padding: 10px 12px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      .sms-reason-btn i {
+        font-size: 17px;
+      }
+      .sms-reason-btn:hover {
+        border-color: rgba(243, 156, 18, 0.3);
+      }
+      .sms-reason-btn.active {
+        background: linear-gradient(
+          135deg,
+          rgba(243, 156, 18, 0.2),
+          rgba(230, 126, 34, 0.14)
+        );
+        border-color: var(--accent4);
+        color: var(--accent4);
+      }
+      .sms-textarea {
+        width: 100%;
+        min-height: 130px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 13px 15px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        font-family: "Vazirmatn", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+        resize: vertical;
+        margin-top: 8px;
+      }
+      .sms-textarea:focus {
+        border-color: var(--border-hover);
+        box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+      }
+      .sms-textarea::placeholder {
+        color: var(--text-muted);
+      }
+      .char-count {
+        text-align: left;
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      .char-count span {
+        color: var(--accent4);
+        font-weight: 600;
+      }
+      .quick-messages-box {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .quick-title {
+        color: var(--accent4);
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .quick-item {
+        background: var(--bg-main);
+        padding: 11px 14px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.22s;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 7px;
+      }
+      .quick-item:hover {
+        border-color: rgba(243, 156, 18, 0.3);
+        transform: translateX(-3px);
+      }
+      .quick-item-text {
+        color: var(--text);
+        font-size: 12.5px;
+        flex: 1;
+      }
+      .quick-delete {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        opacity: 0;
+        transition: all 0.2s;
+      }
+      .quick-item:hover .quick-delete {
+        opacity: 1;
+      }
+      .quick-delete:hover {
+        background: var(--absent);
+        color: #fff;
+      }
+      .sms-actions {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 10px;
+      }
+      .sms-btn {
+        padding: 13px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: #fff;
+      }
+      .sms-btn-save {
+        background: rgba(74, 144, 217, 0.18);
+        color: var(--accent);
+        border: 1px solid rgba(74, 144, 217, 0.2);
+      }
+      .sms-btn-save:hover {
+        background: rgba(74, 144, 217, 0.3);
+        color: #fff;
+      }
+      .sms-btn-send {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        box-shadow: 0 4px 12px rgba(6, 214, 160, 0.25);
+      }
+      .sms-btn-send:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ── CHARGE MODAL ── */
+      .charge-modal-card {
+        max-width: 660px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .charge-info {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 18px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .current-balance-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 9px;
+        flex-wrap: wrap;
+      }
+      .balance-val {
+        color: var(--accent4);
+        font-size: 26px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+      .price-info {
+        color: var(--accent);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .section-title {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .section-title i {
+        color: var(--accent4);
+      }
+      .charge-options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .charge-opt-btn {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 18px 14px;
+        cursor: pointer;
+        transition: all 0.28s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+        position: relative;
+      }
+      .charge-opt-btn i {
+        color: var(--accent4);
+        font-size: 22px;
+      }
+      .charge-opt-btn .amt {
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+      .charge-opt-btn .unt {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .charge-opt-btn:hover {
+        border-color: rgba(243, 156, 18, 0.35);
+        transform: translateY(-3px);
+      }
+      .charge-opt-btn.active {
+        background: linear-gradient(
+          135deg,
+          rgba(243, 156, 18, 0.2),
+          rgba(230, 126, 34, 0.14)
+        );
+        border-color: var(--accent4);
+        box-shadow: 0 5px 18px rgba(243, 156, 18, 0.25);
+      }
+      .badge-popular {
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        background: var(--accent3);
+        color: #fff;
+        padding: 3px 9px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .custom-charge-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .custom-charge-input {
+        width: 100%;
+        background: var(--bg-card2);
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        padding: 13px 70px 13px 20px;
+        border-radius: var(--radius-sm);
+        font-size: 16px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+        direction: ltr;
+        text-align: right;
+      }
+      .custom-charge-input:focus {
+        border-color: var(--accent4);
+        box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+      }
+      .custom-charge-input::placeholder {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 400;
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .input-unit {
+        position: absolute;
+        left: 16px;
+        color: var(--text-muted);
+        font-size: 13px;
+        pointer-events: none;
+      }
+      .min-note {
+        color: var(--accent);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 18px;
+      }
+      .charge-btn-pay {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(6, 214, 160, 0.28);
+      }
+      .charge-btn-pay:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(6, 214, 160, 0.4);
+      }
+      .charge-btn-pay:disabled {
+        background: var(--bg-card2);
+        color: var(--text-muted);
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      /* ── CONFIRM MODALS ── */
+      .confirm-modal-card {
+        max-width: 460px;
+        text-align: center;
+      }
+      .confirm-icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 18px;
+      }
+      .confirm-icon-wrap.danger {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--absent);
+        border: 2px solid rgba(231, 76, 60, 0.3);
+        animation: confirmPulse 2s infinite;
+      }
+      .confirm-icon-wrap.warning {
+        background: rgba(243, 156, 18, 0.14);
+        color: var(--accent4);
+        border: 2px solid rgba(243, 156, 18, 0.3);
+      }
+      .confirm-icon-wrap.info {
+        background: rgba(74, 144, 217, 0.14);
+        color: var(--accent);
+        border: 2px solid rgba(74, 144, 217, 0.25);
+      }
+      .confirm-icon-wrap.success {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        border: 2px solid rgba(6, 214, 160, 0.25);
+      }
+      @keyframes confirmPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+        }
+      }
+      .confirm-title {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 9px;
+      }
+      .confirm-msg {
+        color: var(--text-muted);
+        font-size: 13.5px;
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
+      .confirm-msg strong {
+        color: var(--accent4);
+        font-weight: 700;
+      }
+      .confirm-info-box {
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 18px;
+      }
+      .confirm-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .confirm-row:last-child {
+        margin-bottom: 0;
+      }
+      .confirm-label {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .confirm-value {
+        color: var(--accent4);
+        font-size: 20px;
+        font-weight: 900;
+        font-family: "Shabnam", sans-serif;
+      }
+      .confirm-value.big {
+        font-size: 26px;
+      }
+      .confirm-unit {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+      .confirm-full-value {
+        color: var(--text);
+        font-size: 13.5px;
+        font-weight: 600;
+        background: var(--bg-main);
+        padding: 9px 12px;
+        border-radius: 8px;
+        width: 100%;
+      }
+      .confirm-low-msg {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        margin-bottom: 14px;
+        line-height: 1.6;
+      }
+      .confirm-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .confirm-btns button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .btn-cancel {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+      .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--text);
+      }
+      .btn-danger {
+        background: linear-gradient(135deg, var(--accent5), #c0392b);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.25);
+      }
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(231, 76, 60, 0.35);
+      }
+      .btn-success {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(6, 214, 160, 0.22);
+      }
+      .btn-success:hover {
+        transform: translateY(-2px);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #1a5fd4);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(74, 144, 217, 0.25);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ── REG TOGGLE CONFIRM ── */
+      .reg-confirm-modal {
+        background: var(--bg-card2);
+        border-radius: var(--radius);
+        padding: 36px 32px;
+        width: 420px;
+        max-width: 90vw;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        animation: modalIn 0.28s ease;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      .reg-confirm-icon {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #fff;
+        transition: all 0.3s;
+      }
+      .reg-confirm-icon.open-action {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        box-shadow: 0 8px 22px rgba(6, 214, 160, 0.35);
+      }
+      .reg-confirm-icon.close-action {
+        background: linear-gradient(135deg, var(--accent5), #c0392b);
+        box-shadow: 0 8px 22px rgba(231, 76, 60, 0.35);
+      }
+      #regConfirmTitle {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 9px;
+      }
+      #regConfirmDesc {
+        color: var(--text-muted);
+        font-size: 13.5px;
+        line-height: 1.7;
+        margin-bottom: 26px;
+      }
+      .reg-confirm-actions {
+        display: flex;
+        gap: 11px;
+        justify-content: center;
+      }
+      .reg-confirm-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 11px 26px;
+        border-radius: var(--radius-sm);
+        border: none;
+        font-size: 13.5px;
+        font-weight: 700;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+      }
+      .reg-confirm-btn.cancel {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text-muted);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .reg-confirm-btn.cancel:hover {
+        background: rgba(255, 255, 255, 0.13);
+        color: #fff;
+      }
+      .reg-confirm-btn.ok {
+        background: linear-gradient(135deg, var(--accent3), #1a9e70);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(6, 214, 160, 0.28);
+      }
+      .reg-confirm-btn.ok.danger {
+        background: linear-gradient(135deg, var(--accent5), #c0392b);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.28);
+      }
+      .reg-confirm-btn.ok:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ── ARCHIVE MODAL ── */
+      .archive-modal-card {
+        max-width: 430px;
+        text-align: center;
+      }
+      .archive-modal-icon {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #fff;
+      }
+      .archive-modal-icon.do-archive {
+        background: linear-gradient(135deg, var(--accent4), #e67e22);
+        box-shadow: 0 8px 22px rgba(243, 156, 18, 0.35);
+      }
+      .archive-modal-icon.undo-archive {
+        background: linear-gradient(135deg, var(--accent), #1a5fd4);
+        box-shadow: 0 8px 22px rgba(74, 144, 217, 0.35);
+      }
+      .archive-student-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 7px 16px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .archive-student-chip i {
+        color: var(--accent4);
+      }
+
+      /* ── WARNING MODAL ── */
+      .warning-modal-card {
+        max-width: 440px;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          rgba(231, 76, 60, 0.22),
+          rgba(192, 57, 43, 0.16)
+        );
+        border-color: rgba(231, 76, 60, 0.4);
+      }
+      .warning-icon {
+        width: 72px;
+        height: 72px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-size: 32px;
+        color: #fff;
+      }
+      .warning-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Shabnam", sans-serif;
+        margin-bottom: 10px;
+      }
+      .warning-msg {
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+      }
+      .btn-warning-ok {
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn-warning-ok:hover {
+        background: rgba(255, 255, 255, 0.28);
+      }
+
+      /* ── EXCEL MODAL ── */
+      .excel-modal-card {
+        max-width: 580px;
+      }
+      .excel-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .excel-opt-btn {
+        background: var(--bg-card2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-family: "Vazirmatn", sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .excel-opt-btn:hover {
+        background: rgba(6, 214, 160, 0.1);
+        border-color: rgba(6, 214, 160, 0.3);
+        transform: translateX(-4px);
+      }
+      .excel-btn-left {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 600;
+      }
+      .excel-btn-left i {
+        font-size: 18px;
+        color: var(--accent3);
+        width: 24px;
+        text-align: center;
+      }
+      .excel-badge-count {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+        padding: 5px 13px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+      .excel-all {
+        background: linear-gradient(
+          135deg,
+          rgba(6, 214, 160, 0.2),
+          rgba(46, 204, 113, 0.14)
+        );
+        border-color: rgba(6, 214, 160, 0.3);
+      }
+      .excel-all .excel-btn-left i {
+        color: #fff;
+      }
+      .excel-all .excel-badge-count {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+
+      /* ── IMAGE PREVIEW ── */
+      .img-preview-card {
+        background: var(--bg-card2);
+        padding: 14px;
+        max-width: 90vw;
+        max-height: 90vh;
+      }
+      .img-preview-card img {
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 10px;
+      }
+
+      /* ── TOAST ── */
+      .toast {
+        position: fixed;
+        top: -160px;
+        right: 22px;
+        background: var(--bg-card2);
+        border: 1px solid rgba(6, 214, 160, 0.3);
+        color: var(--text);
+        padding: 15px 18px;
+        border-radius: var(--radius-sm);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 280px;
+        max-width: 400px;
+        z-index: 9999;
+        transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+      .toast.show {
+        top: 22px;
+      }
+      .toast.error {
+        border-color: rgba(231, 76, 60, 0.35);
+      }
+      .toast-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .toast:not(.error) .toast-icon {
+        background: rgba(6, 214, 160, 0.14);
+        color: var(--accent3);
+      }
+      .toast.error .toast-icon {
+        background: rgba(231, 76, 60, 0.14);
+        color: var(--accent5);
+      }
+      .toast-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .toast-msg {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 13px;
+        padding: 3px;
+        border-radius: 50%;
+        transition: all 0.2s;
+      }
+      .toast-close:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 1200px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 68px 13px 26px;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 9px;
+        }
+        .filter-bar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .filter-select,
+        .search-input {
+          width: 100%;
+        }
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .top-right {
+          width: 100%;
+        }
+        .sms-balance-box {
+          width: 100%;
+        }
+        .recipient-btns {
+          grid-template-columns: 1fr;
+        }
+        .sms-actions {
+          grid-template-columns: 1fr;
+        }
+        .charge-options-grid {
+          grid-template-columns: 1fr;
+        }
+        .reg-confirm-btn {
+          padding: 10px 18px;
+        }
+      }
+      @media (max-width: 480px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .stat-value {
+          font-size: 26px;
+        }
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        .sms-modal-card,
+        .charge-modal-card {
+          padding: 20px 14px;
+        }
+        .confirm-btns {
+          flex-direction: column;
+        }
+        .card-actions {
+          flex-direction: column;
+        }
+        .toast {
+          right: 12px;
+          left: 12px;
+          min-width: unset;
+          max-width: unset;
+        }
+        .status-row {
+          grid-template-columns: 1fr;
+          gap: 7px;
+        }
+      }
     </style>
-</head>
-<body>
-    <!-- Hamburger Menu Button -->
-    <button class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
+  </head>
+  <body>
+    <!-- HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" title="منو">
+      <i class="fas fa-bars"></i>
     </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">بوربور</div>
-            <nav>
-                <div class="menu-item">
-                    <a href="dashbord.html">
-                        <i class="fas fa-chart-line"></i>
-                        داشبورد
-                    </a>
-                </div>
-                <div class="menu-item has-submenu">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-users"></i>
-                        مدیریت کاربران
-                        <i class="fas fa-chevron-down submenu-arrow"></i>
-                    </a>
-                    <div class="submenu">
-                        <a href="../html/Assistant_management.html" class="submenu-item">
-                            <i class="fas fa-user-tie"></i>
-                            مدیریت معاونان
-                        </a>
-                        <a href="../html/Teacher_management.html" class="submenu-item">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                            مدیریت معلمین
-                        </a>
-                        <a href="../html/student.html" class="submenu-item">
-                            <i class="fas fa-user-graduate"></i>
-                            مدیریت دانش‌آموزان
-                        </a>
-                        <a href="../html/Parents.html" class="submenu-item">
-                            <i class="fas fa-users"></i>
-                            مدیریت اولیا
-                        </a>
-                    </div>
-                </div>
-                <div class="menu-item has-submenu">
-                    <a href="" class="menu-link">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        مدیریت کلاس ها
-                        <i class="fas fa-chevron-down submenu-arrow"></i>
-                    </a>
-                    <div class="submenu">
-                        <a href="../html/Class-list.html" class="submenu-item">
-                            <i class="fas fa-list"></i>
-                            لیست کلاس‌ها
-                        </a>
-                        <a href="../html/Class-schedule.html" class="submenu-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            برنامه کلاسی
-                        </a>
-                        <a href="../html/Attendance.html" class="submenu-item">
-                            <i class="fas fa-clipboard-check"></i>
-                            حضور و غیاب
-                        </a>
-                        <a href="../html/grades.html" class="submenu-item">
-                            <i class="fas fa-star"></i>
-                            نمرات
-                        </a>
-                    </div>
-                </div>
-                <div class="menu-item active">
-                    <a href="../html/Pre-registration.html">
-                        <i class="fas fa-clipboard-list"></i>
-                        پیش ثبت نام ها
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a href="../html/reports.html">
-                        <i class="fas fa-file-alt"></i>
-                        گزارش ها
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a href="../html/notife.html">
-                        <i class="fas fa-bell"></i>
-                        اطلاعیه ها
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a href="../html/archive.html">
-                        <i class="fas fa-archive"></i>
-                        ارشیو
-                    </a>
-                </div>
-        <div class="menu-item">
-            <a href="../html/permissions.html">
-            <i class="fas fa-shield-alt"></i>
-            مدیریت دسترسی‌ها
-          </a>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="logo">بور<span>بور</span></div>
+      <div class="logo-sub">سامانه مدیریت مدرسه</div>
+      <div class="manager-block">
+        <div class="manager-avatar" id="managerAvatarLetter">م</div>
+        <div>
+          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
+          <div class="manager-role" id="managerRole">مدیر سیستم</div>
+          <div class="manager-badge">هنرستان شهید بوربور</div>
         </div>
+      </div>
+      <div class="nav-section-label">منوی اصلی</div>
+      <div class="menu-item">
+        <a href="../html/dashbord.html"
+          ><i class="fas fa-chart-line"></i> داشبورد</a
+        >
+      </div>
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-users"></i> مدیریت کاربران
+          <i class="fas fa-chevron-down submenu-arrow"></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Assistant_management.html" class="submenu-item"
+            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
+          >
+          <a href="../html/Teacher_management.html" class="submenu-item"
+            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
+          >
+          <a href="../html/student.html" class="submenu-item"
+            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
+          >
 
-                <div class="menu-item">
-                    <a href="../html/settings.html">
-                        <i class="fas fa-cog"></i>
-                        تنظیمات
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a href="../api/logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                        خروج
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="top-header">
-                <h1 class="page-title">پیش ثبت نام ها</h1>
-                
-                
-<!-- بخش وضعیت ثبت‌نام - جایگزین کنید -->
-<div class="reg-status-wrap" id="regStatusWrap">
-    <div class="reg-status-indicator" id="regStatusIndicator">
-        <div class="reg-status-dot" id="regStatusDot"></div>
-        <span class="reg-status-text">وضعیت ثبت‌نام:</span>
-        <span class="reg-status-badge" id="regStatusBadge">در حال بارگذاری</span>
+        </div>
+      </div>
+      <div class="menu-item has-submenu">
+        <a href="#" class="menu-link"
+          ><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
+          <i class="fas fa-chevron-down submenu-arrow"></i
+        ></a>
+        <div class="submenu">
+          <a href="../html/Courses.html" class="submenu-item"
+            ><i class="fas fa-list"></i> مدیریت دروس</a
+          >
+          <a href="../html/Class-schedule.html" class="submenu-item"
+            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
+          >
+          <a href="../html/Attendance.html" class="submenu-item"
+            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
+          >
+          <a href="../html/grades.html" class="submenu-item"
+            ><i class="fas fa-star"></i> نمرات</a
+          >
+        </div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">مدیریت</div>
+      <div class="menu-item active">
+        <a href="../html/Pre-registration.html"
+          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/reports.html"
+          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
+        >
+      </div>
+      <div class="menu-item">
+        <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
+      </div>
+      <div class="menu-item">
+        <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">سیستم</div>
+      <div class="menu-item">
+        <a href="../html/permissions.html"
+          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
+        >
+      </div>
+       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+      </div>
+      <div class="menu-item">
+        <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+      </div>
+      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
     </div>
-    <button class="reg-toggle-btn" id="registrationToggleBtn" onclick="toggleRegistration()">
-        <i class="fas fa-lock" id="regToggleIcon"></i>
-        <span id="regToggleText">بستن ثبت‌نام</span>
-    </button>
-</div>
-                
-                <div class="header-left">
-                    <div class="sms-balance-box" id="smsBalanceBox">
-                        <div class="balance-label">
-                            <i class="fas fa-wallet"></i>
-                            موجودی شارژ پیامک:
-                        </div>
-                        <div class="balance-amount" id="smsBalanceAmount">0</div>
-                        <div class="balance-unit">تومان</div>
-                        <button class="btn-charge-account" onclick="openChargeModal()">
-                            <i class="fas fa-plus-circle"></i>
-                            شارژ حساب
-                        </button>
-                    </div>
-                    <div class="admin-info" id="adminInfo">در حال بارگذاری...</div>
-                </div>
-            </div>
 
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon pending">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-label">در انتظار</div>
-                        <div class="stat-value" id="pendingCount">0</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon accepted">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-label">قبول شده</div>
-                        <div class="stat-value" id="acceptedCount">0</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon rejected">
-                        <i class="fas fa-times-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-label">رد شده</div>
-                        <div class="stat-value" id="rejectedCount">0</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon total">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-label">کل درخواست‌ها</div>
-                        <div class="stat-value" id="totalCount">0</div>
-                    </div>
-                </div>
+    <!-- MAIN -->
+    <div class="main-content">
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="page-title-wrap">
+          <h1>پیش <span>ثبت‌نام‌ها</span></h1>
+          <div class="admin-info" id="adminInfo">
+            <span class="live-dot"></span>در حال بارگذاری...
+          </div>
+        </div>
+        <div class="top-right">
+          <div class="reg-status-wrap">
+            <div class="reg-status-indicator">
+              <div class="reg-status-dot" id="regStatusDot"></div>
+              <span class="reg-status-text">ثبت‌نام:</span>
+              <span class="reg-status-badge open" id="regStatusBadge">باز</span>
             </div>
+            <button
+              class="reg-toggle-btn is-open"
+              id="registrationToggleBtn"
+              onclick="toggleRegistration()"
+            >
+              <i class="fas fa-lock" id="regToggleIcon"></i>
+              <span id="regToggleText">بستن ثبت‌نام</span>
+            </button>
+          </div>
+          <div class="sms-balance-box" id="smsBalanceBox">
+            <div class="balance-label">
+              <i class="fas fa-wallet"></i>موجودی پیامک:
+            </div>
+            <div class="balance-amount" id="smsBalanceAmount">۵۰٬۰۰۰</div>
+            <div class="balance-unit">تومان</div>
+            <button class="btn-charge-account" onclick="openChargeModal()">
+              <i class="fas fa-plus-circle"></i>شارژ
+            </button>
+          </div>
+          <div class="profile-btn" id="profileBtnLetter">م</div>
+        </div>
+      </div>
 
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-group">
-                    <label class="filter-label">جستجو:</label>
-                    <div class="search-group">
-                        <input type="text" id="searchInput" class="search-input" placeholder="جستجو بر اساس نام، کد ملی یا شماره...">
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">پایه:</label>
-                    
-                    <select id="filterGrade" class="filter-select">
-                        <option value="">همه پایه ها</option>
-                        <option value="tenth">دهم</option>
-                        <option value="eleventh">یازدهم</option>
-                        <option value="twelfth">دوازدهم</option>
-                    </select>
-                    
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">وضعیت:</label>
-                    <select id="filterStatus" class="filter-select">
-                        <option value="">همه وضعیت ها</option>
-                        <option value="pending">در انتظار</option>
-                        <option value="accepted">قبول شده</option>
-                        <option value="rejected">رد شده</option>
-                    </select>
-                </div>
-                
-<div class="filter-group auto-archive-group">
-    <label class="auto-archive-label">
-        <i class="fas fa-clock"></i>
-        آرشیو خودکار پس از:
-    </label>
-    <div class="auto-archive-input-wrap">
-        <input
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-label">در انتظار</div>
+          <div class="stat-value" id="pendingCount">۰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-label">قبول شده</div>
+          <div class="stat-value" id="acceptedCount">۰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-label">رد شده</div>
+          <div class="stat-value" id="rejectedCount">۰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+          <div class="stat-label">کل درخواست‌ها</div>
+          <div class="stat-value" id="totalCount">۰</div>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <input
+            class="search-input"
+            type="text"
+            id="searchInput"
+            placeholder="جستجو بر اساس نام، کد ملی یا شماره..."
+          />
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <select class="filter-select" id="filterGrade">
+          <option value="">همه پایه‌ها</option>
+          <option value="tenth">دهم</option>
+          <option value="eleventh">یازدهم</option>
+          <option value="twelfth">دوازدهم</option>
+        </select>
+        <select class="filter-select" id="filterStatus">
+          <option value="">همه وضعیت‌ها</option>
+          <option value="pending">در انتظار</option>
+          <option value="accepted">قبول شده</option>
+          <option value="rejected">رد شده</option>
+        </select>
+        <div class="auto-archive-group">
+          <label class="auto-archive-label"
+            ><i class="fas fa-clock"></i>آرشیو خودکار پس از:</label
+          >
+          <input
             type="number"
             id="autoArchiveDays"
             class="auto-archive-days"
             min="1"
             max="365"
             value="30"
-            placeholder="۳۰"
-        >
-        <span class="auto-archive-days-label">روز</span>
+          />
+          <span class="auto-archive-days-label">روز</span>
+          <button
+            class="auto-archive-save-btn"
+            id="autoArchiveSaveBtn"
+            onclick="saveAutoArchiveDays()"
+          >
+            <i class="fas fa-save"></i>ذخیره
+          </button>
+        </div>
+        <div class="filter-actions">
+          <button class="btn-excel" onclick="openExportModal()">
+            <i class="fas fa-file-excel"></i>Excel
+          </button>
+        </div>
+      </div>
+
+      <!-- CARDS -->
+      <div class="cards-grid" id="cardsGrid"></div>
+      <div class="empty-state" id="emptyState">
+        <i class="fas fa-inbox"></i>
+        <h3>نتیجه‌ای یافت نشد</h3>
+        <p>هیچ پیش ثبت‌نامی با این فیلتر وجود ندارد.</p>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="pagination" id="paginationContainer" style="display: none">
+        <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+          <i class="fas fa-chevron-right"></i> قبلی
+        </button>
+        <div class="pagination-info">
+          صفحه <strong id="curPage">۱</strong> از
+          <strong id="totPages">۱</strong>
+        </div>
+        <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+          بعدی <i class="fas fa-chevron-left"></i>
+        </button>
+      </div>
     </div>
-    <button class="auto-archive-save-btn" id="autoArchiveSaveBtn" onclick="saveAutoArchiveDays()">
-        <i class="fas fa-save"></i>
-        ذخیره
-    </button>
-</div>
-                <div class="filter-group">
-                    <button class="excel-export-btn" onclick="openExportModal()">
-                        <i class="fas fa-file-excel"></i>
-                        خروجی Excel
-                    </button>
-                </div>
-            </div>
 
-            <!-- Registration Cards Grid -->
-            <div class="registrations-grid" id="registrationsGrid">
-                <!-- Cards will be dynamically inserted here -->
-            </div>
-
-            <!-- Empty State -->
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <i class="fas fa-inbox"></i>
-                <h3>نتیجه‌ای یافت نشد</h3>
-                <p>هیچ پیش ثبت نامی با این فیلتر وجود ندارد.</p>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container" id="paginationContainer" style="display: none;">
-                <button class="pagination-btn" id="prevPage" onclick="changePage(-1)">
-                                       <i class="fas fa-chevron-left"></i>
-
-                    قبلی
-                </button>
-                <div class="pagination-info">
-                    <span>صفحه</span>
-                    <span id="currentPage">1</span>
-                    <span>از</span>
-                    <span id="totalPages">1</span>
-                </div>
-                <button class="pagination-btn" id="nextPage" onclick="changePage(1)">
-                                        <i class="fas fa-chevron-right"></i>
-
-                    بعدی
-                </button>
-            </div>
-        </main>
-    </div>
+    <!-- ══ MODALS ══ -->
 
     <!-- Specs Modal -->
-    <div id="specsModal" class="modal">
-        <div class="modal-content specs-modal-content">
-            <button class="close-btn" onclick="closeSpecsModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 class="modal-title">جزئیات پیش ثبت نام</h2>
-            
-            <div class="specs-header">
-                <div id="specPhotoContainer" class="specs-photo-container"></div>
-                <div class="specs-basic-info">
-                    <h3 id="specStudentName" class="specs-student-name">-</h3>
-                    <div class="specs-student-code">شماره ثبت نام: <span id="specRegistrationId">-</span></div>
-                </div>
-            </div>
-            
-            <div class="specs-sections">
-                <div class="specs-section">
-                    <h3 class="specs-section-title">
-                        <i class="fas fa-user-graduate"></i>
-                        اطلاعات دانش‌آموز
-                    </h3>
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">نام:</span>
-                            <span class="spec-value" id="specStudentFirstName">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">نام خانوادگی:</span>
-                            <span class="spec-value" id="specStudentLastName">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">کد ملی:</span>
-                            <span class="spec-value" id="specStudentNationalId">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">تاریخ تولد:</span>
-                            <span class="spec-value" id="specStudentBirthDate">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">پایه تحصیلی:</span>
-                            <span class="spec-value" id="specStudentGrade">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">شماره تماس:</span>
-                            <span class="spec-value" id="specStudentPhone">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="specs-section">
-                    <h3 class="specs-section-title">
-                        <i class="fas fa-male"></i>
-                        اطلاعات پدر
-                    </h3>
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">نام:</span>
-                            <span class="spec-value" id="specFatherName">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">نام خانوادگی:</span>
-                            <span class="spec-value" id="specFatherFamily">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">کد ملی:</span>
-                            <span class="spec-value" id="specFatherNationalId">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">تاریخ تولد:</span>
-                            <span class="spec-value" id="specFatherBirthDate">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">تحصیلات:</span>
-                            <span class="spec-value" id="specFatherEducation">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">شغل:</span>
-                            <span class="spec-value" id="specFatherJob">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">شماره تماس:</span>
-                            <span class="spec-value" id="specFatherPhone">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="specs-section">
-                    <h3 class="specs-section-title">
-                        <i class="fas fa-female"></i>
-                        اطلاعات مادر
-                    </h3>
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">نام:</span>
-                            <span class="spec-value" id="specMotherName">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">نام خانوادگی:</span>
-                            <span class="spec-value" id="specMotherFamily">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">کد ملی:</span>
-                            <span class="spec-value" id="specMotherNationalId">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">تاریخ تولد:</span>
-                            <span class="spec-value" id="specMotherBirthDate">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">تحصیلات:</span>
-                            <span class="spec-value" id="specMotherEducation">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">شغل:</span>
-                            <span class="spec-value" id="specMotherJob">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">شماره تماس:</span>
-                            <span class="spec-value" id="specMotherPhone">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="specs-section">
-                    <h3 class="specs-section-title">
-                        <i class="fas fa-file-alt"></i>
-                        مدارک
-                    </h3>
-                    <div class="documents-container">
-                        <div class="document-item" id="reportCardDoc">
-                            <div class="document-placeholder">
-                                <i class="fas fa-file-image"></i>
-                                <span>کارنامه</span>
-                            </div>
-                        </div>
-                        <div class="document-item" id="guidanceDoc">
-                            <div class="document-placeholder">
-                                <i class="fas fa-file-image"></i>
-                                <span>هدایت تحصیلی</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="modal" id="specsModal">
+      <div class="modal-card specs-modal-card">
+        <button class="close-btn" onclick="closeModal('specsModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">
+          <i class="fas fa-info-circle"></i>جزئیات پیش ثبت‌نام
+        </h2>
+        <div class="specs-header">
+          <div class="specs-photo" id="specPhoto">؟</div>
+          <div>
+            <div class="specs-name" id="specName">-</div>
+            <div class="specs-code" id="specCode">-</div>
+          </div>
         </div>
+        <div class="specs-sections">
+          <div class="specs-section">
+            <div class="specs-section-title">
+              <i class="fas fa-user-graduate"></i>اطلاعات دانش‌آموز
+            </div>
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">نام</span
+                ><span class="spec-value" id="sNm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">نام خانوادگی</span
+                ><span class="spec-value" id="sFm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">کد ملی</span
+                ><span class="spec-value" id="sNi">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">تاریخ تولد</span
+                ><span class="spec-value" id="sBd">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">پایه تحصیلی</span
+                ><span class="spec-value" id="sGr">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">شماره تماس</span
+                ><span class="spec-value" id="sPh">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="specs-section">
+            <div class="specs-section-title">
+              <i class="fas fa-male"></i>اطلاعات پدر
+            </div>
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">نام</span
+                ><span class="spec-value" id="fNm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">نام خانوادگی</span
+                ><span class="spec-value" id="fFm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">تحصیلات</span
+                ><span class="spec-value" id="fEd">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">شغل</span
+                ><span class="spec-value" id="fJb">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">شماره تماس</span
+                ><span class="spec-value" id="fPh">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="specs-section">
+            <div class="specs-section-title">
+              <i class="fas fa-female"></i>اطلاعات مادر
+            </div>
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">نام</span
+                ><span class="spec-value" id="mNm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">نام خانوادگی</span
+                ><span class="spec-value" id="mFm">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">تحصیلات</span
+                ><span class="spec-value" id="mEd">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">شغل</span
+                ><span class="spec-value" id="mJb">-</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">شماره تماس</span
+                ><span class="spec-value" id="mPh">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="specs-section">
+            <div class="specs-section-title">
+              <i class="fas fa-file-alt"></i>مدارک
+            </div>
+            <div class="docs-grid">
+              <div class="doc-item" id="reportCardDoc">
+                <div class="doc-placeholder">
+                  <i class="fas fa-file-image"></i><span>کارنامه</span>
+                </div>
+              </div>
+              <div class="doc-item" id="guidanceDoc">
+                <div class="doc-placeholder">
+                  <i class="fas fa-file-image"></i><span>هدایت تحصیلی</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Status Modal -->
-    <div id="statusModal" class="modal">
-        <div class="status-modal-content">
-            <button class="close-btn" onclick="closeStatusModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 class="modal-title">
-                <i class="fas fa-edit"></i>
-                تغییر وضعیت
-            </h2>
-            <div class="status-options">
-                <button class="status-option-btn pending" onclick="changeStatus('pending')">
-                    <i class="fas fa-clock"></i>
-                    در انتظار
-                </button>
-                <button class="status-option-btn accepted" onclick="changeStatus('accepted')">
-                    <i class="fas fa-check-circle"></i>
-                    قبول شده
-                </button>
-                <button class="status-option-btn rejected" onclick="changeStatus('rejected')">
-                    <i class="fas fa-times-circle"></i>
-                    رد شده
-                </button>
-            </div>
+    <div class="modal" id="statusModal">
+      <div class="modal-card status-modal-card">
+        <button class="close-btn" onclick="closeModal('statusModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title"><i class="fas fa-edit"></i>تغییر وضعیت</h2>
+        <div class="status-options">
+          <button
+            class="status-opt-btn pending"
+            onclick="changeStatus('pending')"
+          >
+            <i class="fas fa-clock"></i>در انتظار
+          </button>
+          <button
+            class="status-opt-btn accepted"
+            onclick="changeStatus('accepted')"
+          >
+            <i class="fas fa-check-circle"></i>قبول شده
+          </button>
+          <button
+            class="status-opt-btn rejected"
+            onclick="changeStatus('rejected')"
+          >
+            <i class="fas fa-times-circle"></i>رد شده
+          </button>
         </div>
+      </div>
     </div>
 
     <!-- SMS Modal -->
     <div class="modal" id="smsModal">
-        <div class="sms-modal-content">
-            <button class="close-btn" onclick="closeSmsModal()">
-                <i class="fas fa-times"></i>
+      <div class="modal-card sms-modal-card">
+        <button class="close-btn" onclick="closeModal('smsModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title"><i class="fas fa-sms"></i>ارسال پیامک</h2>
+        <div id="smsRecipientInfo"></div>
+        <div class="sms-section">
+          <div class="form-label">
+            <i class="fas fa-user-check"></i>ارسال به:
+          </div>
+          <div class="recipient-btns">
+            <button
+              class="recipient-btn"
+              data-r="father"
+              onclick="selectRecipient('father')"
+            >
+              <i class="fas fa-male"></i>پدر
             </button>
-            <h2 class="modal-title" id="smsModalTitle">ارسال پیامک</h2>
-
-            <div class="sms-recipient-info" id="smsRecipientInfo">
-                <!-- اطلاعات گیرنده -->
-            </div>
-
-            <div class="sms-recipient-select" id="smsRecipientSelect">
-                <label class="form-label">
-                    <i class="fas fa-user-check"></i>
-                    ارسال به:
-                </label>
-                <div class="recipient-buttons">
-                    <button class="recipient-btn" data-recipient="father" onclick="selectRecipient('father')">
-                        <i class="fas fa-male"></i>
-                        پدر
-                    </button>
-                    <button class="recipient-btn" data-recipient="mother" onclick="selectRecipient('mother')">
-                        <i class="fas fa-female"></i>
-                        مادر
-                    </button>
-                    <button class="recipient-btn" data-recipient="both" onclick="selectRecipient('both')">
-                        <i class="fas fa-users"></i>
-                        هر دو
-                    </button>
-                </div>
-            </div>
-
-            <div class="sms-reason-section">
-                <label class="form-label">
-                    <i class="fas fa-tag"></i>
-                    دلیل ارسال پیامک:
-                </label>
-                <div class="sms-reason-buttons">
-                    <button class="sms-reason-btn" data-reason="acceptance" onclick="selectSmsReason('acceptance')">
-                        <i class="fas fa-check-circle"></i>
-                        قبولی
-                    </button>
-                    <button class="sms-reason-btn" data-reason="rejection" onclick="selectSmsReason('rejection')">
-                        <i class="fas fa-times-circle"></i>
-                        عدم قبولی
-                    </button>
-                    <button class="sms-reason-btn" data-reason="interview" onclick="selectSmsReason('interview')">
-                        <i class="fas fa-calendar-alt"></i>
-                        مصاحبه
-                    </button>
-                    <button class="sms-reason-btn" data-reason="documents" onclick="selectSmsReason('documents')">
-                        <i class="fas fa-file-alt"></i>
-                        مدارک
-                    </button>
-                    <button class="sms-reason-btn" data-reason="other" onclick="selectSmsReason('other')">
-                        <i class="fas fa-ellipsis-h"></i>
-                        سایر
-                    </button>
-                </div>
-            </div>
-
-            <div class="sms-message-section">
-                <label class="form-label">
-                    <i class="fas fa-comment-alt"></i>
-                    متن پیامک:
-                </label>
-                <textarea class="sms-textarea" id="smsMessage" placeholder="متن پیامک خود را وارد کنید..."></textarea>
-                <div class="sms-char-count">
-                    <span id="smsCharCount">0</span> / 300 کاراکتر
-                </div>
-            </div>
-
-            <div class="sms-quick-messages">
-                <h3 class="sms-quick-title">
-                    <i class="fas fa-bolt"></i>
-                    پیام‌های سریع
-                </h3>
-                <div class="sms-quick-grid" id="smsQuickGrid">
-                    <!-- پیام‌های سریع -->
-                </div>
-            </div>
-
-            <div class="sms-actions">
-                <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()">
-                    <i class="fas fa-save"></i>
-                    ذخیره متن
-                </button>
-                <button class="sms-btn sms-btn-send" onclick="sendSms()">
-                    <i class="fas fa-paper-plane"></i>
-                    ارسال پیامک
-                </button>
-            </div>
+            <button
+              class="recipient-btn"
+              data-r="mother"
+              onclick="selectRecipient('mother')"
+            >
+              <i class="fas fa-female"></i>مادر
+            </button>
+            <button
+              class="recipient-btn"
+              data-r="both"
+              onclick="selectRecipient('both')"
+            >
+              <i class="fas fa-users"></i>هر دو
+            </button>
+          </div>
         </div>
+        <div class="sms-section">
+          <div class="form-label"><i class="fas fa-tag"></i>دلیل ارسال:</div>
+          <div class="sms-reason-btns">
+            <button
+              class="sms-reason-btn"
+              data-reason="acceptance"
+              onclick="selectReason('acceptance')"
+            >
+              <i class="fas fa-check-circle"></i>قبولی
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="rejection"
+              onclick="selectReason('rejection')"
+            >
+              <i class="fas fa-times-circle"></i>عدم قبولی
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="interview"
+              onclick="selectReason('interview')"
+            >
+              <i class="fas fa-calendar-alt"></i>مصاحبه
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="documents"
+              onclick="selectReason('documents')"
+            >
+              <i class="fas fa-file-alt"></i>مدارک
+            </button>
+            <button
+              class="sms-reason-btn"
+              data-reason="other"
+              onclick="selectReason('other')"
+            >
+              <i class="fas fa-ellipsis-h"></i>سایر
+            </button>
+          </div>
+        </div>
+        <div class="sms-section">
+          <div class="form-label">
+            <i class="fas fa-comment-alt"></i>متن پیامک:
+          </div>
+          <textarea
+            class="sms-textarea"
+            id="smsMessage"
+            placeholder="متن پیامک خود را وارد کنید..."
+            oninput="updateCharCount()"
+          ></textarea>
+          <div class="char-count">
+            <span id="charCount">0</span> / 300 کاراکتر
+          </div>
+        </div>
+        <div class="quick-messages-box">
+          <div class="quick-title">
+            <i class="fas fa-bolt"></i>پیام‌های سریع
+          </div>
+          <div id="quickMsgGrid">
+            <div
+              style="
+                color: var(--text-muted);
+                font-size: 13px;
+                text-align: center;
+                padding: 14px;
+              "
+            >
+              ابتدا دلیل ارسال را انتخاب کنید
+            </div>
+          </div>
+        </div>
+        <div class="sms-actions">
+          <button class="sms-btn sms-btn-save" onclick="saveSmsTemplate()">
+            <i class="fas fa-save"></i>ذخیره متن
+          </button>
+          <button class="sms-btn sms-btn-send" onclick="sendSms()">
+            <i class="fas fa-paper-plane"></i>ارسال پیامک
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Charge Modal -->
     <div class="modal" id="chargeModal">
-        <div class="charge-modal-content">
-            <button class="close-btn" onclick="closeChargeModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 class="modal-title">
-                <i class="fas fa-wallet"></i>
-                شارژ حساب پیامک
-            </h2>
-
-            <div class="charge-info">
-                <div class="current-balance">
-                    <span class="balance-label">موجودی فعلی:</span>
-                    <span class="balance-value" id="smsBalanceAmount2">0</span>
-                    <span class="balance-unit">تومان</span>
-                </div>
-                <div class="sms-price-info">
-                    <i class="fas fa-info-circle"></i>
-                    هر پیامک 150 تومان
-                </div>
-            </div>
-
-            <div class="charge-options-section">
-                <h3 class="section-title">
-                    <i class="fas fa-list"></i>
-                    انتخاب مبلغ شارژ:
-                </h3>
-                <div class="charge-options-grid">
-                    <button class="charge-option-btn" data-amount="100000" onclick="selectChargeOption(100000)">
-                        <i class="fas fa-coins"></i>
-                        <span class="amount">100,000</span>
-                        <span class="unit">تومان</span>
-                    </button>
-                    <button class="charge-option-btn" data-amount="200000" onclick="selectChargeOption(200000)">
-                        <i class="fas fa-coins"></i>
-                        <span class="amount">200,000</span>
-                        <span class="unit">تومان</span>
-                    </button>
-                    <button class="charge-option-btn" data-amount="500000" onclick="selectChargeOption(500000)">
-                        <i class="fas fa-coins"></i>
-                        <span class="amount">500,000</span>
-                        <span class="unit">تومان</span>
-                        <span class="badge-popular">پرطرفدار</span>
-                    </button>
-                    <button class="charge-option-btn" data-amount="1000000" onclick="selectChargeOption(1000000)">
-                        <i class="fas fa-coins"></i>
-                        <span class="amount">1,000,000</span>
-                        <span class="unit">تومان</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="custom-charge-section">
-                <h3 class="section-title">
-                    <i class="fas fa-edit"></i>
-                    مبلغ دلخواه:
-                </h3>
-                <div class="custom-charge-input-wrapper">
-                    <input 
-                        type="number" 
-                        id="customChargeAmount" 
-                        class="custom-charge-input" 
-                        placeholder="مبلغ مورد نظر خود را وارد کنید..."
-                        min="10000"
-                        step="10000"
-                        oninput="selectCustomCharge()"
-                    >
-                    <span class="input-unit">تومان</span>
-                </div>
-                <div class="min-charge-note">
-                    <i class="fas fa-exclamation-circle"></i>
-                    حداقل مبلغ شارژ: 10,000 تومان
-                </div>
-            </div>
-
-            <div class="charge-actions">
-                <button class="charge-btn charge-btn-pay" onclick="proceedToPayment()" disabled>
-                    <i class="fas fa-credit-card"></i>
-                    انتخاب مبلغ الزامی است
-                </button>
-            </div>
+      <div class="modal-card charge-modal-card">
+        <button class="close-btn" onclick="closeModal('chargeModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 class="modal-title">
+          <i class="fas fa-wallet"></i>شارژ حساب پیامک
+        </h2>
+        <div class="charge-info">
+          <div class="current-balance-row">
+            <span style="color: var(--text-muted); font-size: 13px"
+              >موجودی فعلی:</span
+            >
+            <span class="balance-val" id="chargeBalanceAmt">۰</span>
+            <span style="color: var(--text-muted); font-size: 12px">تومان</span>
+          </div>
+          <div class="price-info">
+            <i class="fas fa-info-circle"></i>هر پیامک ۱۵۰ تومان
+          </div>
         </div>
+        <div class="section-title">
+          <i class="fas fa-list"></i>انتخاب مبلغ شارژ:
+        </div>
+        <div class="charge-options-grid">
+          <button
+            class="charge-opt-btn"
+            data-amount="100000"
+            onclick="selectChargeOpt(this, 100000)"
+          >
+            <i class="fas fa-coins"></i><span class="amt">۱۰۰٬۰۰۰</span
+            ><span class="unt">تومان</span>
+          </button>
+          <button
+            class="charge-opt-btn"
+            data-amount="200000"
+            onclick="selectChargeOpt(this, 200000)"
+          >
+            <i class="fas fa-coins"></i><span class="amt">۲۰۰٬۰۰۰</span
+            ><span class="unt">تومان</span>
+          </button>
+          <button
+            class="charge-opt-btn"
+            data-amount="500000"
+            onclick="selectChargeOpt(this, 500000)"
+          >
+            <i class="fas fa-coins"></i><span class="amt">۵۰۰٬۰۰۰</span
+            ><span class="unt">تومان</span
+            ><span class="badge-popular">پرطرفدار</span>
+          </button>
+          <button
+            class="charge-opt-btn"
+            data-amount="1000000"
+            onclick="selectChargeOpt(this, 1000000)"
+          >
+            <i class="fas fa-coins"></i><span class="amt">۱٬۰۰۰٬۰۰۰</span
+            ><span class="unt">تومان</span>
+          </button>
+        </div>
+        <div class="section-title" style="margin-top: 4px">
+          <i class="fas fa-edit"></i>مبلغ دلخواه:
+        </div>
+        <div class="custom-charge-wrap">
+          <input
+            type="number"
+            id="customChargeInput"
+            class="custom-charge-input"
+            placeholder="مبلغ مورد نظر..."
+            min="10000"
+            step="10000"
+            oninput="onCustomCharge()"
+          />
+          <span class="input-unit">تومان</span>
+        </div>
+        <div class="min-note">
+          <i class="fas fa-exclamation-circle"></i>حداقل مبلغ شارژ: ۱۰٬۰۰۰ تومان
+        </div>
+        <button
+          class="charge-btn-pay"
+          id="chargePayBtn"
+          onclick="proceedToPayment()"
+          disabled
+        >
+          <i class="fas fa-credit-card"></i>انتخاب مبلغ الزامی است
+        </button>
+      </div>
     </div>
 
-    <!-- SMS Confirm Modal -->
-    <div class="modal" id="smsConfirmModal">
-        <div class="confirm-modal-content">
-            <h2 class="modal-title">
-                <i class="fas fa-question-circle"></i>
-                تأیید ارسال پیامک
-            </h2>
-            
-            <div class="confirm-info">
-                <div class="confirm-row">
-                    <span class="confirm-label">تعداد گیرندگان:</span>
-                    <span class="confirm-value" id="smsConfirmRecipients">0</span>
-                    <span class="confirm-unit">نفر</span>
-                </div>
-                <div class="confirm-row">
-                    <span class="confirm-label">هزینه کل:</span>
-                    <span class="confirm-value" id="smsConfirmCost">0</span>
-                    <span class="confirm-unit">تومان</span>
-                </div>
-                <div class="confirm-row recipient-info">
-                    <span class="confirm-label">گیرنده:</span>
-                    <span class="confirm-value-full" id="smsConfirmRecipientText"></span>
-                </div>
-            </div>
-            
-            <div class="confirm-actions">
-                <button class="btn-confirm-cancel" onclick="closeSmsConfirmModal()">
-                    <i class="fas fa-times"></i>
-                    انصراف
-                </button>
-                <button class="btn-confirm-ok" onclick="confirmSendSms()">
-                    <i class="fas fa-paper-plane"></i>
-                    ارسال پیامک
-                </button>
-            </div>
+    <!-- SMS Confirm -->
+    <div class="modal" id="smsConfirmModal" style="z-index: 2100">
+      <div class="modal-card confirm-modal-card">
+        <h2 class="modal-title">
+          <i class="fas fa-question-circle"></i>تأیید ارسال پیامک
+        </h2>
+        <div class="confirm-info-box">
+          <div class="confirm-row">
+            <span class="confirm-label">تعداد گیرندگان:</span
+            ><span class="confirm-value" id="cRecipients">0</span
+            ><span class="confirm-unit">نفر</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">هزینه کل:</span
+            ><span class="confirm-value" id="cCost">0</span
+            ><span class="confirm-unit">تومان</span>
+          </div>
+          <div
+            class="confirm-row"
+            style="flex-direction: column; align-items: flex-start; gap: 6px"
+          >
+            <span class="confirm-label">گیرنده:</span
+            ><span class="confirm-full-value" id="cRecipientText"></span>
+          </div>
         </div>
+        <div class="confirm-btns">
+          <button class="btn-cancel" onclick="closeModal('smsConfirmModal')">
+            <i class="fas fa-times"></i>انصراف</button
+          ><button class="btn-success" onclick="confirmSendSms()">
+            <i class="fas fa-paper-plane"></i>ارسال پیامک
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Low Balance Modal -->
-    <div class="modal" id="lowBalanceModal">
-        <div class="confirm-modal-content">
-            <h2 class="modal-title">
-                <i class="fas fa-exclamation-triangle"></i>
-                موجودی ناکافی
-            </h2>
-            
-            <div class="confirm-info">
-                <p class="low-balance-message">موجودی شما برای ارسال پیامک کافی نیست.</p>
-                <div class="confirm-row">
-                    <span class="confirm-label">موجودی فعلی:</span>
-                    <span class="confirm-value" id="lowBalanceCurrent">0</span>
-                    <span class="confirm-unit">تومان</span>
-                </div>
-                <div class="confirm-row">
-                    <span class="confirm-label">موجودی مورد نیاز:</span>
-                    <span class="confirm-value" id="lowBalanceNeeded">0</span>
-                    <span class="confirm-unit">تومان</span>
-                </div>
-            </div>
-            
-            <div class="confirm-actions">
-                <button class="btn-confirm-cancel" onclick="closeLowBalanceModal()">
-                    <i class="fas fa-times"></i>
-                    انصراف
-                </button>
-                <button class="btn-confirm-ok" onclick="goToChargeFromLowBalance()">
-                    <i class="fas fa-wallet"></i>
-                    شارژ حساب
-                </button>
-            </div>
+    <!-- Low Balance -->
+    <div class="modal" id="lowBalanceModal" style="z-index: 2100">
+      <div class="modal-card confirm-modal-card">
+        <div class="confirm-icon-wrap warning">
+          <i class="fas fa-exclamation-triangle"></i>
         </div>
+        <div class="confirm-title">موجودی ناکافی</div>
+        <div class="confirm-info-box">
+          <p class="confirm-low-msg">موجودی شما برای ارسال پیامک کافی نیست.</p>
+          <div class="confirm-row">
+            <span class="confirm-label">موجودی فعلی:</span
+            ><span class="confirm-value" id="lbCurrent">0</span
+            ><span class="confirm-unit">تومان</span>
+          </div>
+          <div class="confirm-row">
+            <span class="confirm-label">موجودی مورد نیاز:</span
+            ><span class="confirm-value" id="lbNeeded">0</span
+            ><span class="confirm-unit">تومان</span>
+          </div>
+        </div>
+        <div class="confirm-btns">
+          <button class="btn-cancel" onclick="closeModal('lowBalanceModal')">
+            <i class="fas fa-times"></i>انصراف</button
+          ><button class="btn-primary" onclick="goChargeFromLow()">
+            <i class="fas fa-wallet"></i>شارژ حساب
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Charge Confirm Modal -->
-    <div class="modal" id="chargeConfirmModal">
-        <div class="confirm-modal-content">
-            <h2 class="modal-title">
-                <i class="fas fa-question-circle"></i>
-                تأیید پرداخت
-            </h2>
-            
-            <div class="confirm-info">
-                <p class="charge-confirm-message">آیا از پرداخت مبلغ زیر مطمئن هستید؟</p>
-                <div class="confirm-row highlight">
-                    <span class="confirm-label">مبلغ پرداختی:</span>
-                    <span class="confirm-value large" id="chargeConfirmAmount">0</span>
-                    <span class="confirm-unit">تومان</span>
-                </div>
-            </div>
-            
-            <div class="confirm-actions">
-                <button class="btn-confirm-cancel" onclick="closeChargeConfirmModal()">
-                    <i class="fas fa-times"></i>
-                    انصراف
-                </button>
-                <button class="btn-confirm-ok" onclick="confirmCharge()">
-                    <i class="fas fa-credit-card"></i>
-                    تأیید و پرداخت
-                </button>
-            </div>
+    <!-- Charge Confirm -->
+    <div class="modal" id="chargeConfirmModal" style="z-index: 2100">
+      <div class="modal-card confirm-modal-card">
+        <div class="confirm-icon-wrap success">
+          <i class="fas fa-credit-card"></i>
         </div>
+        <div class="confirm-title">تأیید پرداخت</div>
+        <p class="confirm-msg">آیا از پرداخت مبلغ زیر مطمئن هستید؟</p>
+        <div class="confirm-info-box">
+          <div class="confirm-row">
+            <span class="confirm-label">مبلغ پرداختی:</span
+            ><span class="confirm-value big" id="ccAmount">0</span
+            ><span class="confirm-unit">تومان</span>
+          </div>
+        </div>
+        <div class="confirm-btns">
+          <button class="btn-cancel" onclick="closeModal('chargeConfirmModal')">
+            <i class="fas fa-times"></i>انصراف</button
+          ><button class="btn-success" onclick="confirmCharge()">
+            <i class="fas fa-check"></i>تأیید و پرداخت
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reg Toggle Confirm -->
+    <div class="modal" id="regToggleModal" style="z-index: 2100">
+      <div class="reg-confirm-modal">
+        <div class="reg-confirm-icon" id="regConfirmIcon">
+          <i id="regConfirmIconInner" class="fas fa-lock"></i>
+        </div>
+        <h3 id="regConfirmTitle">تأیید عملیات</h3>
+        <p id="regConfirmDesc">آیا مطمئن هستید؟</p>
+        <div class="reg-confirm-actions">
+          <button
+            class="reg-confirm-btn cancel"
+            onclick="closeModal('regToggleModal')"
+          >
+            <i class="fas fa-times"></i>انصراف
+          </button>
+          <button
+            class="reg-confirm-btn ok"
+            id="regConfirmOkBtn"
+            onclick="confirmToggleRegistration()"
+          >
+            <i class="fas fa-check"></i>تأیید
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archive Modal -->
+    <div class="modal" id="archiveModal">
+      <div class="modal-card archive-modal-card">
+        <button class="close-btn" onclick="closeModal('archiveModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="archive-modal-icon do-archive" id="archiveModalIcon">
+          <i class="fas fa-archive" id="archiveModalIconInner"></i>
+        </div>
+        <div class="confirm-title" id="archiveModalTitle">آرشیو کردن</div>
+        <div class="archive-student-chip">
+          <i class="fas fa-user-graduate"></i
+          ><span id="archiveModalStudentName">نام دانش‌آموز</span>
+        </div>
+        <p class="confirm-msg" id="archiveModalDesc">
+          آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟
+        </p>
+        <div class="confirm-btns">
+          <button class="btn-cancel" onclick="closeModal('archiveModal')">
+            <i class="fas fa-times"></i>انصراف
+          </button>
+          <button
+            class="btn-danger"
+            id="archiveConfirmBtn"
+            onclick="confirmArchive()"
+          >
+            <i class="fas fa-archive"></i>آرشیو کن
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Warning Modal -->
-    <div class="modal warning-modal" id="warningModal">
-        <div class="warning-modal-content">
-            <div class="warning-icon">
-                <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <h3 class="warning-title" id="warningTitle">توجه!</h3>
-            <p class="warning-message" id="warningMessage"></p>
-            <button class="btn-warning-ok" onclick="closeWarningModal()">
-                <i class="fas fa-check"></i>
-                متوجه شدم
-            </button>
+    <div class="modal" id="warningModal" style="z-index: 2200">
+      <div class="modal-card warning-modal-card">
+        <div class="warning-icon">
+          <i class="fas fa-exclamation-circle"></i>
         </div>
-    </div>
-
-    <!-- Export Modal -->
-    <div id="exportModal" class="modal">
-        <div class="excel-modal-content">
-            <button class="close-btn" onclick="closeExportModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 class="modal-title">
-                <i class="fas fa-file-excel"></i>
-                خروجی Excel
-            </h2>
-            <div class="excel-section">
-                <h3 class="excel-section-title">
-                    <i class="fas fa-filter"></i>
-                    انتخاب نوع خروجی
-                </h3>
-                <div class="excel-options">
-                    <button class="excel-option-btn excel-all-btn" onclick="exportToExcel('all')">
-                        <div class="excel-btn-content">
-                            <i class="fas fa-list"></i>
-                            همه درخواست‌ها
-                        </div>
-                        <span class="excel-badge" id="excelAllCount">0</span>
-                    </button>
-                    <button class="excel-option-btn" onclick="exportToExcel('pending')">
-                        <div class="excel-btn-content">
-                            <i class="fas fa-clock"></i>
-                            در انتظار
-                        </div>
-                        <span class="excel-badge" id="excelPendingCount">0</span>
-                    </button>
-                    <button class="excel-option-btn" onclick="exportToExcel('accepted')">
-                        <div class="excel-btn-content">
-                            <i class="fas fa-check-circle"></i>
-                            قبول شده
-                        </div>
-                        <span class="excel-badge" id="excelAcceptedCount">0</span>
-                    </button>
-                    <button class="excel-option-btn" onclick="exportToExcel('rejected')">
-                        <div class="excel-btn-content">
-                            <i class="fas fa-times-circle"></i>
-                            رد شده
-                        </div>
-                        <span class="excel-badge" id="excelRejectedCount">0</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image Preview Modal -->
-    <div id="imagePreviewModal" class="modal">
-        <div class="image-preview-modal-content">
-            <button class="close-btn" onclick="closeImagePreview()">
-                <i class="fas fa-times"></i>
-            </button>
-            <img id="imagePreviewContent" src="" alt="Preview">
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast-notification" id="toast">
-        <div class="toast-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="toast-content">
-            <div class="toast-title">موفقیت‌آمیز</div>
-            <div class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد!</div>
-        </div>
-        <button class="toast-close" onclick="closeToast()">
-            <i class="fas fa-times"></i>
+        <div class="warning-title" id="warningTitle">توجه!</div>
+        <div class="warning-msg" id="warningMsg"></div>
+        <button class="btn-warning-ok" onclick="closeModal('warningModal')">
+          <i class="fas fa-check"></i>متوجه شدم
         </button>
+      </div>
     </div>
-    
-    
-    
-    
-<!-- مودال تأیید باز/بستن ثبت‌نام - قبل از بسته شدن body اضافه کنید -->
-<div class="modal" id="regToggleModal" style="z-index:9999;">
-    <div class="reg-confirm-modal">
-        <div class="reg-confirm-icon" id="regConfirmIcon">
-            <i class="fas fa-lock-open" id="regConfirmIconInner"></i>
-        </div>
-        <h3 class="reg-confirm-title" id="regConfirmTitle">تأیید عملیات</h3>
-        <p class="reg-confirm-desc" id="regConfirmDesc">آیا مطمئن هستید؟</p>
-        <div class="reg-confirm-actions">
-            <button class="reg-confirm-btn cancel" onclick="closeRegToggleModal()">
-                <i class="fas fa-times"></i>
-                انصراف
-            </button>
-            <button class="reg-confirm-btn ok" id="regConfirmOkBtn" onclick="confirmToggleRegistration()">
-                <i class="fas fa-check"></i>
-                تأیید
-            </button>
-        </div>
-    </div>
-</div>
 
-
-
-<div class="modal" id="archiveModal">
-    <div class="archive-modal-box">
-        <!-- بستن — سمت راست -->
-        <button class="archive-modal-close" onclick="closeArchiveModal()">
-            <i class="fas fa-times"></i>
+    <!-- Excel Modal -->
+    <div class="modal" id="exportModal">
+      <div class="modal-card excel-modal-card">
+        <button class="close-btn" onclick="closeModal('exportModal')">
+          <i class="fas fa-times"></i>
         </button>
-
-        <!-- آیکون -->
-        <div class="archive-modal-icon do-archive" id="archiveModalIcon">
-            <i class="fas fa-archive" id="archiveModalIconInner"></i>
+        <h2 class="modal-title" style="color: var(--accent3)">
+          <i class="fas fa-file-excel"></i>خروجی Excel
+        </h2>
+        <div class="excel-options">
+          <button class="excel-opt-btn excel-all" onclick="exportExcel('all')">
+            <div class="excel-btn-left">
+              <i class="fas fa-list"></i>همه درخواست‌ها
+            </div>
+            <span class="excel-badge-count" id="exAllCnt">0</span>
+          </button>
+          <button class="excel-opt-btn" onclick="exportExcel('pending')">
+            <div class="excel-btn-left">
+              <i class="fas fa-clock"></i>در انتظار
+            </div>
+            <span class="excel-badge-count" id="exPendCnt">0</span>
+          </button>
+          <button class="excel-opt-btn" onclick="exportExcel('accepted')">
+            <div class="excel-btn-left">
+              <i class="fas fa-check-circle"></i>قبول شده
+            </div>
+            <span class="excel-badge-count" id="exAccCnt">0</span>
+          </button>
+          <button class="excel-opt-btn" onclick="exportExcel('rejected')">
+            <div class="excel-btn-left">
+              <i class="fas fa-times-circle"></i>رد شده
+            </div>
+            <span class="excel-badge-count" id="exRejCnt">0</span>
+          </button>
         </div>
-
-        <h3 class="archive-modal-title" id="archiveModalTitle">آرشیو کردن</h3>
-
-        <!-- نام دانش‌آموز -->
-        <div class="archive-modal-student" id="archiveModalStudent">
-            <i class="fas fa-user-graduate"></i>
-            <span id="archiveModalStudentName">نام دانش‌آموز</span>
-        </div>
-
-        <p class="archive-modal-desc" id="archiveModalDesc">
-            آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟<br>
-            پس از آرشیو، در صفحه آرشیو قابل مشاهده خواهد بود.
-        </p>
-
-        <div class="archive-modal-actions">
-            <button class="arch-btn cancel" onclick="closeArchiveModal()">
-                <i class="fas fa-times"></i>
-                انصراف
-            </button>
-            <button class="arch-btn confirm-archive" id="archiveModalConfirmBtn" onclick="confirmArchive()">
-                <i class="fas fa-archive"></i>
-                آرشیو کن
-            </button>
-        </div>
+      </div>
     </div>
-</div>
-    <script src="../javaScript/Pre-registration.js"></script>
-    <script src="../javaScript/menu.js"></script>
-</body>
+
+    <!-- Image Preview -->
+    <div class="modal" id="imgPreviewModal">
+      <div class="modal-card img-preview-card" style="text-align: center">
+        <button class="close-btn" onclick="closeModal('imgPreviewModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <img id="imgPreviewSrc" src="" alt="پیش‌نمایش" />
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <div class="toast-icon">
+        <i class="fas fa-check-circle" id="toastIcon"></i>
+      </div>
+      <div style="flex: 1">
+        <div class="toast-title" id="toastTitle">موفقیت</div>
+        <div class="toast-msg" id="toastMsg">عملیات انجام شد</div>
+      </div>
+      <button class="toast-close" onclick="hideToast()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <script>
+      /* ════════════ STATE ════════════ */
+      const API_BASE = "../api";
+      let registrations = [],
+        filtered = [],
+        currentReg = null,
+        pendingArchiveReg = null;
+      let registrationIsOpen = true,
+        smsBalance = 50000;
+      const smsPrice = 150,
+        ITEMS_PER_PAGE = 16;
+      let currentPage = 1,
+        totalPages = 1;
+      let currentRecipientType = null,
+        currentReason = null;
+      let smsTemplates = {};
+      let pendingChargeAmount = 0,
+        pendingSmsData = null;
+
+      const defaultTemplates = {
+        acceptance: [
+          "تبریک! فرزند گرامی شما در پیش ثبت نام پذیرفته شد. لطفاً جهت تکمیل ثبت نام به مدرسه مراجعه فرمایید.",
+          "با سلام، با کمال مسرت به اطلاع می‌رساند فرزندتان در پیش ثبت نام قبول شده است.",
+        ],
+        rejection: [
+          "با سلام، متأسفانه فرزند گرامی شما در پیش ثبت نام پذیرفته نشد.",
+          "احتراماً به اطلاع می‌رساند درخواست پیش ثبت نام فرزندتان مورد تأیید قرار نگرفت.",
+        ],
+        interview: [
+          "با سلام، لطفاً جهت انجام مصاحبه فرزندتان روز {تاریخ} ساعت {ساعت} به مدرسه تشریف بیاورید.",
+        ],
+        documents: [
+          "لطفاً مدارک ناقص پیش ثبت نام را تا تاریخ {تاریخ} تکمیل و ارسال فرمایید.",
+        ],
+        other: [
+          "با سلام والدین محترم، لطفاً در اسرع وقت با مدرسه تماس حاصل فرمایید.",
+        ],
+      };
+
+      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      const fmt = (n) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      /* ════════════ INIT ════════════ */
+      document.addEventListener("DOMContentLoaded", () => {
+        loadSmsBalance();
+        loadSmsTemplates();
+        loadAutoArchiveDays();
+        fetchRegistrations();
+        loadRegistrationToggle();
+        setupFilters();
+
+        document.querySelectorAll(".modal").forEach((m) => {
+          m.addEventListener("click", (e) => {
+            if (e.target === m) m.classList.remove("active");
+          });
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            document
+              .querySelectorAll(".modal.active")
+              .forEach((m) => m.classList.remove("active"));
+            document.getElementById("sidebar").classList.remove("active");
+            document
+              .getElementById("sidebarOverlay")
+              .classList.remove("active");
+          }
+        });
+      });
+
+      /* ════════════ SIDEBAR ════════════ */
+      document.getElementById("menuToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.add("active");
+        document.getElementById("sidebarOverlay").classList.add("active");
+      });
+      document
+        .getElementById("sidebarCloseBtn")
+        .addEventListener("click", closeSidebar);
+      document
+        .getElementById("sidebarOverlay")
+        .addEventListener("click", closeSidebar);
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("active");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+      }
+      document.querySelectorAll(".menu-item.has-submenu").forEach((item) => {
+        item.querySelector(".menu-link")?.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.querySelectorAll(".menu-item.has-submenu").forEach((o) => {
+            if (o !== item) o.classList.remove("open");
+          });
+          item.classList.toggle("open");
+        });
+      });
+
+      /* ════════════ MODAL HELPERS ════════════ */
+      function openModal(id) {
+        document.getElementById(id)?.classList.add("active");
+      }
+      function closeModal(id) {
+        document.getElementById(id)?.classList.remove("active");
+      }
+
+      /* ════════════ REGISTRATION TOGGLE ════════════ */
+      async function loadRegistrationToggle() {
+        try {
+          const r = await fetch(`${API_BASE}/registration_status.php`);
+          const d = await r.json();
+          if (d.success) {
+            registrationIsOpen = d.is_open;
+            updateToggleUI();
+          }
+        } catch {}
+      }
+      function updateToggleUI() {
+        const btn = document.getElementById("registrationToggleBtn");
+        const badge = document.getElementById("regStatusBadge");
+        const dot = document.getElementById("regStatusDot");
+        const icon = document.getElementById("regToggleIcon");
+        const text = document.getElementById("regToggleText");
+        if (!btn) return;
+        if (registrationIsOpen) {
+          btn.className = "reg-toggle-btn is-open";
+          if (icon) icon.className = "fas fa-lock";
+          if (text) text.textContent = "بستن ثبت‌نام";
+          if (badge) {
+            badge.textContent = "باز";
+            badge.className = "reg-status-badge open";
+          }
+          if (dot) dot.className = "reg-status-dot";
+        } else {
+          btn.className = "reg-toggle-btn is-closed";
+          if (icon) icon.className = "fas fa-lock-open";
+          if (text) text.textContent = "باز کردن ثبت‌نام";
+          if (badge) {
+            badge.textContent = "بسته";
+            badge.className = "reg-status-badge closed";
+          }
+          if (dot) dot.className = "reg-status-dot closed";
+        }
+        btn.disabled = false;
+      }
+      function toggleRegistration() {
+        const action = registrationIsOpen ? "close" : "open";
+        const iconEl = document.getElementById("regConfirmIcon");
+        const iconIn = document.getElementById("regConfirmIconInner");
+        const title = document.getElementById("regConfirmTitle");
+        const desc = document.getElementById("regConfirmDesc");
+        const okBtn = document.getElementById("regConfirmOkBtn");
+        if (action === "close") {
+          iconEl.className = "reg-confirm-icon close-action";
+          iconIn.className = "fas fa-lock";
+          title.textContent = "بستن پیش‌ثبت‌نام";
+          desc.textContent =
+            "با تأیید این عملیات، دانش‌آموزان دیگر قادر به ثبت‌نام نخواهند بود.";
+          okBtn.className = "reg-confirm-btn ok danger";
+        } else {
+          iconEl.className = "reg-confirm-icon open-action";
+          iconIn.className = "fas fa-lock-open";
+          title.textContent = "باز کردن پیش‌ثبت‌نام";
+          desc.textContent =
+            "با تأیید این عملیات، فرم پیش‌ثبت‌نام برای عموم در دسترس قرار می‌گیرد.";
+          okBtn.className = "reg-confirm-btn ok";
+        }
+        okBtn.dataset.action = action;
+        openModal("regToggleModal");
+      }
+      async function confirmToggleRegistration() {
+        const okBtn = document.getElementById("regConfirmOkBtn");
+        const action = okBtn?.dataset.action;
+        if (!action) return;
+        closeModal("regToggleModal");
+        const btn = document.getElementById("registrationToggleBtn");
+        if (btn) btn.disabled = true;
+        try {
+          const r = await fetch(`${API_BASE}/registration_status.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+          });
+          const d = await r.json();
+          if (d.success) {
+            registrationIsOpen = d.is_open;
+            updateToggleUI();
+            showToast(d.message || "وضعیت ثبت‌نام تغییر کرد");
+          } else {
+            showToast(d.message || "خطا", true);
+            if (btn) {
+              btn.disabled = false;
+              updateToggleUI();
+            }
+          }
+        } catch {
+          showToast("خطا در ارتباط با سرور", true);
+          if (btn) {
+            btn.disabled = false;
+            updateToggleUI();
+          }
+        }
+      }
+
+      /* ════════════ FETCH REGISTRATIONS ════════════ */
+      async function fetchRegistrations() {
+        fetchAdminInfo();
+        showLoading(true);
+        try {
+          const p = new URLSearchParams({
+            search: document.getElementById("searchInput")?.value || "",
+            grade: document.getElementById("filterGrade")?.value || "",
+            status: document.getElementById("filterStatus")?.value || "",
+          });
+          const r = await fetch(`${API_BASE}/get_registrations.php?${p}`);
+          const d = await r.json();
+          if (!d.success) {
+            showToast(d.message || "خطا در دریافت اطلاعات", true);
+            return;
+          }
+          registrations = d.registrations || [];
+          filtered = [...registrations];
+          updateStats(d.stats);
+          currentPage = 1;
+          renderCards();
+        } catch {
+          showToast("خطا در ارتباط با سرور", true);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      function showLoading(v) {
+        const g = document.getElementById("cardsGrid");
+        if (!g) return;
+        if (v) {
+          g.innerHTML =
+            '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted)"><i class="fas fa-spinner fa-spin" style="font-size:36px;display:block;margin-bottom:14px"></i>در حال بارگذاری...</div>';
+        }
+      }
+
+      function updateStats(s) {
+        if (!s) return;
+        [
+          "pendingCount",
+          "acceptedCount",
+          "rejectedCount",
+          "totalCount",
+        ].forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (el)
+            el.textContent = fa(
+              [s.pending, s.accepted, s.rejected, s.total][i] || 0,
+            );
+        });
+        ["exAllCnt", "exPendCnt", "exAccCnt", "exRejCnt"].forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (el)
+            el.textContent =
+              [s.total, s.pending, s.accepted, s.rejected][i] || 0;
+        });
+      }
+
+      function fetchAdminInfo() {
+        fetch("../api/stats.php")
+          .then((r) => r.json())
+          .then((d) => {
+            if (d.success && d.currentUser) {
+              const u = d.currentUser;
+              const l = (u.name || "م").charAt(0);
+              [
+                "managerName",
+                "managerRole",
+                "managerAvatarLetter",
+                "profileBtnLetter",
+              ].forEach((id, i) => {
+                const el = document.getElementById(id);
+                if (el)
+                  el.textContent = [
+                    u.name || "",
+                    u.role_label || u.role || "",
+                    l,
+                    l,
+                  ][i];
+              });
+              const ai = document.getElementById("adminInfo");
+              if (ai)
+                ai.innerHTML = `<span class="live-dot"></span>${u.role_label || ""}: ${u.name || ""}`;
+            }
+          })
+          .catch(() => {});
+      }
+
+      /* ════════════ RENDER CARDS ════════════ */
+      function renderCards() {
+        const grid = document.getElementById("cardsGrid");
+        const empty = document.getElementById("emptyState");
+        const pag = document.getElementById("paginationContainer");
+        grid.innerHTML = "";
+        if (!filtered.length) {
+          grid.style.display = "none";
+          empty.style.display = "block";
+          pag.style.display = "none";
+          return;
+        }
+        grid.style.display = "grid";
+        empty.style.display = "none";
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        filtered.slice(start, start + ITEMS_PER_PAGE).forEach((reg) => {
+          const card = createCard(reg);
+          grid.appendChild(card);
+        });
+        updatePagination();
+      }
+
+      function createCard(reg) {
+        const card = document.createElement("div");
+        const fullName = `${reg.studentName} ${reg.studentFamily}`;
+        const av = reg.studentName.charAt(0);
+        const statusMap = {
+          pending: { icon: "fa-clock", text: "در انتظار" },
+          accepted: { icon: "fa-check-circle", text: "قبول شده" },
+          rejected: { icon: "fa-times-circle", text: "رد شده" },
+        };
+        const s = statusMap[reg.status] || statusMap.pending;
+        const smsOk = reg.status !== "pending";
+        const rj = JSON.stringify(reg).replace(/'/g, "&#39;");
+
+        card.className = `reg-card ${reg.status}`;
+        card.innerHTML = `
+    <button class="card-archive-btn ${reg.archived ? "archived" : ""}" onclick='openArchiveModal(${rj})' title="${reg.archived ? "خارج از آرشیو" : "آرشیو کن"}">
+      <i class="fas fa-${reg.archived ? "box-open" : "archive"}"></i>
+    </button>
+    <div class="card-header">
+      ${reg.photo ? `<img src="${reg.photo}" class="card-avatar" alt="${fullName}">` : `<div class="card-avatar">${av}</div>`}
+      <div><div class="card-name">${fullName}</div><div class="card-code">کد: ${reg.trackingCode || reg.registrationId}</div></div>
+    </div>
+    <div class="card-details">
+      <div class="detail-row"><span style="color:var(--text-muted)">پایه:</span><span class="detail-value">${reg.studentGrade}</span></div>
+      <div class="detail-row"><span style="color:var(--text-muted)">کد ملی:</span><span class="detail-value">${reg.studentNationalId}</span></div>
+      <div class="detail-row"><span style="color:var(--text-muted)">شماره پدر:</span><span class="detail-value">${reg.fatherPhone}</span></div>
+      <div class="detail-row status-row">
+        <span style="color:var(--text-muted)">وضعیت:</span>
+        <span class="status-badge ${reg.status}"><i class="fas ${s.icon}"></i>${s.text}</span>
+        <button class="btn-change-status" onclick='openStatusModal(${rj})'><i class="fas fa-edit"></i>تغییر</button>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="card-btn btn-details" onclick='showSpecs(${rj})'><i class="fas fa-info-circle"></i>جزئیات</button>
+      <button class="card-btn btn-sms${smsOk ? "" : ""}" onclick='openSmsModal(${rj})' ${smsOk ? "" : "disabled"}><i class="fas fa-sms"></i>پیامک</button>
+    </div>`;
+        return card;
+      }
+
+      /* ════════════ PAGINATION ════════════ */
+      function updatePagination() {
+        totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+        const pag = document.getElementById("paginationContainer");
+        if (totalPages <= 1) {
+          pag.style.display = "none";
+          return;
+        }
+        pag.style.display = "flex";
+        document.getElementById("curPage").textContent = fa(currentPage);
+        document.getElementById("totPages").textContent = fa(totalPages);
+        document.getElementById("prevBtn").disabled = currentPage === 1;
+        document.getElementById("nextBtn").disabled =
+          currentPage === totalPages;
+      }
+      function changePage(d) {
+        const np = currentPage + d;
+        if (np >= 1 && np <= totalPages) {
+          currentPage = np;
+          renderCards();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      /* ════════════ FILTERS ════════════ */
+      function setupFilters() {
+        let dt;
+        document
+          .getElementById("searchInput")
+          ?.addEventListener("input", () => {
+            clearTimeout(dt);
+            dt = setTimeout(applyFilters, 350);
+          });
+        document
+          .getElementById("filterGrade")
+          ?.addEventListener("change", applyFilters);
+        document
+          .getElementById("filterStatus")
+          ?.addEventListener("change", applyFilters);
+      }
+      function applyFilters() {
+        const q = (
+          document.getElementById("searchInput")?.value || ""
+        ).toLowerCase();
+        const gr = document.getElementById("filterGrade")?.value || "";
+        const st = document.getElementById("filterStatus")?.value || "";
+        filtered = registrations.filter((r) => {
+          const nm = `${r.studentName} ${r.studentFamily}`.toLowerCase();
+          if (
+            q &&
+            !nm.includes(q) &&
+            !(r.studentNationalId || "").includes(q) &&
+            !(r.fatherPhone || "").includes(q)
+          )
+            return false;
+          if (gr && r.studentGradeRaw !== gr) return false;
+          if (st && r.status !== st) return false;
+          return true;
+        });
+        currentPage = 1;
+        renderCards();
+      }
+
+      /* ════════════ SPECS MODAL ════════════ */
+      function showSpecs(reg) {
+        currentReg = reg;
+        const fullName = `${reg.studentName} ${reg.studentFamily}`;
+        const ph = document.getElementById("specPhoto");
+        ph.innerHTML = reg.photo
+          ? `<img src="${reg.photo}" alt="${fullName}">`
+          : reg.studentName.charAt(0);
+        document.getElementById("specName").textContent = fullName;
+        document.getElementById("specCode").textContent =
+          `کد: ${reg.trackingCode || reg.registrationId}`;
+        document.getElementById("sNm").textContent = reg.studentName;
+        document.getElementById("sFm").textContent = reg.studentFamily;
+        document.getElementById("sNi").textContent = reg.studentNationalId;
+        document.getElementById("sBd").textContent =
+          reg.studentBirthDate || "---";
+        document.getElementById("sGr").textContent = reg.studentGrade;
+        document.getElementById("sPh").textContent = reg.studentPhone || "---";
+        document.getElementById("fNm").textContent = reg.fatherName;
+        document.getElementById("fFm").textContent = reg.fatherFamily || "---";
+        document.getElementById("fEd").textContent = reg.fatherEducation;
+        document.getElementById("fJb").textContent = reg.fatherJob || "---";
+        document.getElementById("fPh").textContent = reg.fatherPhone;
+        document.getElementById("mNm").textContent = reg.motherName;
+        document.getElementById("mFm").textContent = reg.motherFamily || "---";
+        document.getElementById("mEd").textContent = reg.motherEducation;
+        document.getElementById("mJb").textContent = reg.motherJob || "---";
+        document.getElementById("mPh").textContent = reg.motherPhone;
+        const rDoc = (elId, src, lbl) => {
+          document.getElementById(elId).innerHTML = src
+            ? `<img src="${src}" onclick="openImgPreview('${src}')" alt="${lbl}">`
+            : `<div class="doc-placeholder"><i class="fas fa-file-image"></i><span>${lbl}</span></div>`;
+        };
+        rDoc("reportCardDoc", reg.reportCard, "کارنامه");
+        rDoc("guidanceDoc", reg.guidanceDoc, "هدایت تحصیلی");
+        openModal("specsModal");
+      }
+
+      /* ════════════ STATUS MODAL ════════════ */
+      function openStatusModal(reg) {
+        currentReg = reg;
+        openModal("statusModal");
+      }
+      async function changeStatus(newStatus) {
+        if (!currentReg) return;
+        try {
+          const r = await fetch(`${API_BASE}/update_status.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: currentReg.registrationId,
+              status: newStatus,
+            }),
+          });
+          const d = await r.json();
+          if (d.success) {
+            [registrations, filtered].forEach((arr) => {
+              const i = arr.findIndex(
+                (x) => x.registrationId === currentReg.registrationId,
+              );
+              if (i !== -1) arr[i].status = newStatus;
+            });
+            closeModal("statusModal");
+            renderCards();
+            fetchStats();
+            showToast("وضعیت با موفقیت تغییر کرد!");
+          } else {
+            showToast("خطا در تغییر وضعیت", true);
+            closeModal("statusModal");
+          }
+        } catch {
+          showToast("خطا در ارتباط با سرور", true);
+          closeModal("statusModal");
+        }
+      }
+      async function fetchStats() {
+        try {
+          const r = await fetch(
+            `${API_BASE}/get_registrations.php?stats_only=1`,
+          );
+          const d = await r.json();
+          if (d.success) updateStats(d.stats);
+        } catch {}
+      }
+
+      /* ════════════ SMS ════════════ */
+      function openSmsModal(reg) {
+        if (reg.status === "pending") {
+          showWarning(
+            "امکان ارسال پیامک وجود ندارد!",
+            "فقط برای متقاضیانی که وضعیتشان قبول یا رد شده است می‌توانید پیامک ارسال کنید.",
+          );
+          return;
+        }
+        currentReg = reg;
+        currentRecipientType = null;
+        currentReason = null;
+        const ph = document.getElementById("smsRecipientInfo");
+        ph.innerHTML = `
+    <div class="sms-student-info">
+      <div class="sms-student-avatar">${reg.studentName.charAt(0)}</div>
+      <div><div class="sms-student-name">${reg.studentName} ${reg.studentFamily}</div><div class="sms-student-code">کد: ${reg.trackingCode || reg.registrationId}</div></div>
+    </div>
+    <div class="parent-phones" style="margin-bottom:14px">
+      <div class="phone-item"><i class="fas fa-male"></i><span>پدر: ${reg.fatherName}</span><span style="margin-right:auto;direction:ltr">${reg.fatherPhone}</span></div>
+      <div class="phone-item"><i class="fas fa-female"></i><span>مادر: ${reg.motherName}</span><span style="margin-right:auto;direction:ltr">${reg.motherPhone}</span></div>
+    </div>`;
+        document
+          .querySelectorAll(".recipient-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".sms-reason-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("smsMessage").value = "";
+        updateCharCount();
+        renderQuickMsgs();
+        openModal("smsModal");
+      }
+      function selectRecipient(t) {
+        currentRecipientType = t;
+        document
+          .querySelectorAll(".recipient-btn")
+          .forEach((b) => b.classList.toggle("active", b.dataset.r === t));
+      }
+      function selectReason(r) {
+        currentReason = r;
+        document
+          .querySelectorAll(".sms-reason-btn")
+          .forEach((b) => b.classList.toggle("active", b.dataset.reason === r));
+        renderQuickMsgs();
+      }
+      function renderQuickMsgs() {
+        const grid = document.getElementById("quickMsgGrid");
+        if (!currentReason) {
+          grid.innerHTML =
+            '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:14px">ابتدا دلیل ارسال را انتخاب کنید</div>';
+          return;
+        }
+        const tpls = smsTemplates[currentReason] || [];
+        if (!tpls.length) {
+          grid.innerHTML =
+            '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:14px">هیچ پیام سریعی ذخیره نشده است</div>';
+          return;
+        }
+        grid.innerHTML = "";
+        tpls.forEach((t, i) => {
+          const item = document.createElement("div");
+          item.className = "quick-item";
+          item.innerHTML = `<i class="fas fa-comment" style="color:var(--accent4);font-size:14px;flex-shrink:0"></i><div class="quick-item-text">${t}</div><button class="quick-delete" onclick="deleteQuickMsg(${i})"><i class="fas fa-trash"></i></button>`;
+          item.addEventListener("click", (e) => {
+            if (!e.target.closest(".quick-delete")) {
+              document.getElementById("smsMessage").value = t;
+              updateCharCount();
+            }
+          });
+          grid.appendChild(item);
+        });
+      }
+      function deleteQuickMsg(i) {
+        if (!currentReason) return;
+        if (confirm("آیا این پیام سریع را حذف کنید؟")) {
+          smsTemplates[currentReason].splice(i, 1);
+          saveSmsTemplates();
+          renderQuickMsgs();
+          showToast("پیام سریع حذف شد");
+        }
+      }
+      function updateCharCount() {
+        const n = document.getElementById("smsMessage").value.length;
+        const el = document.getElementById("charCount");
+        if (el) {
+          el.textContent = n;
+          el.style.color = n > 300 ? "var(--accent5)" : "var(--accent4)";
+        }
+      }
+      function saveSmsTemplate() {
+        const msg = document.getElementById("smsMessage").value.trim();
+        if (!msg) {
+          showWarning("خطا", "لطفاً متن پیامک را وارد کنید!");
+          return;
+        }
+        if (!currentReason) {
+          showWarning("خطا", "لطفاً دلیل ارسال را انتخاب کنید!");
+          return;
+        }
+        if (msg.length > 300) {
+          showWarning("خطا", "متن پیامک نباید بیش از ۳۰۰ کاراکتر باشد!");
+          return;
+        }
+        if ((smsTemplates[currentReason] || []).includes(msg)) {
+          showWarning("خطا", "این پیام قبلاً ذخیره شده است!");
+          return;
+        }
+        if (!smsTemplates[currentReason]) smsTemplates[currentReason] = [];
+        smsTemplates[currentReason].push(msg);
+        saveSmsTemplates();
+        renderQuickMsgs();
+        showToast("متن به پیام‌های سریع اضافه شد");
+      }
+      function sendSms() {
+        const msg = document.getElementById("smsMessage").value.trim();
+        if (!msg) {
+          showWarning("متن خالی!", "لطفاً متن پیامک را وارد کنید.");
+          return;
+        }
+        if (!currentReason) {
+          showWarning("دلیل انتخاب نشده!", "لطفاً دلیل ارسال را انتخاب کنید.");
+          return;
+        }
+        if (msg.length > 300) {
+          showWarning(
+            "متن طولانی!",
+            `متن ${msg.length} کاراکتر دارد. حداکثر ۳۰۰.`,
+          );
+          return;
+        }
+        if (!currentRecipientType) {
+          showWarning("گیرنده انتخاب نشده!", "لطفاً گیرنده را انتخاب کنید.");
+          return;
+        }
+        const count = currentRecipientType === "both" ? 2 : 1;
+        const recipText =
+          currentRecipientType === "father"
+            ? `پدر ${currentReg.studentName} ${currentReg.studentFamily}`
+            : currentRecipientType === "mother"
+              ? `مادر ${currentReg.studentName} ${currentReg.studentFamily}`
+              : `والدین ${currentReg.studentName} ${currentReg.studentFamily}`;
+        const cost = count * smsPrice;
+        if (smsBalance < cost) {
+          document.getElementById("lbCurrent").textContent = fmt(smsBalance);
+          document.getElementById("lbNeeded").textContent = fmt(cost);
+          openModal("lowBalanceModal");
+          return;
+        }
+        pendingSmsData = { count, cost, recipText };
+        document.getElementById("cRecipients").textContent = count;
+        document.getElementById("cCost").textContent = fmt(cost);
+        document.getElementById("cRecipientText").textContent = recipText;
+        openModal("smsConfirmModal");
+      }
+      function confirmSendSms() {
+        if (!pendingSmsData) return;
+        closeModal("smsConfirmModal");
+        smsBalance -= pendingSmsData.cost;
+        saveSmsBalance();
+        showToast(`پیامک به ${pendingSmsData.recipText} ارسال شد.`);
+        closeModal("smsModal");
+        pendingSmsData = null;
+      }
+      function goChargeFromLow() {
+        closeModal("lowBalanceModal");
+        closeModal("smsModal");
+        openChargeModal();
+      }
+
+      /* ════════════ CHARGE ════════════ */
+      function openChargeModal() {
+        updateChargeBalanceDisplay();
+        document
+          .querySelectorAll(".charge-opt-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("customChargeInput").value = "";
+        updateChargeBtn(0);
+        openModal("chargeModal");
+      }
+      function selectChargeOpt(el, amt) {
+        document
+          .querySelectorAll(".charge-opt-btn")
+          .forEach((b) => b.classList.remove("active"));
+        el.classList.add("active");
+        document.getElementById("customChargeInput").value = "";
+        updateChargeBtn(amt);
+      }
+      function onCustomCharge() {
+        document
+          .querySelectorAll(".charge-opt-btn")
+          .forEach((b) => b.classList.remove("active"));
+        const v =
+          parseInt(document.getElementById("customChargeInput").value) || 0;
+        updateChargeBtn(v);
+      }
+      function updateChargeBtn(amt) {
+        const btn = document.getElementById("chargePayBtn");
+        btn.disabled = amt < 10000;
+        btn.innerHTML =
+          amt >= 10000
+            ? `<i class="fas fa-credit-card"></i>پرداخت ${fmt(amt)} تومان`
+            : `<i class="fas fa-credit-card"></i>انتخاب مبلغ الزامی است`;
+      }
+      function proceedToPayment() {
+        const active = document.querySelector(".charge-opt-btn.active");
+        const custom =
+          parseInt(document.getElementById("customChargeInput").value) || 0;
+        const amt = active ? parseInt(active.dataset.amount) : custom;
+        if (amt < 10000) {
+          showWarning("خطا", "حداقل مبلغ شارژ ۱۰٬۰۰۰ تومان است!");
+          return;
+        }
+        pendingChargeAmount = amt;
+        document.getElementById("ccAmount").textContent = fmt(amt);
+        closeModal("chargeModal");
+        openModal("chargeConfirmModal");
+      }
+      function confirmCharge() {
+        if (!pendingChargeAmount) return;
+        closeModal("chargeConfirmModal");
+        showToast("در حال انتقال به درگاه پرداخت...");
+        setTimeout(() => {
+          smsBalance += pendingChargeAmount;
+          saveSmsBalance();
+          showToast(`حساب شما ${fmt(pendingChargeAmount)} تومان شارژ شد!`);
+          pendingChargeAmount = 0;
+        }, 1500);
+      }
+
+      /* ════════════ ARCHIVE ════════════ */
+      function openArchiveModal(reg) {
+        pendingArchiveReg = reg;
+        const isArch = reg.archived === true || reg.archived == 1;
+        const fullName = `${reg.studentName} ${reg.studentFamily}`;
+        const icon = document.getElementById("archiveModalIcon");
+        const iconIn = document.getElementById("archiveModalIconInner");
+        const title = document.getElementById("archiveModalTitle");
+        const desc = document.getElementById("archiveModalDesc");
+        const confirmBtn = document.getElementById("archiveConfirmBtn");
+        document.getElementById("archiveModalStudentName").textContent =
+          fullName;
+        if (isArch) {
+          icon.className = "archive-modal-icon undo-archive";
+          iconIn.className = "fas fa-box-open";
+          title.textContent = "خارج کردن از آرشیو";
+          desc.textContent =
+            "آیا می‌خواهید این پیش‌ثبت‌نام را از آرشیو خارج کنید؟";
+          confirmBtn.className = "btn-primary";
+          confirmBtn.innerHTML =
+            '<i class="fas fa-box-open"></i>از آرشیو خارج کن';
+        } else {
+          icon.className = "archive-modal-icon do-archive";
+          iconIn.className = "fas fa-archive";
+          title.textContent = "آرشیو کردن";
+          desc.textContent = "آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟";
+          confirmBtn.className = "btn-danger";
+          confirmBtn.innerHTML = '<i class="fas fa-archive"></i>آرشیو کن';
+        }
+        openModal("archiveModal");
+      }
+      function confirmArchive() {
+        if (!pendingArchiveReg) return;
+        const isArch =
+          pendingArchiveReg.archived === true ||
+          pendingArchiveReg.archived == 1;
+        const fullName = `${pendingArchiveReg.studentName} ${pendingArchiveReg.studentFamily}`;
+        closeModal("archiveModal");
+        showToast(
+          isArch ? `${fullName} از آرشیو خارج شد` : `${fullName} آرشیو شد`,
+        );
+        pendingArchiveReg = null;
+      }
+
+      /* ════════════ IMAGE PREVIEW ════════════ */
+      function openImgPreview(src) {
+        document.getElementById("imgPreviewSrc").src = src;
+        openModal("imgPreviewModal");
+      }
+
+      /* ════════════ EXPORT ════════════ */
+      function openExportModal() {
+        openModal("exportModal");
+      }
+      function exportExcel(type) {
+        const statusLabel = {
+          pending: "در انتظار",
+          accepted: "قبول شده",
+          rejected: "رد شده",
+        };
+        const rows =
+          type === "all"
+            ? registrations
+            : registrations.filter((r) => r.status === type);
+        if (!rows.length) {
+          showToast("هیچ رکوردی یافت نشد!", true);
+          closeModal("exportModal");
+          return;
+        }
+        let csv = "data:text/csv;charset=utf-8,\uFEFF";
+        csv +=
+          "کد پیگیری,نام,نام خانوادگی,کد ملی,پایه,تاریخ تولد,نام پدر,تحصیلات پدر,شغل پدر,شماره پدر,نام مادر,تحصیلات مادر,شغل مادر,شماره مادر,وضعیت,تاریخ ثبت\n";
+        rows.forEach((r) => {
+          csv += `${r.trackingCode || r.registrationId},${r.studentName},${r.studentFamily},${r.studentNationalId},${r.studentGrade},${r.studentBirthDate},${r.fatherName},${r.fatherEducation},${r.fatherJob || ""},${r.fatherPhone},${r.motherName},${r.motherEducation},${r.motherJob || ""},${r.motherPhone},${statusLabel[r.status]},${r.createdAt}\n`;
+        });
+        const a = document.createElement("a");
+        a.href = encodeURI(csv);
+        a.download = `registrations_${type}_${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        closeModal("exportModal");
+        showToast("فایل Excel دانلود شد!");
+      }
+
+      /* ════════════ AUTO ARCHIVE ════════════ */
+      function loadAutoArchiveDays() {
+        const v = localStorage.getItem("autoArchiveDays") || "30";
+        const el = document.getElementById("autoArchiveDays");
+        if (el) el.value = v;
+      }
+      function saveAutoArchiveDays() {
+        const el = document.getElementById("autoArchiveDays");
+        const btn = document.getElementById("autoArchiveSaveBtn");
+        const v = parseInt(el?.value);
+        if (!v || v < 1 || v > 365) {
+          showToast("عدد روز باید بین ۱ تا ۳۶۵ باشد", true);
+          return;
+        }
+        localStorage.setItem("autoArchiveDays", v.toString());
+        btn.classList.add("saved");
+        btn.innerHTML = '<i class="fas fa-check"></i>ذخیره شد';
+        setTimeout(() => {
+          btn.classList.remove("saved");
+          btn.innerHTML = '<i class="fas fa-save"></i>ذخیره';
+        }, 2000);
+        showToast(`آرشیو خودکار پس از ${fa(v)} روز تنظیم شد`);
+      }
+
+      /* ════════════ SMS BALANCE ════════════ */
+      function loadSmsBalance() {
+        const s = localStorage.getItem("smsBal");
+        smsBalance = s ? parseInt(s) : 50000;
+        if (!s) saveSmsBalance();
+        updateBalanceUI();
+      }
+      function saveSmsBalance() {
+        localStorage.setItem("smsBal", smsBalance.toString());
+        updateBalanceUI();
+      }
+      function updateBalanceUI() {
+        ["smsBalanceAmount"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = fmt(smsBalance);
+        });
+        updateChargeBalanceDisplay();
+        const box = document.getElementById("smsBalanceBox");
+        if (box) {
+          box.classList.remove("low-balance", "medium-balance");
+          if (smsBalance < 10000) box.classList.add("low-balance");
+          else if (smsBalance < 50000) box.classList.add("medium-balance");
+        }
+      }
+      function updateChargeBalanceDisplay() {
+        const el = document.getElementById("chargeBalanceAmt");
+        if (el) el.textContent = fmt(smsBalance);
+      }
+
+      /* ════════════ SMS TEMPLATES ════════════ */
+      function loadSmsTemplates() {
+        const s = localStorage.getItem("smsTpls");
+        smsTemplates = s
+          ? JSON.parse(s)
+          : JSON.parse(JSON.stringify(defaultTemplates));
+      }
+      function saveSmsTemplates() {
+        localStorage.setItem("smsTpls", JSON.stringify(smsTemplates));
+      }
+
+      /* ════════════ WARNING ════════════ */
+      function showWarning(title, msg) {
+        document.getElementById("warningTitle").textContent = title;
+        document.getElementById("warningMsg").textContent = msg;
+        openModal("warningModal");
+      }
+
+      /* ════════════ TOAST ════════════ */
+      let toastTimer;
+      function showToast(msg, err = false) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastTitle").textContent = err
+          ? "خطا"
+          : "موفقیت";
+        document.getElementById("toastMsg").textContent = msg;
+        document.getElementById("toastIcon").className = err
+          ? "fas fa-times-circle"
+          : "fas fa-check-circle";
+        t.classList.toggle("error", err);
+        t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(hideToast, 3500);
+      }
+      function hideToast() {
+        document.getElementById("toast").classList.remove("show");
+      }
+    </script>
+  </body>
 </html>

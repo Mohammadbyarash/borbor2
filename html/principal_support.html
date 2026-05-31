@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — پشتیبانی مدیر مدرسه</title>
+<link rel="icon" href="../image/iconB.png">
+<link rel="stylesheet" href="../style/scrollbar.css" />
+<link rel="stylesheet" href="../css/all.min.css">
+<script src="../javaScript/auth.js"></script>
+<script src="../javaScript/permission-guard.js"></script>
+<style>
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+@font-face { font-family:"Shabnam"; src:url("../font/Shabnam-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+@font-face { font-family:"Shabnam"; src:url("../font/Shabnam-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+
+:root {
+  --bg-main:#0f1629; --bg-card:#162040; --bg-card2:#1a2650; --bg-sidebar:#0b1120;
+  --accent:#4a90d9; --accent2:#8e5fd4; --accent3:#06d6a0; --accent4:#f39c12; --accent5:#e74c3c;
+  --present:#2ecc71; --absent:#e74c3c; --late:#f39c12;
+  --text:#e8f0ff; --text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07); --border-hover:rgba(74,144,217,0.35);
+  --sidebar-w:258px; --radius:18px; --radius-sm:11px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"Vazirmatn","Shabnam",Tahoma,sans-serif;
+  background:var(--bg-main); color:var(--text); direction:rtl;
+  min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%, rgba(74,144,217,.13) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(142,95,212,.10) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 45% at 55% 45%, rgba(6,214,160,.04) 0%, transparent 65%);
+  pointer-events:none; z-index:0;
+}
+body::after{
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(74,144,217,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,144,217,.03) 1px, transparent 1px);
+  background-size:40px 40px; pointer-events:none; z-index:0;
+}
+
+/* ════ SIDEBAR ════ */
+.sidebar{
+  width:var(--sidebar-w); background:var(--bg-sidebar); padding:26px 14px;
+  border-left:1px solid var(--border); position:fixed; right:0; top:0;
+  height:100vh; overflow-y:auto; overflow-x:hidden; z-index:400;
+  display:flex; flex-direction:column;
+  transform:translateX(110%); transition:transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 40px rgba(0,0,0,.5);
+}
+.sidebar.active{transform:translateX(0);}
+.sidebar-overlay{display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:199;}
+.sidebar-overlay.active{display:block;}
+
+.logo{text-align:center; margin-bottom:4px; font-size:28px; font-weight:900; letter-spacing:-1px; color:#fff; font-family:"Shabnam",sans-serif;}
+.logo span{color:var(--accent);}
+.logo-sub{text-align:center; font-size:10px; color:var(--text-muted); margin-bottom:22px; letter-spacing:1px; text-transform:uppercase;}
+
+.sidebar-close-btn{
+  position:absolute; top:14px; left:14px; width:32px; height:32px;
+  background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.2);
+  border-radius:50%; color:var(--absent); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:all .2s;
+}
+.sidebar-close-btn:hover{background:var(--absent); color:#fff; transform:rotate(90deg);}
+
+.manager-block{
+  background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.10));
+  border:1px solid rgba(74,144,217,.2); border-radius:var(--radius-sm);
+  padding:15px 13px; margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.manager-block::before{
+  content:''; position:absolute; top:-20px; left:-20px; width:80px; height:80px;
+  background:radial-gradient(circle,rgba(74,144,217,.15),transparent 70%); pointer-events:none;
+}
+.manager-avatar{
+  width:46px; height:46px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:800; flex-shrink:0;
+  box-shadow:0 4px 14px rgba(74,144,217,.35);
+}
+.manager-name{font-size:13px; font-weight:700; margin-bottom:2px;}
+.manager-role{font-size:10px; color:var(--text-muted);}
+.manager-badge{
+  margin-top:7px; display:inline-block;
+  background:rgba(74,144,217,.14); color:var(--accent);
+  font-size:9px; font-weight:700; padding:2px 9px; border-radius:20px;
+  border:1px solid rgba(74,144,217,.22);
+}
+
+.nav-section-label{
+  font-size:9px; font-weight:700; color:rgba(180,200,255,.28);
+  letter-spacing:1.5px; text-transform:uppercase; padding:0 14px; margin:14px 0 8px;
+}
+.menu-item{margin-bottom:2px;}
+.menu-item a, .menu-item .menu-link{
+  color:rgba(180,200,255,.58); text-decoration:none; padding:10px 14px;
+  display:flex; align-items:center; gap:11px;
+  border-radius:var(--radius-sm); font-size:12.5px; font-weight:500;
+  transition:all .2s; cursor:pointer; position:relative;
+}
+.menu-item a i, .menu-item .menu-link i:first-child{
+  font-size:14px; width:20px; text-align:center; flex-shrink:0; opacity:.75;
+}
+.menu-item a:hover,.menu-item .menu-link:hover{background:rgba(255,255,255,.05); color:#fff;}
+.menu-item a:hover i,.menu-item .menu-link:hover i{opacity:1;}
+.menu-item:not(.has-submenu).active>a{
+  background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.05));
+  color:#fff; font-weight:700; border:1px solid rgba(74,144,217,.22);
+}
+.menu-item:not(.has-submenu).active>a::before{
+  content:''; position:absolute; right:0; top:50%; transform:translateY(-50%);
+  width:3px; height:65%; background:var(--accent); border-radius:3px 0 0 3px;
+}
+.menu-item:not(.has-submenu).active>a i{opacity:1; color:var(--accent);}
+
+.submenu-arrow{margin-right:auto; font-size:12px !important; transition:transform .3s;}
+.menu-item.has-submenu.open .submenu-arrow{transform:rotate(180deg);}
+.menu-item.has-submenu.open>.menu-link{background:rgba(255,255,255,.05); color:#fff;}
+.submenu{max-height:0; overflow:hidden; transition:max-height .3s ease; background:rgba(0,0,0,.2); border-radius:var(--radius-sm); margin-top:4px;}
+.menu-item.has-submenu.open .submenu{max-height:500px;}
+.submenu-item{
+  color:rgba(180,200,255,.6); text-decoration:none; padding:10px 14px 10px 44px;
+  display:flex; align-items:center; gap:9px; font-size:12px; font-weight:400;
+  transition:all .2s; border-radius:8px; margin:4px;
+}
+.submenu-item i{font-size:13px; width:18px; text-align:center; opacity:.75;}
+.submenu-item:hover{background:rgba(74,144,217,.1); color:#fff;}
+.submenu-item.active{background:rgba(74,144,217,.14); color:#fff; font-weight:600;}
+
+.nav-badge{
+  margin-right:auto; background:var(--accent5); color:#fff;
+  font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:20px;
+  min-width:20px; text-align:center;
+}
+.nav-divider{height:1px; background:var(--border); margin:10px 4px;}
+.sidebar-footer{
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--border);
+  font-size:10px; color:var(--text-muted); text-align:center; line-height:1.7;
+}
+
+/* ════ HAMBURGER ════ */
+.menu-toggle{
+  position:fixed; top:16px; right:20px; z-index:300;
+  width:44px; height:44px; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  transition:all .2s; box-shadow:0 4px 16px rgba(0,0,0,.3); color:var(--text-muted); font-size:16px;
+}
+.menu-toggle:hover{border-color:var(--border-hover); color:var(--text);}
+
+/* ════ MAIN ════ */
+.main-content{min-height:100vh; width:100%; padding:72px 24px 36px; position:relative; z-index:1;}
+
+.top-bar{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; gap:14px; flex-wrap:wrap; animation:fadeUp .4s ease both;}
+.greeting h1{font-size:20px; font-weight:800; line-height:1.3;}
+.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:7px;}
+.live-dot{width:6px; height:6px; background:var(--accent3); border-radius:50%; animation:pulse 2s infinite; flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,.5)} 50%{box-shadow:0 0 0 5px rgba(6,214,160,0)}}
+.top-actions{display:flex; align-items:center; gap:9px;}
+.action-btn{
+  position:relative; width:40px; height:40px; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text-muted); font-size:15px; transition:all .2s;
+}
+.action-btn:hover{color:#fff; border-color:var(--border-hover);}
+.notif-dot{position:absolute; top:8px; left:8px; width:7px; height:7px; background:var(--accent5); border-radius:50%; border:2px solid var(--bg-main);}
+.profile-btn{
+  width:40px; height:40px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:#fff;
+  box-shadow:0 3px 10px rgba(74,144,217,.35);
+}
+
+/* ════ SEC HEADER ════ */
+.sec-hdr{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;}
+.sec-title{font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:8px;}
+.sec-title i{color:var(--accent); font-size:14px;}
+.sec-link{font-size:11px; color:var(--accent); cursor:pointer; text-decoration:none; padding:3px 8px; border-radius:6px; transition:background .2s;}
+.sec-link:hover{background:rgba(74,144,217,.1);}
+
+/* ════ SEARCH ════ */
+.search-wrap{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:20px; animation:fadeUp .45s .04s ease both;}
+.search-inner{display:flex; align-items:center; gap:12px; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 16px; transition:border-color .2s;}
+.search-inner:focus-within{border-color:rgba(74,144,217,.4);}
+.search-inner i{color:var(--text-muted); font-size:14px; flex-shrink:0;}
+.search-inner input{background:none; border:none; outline:none; color:var(--text); font-family:"Vazirmatn",sans-serif; font-size:13px; width:100%;}
+.search-inner input::placeholder{color:var(--text-muted);}
+.search-hint{font-size:11px; color:var(--text-muted); margin-top:10px; display:flex; align-items:center; gap:6px;}
+
+/* ════ STAT ROW ════ */
+.stat-row{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; margin-bottom:20px;}
+.stat-card{
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px 14px 16px; position:relative; overflow:hidden;
+  transition:transform .28s,box-shadow .28s,border-color .28s;
+  animation:fadeUp .45s ease both; min-width:0; cursor:default;
+}
+.stat-card::before{content:''; position:absolute; top:0; right:0; left:0; height:3px; border-radius:var(--radius) var(--radius) 0 0;}
+.stat-card.blue::before  {background:linear-gradient(90deg,#4a90d9,#8e5fd4);}
+.stat-card.green::before {background:linear-gradient(90deg,#06d6a0,#2ecc71);}
+.stat-card.yellow::before{background:linear-gradient(90deg,#f39c12,#fbbf24);}
+.stat-card.red::before   {background:linear-gradient(90deg,#e74c3c,#f97316);}
+.stat-card:nth-child(1){animation-delay:.06s} .stat-card:nth-child(2){animation-delay:.10s}
+.stat-card:nth-child(3){animation-delay:.14s} .stat-card:nth-child(4){animation-delay:.18s}
+.stat-card:hover{transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,.3); border-color:rgba(74,144,217,.18);}
+.stat-card-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:6px;}
+.stat-icon{width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0;}
+.blue   .stat-icon{background:rgba(74,144,217,.15);  color:var(--accent);}
+.green  .stat-icon{background:rgba(6,214,160,.15);   color:var(--accent3);}
+.yellow .stat-icon{background:rgba(243,156,18,.15);  color:var(--accent4);}
+.red    .stat-icon{background:rgba(231,76,60,.15);   color:var(--accent5);}
+.stat-badge{font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; white-space:nowrap;}
+.blue   .stat-badge{background:rgba(74,144,217,.15);  color:var(--accent);}
+.green  .stat-badge{background:rgba(6,214,160,.15);   color:var(--accent3);}
+.yellow .stat-badge{background:rgba(243,156,18,.15);  color:var(--accent4);}
+.red    .stat-badge{background:rgba(231,76,60,.15);   color:var(--accent5);}
+.stat-value{font-size:30px; font-weight:900; line-height:1; font-family:"Shabnam",sans-serif; margin-bottom:4px;}
+.stat-label{font-size:11px; color:var(--text-muted); font-weight:500;}
+
+/* ════ CATEGORIES ════ */
+.cat-row{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:20px; animation:fadeUp .45s .20s ease both;}
+.cat-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 14px; text-align:center; cursor:pointer; transition:transform .25s,box-shadow .25s,border-color .25s; position:relative; overflow:hidden;}
+.cat-card:hover{transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,.25); border-color:var(--border-hover);}
+.cat-card.active-cat{border-color:rgba(74,144,217,.4); background:rgba(74,144,217,.07);}
+.cat-icon-wrap{width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:18px; margin:0 auto 10px;}
+.cat-name{font-size:12px; font-weight:700; margin-bottom:4px;}
+.cat-count{font-size:10px; color:var(--text-muted);}
+
+/* ════ MAIN ROW ════ */
+.main-row{display:grid; grid-template-columns:1.3fr 0.7fr; gap:16px; margin-bottom:20px;}
+
+/* ── FAQ ── */
+.faq-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; animation:fadeUp .45s .24s ease both;}
+.faq-item{border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; overflow:hidden; transition:border-color .2s;}
+.faq-item:last-child{margin-bottom:0;}
+.faq-item.open{border-color:rgba(74,144,217,.3);}
+.faq-q{display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; font-size:13px; font-weight:600; transition:background .2s; user-select:none;}
+.faq-q:hover{background:rgba(255,255,255,.03);}
+.faq-item.open .faq-q{background:rgba(74,144,217,.07);}
+.faq-q-icon{width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;}
+.faq-q-text{flex:1;}
+.faq-arrow{font-size:11px; color:var(--text-muted); transition:transform .3s; flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(180deg); color:var(--accent);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .35s cubic-bezier(.4,0,.2,1); font-size:12px; color:var(--text-muted); line-height:1.7;}
+.faq-item.open .faq-a{max-height:220px;}
+.faq-a-inner{padding:0 14px 14px; padding-right:52px;}
+
+/* ── CONTACT ── */
+.contact-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; animation:fadeUp .45s .28s ease both; display:flex; flex-direction:column; gap:10px;}
+.contact-item{display:flex; align-items:center; gap:12px; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:13px 14px; transition:border-color .2s, transform .2s; cursor:default;}
+.contact-item:hover{border-color:var(--border-hover); transform:translateX(-3px);}
+.contact-icon{width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+.contact-info{flex:1; min-width:0;}
+.contact-label{font-size:10px; color:var(--text-muted); margin-bottom:2px;}
+.contact-value{font-size:13px; font-weight:700;}
+.contact-hours{font-size:9.5px; color:var(--text-muted); margin-top:2px;}
+
+/* ════ BOT ROW ════ */
+.bot-row{display:grid; grid-template-columns:1.2fr 0.8fr; gap:16px; margin-bottom:20px;}
+
+/* ── TICKET FORM ── */
+.ticket-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; animation:fadeUp .45s .32s ease both;}
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex; flex-direction:column; gap:6px;}
+.form-label{font-size:11px; font-weight:600; color:var(--text-muted);}
+.form-control{background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 13px; color:var(--text); font-family:"Vazirmatn",sans-serif; font-size:12.5px; outline:none; transition:border-color .2s; width:100%;}
+.form-control:focus{border-color:rgba(74,144,217,.4);}
+.form-control::placeholder{color:var(--text-muted);}
+select.form-control{cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(180,200,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 12px center; padding-left:32px;}
+select.form-control option{background:var(--bg-card2); color:var(--text);}
+textarea.form-control{resize:vertical; min-height:90px;}
+
+.upload-area{border:1.5px dashed rgba(74,144,217,.3); border-radius:var(--radius-sm); padding:22px 18px; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; background:rgba(74,144,217,.03); position:relative;}
+.upload-area:hover,.upload-area.drag-over{border-color:rgba(74,144,217,.6); background:rgba(74,144,217,.08);}
+.upload-area input[type="file"]{position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;}
+.upload-icon{font-size:22px; color:var(--accent); margin-bottom:8px; display:block; opacity:.8;}
+.upload-main-text{font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px;}
+.upload-sub-text{font-size:10px; color:rgba(180,200,255,.32); display:block;}
+.file-list-wrap{margin-top:8px; display:flex; flex-direction:column; gap:6px;}
+.file-item{display:flex; align-items:center; gap:9px; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:9px 12px; animation:fadeUp .25s ease both;}
+.file-item-icon{width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;}
+.file-item-info{flex:1; min-width:0;}
+.file-item-name{font-size:11px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.file-item-size{font-size:10px; color:var(--text-muted); margin-top:1px;}
+.file-item-remove{width:24px; height:24px; border-radius:50%; background:rgba(231,76,60,.12); border:none; color:var(--accent5); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; transition:all .2s; flex-shrink:0;}
+.file-item-remove:hover{background:var(--accent5); color:#fff;}
+
+.submit-btn{width:100%; padding:12px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:var(--radius-sm); color:#fff; font-family:"Vazirmatn",sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:opacity .2s, transform .2s; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px;}
+.submit-btn:hover{opacity:.9; transform:translateY(-1px);}
+
+/* ── INCOMING TICKETS ── */
+.incoming-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; animation:fadeUp .45s .36s ease both;}
+.ticket-item{padding:12px 0; border-bottom:1px solid var(--border); transition:transform .2s, background .2s; cursor:pointer; border-radius:var(--radius-sm);}
+.ticket-item:last-child{border-bottom:none;}
+.ticket-item:hover{transform:translateX(3px); background:rgba(255,255,255,.02);}
+.ticket-top{display:flex; align-items:flex-start; gap:10px; margin-bottom:6px;}
+.ticket-icon{width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;}
+.ticket-meta{flex:1; min-width:0;}
+.ticket-title{font-size:12.5px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ticket-date{font-size:10px; color:var(--text-muted);}
+.ticket-status-row{display:flex; align-items:center; justify-content:space-between;}
+.ticket-id{font-size:10px; color:var(--text-muted); font-family:"Shabnam",sans-serif;}
+.ticket-badge{font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;}
+.badge-wait  {background:rgba(243,156,18,.14);  color:var(--accent4);}
+.badge-review{background:rgba(74,144,217,.14);  color:var(--accent);}
+.badge-solved{background:rgba(46,204,113,.14);  color:var(--present);}
+.badge-need  {background:rgba(231,76,60,.14);   color:var(--accent5);}
+.pri-urgent{background:rgba(231,76,60,.14);  color:var(--accent5);}
+.pri-high  {background:rgba(243,156,18,.14); color:var(--accent4);}
+.pri-normal{background:rgba(74,144,217,.14); color:var(--accent);}
+
+/* ════ MY TICKETS SECTION ════ */
+.my-tickets-section{margin-bottom:20px; animation:fadeUp .45s .38s ease both;}
+.my-tickets-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;}
+.my-tickets-header{display:flex; align-items:center; justify-content:space-between; padding:18px 20px 14px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,rgba(74,144,217,.06),rgba(142,95,212,.04)); flex-wrap:wrap; gap:10px;}
+.my-tickets-title{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:800;}
+.my-tickets-title-icon{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,rgba(74,144,217,.2),rgba(142,95,212,.15)); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--accent);}
+.my-tickets-count-badge{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;}
+.my-tickets-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.my-filter-btn{background:var(--bg-card2); border:1px solid var(--border); border-radius:8px; color:var(--text-muted); font-family:"Vazirmatn",sans-serif; font-size:11px; padding:5px 11px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:5px;}
+.my-filter-btn:hover,.my-filter-btn.active{border-color:rgba(74,144,217,.4); color:var(--accent); background:rgba(74,144,217,.08);}
+.my-tickets-body{padding:16px 20px;}
+.my-ticket-empty{text-align:center; padding:36px 20px; color:var(--text-muted); font-size:12px;}
+.my-ticket-empty i{font-size:32px; display:block; margin-bottom:10px; opacity:.3;}
+.my-ticket-row{display:flex; align-items:center; gap:12px; padding:13px 14px; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; cursor:pointer; transition:border-color .2s, transform .2s, box-shadow .2s; animation:fadeUp .3s ease both;}
+.my-ticket-row:last-child{margin-bottom:0;}
+.my-ticket-row:hover{border-color:var(--border-hover); transform:translateX(-3px); box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.my-ticket-row.priority-urgent{border-right:3px solid var(--accent5);}
+.my-ticket-row.priority-high{border-right:3px solid var(--accent4);}
+.mtr-icon{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;}
+.mtr-info{flex:1; min-width:0;}
+.mtr-title{font-size:12.5px; font-weight:700; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mtr-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.mtr-id{font-size:10px; color:var(--text-muted); font-family:"Shabnam",sans-serif;}
+.mtr-date{font-size:10px; color:var(--text-muted);}
+.mtr-subject{font-size:10px; color:var(--text-muted);}
+.mtr-sep{width:3px; height:3px; border-radius:50%; background:var(--text-muted); opacity:.4;}
+.mtr-badges{display:flex; gap:5px; flex-shrink:0; align-items:center;}
+.my-stats-bar{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;}
+.my-stat-mini{background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; display:flex; align-items:center; gap:10px; transition:border-color .2s;}
+.my-stat-mini:hover{border-color:var(--border-hover);}
+.my-stat-mini-icon{width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;}
+.my-stat-mini-val{font-size:18px; font-weight:900; font-family:"Shabnam",sans-serif; line-height:1;}
+.my-stat-mini-lbl{font-size:10px; color:var(--text-muted); margin-top:2px;}
+
+/* ════ INCOMING SECTION (تیکت‌های دریافتی از معلمان و معاونان) ════ */
+.incoming-section{margin-bottom:20px; animation:fadeUp .45s .40s ease both;}
+.incoming-full-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;}
+.incoming-full-header{display:flex; align-items:center; justify-content:space-between; padding:18px 20px 14px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,rgba(142,95,212,.06),rgba(231,76,60,.03)); flex-wrap:wrap; gap:10px;}
+.incoming-full-title{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:800;}
+.incoming-full-title-icon{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,rgba(142,95,212,.2),rgba(231,76,60,.1)); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--accent2);}
+.incoming-full-body{padding:16px 20px;}
+.inc-row{display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; cursor:pointer; transition:border-color .2s, transform .2s, box-shadow .2s;}
+.inc-row:last-child{margin-bottom:0;}
+.inc-row:hover{border-color:var(--border-hover); transform:translateX(-3px); box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.inc-row.unread{border-right:3px solid var(--accent2);}
+.inc-av{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;}
+.inc-info{flex:1; min-width:0;}
+.inc-name{font-size:12.5px; font-weight:700; margin-bottom:2px;}
+.inc-subject{font-size:10.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.inc-meta{font-size:9.5px; color:var(--text-muted); margin-top:2px;}
+.inc-badges{display:flex; gap:5px; flex-shrink:0; align-items:center;}
+.role-badge{font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px;}
+.role-teacher {background:rgba(74,144,217,.14);  color:var(--accent);}
+.role-assistant{background:rgba(243,156,18,.14); color:var(--accent4);}
+
+/* ════ MODAL ════ */
+.modal-backdrop{display:none; position:fixed; inset:0; z-index:800; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;}
+.modal-backdrop.show{display:flex;}
+.modal-box{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); width:100%; max-width:560px; max-height:90vh; overflow-y:auto; position:relative; animation:modalIn .28s cubic-bezier(.34,1.56,.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,.5);}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex; align-items:center; gap:12px; padding:20px 20px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg-card); z-index:2;}
+.modal-header-icon{width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0;}
+.modal-header-title{flex:1; font-size:14px; font-weight:800;}
+.modal-close{width:30px; height:30px; border-radius:50%; background:rgba(231,76,60,.1); border:1px solid rgba(231,76,60,.2); color:var(--accent5); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .2s; flex-shrink:0;}
+.modal-close:hover{background:var(--accent5); color:#fff; transform:rotate(90deg);}
+.modal-body{padding:20px;}
+.td-row{display:flex; align-items:flex-start; gap:8px; padding:10px 0; border-bottom:1px solid var(--border); font-size:12px;}
+.td-row:last-child{border-bottom:none;}
+.td-label{color:var(--text-muted); min-width:100px; flex-shrink:0; font-size:11px;}
+.td-val{flex:1; font-weight:600; line-height:1.6;}
+.td-desc{background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-size:12px; color:var(--text-muted); line-height:1.7; margin-top:6px;}
+.reply-box{margin-top:16px; padding-top:16px; border-top:1px solid var(--border);}
+.reply-box-title{font-size:12px; font-weight:700; color:var(--accent3); margin-bottom:10px; display:flex; align-items:center; gap:6px;}
+.reply-textarea{width:100%; background:var(--bg-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:11px 13px; color:var(--text); font-family:"Vazirmatn",sans-serif; font-size:12.5px; outline:none; resize:vertical; min-height:80px; transition:border-color .2s;}
+.reply-textarea:focus{border-color:rgba(74,144,217,.4);}
+.reply-textarea::placeholder{color:var(--text-muted);}
+.reply-actions{display:flex; gap:8px; margin-top:10px;}
+.reply-btn{flex:1; padding:10px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--accent3),var(--present)); border:none; color:#fff; font-family:"Vazirmatn",sans-serif; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:opacity .2s, transform .2s;}
+.reply-btn:hover{opacity:.9; transform:translateY(-1px);}
+.status-btn{padding:10px 14px; border-radius:var(--radius-sm); background:rgba(255,255,255,.05); border:1px solid var(--border); color:var(--text-muted); font-family:"Vazirmatn",sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s;}
+.status-btn:hover{border-color:var(--border-hover); color:var(--text);}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed; bottom:28px; left:50%; transform:translateX(-50%); z-index:9000; display:flex; flex-direction:column; align-items:center; gap:10px; pointer-events:none;}
+.toast{pointer-events:auto; min-width:280px; max-width:400px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:flex-start; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,.45); animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both; position:relative; overflow:hidden;}
+.toast.removing{animation:toastOut .25s ease forwards;}
+@keyframes toastIn {from{opacity:0;transform:translateY(20px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(10px)}}
+.toast::before{content:''; position:absolute; top:0; right:0; left:0; height:3px; border-radius:var(--radius-sm) var(--radius-sm) 0 0;}
+.toast.success::before{background:linear-gradient(90deg,var(--accent3),var(--present));}
+.toast.error::before  {background:linear-gradient(90deg,var(--accent5),#f97316);}
+.toast.warning::before{background:linear-gradient(90deg,var(--accent4),#fbbf24);}
+.toast.info::before   {background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.toast-icon{width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; margin-top:1px;}
+.toast.success .toast-icon{background:rgba(6,214,160,.15);  color:var(--accent3);}
+.toast.error   .toast-icon{background:rgba(231,76,60,.15);  color:var(--accent5);}
+.toast.warning .toast-icon{background:rgba(243,156,18,.15); color:var(--accent4);}
+.toast.info    .toast-icon{background:rgba(74,144,217,.15); color:var(--accent);}
+.toast-content{flex:1; min-width:0;}
+.toast-title{font-size:12.5px; font-weight:800; margin-bottom:3px;}
+.toast-msg  {font-size:11.5px; color:var(--text-muted); line-height:1.55;}
+.toast-close{width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.06); border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; transition:all .2s;}
+.toast-close:hover{background:rgba(255,255,255,.12); color:var(--text);}
+.toast-bar{position:absolute; bottom:0; right:0; left:0; height:2px; background:rgba(255,255,255,.05);}
+.toast-bar-fill{height:100%; border-radius:2px;}
+.toast.success .toast-bar-fill{background:var(--accent3);}
+.toast.error   .toast-bar-fill{background:var(--accent5);}
+.toast.warning .toast-bar-fill{background:var(--accent4);}
+.toast.info    .toast-bar-fill{background:var(--accent);}
+
+/* ── DANGER ── */
+.danger-overlay{display:none; position:fixed; inset:0; z-index:9999; background:rgba(8,4,4,.97); flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px; animation:dangerIn .3s ease both;}
+.danger-overlay.show{display:flex;}
+@keyframes dangerIn{from{opacity:0;transform:scale(1.04)} to{opacity:1;transform:scale(1)}}
+.danger-icon-wrap{width:90px; height:90px; border-radius:50%; background:rgba(231,76,60,.12); border:2px solid rgba(231,76,60,.4); display:flex; align-items:center; justify-content:center; font-size:38px; color:var(--accent5); margin-bottom:24px; animation:dangerPulse 1.4s infinite;}
+@keyframes dangerPulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.5)} 50%{box-shadow:0 0 0 18px rgba(231,76,60,0)}}
+.danger-title{font-size:22px; font-weight:900; color:#fff; margin-bottom:10px; font-family:"Shabnam",sans-serif;}
+.danger-title span{color:var(--accent5);}
+.danger-body{font-size:13px; color:rgba(255,200,200,.7); line-height:1.8; max-width:420px; margin-bottom:28px;}
+.danger-filename{background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.25); border-radius:8px; padding:8px 18px; font-size:12px; font-weight:700; color:var(--accent5); margin-bottom:24px; display:inline-block; word-break:break-all;}
+.danger-btn{padding:12px 36px; border-radius:var(--radius-sm); background:linear-gradient(135deg,#e74c3c,#c0392b); border:none; color:#fff; font-family:"Vazirmatn",sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:opacity .2s, transform .2s;}
+.danger-btn:hover{opacity:.9; transform:translateY(-1px);}
+.danger-bar{width:100%; max-width:380px; height:4px; background:rgba(231,76,60,.15); border-radius:4px; margin-top:20px; overflow:hidden;}
+.danger-bar-fill{height:100%; background:var(--accent5); border-radius:4px; animation:dangerBarAnim 5s linear forwards;}
+@keyframes dangerBarAnim{from{width:100%} to{width:0%}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)}}
+
+/* ════ RESPONSIVE ════ */
+@media(max-width:1024px){
+  .stat-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .cat-row {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .main-row{grid-template-columns:1fr;}
+  .bot-row {grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .main-content{padding:68px 14px 24px;}
+  .stat-row{grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+  .cat-row {grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+  .form-row{grid-template-columns:1fr;}
+  .greeting h1{font-size:16px;}
+  .modal-box{max-width:100%;}
+  .my-stats-bar{gap:8px;}
+  .my-tickets-header,.incoming-full-header{flex-direction:column; align-items:flex-start;}
+}
+@media(max-width:540px){
+  .main-content{padding:66px 12px 20px;}
+  .toast{min-width:240px; max-width:calc(100vw - 32px);}
+  .my-stats-bar{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" title="منو"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ════ SIDEBAR ════ -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن"><i class="fas fa-times"></i></button>
+
+  <div class="manager-block">
+    <div class="manager-avatar" id="managerAvatarLetter">م</div>
+    <div>
+      <div class="manager-name" id="managerName">مدیر مدرسه</div>
+      <div class="manager-role" id="managerRole">مدیر سیستم</div>
+      <div class="manager-badge">هنرستان شهید بوربور</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">منوی اصلی</div>
+
+  <div class="menu-item">
+    <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+  </div>
+  <div class="menu-item has-submenu">
+    <a href="#" class="menu-link"><i class="fas fa-users"></i> مدیریت کاربران<i class="fas fa-chevron-down submenu-arrow"></i></a>
+    <div class="submenu">
+      <a href="../html/Assistant_management.html" class="submenu-item"><i class="fas fa-user-tie"></i> مدیریت معاونان</a>
+      <a href="../html/Teacher_management.html" class="submenu-item"><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a>
+      <a href="../html/student.html" class="submenu-item"><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a>
+    </div>
+  </div>
+  <div class="menu-item has-submenu">
+    <a href="#" class="menu-link"><i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها<i class="fas fa-chevron-down submenu-arrow"></i></a>
+    <div class="submenu">
+      <a href="../html/Courses.html" class="submenu-item"><i class="fas fa-list"></i> مدیریت دروس</a>
+      <a href="../html/Class-schedule.html" class="submenu-item"><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a>
+      <a href="../html/Attendance.html" class="submenu-item"><i class="fas fa-clipboard-check"></i> حضور و غیاب</a>
+      <a href="../html/grades.html" class="submenu-item"><i class="fas fa-star"></i> نمرات</a>
+    </div>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">مدیریت</div>
+
+  <div class="menu-item"><a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a></div>
+  <div class="menu-item"><a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش‌ها</a></div>
+  <div class="menu-item"><a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a></div>
+  <div class="menu-item"><a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a></div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
+
+  <div class="menu-item"><a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a></div>
+  <div class="menu-item active"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی <span class="nav-badge">۵</span></a></div>
+  <div class="menu-item"><a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a></div>
+  <div class="menu-item"><a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a></div>
+
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- ════ MAIN ════ -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="greeting">
+      <h1><i class="fas fa-headset" style="color:var(--accent);font-size:16px;margin-left:6px"></i>پشتیبانی — <span>مدیر مدرسه</span></h1>
+      <p><span class="live-dot"></span> مدیریت تیکت‌های دریافتی و ارسال درخواست به مدیریت مدارس</p>
+    </div>
+    <div class="top-actions">
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn" id="profileBtnLetter">م</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <i class="fas fa-search"></i>
+      <input type="text" id="faqSearch" placeholder="جستجو در راهنمای مدیران مدرسه..." autocomplete="off">
+    </div>
+    <div class="search-hint"><i class="fas fa-lightbulb" style="color:var(--accent4);font-size:11px"></i> قبل از ارسال تیکت، راهنمای مدیران را بررسی کنید</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-card blue">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-inbox"></i></div><span class="stat-badge">دریافتی</span></div>
+      <div class="stat-value" id="statIncoming">۵</div>
+      <div class="stat-label">تیکت دریافتی</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-clock"></i></div><span class="stat-badge">در انتظار</span></div>
+      <div class="stat-value" id="statPending">۳</div>
+      <div class="stat-label">در انتظار پاسخ</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-check-double"></i></div><span class="stat-badge">ارسالی</span></div>
+      <div class="stat-value" id="statSent">۰</div>
+      <div class="stat-label">تیکت ارسالی به مدیریت</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><span class="stat-badge">فوری</span></div>
+      <div class="stat-value" id="statUrgent">۲</div>
+      <div class="stat-label">تیکت فوری</div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="cat-row" id="catRow"></div>
+
+  <!-- FAQ + CONTACT -->
+  <div class="main-row">
+    <div class="faq-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-question-circle"></i> راهنمای مدیران مدرسه</div>
+        <span class="sec-link" id="faqCount">۸ راهنما</span>
+      </div>
+      <div id="faqList"></div>
+    </div>
+
+    <div class="contact-card">
+      <div class="sec-hdr" style="margin-bottom:5px">
+        <div class="sec-title"><i class="fas fa-phone-alt"></i> تماس با مدیریت مدارس</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-building"></i></div>
+        <div class="contact-info"><div class="contact-label">اداره مدیریت مدارس</div><div class="contact-value">واحد پشتیبانی</div><div class="contact-hours">۰۲۱–۳۳۱۱۲۲۳۳ | شنبه تا چهارشنبه ۸–۱۴</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(6,214,160,.15);color:var(--accent3)"><i class="fas fa-envelope"></i></div>
+        <div class="contact-info"><div class="contact-label">ایمیل مدیریت مدارس</div><div class="contact-value" style="font-size:11px">schools@edu.ir</div><div class="contact-hours">پاسخ تا ۲۴ ساعت کاری</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-laptop"></i></div>
+        <div class="contact-info"><div class="contact-label">پشتیبانی فنی سامانه</div><div class="contact-value">واحد IT بوربور</div><div class="contact-hours">support@boorboor.edu.ir</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-university"></i></div>
+        <div class="contact-info"><div class="contact-label">اداره آموزش و پرورش</div><div class="contact-value">منطقه ۴ تهران</div><div class="contact-hours">داخلی ۱۱۵ | شنبه تا چهارشنبه</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET FORM + INCOMING -->
+  <div class="bot-row">
+    <!-- ارسال تیکت به مدیریت مدارس -->
+    <div class="ticket-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-plus-circle"></i> ارسال درخواست به مدیریت مدارس</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">دپارتمان</label>
+          <select class="form-control" id="ticketDept">
+            <option value="">انتخاب کنید...</option>
+            <option>اداره آموزش و پرورش</option>
+            <option>واحد IT بوربور</option>
+            <option>واحد مالی و بودجه</option>
+            <option>واحد منابع انسانی</option>
+            <option>واحد نظارت و ارزیابی</option>
+            <option>سایر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">موضوع</label>
+          <select class="form-control" id="ticketSubject">
+            <option value="">انتخاب کنید...</option>
+            <option>مشکل فنی سامانه</option>
+            <option>درخواست بودجه یا منابع</option>
+            <option>مسئله انضباطی</option>
+            <option>درخواست مجوز</option>
+            <option>گزارش حادثه</option>
+            <option>درخواست تجهیزات</option>
+            <option>اعتراض به بخشنامه</option>
+            <option>سایر</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">اولویت</label>
+          <select class="form-control" id="ticketPriority">
+            <option>عادی</option>
+            <option>مهم</option>
+            <option>فوری</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">محرمانگی</label>
+          <select class="form-control" id="ticketConfidential">
+            <option>عادی</option>
+            <option>محرمانه</option>
+            <option>کاملاً محرمانه</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">عنوان درخواست</label>
+          <input type="text" class="form-control" placeholder="خلاصه درخواست یا مشکل..." id="ticketTitle">
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">توضیحات</label>
+          <textarea class="form-control" placeholder="درخواست یا مشکل را با جزئیات کامل شرح دهید..." id="ticketDesc"></textarea>
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:14px">
+        <div class="form-group">
+          <label class="form-label">پیوست فایل <span style="color:var(--text-muted);font-weight:400">(اختیاری — حداکثر ۵ فایل)</span></label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif,image/webp,application/pdf" multiple>
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <span class="upload-main-text">کلیک کنید یا فایل را اینجا رها کنید</span>
+            <span class="upload-sub-text">JPG، PNG، GIF، WEBP، PDF — هر فایل حداکثر ۵ مگابایت</span>
+          </div>
+          <div class="file-list-wrap" id="fileList"></div>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="submitTicket()">
+        <i class="fas fa-paper-plane"></i> ارسال به مدیریت مدارس
+      </button>
+    </div>
+
+    <!-- تیکت‌های دریافتی از معلمان و معاونان -->
+    <div class="incoming-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-inbox" style="color:var(--accent2)"></i> تیکت‌های دریافتی</div>
+        <a class="sec-link" href="#" id="allIncomingLink">همه (۵)</a>
+      </div>
+      <div id="incomingListShort"></div>
+    </div>
+  </div>
+
+  <!-- MY TICKETS -->
+  <div class="my-tickets-section">
+    <div class="my-tickets-card">
+      <div class="my-tickets-header">
+        <div class="my-tickets-title">
+          <div class="my-tickets-title-icon"><i class="fas fa-paper-plane"></i></div>
+          تیکت‌های ارسالی به مدیریت مدارس
+          <span class="my-tickets-count-badge" id="myTicketsCountBadge">۰</span>
+        </div>
+        <div class="my-tickets-actions">
+          <button class="my-filter-btn active" data-filter="all" onclick="filterMyTickets('all',this)"><i class="fas fa-list"></i> همه</button>
+          <button class="my-filter-btn" data-filter="wait"   onclick="filterMyTickets('wait',this)"><i class="fas fa-clock"></i> در انتظار</button>
+          <button class="my-filter-btn" data-filter="review" onclick="filterMyTickets('review',this)"><i class="fas fa-search"></i> در بررسی</button>
+          <button class="my-filter-btn" data-filter="solved" onclick="filterMyTickets('solved',this)"><i class="fas fa-check"></i> حل‌شده</button>
+        </div>
+      </div>
+      <div class="my-tickets-body">
+        <div class="my-stats-bar">
+          <div class="my-stat-mini">
+            <div class="my-stat-mini-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-paper-plane"></i></div>
+            <div><div class="my-stat-mini-val" id="myStatTotal">۰</div><div class="my-stat-mini-lbl">کل ارسالی</div></div>
+          </div>
+          <div class="my-stat-mini">
+            <div class="my-stat-mini-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-clock"></i></div>
+            <div><div class="my-stat-mini-val" id="myStatWait">۰</div><div class="my-stat-mini-lbl">در انتظار</div></div>
+          </div>
+          <div class="my-stat-mini">
+            <div class="my-stat-mini-icon" style="background:rgba(46,204,113,.15);color:var(--present)"><i class="fas fa-check-double"></i></div>
+            <div><div class="my-stat-mini-val" id="myStatSolved">۰</div><div class="my-stat-mini-lbl">حل‌شده</div></div>
+          </div>
+        </div>
+        <div id="myTicketsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOMING FULL SECTION -->
+  <div class="incoming-section">
+    <div class="incoming-full-card">
+      <div class="incoming-full-header">
+        <div class="incoming-full-title">
+          <div class="incoming-full-title-icon"><i class="fas fa-inbox"></i></div>
+          همه تیکت‌های دریافتی از کارکنان
+          <span class="my-tickets-count-badge" style="background:linear-gradient(135deg,var(--accent2),var(--accent5))" id="incomingCountBadge">۵</span>
+        </div>
+        <div class="my-tickets-actions">
+          <button class="my-filter-btn active" data-ifilter="all"     onclick="filterIncoming('all',this)"><i class="fas fa-list"></i> همه</button>
+          <button class="my-filter-btn" data-ifilter="teacher"        onclick="filterIncoming('teacher',this)"><i class="fas fa-chalkboard-teacher"></i> معلمان</button>
+          <button class="my-filter-btn" data-ifilter="assistant"      onclick="filterIncoming('assistant',this)"><i class="fas fa-user-tie"></i> معاونان</button>
+          <button class="my-filter-btn" data-ifilter="wait"           onclick="filterIncoming('wait',this)"><i class="fas fa-clock"></i> در انتظار</button>
+          <button class="my-filter-btn" data-ifilter="solved"         onclick="filterIncoming('solved',this)"><i class="fas fa-check"></i> حل‌شده</button>
+        </div>
+      </div>
+      <div class="incoming-full-body">
+        <div id="incomingFullList"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TICKET DETAIL MODAL (دریافتی) -->
+<div class="modal-backdrop" id="incDetailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon" id="incModalIcon"></div>
+      <div class="modal-header-title" id="incModalTitle">جزئیات تیکت</div>
+      <button class="modal-close" onclick="closeModal('incDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="incModalBody"></div>
+  </div>
+</div>
+
+<!-- MY TICKET DETAIL MODAL -->
+<div class="modal-backdrop" id="myTicketDetailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon" id="myTdIcon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-paper-plane"></i></div>
+      <div class="modal-header-title" id="myTdTitle">جزئیات درخواست</div>
+      <button class="modal-close" onclick="closeModal('myTicketDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="myTdBody"></div>
+  </div>
+</div>
+
+<!-- ALL INCOMING MODAL -->
+<div class="modal-backdrop" id="allIncomingModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-inbox"></i></div>
+      <div class="modal-header-title">همه تیکت‌های دریافتی</div>
+      <button class="modal-close" onclick="closeModal('allIncomingModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="allIncomingBody"></div>
+  </div>
+</div>
+
+<!-- DANGER -->
+<div class="danger-overlay" id="dangerOverlay">
+  <div class="danger-icon-wrap"><i class="fas fa-skull-crossbones"></i></div>
+  <div class="danger-title">فایل <span>مخرب</span> شناسایی شد!</div>
+  <div class="danger-filename" id="dangerFileName">—</div>
+  <div class="danger-body">این فایل از نوع مجاز نیست.<br>فایل حذف شد و رویداد ثبت گردید.<br><strong style="color:#fff">فقط JPG، PNG، GIF، WEBP و PDF مجاز هستند.</strong></div>
+  <button class="danger-btn" onclick="closeDanger()"><i class="fas fa-shield-alt" style="margin-left:6px"></i>متوجه شدم</button>
+  <div class="danger-bar"><div class="danger-bar-fill" id="dangerBarFill"></div></div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ══ HELPERS ══ */
+const toF = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const fmtSize = b => b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB';
+
+/* ══ TOAST ══ */
+const T_ICONS = {success:'fa-check-circle',error:'fa-times-circle',warning:'fa-exclamation-triangle',info:'fa-info-circle'};
+function showToast(type, title, msg, dur=4000){
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div'); t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon"><i class="fas ${T_ICONS[type]}"></i></div><div class="toast-content"><div class="toast-title">${title}</div>${msg?`<div class="toast-msg">${msg}</div>`:''}</div><button class="toast-close" onclick="removeToast(this.parentElement)"><i class="fas fa-times"></i></button><div class="toast-bar"><div class="toast-bar-fill" style="animation:dangerBarAnim ${dur}ms linear forwards"></div></div>`;
+  wrap.appendChild(t); setTimeout(()=>removeToast(t),dur);
+}
+function removeToast(el){ if(!el||el.classList.contains('removing'))return; el.classList.add('removing'); setTimeout(()=>el.remove(),260); }
+
+/* ══ MODAL ══ */
+function openModal(id){ document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.modal-backdrop.show').forEach(m=>closeModal(m.id)); closeDanger(); }});
+
+/* ══ CATEGORIES ══ */
+const CATS=[
+  {icon:'fa-laptop',         label:'مشکل فنی',        count:'۳ راهنما', color:'var(--accent2)', bg:'rgba(142,95,212,.15)', filter:'tech'     },
+  {icon:'fa-money-bill-wave',label:'امور مالی',        count:'۲ راهنما', color:'var(--accent4)', bg:'rgba(243,156,18,.15)', filter:'finance'  },
+  {icon:'fa-users',          label:'منابع انسانی',     count:'۲ راهنما', color:'var(--accent3)', bg:'rgba(6,214,160,.15)',  filter:'hr'       },
+  {icon:'fa-file-alt',       label:'مجوز و بخشنامه',  count:'۱ راهنما', color:'var(--accent)',  bg:'rgba(74,144,217,.15)', filter:'permit'   },
+];
+let activeFaqFilter='all';
+CATS.forEach(c=>{
+  const el=document.createElement('div'); el.className='cat-card'; el.dataset.filter=c.filter;
+  el.innerHTML=`<div class="cat-icon-wrap" style="background:${c.bg};color:${c.color}"><i class="fas ${c.icon}"></i></div><div class="cat-name">${c.label}</div><div class="cat-count">${c.count}</div>`;
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.cat-card').forEach(x=>x.classList.remove('active-cat'));
+    if(activeFaqFilter===c.filter){activeFaqFilter='all';filterFAQ('all');}
+    else{el.classList.add('active-cat');activeFaqFilter=c.filter;filterFAQ(c.filter);}
+  });
+  document.getElementById('catRow').appendChild(el);
+});
+
+/* ══ FAQ ══ */
+const FAQS=[
+  {q:'چطور مشکل فنی سامانه را گزارش دهم؟',          a:'از فرم زیر، دپارتمان «واحد IT بوربور» را انتخاب کنید. اسکرین‌شات خطا را پیوست کرده و جزئیات مشکل را شرح دهید.', cat:'tech',    icon:'fa-laptop',          color:'var(--accent2)',bg:'rgba(142,95,212,.14)'},
+  {q:'سامانه برای همه کاربران مدرسه کند است',         a:'ابتدا اتصال اینترنت مدرسه را بررسی کنید. اگر مشکل از سامانه است یک تیکت فوری با اولویت «فوری» به IT ارسال کنید.', cat:'tech',    icon:'fa-laptop',          color:'var(--accent2)',bg:'rgba(142,95,212,.14)'},
+  {q:'چطور درخواست بودجه یا تجهیزات بدهم؟',          a:'از فرم زیر، دپارتمان «واحد مالی و بودجه» را انتخاب و موضوع «درخواست بودجه یا منابع» را انتخاب کنید. مستندات لازم را پیوست نمایید.', cat:'finance', icon:'fa-money-bill-wave',  color:'var(--accent4)',bg:'rgba(243,156,18,.14)'},
+  {q:'فرآیند استخدام معلم جدید چیست؟',               a:'درخواست نیرو را از طریق تیکت به «واحد منابع انسانی» ارسال کنید. مدارک مورد نیاز: فرم تقاضا، دلایل توجیهی، و تأیید بودجه.', cat:'hr',      icon:'fa-users',           color:'var(--accent3)',bg:'rgba(6,214,160,.14)' },
+  {q:'چطور حادثه مدرسه را رسمی گزارش دهم؟',          a:'فوراً یک تیکت با اولویت «فوری» به اداره آموزش و پرورش ارسال کنید. موضوع «گزارش حادثه» را انتخاب و جزئیات کامل را بنویسید.', cat:'permit',  icon:'fa-file-alt',         color:'var(--accent)', bg:'rgba(74,144,217,.14)'},
+  {q:'اعتراض به بخشنامه چگونه ثبت می‌شود؟',         a:'از تیکت با دپارتمان «اداره آموزش و پرورش» و موضوع «اعتراض به بخشنامه» استفاده کنید. دلایل حقوقی و اثرات آموزشی را شرح دهید.', cat:'permit',  icon:'fa-file-alt',         color:'var(--accent)', bg:'rgba(74,144,217,.14)'},
+  {q:'چطور قرارداد معلم را تمدید یا فسخ کنم؟',      a:'تیکت به «واحد منابع انسانی» با موضوع «سایر» ارسال کنید. مستندات قرارداد و دلایل تصمیم را پیوست نمایید.', cat:'hr',      icon:'fa-users',           color:'var(--accent3)',bg:'rgba(6,214,160,.14)' },
+  {q:'درخواست مجوز برگزاری رویداد مدرسه',            a:'تیکت با دپارتمان «واحد نظارت و ارزیابی» و موضوع «درخواست مجوز» ارسال کنید. تاریخ، مکان و برنامه رویداد را ضمیمه نمایید.', cat:'finance', icon:'fa-money-bill-wave',  color:'var(--accent4)',bg:'rgba(243,156,18,.14)'},
+];
+function renderFAQ(list){
+  const c=document.getElementById('faqList'); c.innerHTML='';
+  document.getElementById('faqCount').textContent=toF(list.length)+' راهنما';
+  if(!list.length){c.innerHTML=`<div style="text-align:center;padding:28px;color:var(--text-muted);font-size:12px"><i class="fas fa-search" style="font-size:22px;margin-bottom:10px;display:block;opacity:.4"></i>نتیجه‌ای یافت نشد</div>`;return;}
+  list.forEach(f=>{
+    const el=document.createElement('div'); el.className='faq-item';
+    el.innerHTML=`<div class="faq-q" onclick="toggleFAQ(this.parentElement)"><div class="faq-q-icon" style="background:${f.bg};color:${f.color}"><i class="fas ${f.icon}"></i></div><span class="faq-q-text">${f.q}</span><i class="fas fa-chevron-down faq-arrow"></i></div><div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>`;
+    c.appendChild(el);
+  });
+}
+function toggleFAQ(el){const o=el.classList.contains('open'); document.querySelectorAll('.faq-item.open').forEach(x=>x.classList.remove('open')); if(!o)el.classList.add('open');}
+function filterFAQ(cat){const q=document.getElementById('faqSearch').value.trim().toLowerCase(); let l=cat==='all'?FAQS:FAQS.filter(f=>f.cat===cat); if(q)l=l.filter(f=>f.q.includes(q)||f.a.includes(q)); renderFAQ(l);}
+document.getElementById('faqSearch').addEventListener('input',()=>filterFAQ(activeFaqFilter));
+renderFAQ(FAQS);
+
+/* ══ MAPS ══ */
+const STATUS_MAP={wait:{label:'در انتظار پاسخ',cls:'badge-wait'},review:{label:'در بررسی',cls:'badge-review'},solved:{label:'حل‌شده',cls:'badge-solved'},need:{label:'نیاز به اطلاعات',cls:'badge-need'}};
+const PRI_MAP={'فوری':{cls:'pri-urgent'},'مهم':{cls:'pri-high'},'عادی':{cls:'pri-normal'}};
+const DEPT_ICON={
+  'اداره آموزش و پرورش': {icon:'fa-university',    bg:'rgba(74,144,217,.14)', color:'var(--accent)'},
+  'واحد IT بوربور':      {icon:'fa-laptop',         bg:'rgba(142,95,212,.14)',color:'var(--accent2)'},
+  'واحد مالی و بودجه':   {icon:'fa-money-bill-wave',bg:'rgba(243,156,18,.14)',color:'var(--accent4)'},
+  'واحد منابع انسانی':   {icon:'fa-users',          bg:'rgba(6,214,160,.14)', color:'var(--accent3)'},
+  'واحد نظارت و ارزیابی':{icon:'fa-chart-bar',      bg:'rgba(142,95,212,.14)',color:'var(--accent2)'},
+  'سایر':                {icon:'fa-question-circle',bg:'rgba(180,200,255,.1)','color':'var(--text-muted)'},
+};
+function getDeptStyle(d){return DEPT_ICON[d]||DEPT_ICON['سایر'];}
+
+/* ══ INCOMING TICKETS (دریافتی از کارکنان) ══ */
+let incomingTickets=[
+  {id:'#S-0041',sender:'مریم رضایی',   role:'teacher',  cls:'معلم فیزیک',    av:'م',avBg:'rgba(74,144,217,.2)',avClr:'#4a90d9', icon:'fa-star',            bg:'rgba(243,156,18,.14)',color:'var(--accent4)', title:'اعتراض به نمره ثبت‌شده',        date:'۱۴۰۴/۰۲/۲۶',status:'wait',  priority:'مهم',  desc:'دانش‌آموز ادعا می‌کند نمره‌اش اشتباه وارد شده. بررسی اولیه نشان می‌دهد ممکن است خطای سیستمی بوده باشد.',unread:true },
+  {id:'#S-0040',sender:'احمد کریمی',   role:'assistant',cls:'معاون آموزشی',  av:'ا',avBg:'rgba(6,214,160,.2)', avClr:'#06d6a0', icon:'fa-laptop',          bg:'rgba(142,95,212,.14)',color:'var(--accent2)', title:'خطای سامانه در ثبت جمعی نمرات', date:'۱۴۰۴/۰۲/۲۵',status:'review',priority:'فوری', desc:'هنگام ثبت دسته‌جمعی نمرات پایان ترم سامانه خطا می‌دهد و تعدادی از نمرات ذخیره نشده‌اند.',unread:true },
+  {id:'#S-0039',sender:'رضا نوروزی',   role:'teacher',  cls:'معلم ریاضی',    av:'ر',avBg:'rgba(231,76,60,.2)', avClr:'#e74c3c', icon:'fa-clipboard-check', bg:'rgba(6,214,160,.14)', color:'var(--accent3)', title:'غیبت اشتباه ثبت‌شده دانش‌آموز', date:'۱۴۰۴/۰۲/۲۴',status:'wait',  priority:'عادی', desc:'دانش‌آموز رامتین آذری در تاریخ ۲۳ اردیبهشت حاضر بوده اما غیبت ثبت شده است.',unread:true },
+  {id:'#S-0038',sender:'احمد کریمی',   role:'assistant',cls:'معاون آموزشی',  av:'ا',avBg:'rgba(6,214,160,.2)', avClr:'#06d6a0', icon:'fa-user-plus',       bg:'rgba(74,144,217,.14)',color:'var(--accent)',  title:'درخواست افزودن معلم جایگزین',    date:'۱۴۰۴/۰۲/۲۳',status:'wait',  priority:'مهم',  desc:'معلم شیمی از ابتدای خرداد به مرخصی می‌رود. نیاز به معلم جایگزین تا پایان سال تحصیلی داریم.',unread:false},
+  {id:'#S-0037',sender:'زهرا موسوی',   role:'teacher',  cls:'معلم ادبیات',   av:'ز',avBg:'rgba(243,156,18,.2)',avClr:'#f39c12', icon:'fa-calendar-week',   bg:'rgba(74,144,217,.14)',color:'var(--accent)',  title:'تداخل در برنامه هفتگی',          date:'۱۴۰۴/۰۲/۲۲',status:'solved',priority:'عادی', desc:'برنامه هفتگی کلاس یازدهم الف با کلاس دهم ب تداخل دارد.',unread:false},
+];
+
+let incomingFilter='all';
+function renderIncomingShort(){
+  const c=document.getElementById('incomingListShort'); c.innerHTML='';
+  incomingTickets.slice(0,4).forEach(t=>c.appendChild(buildIncomingItem(t,true)));
+}
+function renderIncomingFull(filter){
+  const c=document.getElementById('incomingFullList'); c.innerHTML='';
+  let list=incomingTickets;
+  if(filter==='teacher')  list=list.filter(t=>t.role==='teacher');
+  else if(filter==='assistant') list=list.filter(t=>t.role==='assistant');
+  else if(filter==='wait')   list=list.filter(t=>t.status==='wait'||t.status==='review');
+  else if(filter==='solved') list=list.filter(t=>t.status==='solved');
+  if(!list.length){c.innerHTML=`<div class="my-ticket-empty"><i class="fas fa-inbox"></i>تیکتی در این دسته وجود ندارد</div>`;return;}
+  list.forEach(t=>c.appendChild(buildIncomingItem(t,false)));
+}
+function buildIncomingItem(t, compact){
+  const st=STATUS_MAP[t.status]; const pr=PRI_MAP[t.priority]||PRI_MAP['عادی'];
+  const roleLbl=t.role==='teacher'?'معلم':'معاون';
+  const roleCls=t.role==='teacher'?'role-teacher':'role-assistant';
+  if(compact){
+    const el=document.createElement('div'); el.className='ticket-item';
+    el.innerHTML=`<div class="ticket-top"><div class="ticket-icon" style="background:${t.bg};color:${t.color}"><i class="fas ${t.icon}"></i></div><div class="ticket-meta"><div class="ticket-title">${t.title}</div><div class="ticket-date">${t.sender} — ${t.cls} | ${t.date}</div></div>${t.unread?'<span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);flex-shrink:0;margin-top:4px"></span>':''}</div><div class="ticket-status-row"><span class="ticket-id">${t.id}</span><div style="display:flex;gap:5px;align-items:center"><span class="ticket-badge ${roleCls}">${roleLbl}</span><span class="ticket-badge ${pr.cls}">${t.priority}</span><span class="ticket-badge ${st.cls}">${st.label}</span></div></div>`;
+    el.addEventListener('click',()=>openIncomingDetail(t)); return el;
+  }
+  const el=document.createElement('div'); el.className=`inc-row${t.unread?' unread':''}`;
+  el.innerHTML=`<div class="inc-av" style="background:${t.avBg};color:${t.avClr}">${t.av}</div><div class="inc-info"><div class="inc-name">${t.sender}</div><div class="inc-subject">${t.title}</div><div class="inc-meta">${t.cls} | ${t.id} | ${t.date}</div></div><div class="inc-badges"><span class="ticket-badge ${roleCls}">${roleLbl}</span><span class="ticket-badge ${pr.cls}">${t.priority}</span><span class="ticket-badge ${st.cls}">${st.label}</span></div>`;
+  el.addEventListener('click',()=>openIncomingDetail(t)); return el;
+}
+
+function filterIncoming(filter, btn){
+  incomingFilter=filter;
+  document.querySelectorAll('[data-ifilter]').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderIncomingFull(filter);
+}
+
+function openIncomingDetail(t){
+  const st=STATUS_MAP[t.status]; const pr=PRI_MAP[t.priority]||PRI_MAP['عادی'];
+  const roleLbl=t.role==='teacher'?'معلم':'معاون';
+  document.getElementById('incModalIcon').style.cssText=`background:${t.bg};color:${t.color}`;
+  document.getElementById('incModalIcon').innerHTML=`<i class="fas ${t.icon}"></i>`;
+  document.getElementById('incModalTitle').textContent=t.title;
+  document.getElementById('incModalBody').innerHTML=`
+    <div class="td-row"><span class="td-label">شناسه</span><span class="td-val" style="font-family:'Shabnam',sans-serif">${t.id}</span></div>
+    <div class="td-row"><span class="td-label">فرستنده</span><span class="td-val">${t.sender} (${roleLbl}) — ${t.cls}</span></div>
+    <div class="td-row"><span class="td-label">اولویت</span><span class="td-val"><span class="ticket-badge ${pr.cls}">${t.priority}</span></span></div>
+    <div class="td-row"><span class="td-label">تاریخ</span><span class="td-val">${t.date}</span></div>
+    <div class="td-row"><span class="td-label">وضعیت</span><span class="td-val"><span class="ticket-badge ${st.cls}">${st.label}</span></span></div>
+    <div class="td-row" style="flex-direction:column;gap:6px"><span class="td-label">توضیحات</span><div class="td-desc">${t.desc}</div></div>
+    <div class="reply-box">
+      <div class="reply-box-title"><i class="fas fa-reply"></i> پاسخ به ${roleLbl}</div>
+      <textarea class="reply-textarea" id="replyText-${t.id}" placeholder="پاسخ خود را بنویسید..."></textarea>
+      <div class="reply-actions">
+        <button class="reply-btn" onclick="sendReply('${t.id}')"><i class="fas fa-paper-plane"></i> ارسال پاسخ</button>
+        <button class="status-btn" onclick="markIncomingSolved('${t.id}')"><i class="fas fa-check"></i> حل‌شده</button>
+      </div>
+    </div>`;
+  const tk=incomingTickets.find(x=>x.id===t.id); if(tk)tk.unread=false;
+  renderIncomingShort(); renderIncomingFull(incomingFilter); updateStats();
+  openModal('incDetailModal');
+}
+function sendReply(id){
+  const txt=document.getElementById('replyText-'+id);
+  if(!txt||!txt.value.trim()){showToast('error','خطا','متن پاسخ را وارد کنید.');return;}
+  const tk=incomingTickets.find(t=>t.id===id); if(tk)tk.status='solved';
+  renderIncomingShort(); renderIncomingFull(incomingFilter); updateStats();
+  closeModal('incDetailModal');
+  showToast('success','پاسخ ارسال شد','پاسخ شما با موفقیت ارسال گردید.',5000);
+}
+function markIncomingSolved(id){
+  const tk=incomingTickets.find(t=>t.id===id); if(tk)tk.status='solved';
+  renderIncomingShort(); renderIncomingFull(incomingFilter); updateStats();
+  closeModal('incDetailModal');
+  showToast('success','وضعیت تغییر کرد','تیکت به عنوان حل‌شده علامت‌گذاری شد.');
+}
+
+/* ══ ALL INCOMING MODAL ══ */
+document.getElementById('allIncomingLink').addEventListener('click',e=>{
+  e.preventDefault();
+  const body=document.getElementById('allIncomingBody'); body.innerHTML='';
+  incomingTickets.forEach(t=>{
+    const st=STATUS_MAP[t.status]; const pr=PRI_MAP[t.priority]||PRI_MAP['عادی'];
+    const roleLbl=t.role==='teacher'?'معلم':'معاون';
+    const roleCls=t.role==='teacher'?'role-teacher':'role-assistant';
+    const el=document.createElement('div');
+    el.style.cssText='display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s';
+    el.onmouseover=()=>{el.style.borderColor='rgba(74,144,217,.3)';el.style.background='rgba(74,144,217,.04)';};
+    el.onmouseout=()=>{el.style.borderColor='var(--border)';el.style.background='';};
+    el.innerHTML=`<div class="ticket-icon" style="background:${t.bg};color:${t.color}"><i class="fas ${t.icon}"></i></div><div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title}</div><div style="font-size:10px;color:var(--text-muted)">${t.sender} | ${t.cls} | ${t.id} | ${t.date}</div></div><div style="display:flex;gap:5px;flex-shrink:0"><span class="ticket-badge ${roleCls}">${roleLbl}</span><span class="ticket-badge ${pr.cls}">${t.priority}</span><span class="ticket-badge ${st.cls}">${st.label}</span></div>`;
+    el.addEventListener('click',()=>{closeModal('allIncomingModal');openIncomingDetail(t);});
+    body.appendChild(el);
+  });
+  openModal('allIncomingModal');
+});
+
+/* ══ MY TICKETS ══ */
+let myTickets=[], myTicketsFilter='all';
+
+function updateStats(){
+  document.getElementById('statIncoming').textContent=toF(incomingTickets.length);
+  document.getElementById('statPending').textContent=toF(incomingTickets.filter(t=>t.status==='wait'||t.status==='review').length);
+  document.getElementById('statSent').textContent=toF(myTickets.length);
+  document.getElementById('statUrgent').textContent=toF(incomingTickets.filter(t=>t.priority==='فوری').length);
+  document.getElementById('myStatTotal').textContent=toF(myTickets.length);
+  document.getElementById('myStatWait').textContent=toF(myTickets.filter(t=>t.status==='wait'||t.status==='review').length);
+  document.getElementById('myStatSolved').textContent=toF(myTickets.filter(t=>t.status==='solved').length);
+  document.getElementById('myTicketsCountBadge').textContent=toF(myTickets.length);
+  document.getElementById('incomingCountBadge').textContent=toF(incomingTickets.length);
+}
+
+function renderMyTickets(filter){
+  const c=document.getElementById('myTicketsList'); c.innerHTML='';
+  const list=filter&&filter!=='all'?myTickets.filter(t=>t.status===filter):myTickets;
+  updateStats();
+  if(!list.length){c.innerHTML=`<div class="my-ticket-empty"><i class="fas fa-inbox"></i>${myTickets.length===0?'هنوز درخواستی ارسال نکرده‌اید':'تیکتی با این وضعیت وجود ندارد'}</div>`;return;}
+  list.forEach((t,idx)=>{
+    const st=STATUS_MAP[t.status]; const pr=PRI_MAP[t.priority]||PRI_MAP['عادی'];
+    const sty=getDeptStyle(t.dept);
+    const pc=t.priority==='فوری'?'priority-urgent':t.priority==='مهم'?'priority-high':'';
+    const el=document.createElement('div'); el.className=`my-ticket-row ${pc}`; el.style.animationDelay=(idx*.05)+'s';
+    el.innerHTML=`<div class="mtr-icon" style="background:${sty.bg};color:${sty.color}"><i class="fas ${sty.icon}"></i></div><div class="mtr-info"><div class="mtr-title">${t.title}</div><div class="mtr-meta"><span class="mtr-id">${t.id}</span><span class="mtr-sep"></span><span class="mtr-subject">${t.dept} — ${t.subject}</span><span class="mtr-sep"></span><span class="mtr-date">${t.date}</span></div></div><div class="mtr-badges"><span class="ticket-badge ${pr.cls}">${t.priority}</span><span class="ticket-badge ${st.cls}">${st.label}</span></div>`;
+    el.addEventListener('click',()=>openMyTicketDetail(t));
+    c.appendChild(el);
+  });
+}
+
+function filterMyTickets(filter,btn){
+  myTicketsFilter=filter;
+  document.querySelectorAll('[data-filter]').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderMyTickets(filter);
+}
+
+function openMyTicketDetail(t){
+  const st=STATUS_MAP[t.status]; const pr=PRI_MAP[t.priority]||PRI_MAP['عادی'];
+  const sty=getDeptStyle(t.dept);
+  const confBadge=t.confidential!=='عادی'?`<span style="background:rgba(231,76,60,.14);color:var(--accent5);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:6px">${t.confidential}</span>`:'';
+  document.getElementById('myTdIcon').style.cssText=`background:${sty.bg};color:${sty.color}`;
+  document.getElementById('myTdIcon').innerHTML=`<i class="fas ${sty.icon}"></i>`;
+  document.getElementById('myTdTitle').textContent=t.title;
+  document.getElementById('myTdBody').innerHTML=`
+    <div class="td-row"><span class="td-label">شناسه تیکت</span><span class="td-val" style="font-family:'Shabnam',sans-serif">${t.id}</span></div>
+    <div class="td-row"><span class="td-label">دپارتمان</span><span class="td-val">${t.dept}</span></div>
+    <div class="td-row"><span class="td-label">موضوع</span><span class="td-val">${t.subject}</span></div>
+    <div class="td-row"><span class="td-label">اولویت</span><span class="td-val"><span class="ticket-badge ${pr.cls}">${t.priority}</span>${confBadge}</span></div>
+    <div class="td-row"><span class="td-label">تاریخ ثبت</span><span class="td-val">${t.date}</span></div>
+    <div class="td-row"><span class="td-label">وضعیت</span><span class="td-val"><span class="ticket-badge ${st.cls}">${st.label}</span></span></div>
+    <div class="td-row" style="flex-direction:column;gap:6px"><span class="td-label">توضیحات</span><div class="td-desc">${t.desc}</div></div>
+    ${t.files&&t.files.length?`<div class="td-row" style="flex-direction:column;gap:6px"><span class="td-label">فایل‌های پیوست</span><div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">${t.files.map(f=>`<div style="display:flex;align-items:center;gap:8px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px"><i class="fas fa-paperclip" style="color:var(--accent);font-size:11px"></i><span style="font-size:11px;font-weight:600">${f.name}</span><span style="font-size:10px;color:var(--text-muted);margin-right:auto">${fmtSize(f.size)}</span></div>`).join('')}</div></div>`:''}
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-muted)"><i class="fas fa-info-circle" style="color:var(--accent)"></i>این درخواست به مدیریت مدارس ارسال شده و در صف بررسی قرار دارد.</div></div>`;
+  openModal('myTicketDetailModal');
+}
+
+/* ══ SUBMIT ══ */
+function getTodayJalali(){
+  try{const d=new Date();const fmt=new Intl.DateTimeFormat('fa-IR',{year:'numeric',month:'2-digit',day:'2-digit',calendar:'persian'});const parts=fmt.formatToParts(d);return `${parts.find(p=>p.type==='year').value}/${parts.find(p=>p.type==='month').value}/${parts.find(p=>p.type==='day').value}`;}catch(e){return '۱۴۰۴/۰۲/۲۶';}
+}
+function submitTicket(){
+  const dept=document.getElementById('ticketDept').value;
+  const subject=document.getElementById('ticketSubject').value;
+  const title=document.getElementById('ticketTitle').value.trim();
+  const desc=document.getElementById('ticketDesc').value.trim();
+  const priority=document.getElementById('ticketPriority').value;
+  const confidential=document.getElementById('ticketConfidential').value;
+  if(!dept)  {showToast('error','خطا','لطفاً دپارتمان را انتخاب کنید.');return;}
+  if(!subject){showToast('error','خطا','لطفاً موضوع را انتخاب کنید.');return;}
+  if(!title)  {showToast('error','خطا','لطفاً عنوان را وارد کنید.');return;}
+  if(!desc)   {showToast('error','خطا','لطفاً توضیحات را بنویسید.');return;}
+  const newId='#M-'+toF(2001+myTickets.length);
+  myTickets.unshift({id:newId,dept,subject,title,desc,priority,confidential,date:getTodayJalali(),status:'wait',files:[...uploadedFiles]});
+  document.getElementById('ticketDept').value='';
+  document.getElementById('ticketSubject').value='';
+  document.getElementById('ticketTitle').value='';
+  document.getElementById('ticketDesc').value='';
+  document.getElementById('ticketPriority').value='عادی';
+  document.getElementById('ticketConfidential').value='عادی';
+  uploadedFiles=[]; document.getElementById('fileList').innerHTML='';
+  renderMyTickets(myTicketsFilter);
+  setTimeout(()=>{document.querySelector('.my-tickets-section').scrollIntoView({behavior:'smooth',block:'start'});},200);
+  showToast('success','درخواست ارسال شد',`درخواست ${newId} به مدیریت مدارس ارسال شد.`,6000);
+}
+
+/* ══ FILE UPLOAD ══ */
+const ALLOWED=['image/jpeg','image/png','image/gif','image/webp','application/pdf'];
+const MAX_SIZE=5*1024*1024,MAX_F=5;
+let uploadedFiles=[];
+const fileInp=document.getElementById('fileInput');
+const upArea=document.getElementById('uploadArea');
+const fileListEl=document.getElementById('fileList');
+fileInp.addEventListener('change',e=>{handleFiles(Array.from(e.target.files));fileInp.value='';});
+upArea.addEventListener('dragover',e=>{e.preventDefault();upArea.classList.add('drag-over');});
+upArea.addEventListener('dragleave',()=>upArea.classList.remove('drag-over'));
+upArea.addEventListener('drop',e=>{e.preventDefault();upArea.classList.remove('drag-over');handleFiles(Array.from(e.dataTransfer.files));});
+function handleFiles(files){
+  files.forEach(file=>{
+    if(!ALLOWED.includes(file.type)){document.getElementById('dangerFileName').textContent=file.name;const b=document.getElementById('dangerBarFill');b.style.animation='none';b.offsetHeight;b.style.animation='dangerBarAnim 5s linear forwards';document.getElementById('dangerOverlay').classList.add('show');return;}
+    if(file.size>MAX_SIZE){showToast('warning','حجم زیاد',`«${file.name}» بیشتر از ۵ مگابایت است.`);return;}
+    if(uploadedFiles.length>=MAX_F){showToast('warning','محدودیت','حداکثر ۵ فایل مجاز است.');return;}
+    if(uploadedFiles.find(f=>f.name===file.name&&f.size===file.size)){showToast('info','تکراری',`«${file.name}» قبلاً اضافه شده.`);return;}
+    uploadedFiles.push(file);renderFileItem(file);showToast('success','فایل اضافه شد',`«${file.name}» پیوست شد.`);
+  });
+}
+const FICONS={'image/jpeg':'fa-file-image','image/png':'fa-file-image','image/gif':'fa-file-image','image/webp':'fa-file-image','application/pdf':'fa-file-pdf'};
+const FCOLORS={'image/jpeg':'var(--accent3)','image/png':'var(--accent3)','image/gif':'var(--accent3)','image/webp':'var(--accent3)','application/pdf':'var(--accent5)'};
+function renderFileItem(file){
+  const ic=FICONS[file.type]||'fa-file',cl=FCOLORS[file.type]||'var(--accent)';
+  const el=document.createElement('div');el.className='file-item';
+  el.innerHTML=`<div class="file-item-icon" style="background:${cl}22;color:${cl}"><i class="fas ${ic}"></i></div><div class="file-item-info"><div class="file-item-name">${file.name}</div><div class="file-item-size">${fmtSize(file.size)}</div></div><button class="file-item-remove" title="حذف"><i class="fas fa-times"></i></button>`;
+  el.querySelector('.file-item-remove').addEventListener('click',()=>{uploadedFiles=uploadedFiles.filter(f=>!(f.name===file.name&&f.size===file.size));el.style.animation='toastOut .2s ease forwards';setTimeout(()=>el.remove(),220);showToast('info','حذف شد',`«${file.name}» حذف شد.`);});
+  fileListEl.appendChild(el);
+}
+
+/* ══ DANGER ══ */
+let dangerTimer=null;
+function closeDanger(){document.getElementById('dangerOverlay').classList.remove('show');if(dangerTimer)clearTimeout(dangerTimer);}
+new MutationObserver(()=>{if(document.getElementById('dangerOverlay').classList.contains('show')){if(dangerTimer)clearTimeout(dangerTimer);dangerTimer=setTimeout(closeDanger,5200);}}).observe(document.getElementById('dangerOverlay'),{attributes:true,attributeFilter:['class']});
+
+/* ══ SIDEBAR ══ */
+document.getElementById('menuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('active');document.getElementById('sidebarOverlay').classList.toggle('active');});
+document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('active');document.getElementById('sidebarOverlay').classList.remove('active');});
+document.getElementById('sidebarCloseBtn').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('active');document.getElementById('sidebarOverlay').classList.remove('active');});
+document.querySelectorAll('.menu-item.has-submenu').forEach(item=>{item.querySelector('.menu-link')?.addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.menu-item.has-submenu').forEach(o=>{if(o!==item)o.classList.remove('open');});item.classList.toggle('open');});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('sidebar').classList.remove('active');document.getElementById('sidebarOverlay').classList.remove('active');}});
+
+/* ══ INIT ══ */
+updateStats();
+renderIncomingShort();
+renderIncomingFull('all');
+renderMyTickets('all');
+</script>
+</body>
+</html>
