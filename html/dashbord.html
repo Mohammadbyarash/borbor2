@@ -1,1519 +1,810 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوربور — داشبورد مدیر کل</title>
+<link rel="stylesheet" href="../css/all.min.css">
     <link rel="icon" href="../image/iconB.png" />
     <link rel="stylesheet" href="../style/scrollbar.css" />
-    <title>بوربور — داشبورد مدیر</title>
+<script src="../js/chart.umd.min.js"></script>
+<style>
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Vazirmatn"; src:url("../font/Vazirmatn-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+@font-face { font-family:"Shabnam"; src:url("../font/Shabnam-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+@font-face { font-family:"Shabnam"; src:url("../font/Shabnam-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
 
-    <!-- LOCAL FONTS -->
-    <link
-      rel="preload"
-      href="../font/Vazirmatn-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="../font/Vazirmatn-Medium.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="../font/Shabnam-Bold.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="../css/all.min.css" />
-    <script src="../javaScript/auth.js"></script>
-    <script src="../javaScript/permission-guard.js"></script>
-    <script src="../javaScript/sidebar-permissions.js"></script>
-    <script src="../js/chart.umd.min.js"></script>
+:root {
+  --bg-main:#0f1629; --bg-card:#162040; --bg-card2:#1a2650; --bg-sidebar:#0b1120;
+  --accent:#4a90d9; --accent2:#8e5fd4; --accent3:#06d6a0; --accent4:#f39c12; --accent5:#e74c3c;
+  --present:#2ecc71; --absent:#e74c3c; --late:#f39c12;
+  --text:#e8f0ff; --text-muted:rgba(180,200,255,0.48);
+  --border:rgba(255,255,255,0.07); --border-h:rgba(74,144,217,0.35);
+  --sidebar-w:258px; --radius:18px; --radius-sm:11px;
+}
 
-    <style>
-      /* ========================= LOCAL FONTS ========================= */
-      @font-face {
-        font-family: "Vazirmatn";
-        src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
-        font-weight: 400;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Vazirmatn";
-        src: url("../font/Vazirmatn-Medium.woff2") format("woff2");
-        font-weight: 500;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Shabnam";
-        src: url("../font/Shabnam-Bold.woff2") format("woff2");
-        font-weight: 700;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Shabnam";
-        src: url("../font/Shabnam-Medium.woff2") format("woff2");
-        font-weight: 500;
-        font-display: swap;
-      }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"Vazirmatn","Shabnam",Tahoma,sans-serif;
+  background:var(--bg-main); color:var(--text);
+  direction:rtl; min-height:100vh; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%,rgba(74,144,217,.13) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 90%,rgba(142,95,212,.10) 0%,transparent 55%),
+    radial-gradient(ellipse 45% 45% at 55% 45%,rgba(6,214,160,.04) 0%,transparent 65%);
+}
+body::after{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:linear-gradient(rgba(74,144,217,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,144,217,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
 
-      /* ========================= ROOT ========================= */
-      :root {
-        --bg-main: #0f1629;
-        --bg-card: #162040;
-        --bg-card2: #1a2650;
-        --bg-sidebar: #0b1120;
-        --accent: #4a90d9;
-        --accent2: #8e5fd4;
-        --accent3: #06d6a0;
-        --accent4: #f39c12;
-        --accent5: #e74c3c;
-        --present: #2ecc71;
-        --absent: #e74c3c;
-        --late: #f39c12;
-        --text: #e8f0ff;
-        --text-muted: rgba(180, 200, 255, 0.48);
-        --border: rgba(255, 255, 255, 0.07);
-        --border-hover: rgba(74, 144, 217, 0.35);
-        --sidebar-w: 258px;
-        --radius: 18px;
-        --radius-sm: 11px;
-      }
+/* ══════════════════════════════
+   SIDEBAR — کپی دقیق از Assistant_management
+══════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--bg-sidebar);
+  padding:26px 14px;
+  border-left:1px solid var(--border);
+  position:fixed; right:0; top:0;
+  height:100vh;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:500;
+  display:flex; flex-direction:column;
+  transform:translateX(110%);
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 40px rgba(0,0,0,.5);
+}
+.sidebar.active{transform:translateX(0)!important;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:499;}
+.sidebar-overlay.active{display:block;}
 
-      /* ========================= GLOBAL ========================= */
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
+.logo{text-align:center;margin-bottom:4px;font-size:28px;font-weight:900;letter-spacing:-1px;color:#fff;font-family:"Shabnam",sans-serif;}
+.logo span{color:var(--accent);}
+.logo-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-bottom:18px;letter-spacing:1px;text-transform:uppercase;}
 
-      body {
-        font-family: "Vazirmatn", "Shabnam", Tahoma, sans-serif;
-        background: var(--bg-main);
-        color: var(--text);
-        direction: rtl;
-        min-height: 100vh;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-      }
+.sidebar-close-btn{
+  position:absolute;top:14px;left:14px;width:32px;height:32px;
+  background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.2);
+  border-radius:50%;color:var(--absent);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;
+}
+.sidebar-close-btn:hover{background:var(--absent);color:#fff;transform:rotate(90deg);}
 
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background:
-          radial-gradient(
-            ellipse 80% 60% at 10% 5%,
-            rgba(74, 144, 217, 0.13) 0%,
-            transparent 55%
-          ),
-          radial-gradient(
-            ellipse 60% 50% at 85% 90%,
-            rgba(142, 95, 212, 0.1) 0%,
-            transparent 55%
-          ),
-          radial-gradient(
-            ellipse 45% 45% at 55% 45%,
-            rgba(6, 214, 160, 0.04) 0%,
-            transparent 65%
-          );
-        pointer-events: none;
-        z-index: 0;
-      }
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image:
-          linear-gradient(rgba(74, 144, 217, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(74, 144, 217, 0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-        pointer-events: none;
-        z-index: 0;
-      }
+.manager-block{
+  background:linear-gradient(135deg,rgba(74,144,217,.14),rgba(142,95,212,.10));
+  border:1px solid rgba(74,144,217,.2);border-radius:var(--radius-sm);
+  padding:15px 13px;margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;flex-shrink:0;
+}
+.manager-block::before{
+  content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;
+  background:radial-gradient(circle,rgba(74,144,217,.15),transparent 70%);pointer-events:none;
+}
+.manager-avatar{
+  width:46px;height:46px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:800;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(74,144,217,.35);
+}
+.manager-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.manager-role{font-size:10px;color:var(--text-muted);}
+.manager-badge{
+  margin-top:7px;display:inline-block;
+  background:rgba(74,144,217,.14);color:var(--accent);
+  font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;
+  border:1px solid rgba(74,144,217,.22);
+}
 
-      /* ========================= PAGE LOADER ========================= */
-      #pageLoader {
-        position: fixed;
-        inset: 0;
-        background: var(--bg-main);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        gap: 18px;
-        transition: opacity 0.5s ease;
-      }
-      #pageLoader.hide {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .loader-spinner {
-        width: 58px;
-        height: 58px;
-        border: 5px solid rgba(255, 255, 255, 0.1);
-        border-top-color: var(--accent);
-        border-radius: 50%;
-        animation: spin 0.85s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      .loader-text {
-        color: var(--text);
-        font-size: 15px;
-      }
-      .loader-sub {
-        color: var(--text-muted);
-        font-size: 12px;
-        margin-top: -8px;
-      }
+.nav-section-label{font-size:9px;font-weight:700;color:rgba(180,200,255,.28);letter-spacing:1.5px;text-transform:uppercase;padding:0 14px;margin:14px 0 8px;}
 
-      /* ========================= SIDEBAR ========================= */
+.menu-item{margin-bottom:2px;}
+.menu-item a,.menu-item .menu-link{
+  color:rgba(180,200,255,.58);text-decoration:none;padding:10px 14px;
+  display:flex;align-items:center;gap:11px;
+  border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;
+  transition:all .2s;cursor:pointer;position:relative;
+}
+.menu-item a i,.menu-item .menu-link i:first-child{font-size:14px;width:20px;text-align:center;flex-shrink:0;opacity:.75;}
+.menu-item a:hover,.menu-item .menu-link:hover{background:rgba(255,255,255,.05);color:#fff;}
+.menu-item a:hover i,.menu-item .menu-link:hover i{opacity:1;}
 
-      .sidebar {
-        width: var(--sidebar-w);
-        background: var(--bg-sidebar);
-        padding: 26px 14px;
-        border-left: 1px solid var(--border);
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto; /* قبلاً فقط auto بود — تأیید */
-        overflow-x: hidden; /* ← اضافه شد */
-        z-index: 400;
-        display: flex;
-        flex-direction: column;
-        transform: translateX(110%);
-        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
-      }
+.menu-item:not(.has-submenu).active > a{
+  background:linear-gradient(90deg,rgba(74,144,217,.18),rgba(74,144,217,.05));
+  color:#fff;font-weight:700;border:1px solid rgba(74,144,217,.22);
+}
+.menu-item:not(.has-submenu).active > a::before{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:3px;height:65%;background:var(--accent);border-radius:3px 0 0 3px;
+}
+.menu-item:not(.has-submenu).active > a i{opacity:1;color:var(--accent);}
 
-      .sidebar.active {
-        transform: translateX(0);
-      }
+.has-submenu{position:relative;}
+.submenu-arrow{margin-right:auto;font-size:12px!important;transition:transform .3s;}
+.menu-item.has-submenu.open .submenu-arrow{transform:rotate(180deg);}
+.menu-item.has-submenu.open > .menu-link{background:rgba(255,255,255,.05);color:#fff;}
+.submenu{max-height:0;overflow:hidden;transition:max-height .3s ease;background:rgba(0,0,0,.2);border-radius:var(--radius-sm);margin-top:4px;}
+.menu-item.has-submenu.open .submenu{max-height:500px;}
+.submenu-item{
+  color:rgba(180,200,255,.6);text-decoration:none;
+  padding:10px 14px 10px 44px;display:flex;align-items:center;gap:9px;
+  font-size:12px;font-weight:400;transition:all .2s;border-radius:8px;margin:4px;
+}
+.submenu-item i{font-size:13px;width:18px;text-align:center;opacity:.75;}
+.submenu-item:hover{background:rgba(74,144,217,.1);color:#fff;}
+.submenu-item.active{background:rgba(74,144,217,.14);color:#fff;font-weight:600;}
 
-      .sidebar-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.65);
-        z-index: 199;
-      }
-      .sidebar-overlay.active {
-        display: block;
-      }
+.nav-badge{margin-right:auto;background:var(--accent5);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:20px;text-align:center;}
+.nav-divider{height:1px;background:var(--border);margin:10px 4px;}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);text-align:center;line-height:1.7;}
 
-      /* Logo */
-      .logo {
-        text-align: center;
-        margin-bottom: 4px;
-        font-size: 28px;
-        font-weight: 900;
-        letter-spacing: -1px;
-        color: #fff;
-        font-family: "Shabnam", sans-serif;
-      }
-      .logo span {
-        color: var(--accent);
-      }
-      .logo-sub {
-        text-align: center;
-        font-size: 10px;
-        color: var(--text-muted);
-        margin-bottom: 22px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
+/* ══ HAMBURGER ══ */
+.menu-toggle{
+  position:fixed;top:16px;right:20px;z-index:300;
+  width:44px;height:44px;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.3);
+  color:var(--text-muted);font-size:18px;
+}
+.menu-toggle:hover{border-color:var(--border-h);color:var(--text);}
 
-      /* Manager profile block */
-      .manager-block {
-        background: linear-gradient(
-          135deg,
-          rgba(74, 144, 217, 0.14),
-          rgba(142, 95, 212, 0.1)
-        );
-        border: 1px solid rgba(74, 144, 217, 0.2);
-        border-radius: var(--radius-sm);
-        padding: 15px 13px;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        position: relative;
-        overflow: hidden;
-        flex-shrink: 0;
-      }
-      .manager-block::before {
-        content: "";
-        position: absolute;
-        top: -20px;
-        left: -20px;
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(
-          circle,
-          rgba(74, 144, 217, 0.15),
-          transparent 70%
-        );
-        pointer-events: none;
-      }
-      .manager-avatar {
-        width: 46px;
-        height: 46px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px;
-        font-weight: 800;
-        flex-shrink: 0;
-        box-shadow: 0 4px 14px rgba(74, 144, 217, 0.35);
-      }
-      .manager-name {
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 2px;
-      }
-      .manager-role {
-        font-size: 10px;
-        color: var(--text-muted);
-      }
-      .manager-badge {
-        margin-top: 7px;
-        display: inline-block;
-        background: rgba(74, 144, 217, 0.14);
-        color: var(--accent);
-        font-size: 9px;
-        font-weight: 700;
-        padding: 2px 9px;
-        border-radius: 20px;
-        border: 1px solid rgba(74, 144, 217, 0.22);
-      }
+/* ══ MAIN ══ */
+.main-content{min-height:100vh;padding:72px 24px 36px;position:relative;z-index:1;}
 
-      /* Nav */
-      .nav-section-label {
-        font-size: 9px;
-        font-weight: 700;
-        color: rgba(180, 200, 255, 0.28);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        padding: 0 14px;
-        margin: 14px 0 8px;
-      }
+/* TOP BAR */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:14px;animation:fadeUp .4s ease both;}
+.greeting h1{font-size:20px;font-weight:800;line-height:1.3;}
+.greeting h1 span{color:var(--accent);}
+.greeting p{font-size:11.5px;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.live-dot{width:6px;height:6px;background:var(--accent3);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,.5)}50%{box-shadow:0 0 0 5px rgba(6,214,160,0)}}
+.top-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.action-btn{
+  position:relative;width:40px;height:40px;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);font-size:15px;transition:all .2s;
+}
+.action-btn:hover{color:#fff;border-color:var(--border-h);}
+.notif-dot{position:absolute;top:8px;left:8px;width:7px;height:7px;background:var(--accent5);border-radius:50%;border:2px solid var(--bg-main);}
+.profile-btn{
+  width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;color:#fff;
+  box-shadow:0 3px 10px rgba(74,144,217,.35);
+}
 
-      .menu-item {
-        margin-bottom: 2px;
-      }
-      .menu-item a,
-      .menu-item .menu-link {
-        color: rgba(180, 200, 255, 0.58);
-        text-decoration: none;
-        padding: 10px 14px;
-        display: flex;
-        align-items: center;
-        gap: 11px;
-        border-radius: var(--radius-sm);
-        font-size: 12.5px;
-        font-weight: 500;
-        transition: all 0.2s;
-        cursor: pointer;
-        position: relative;
-      }
-      .menu-item a i,
-      .menu-item .menu-link i:first-child {
-        font-size: 14px;
-        width: 20px;
-        text-align: center;
-        flex-shrink: 0;
-        opacity: 0.75;
-      }
-      .menu-item a:hover,
-      .menu-item .menu-link:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-      }
-      .menu-item a:hover i,
-      .menu-item .menu-link:hover i {
-        opacity: 1;
-      }
+/* ══ QUICK BAR ══ */
+.quick-bar{
+  display:flex;gap:0;margin-bottom:20px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:13px 18px;align-items:center;flex-wrap:wrap;
+  animation:fadeUp .4s .05s ease both;
+}
+.qb-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-muted);padding:0 14px;border-left:1px solid var(--border);}
+.qb-item:first-child{border-left:none;padding-right:0;}
+.qb-item:last-child{padding-left:0;}
+.qb-val{font-weight:700;color:var(--text);font-size:12.5px;}
 
-      .menu-item:not(.has-submenu).active > a {
-        background: linear-gradient(
-          90deg,
-          rgba(74, 144, 217, 0.18),
-          rgba(74, 144, 217, 0.05)
-        );
-        color: #fff;
-        font-weight: 700;
-        border: 1px solid rgba(74, 144, 217, 0.22);
-      }
-      .menu-item:not(.has-submenu).active > a::before {
-        content: "";
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 65%;
-        background: var(--accent);
-        border-radius: 3px 0 0 3px;
-      }
-      .menu-item:not(.has-submenu).active > a i {
-        opacity: 1;
-        color: var(--accent);
-      }
+/* ══ STAT CARDS ══ */
+.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
+.s-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 15px 16px;
+  position:relative;overflow:hidden;
+  transition:transform .28s,box-shadow .28s,border-color .28s;
+  animation:fadeUp .45s ease both;
+}
+.s-card::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.c1::before{background:linear-gradient(90deg,#4a90d9,#8e5fd4);}
+.c2::before{background:linear-gradient(90deg,#06d6a0,#2ecc71);}
+.c3::before{background:linear-gradient(90deg,#e74c3c,#f97316);}
+.c4::before{background:linear-gradient(90deg,#f39c12,#e67e22);}
+.c5::before{background:linear-gradient(90deg,#8e5fd4,#c85fe8);}
+.c6::before{background:linear-gradient(90deg,#4a90d9,#06d6a0);}
+.s-card:nth-child(1){animation-delay:.04s;} .s-card:nth-child(2){animation-delay:.08s;}
+.s-card:nth-child(3){animation-delay:.12s;} .s-card:nth-child(4){animation-delay:.16s;}
+.s-card:nth-child(5){animation-delay:.20s;} .s-card:nth-child(6){animation-delay:.24s;}
+.s-card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,0,0,.3);border-color:rgba(74,144,217,.18);}
+.s-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.s-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.c1 .s-icon{background:rgba(74,144,217,.16);color:var(--accent);}
+.c2 .s-icon{background:rgba(6,214,160,.14);color:var(--accent3);}
+.c3 .s-icon{background:rgba(231,76,60,.15);color:var(--absent);}
+.c4 .s-icon{background:rgba(243,156,18,.15);color:var(--accent4);}
+.c5 .s-icon{background:rgba(142,95,212,.15);color:var(--accent2);}
+.c6 .s-icon{background:rgba(74,144,217,.14);color:var(--accent);}
+.s-trend{display:flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.t-up{background:rgba(46,204,113,.12);color:var(--present);}
+.t-dn{background:rgba(231,76,60,.12);color:var(--absent);}
+.t-sm{background:rgba(255,255,255,.07);color:var(--text-muted);}
+.s-val{font-size:30px;font-weight:900;line-height:1;margin-bottom:3px;}
+.s-label{font-size:11px;color:var(--text-muted);font-weight:500;margin-bottom:9px;}
+.s-sub{font-size:10px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:8px;display:flex;align-items:center;gap:5px;}
 
-      /* Submenu */
-      .menu-item.has-submenu {
-        position: relative;
-      }
-      .submenu-arrow {
-        margin-right: auto;
-        font-size: 12px !important;
-        transition: transform 0.3s;
-      }
-      .menu-item.has-submenu.open .submenu-arrow {
-        transform: rotate(180deg);
-      }
-      .menu-item.has-submenu.open > .menu-link {
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-      }
+/* ══ SECTION HEADER ══ */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
+.sec-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sec-title i{color:var(--accent);}
+.sec-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;padding:3px 8px;border-radius:6px;transition:background .2s;white-space:nowrap;}
+.sec-link:hover{background:rgba(74,144,217,.1);}
 
-      .submenu {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: var(--radius-sm);
-        margin-top: 4px;
-      }
-      .menu-item.has-submenu.open .submenu {
-        max-height: 500px;
-      }
+.card-base{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
 
-      .submenu-item {
-        color: rgba(180, 200, 255, 0.6);
-        text-decoration: none;
-        padding: 10px 14px 10px 44px;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        font-size: 12px;
-        font-weight: 400;
-        transition: all 0.2s;
-        border-radius: 8px;
-        margin: 4px;
-      }
-      .submenu-item i {
-        font-size: 13px;
-        width: 18px;
-        text-align: center;
-        opacity: 0.75;
-      }
-      .submenu-item:hover {
-        background: rgba(74, 144, 217, 0.1);
-        color: #fff;
-      }
-      .submenu-item:hover i {
-        opacity: 1;
-      }
-      .submenu-item.active {
-        background: rgba(74, 144, 217, 0.14);
-        color: #fff;
-        font-weight: 600;
-      }
+/* ══ ROW 1 ══ */
+.row1{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.class-list{display:flex;flex-direction:column;gap:8px;}
+.cs-row{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--bg-card2);border-radius:var(--radius-sm);border:1px solid var(--border);transition:all .22s;}
+.cs-row:hover{border-color:var(--border-h);transform:translateX(-3px);}
+.grade-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;flex-shrink:0;min-width:62px;text-align:center;}
+.gb1{background:rgba(74,144,217,.15);color:var(--accent);border:1px solid rgba(74,144,217,.2);}
+.gb2{background:rgba(6,214,160,.14);color:var(--accent3);border:1px solid rgba(6,214,160,.2);}
+.gb3{background:rgba(243,156,18,.14);color:var(--accent4);border:1px solid rgba(243,156,18,.2);}
+.cs-info{flex:1;min-width:0;}
+.cs-info-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.cs-name{font-size:12.5px;font-weight:700;}
+.cs-pct{font-size:11.5px;font-weight:800;}
+.cs-bar-track{height:6px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;display:flex;}
+.cs-bar-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.cs-meta{font-size:10px;color:var(--text-muted);margin-top:5px;display:flex;gap:10px;}
+.cs-meta span{display:flex;align-items:center;gap:4px;}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 
-      .nav-badge {
-        margin-right: auto;
-        background: var(--accent5);
-        color: #fff;
-        font-size: 9.5px;
-        font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 20px;
-        min-width: 20px;
-        text-align: center;
-      }
+.donut-card{display:flex;flex-direction:column;}
+.donut-outer{position:relative;width:140px;height:140px;margin:4px auto 14px;}
+.donut-svg{width:140px;height:140px;transform:rotate(-90deg);}
+.donut-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:15;}
+.donut-seg{fill:none;stroke-width:15;stroke-linecap:round;}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-pct{font-size:24px;font-weight:800;color:var(--present);line-height:1;}
+.donut-sub{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.donut-legend{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:auto;}
+.dl-row{display:flex;align-items:center;gap:5px;font-size:11px;}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dl-label{color:var(--text-muted);}
+.dl-val{margin-right:auto;font-weight:700;font-size:12px;}
 
-      .nav-divider {
-        height: 1px;
-        background: var(--border);
-        margin: 10px 4px;
-      }
+.teacher-stat-blocks{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+.tsb{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 11px;text-align:center;}
+.tsb-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px;}
+.tsb-label{font-size:10px;color:var(--text-muted);}
+.teacher-list{display:flex;flex-direction:column;gap:6px;}
+.tl-item{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--bg-card2);border:1px solid var(--border);border-radius:9px;transition:all .2s;}
+.tl-item:hover{border-color:var(--border-h);}
+.tl-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.tl-info{flex:1;min-width:0;}
+.tl-name{font-size:12px;font-weight:600;}
+.tl-sub{font-size:9.5px;color:var(--text-muted);margin-top:1px;}
+.tl-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.tag-p{background:rgba(46,204,113,.14);color:var(--present);}
+.tag-a{background:rgba(231,76,60,.14);color:var(--absent);}
+.tag-l{background:rgba(243,156,18,.14);color:var(--late);}
 
-      .sidebar-footer {
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid var(--border);
-        font-size: 10px;
-        color: var(--text-muted);
-        text-align: center;
-        line-height: 1.7;
-      }
+/* ══ ROW 2 ══ */
+.row2{display:grid;grid-template-columns:1.2fr 1fr 1.5fr;gap:16px;margin-bottom:20px;}
+.class-item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;transition:all .22s;}
+.class-item:last-child{margin-bottom:0;}
+.class-item:hover{border-color:var(--border-h);transform:translateX(-3px);}
+.class-item.now{border-color:rgba(74,144,217,.4);background:rgba(74,144,217,.08);}
+.ci-time{font-size:9.5px;color:var(--text-muted);text-align:center;min-width:44px;line-height:1.7;flex-shrink:0;}
+.ci-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ci-info{flex:1;min-width:0;}
+.ci-name{font-size:12px;font-weight:700;}
+.ci-meta{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.ci-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.ct-done{background:rgba(46,204,113,.14);color:var(--present);}
+.ct-now{background:rgba(74,144,217,.2);color:var(--accent);animation:blink 2s infinite;}
+.ct-pend{background:rgba(255,255,255,.06);color:var(--text-muted);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 
-      /* ========================= HAMBURGER ========================= */
-      .menu-toggle {
-        position: fixed;
-        top: 16px;
-        right: 20px;
-        z-index: 300;
-        width: 44px;
-        height: 44px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        transition: all 0.2s;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-        color: var(--text-muted);
-        font-size: 16px;
-      }
-      .menu-toggle:hover {
-        border-color: var(--border-hover);
-        color: var(--text);
-      }
+.abs-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg-card2);border:1px solid rgba(231,76,60,.12);border-radius:9px;margin-bottom:6px;transition:all .2s;}
+.abs-item:last-child{margin-bottom:0;}
+.abs-item:hover{border-color:rgba(231,76,60,.3);}
+.abs-av{width:30px;height:30px;border-radius:50%;background:rgba(231,76,60,.15);color:var(--absent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.abs-info{flex:1;min-width:0;}
+.abs-name{font-size:12px;font-weight:600;}
+.abs-cls{font-size:9.5px;color:var(--text-muted);margin-top:1px;}
+.abs-time{font-size:10px;color:var(--text-muted);flex-shrink:0;}
 
-      /* ========================= MAIN ========================= */
-      .main-content {
-        min-height: 100vh;
-        padding: 72px 24px 36px;
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-      }
+.chart-wrap{position:relative;height:220px;margin-top:8px;}
 
-      /* TOP BAR */
-      .top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 26px;
-        gap: 14px;
-      }
-      .greeting h1 {
-        font-size: 20px;
-        font-weight: 800;
-        line-height: 1.3;
-      }
-      .greeting h1 span {
-        color: var(--accent);
-      }
-      .greeting p {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-      }
-      #userHeader {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-      }
-      .live-dot {
-        width: 6px;
-        height: 6px;
-        background: var(--accent3);
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-        flex-shrink: 0;
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
-        }
-        50% {
-          box-shadow: 0 0 0 5px rgba(6, 214, 160, 0);
-        }
-      }
+/* ══ ROW 3 ══ */
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grade-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);}
+.grade-item:last-child{border-bottom:none;}
+.grade-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.grade-info{flex:1;min-width:0;}
+.grade-sub{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.grade-date{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.grade-bar{width:40px;height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.grade-bar-fill{height:100%;border-radius:4px;}
+.grade-score{font-size:16px;font-weight:800;min-width:30px;text-align:center;flex-shrink:0;}
+.g-ex{color:var(--present);} .g-gd{color:var(--accent);} .g-av{color:var(--accent4);} .g-po{color:var(--absent);}
 
-      .top-actions {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-      }
-      .action-btn {
-        position: relative;
-        width: 40px;
-        height: 40px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: var(--text-muted);
-        font-size: 15px;
-        transition: all 0.2s;
-      }
-      .action-btn:hover {
-        color: #fff;
-        border-color: var(--border-hover);
-      }
-      .notif-dot {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        width: 7px;
-        height: 7px;
-        background: var(--accent5);
-        border-radius: 50%;
-        border: 2px solid var(--bg-main);
-      }
-      .profile-btn {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 50%;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 800;
-        box-shadow: 0 3px 10px rgba(74, 144, 217, 0.35);
-        color: #fff;
-      }
+.notice-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:transform .2s;}
+.notice-item:last-child{border-bottom:none;padding-bottom:0;}
+.notice-item:hover{transform:translateX(4px);}
+.notice-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;}
+.n-r{background:rgba(231,76,60,.15);color:var(--absent);}
+.n-b{background:rgba(74,144,217,.15);color:var(--accent);}
+.n-g{background:rgba(6,214,160,.15);color:var(--accent3);}
+.n-y{background:rgba(243,156,18,.15);color:var(--late);}
+.n-p{background:rgba(142,95,212,.15);color:var(--accent2);}
+.notice-content{flex:1;min-width:0;}
+.notice-title{font-size:12px;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.notice-body{font-size:10.5px;color:var(--text-muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.notice-time{font-size:9.5px;color:rgba(180,200,255,.35);margin-top:3px;}
 
-      /* ========================= STAT CARDS ========================= */
-      .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 13px;
-        margin-bottom: 22px;
-        flex-shrink: 0;
-      }
+.reg-item{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;transition:all .2s;}
+.reg-item:last-child{margin-bottom:0;}
+.reg-item:hover{border-color:var(--border-h);}
+.reg-av{width:34px;height:34px;background:linear-gradient(135deg,rgba(74,144,217,.2),rgba(142,95,212,.2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.reg-info{flex:1;min-width:0;}
+.reg-name{font-size:12.5px;font-weight:600;}
+.reg-grade{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.reg-status{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+.rs-new{background:rgba(74,144,217,.15);color:var(--accent);}
+.rs-rev{background:rgba(243,156,18,.15);color:var(--accent4);}
+.rs-ok{background:rgba(46,204,113,.15);color:var(--present);}
 
-      .card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 20px 16px 18px;
-        position: relative;
-        overflow: hidden;
-        transition:
-          transform 0.28s,
-          box-shadow 0.28s,
-          border-color 0.28s;
-        cursor: default;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-      .card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 3px;
-        border-radius: var(--radius) var(--radius) 0 0;
-      }
-      .card:nth-child(1)::before {
-        background: linear-gradient(90deg, #4a90d9, #8e5fd4);
-      }
-      .card:nth-child(2)::before {
-        background: linear-gradient(90deg, #06d6a0, #2ecc71);
-      }
-      .card:nth-child(3)::before {
-        background: linear-gradient(90deg, #e74c3c, #f97316);
-      }
-      .card:nth-child(4)::before {
-        background: linear-gradient(90deg, #f39c12, #e67e22);
-      }
-      .card:nth-child(5)::before {
-        background: linear-gradient(90deg, #8e5fd4, #c85fe8);
-      }
-      .card:nth-child(6)::before {
-        background: linear-gradient(90deg, #4a90d9, #06d6a0);
-      }
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.row1{animation:fadeUp .45s .28s ease both;}
+.row2{animation:fadeUp .45s .35s ease both;}
+.row3{animation:fadeUp .45s .42s ease both;}
 
-      .card::after {
-        content: "";
-        position: absolute;
-        bottom: -20px;
-        left: -10px;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        opacity: 0.08;
-        pointer-events: none;
-      }
-      .card:nth-child(1)::after {
-        background: #4a90d9;
-      }
-      .card:nth-child(2)::after {
-        background: #06d6a0;
-      }
-      .card:nth-child(3)::after {
-        background: #e74c3c;
-      }
-      .card:nth-child(4)::after {
-        background: #f39c12;
-      }
-      .card:nth-child(5)::after {
-        background: #8e5fd4;
-      }
-      .card:nth-child(6)::after {
-        background: #4a90d9;
-      }
+/* ══ RESPONSIVE ══ */
+@media(max-width:1300px){
+  .stat-grid{grid-template-columns:repeat(3,1fr);}
+  .row1{grid-template-columns:1fr 1fr;}
+  .row1 .card-base:first-child{grid-column:1/-1;}
+}
+@media(max-width:1100px){
+  .row2{grid-template-columns:1fr 1fr;}
+  .row2 .chart-card{grid-column:1/-1;}
+  .row3{grid-template-columns:1fr 1fr;}
+  .row3>*:last-child{grid-column:1/-1;}
+}
+@media(max-width:768px){
+  .main-content{padding:68px 13px 26px;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:9px;}
+  .row1,.row2,.row3{grid-template-columns:1fr;}
+  .row1 .card-base:first-child{grid-column:auto;}
+  .quick-bar{display:none;}
+  .s-val{font-size:26px;}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr 1fr;gap:8px;}
+}
+</style>
+</head>
+<body>
 
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        border-color: rgba(74, 144, 217, 0.18);
-      }
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-      .card-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px;
-        margin-bottom: 14px;
-      }
-      .card:nth-child(1) .card-icon {
-        background: rgba(74, 144, 217, 0.16);
-        color: var(--accent);
-      }
-      .card:nth-child(2) .card-icon {
-        background: rgba(6, 214, 160, 0.14);
-        color: var(--accent3);
-      }
-      .card:nth-child(3) .card-icon {
-        background: rgba(231, 76, 60, 0.15);
-        color: var(--absent);
-      }
-      .card:nth-child(4) .card-icon {
-        background: rgba(243, 156, 18, 0.15);
-        color: var(--accent4);
-      }
-      .card:nth-child(5) .card-icon {
-        background: rgba(142, 95, 212, 0.15);
-        color: var(--accent2);
-      }
-      .card:nth-child(6) .card-icon {
-        background: rgba(74, 144, 217, 0.14);
-        color: var(--accent);
-      }
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="logo">بور<span>بور</span></div>
+  <div class="logo-sub">سامانه مدیریت مدرسه</div>
 
-      .card-title {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-weight: 500;
-        margin-bottom: 10px;
-      }
-      .card-number {
-        font-size: 32px;
-        font-weight: 900;
-        line-height: 1;
-        margin-bottom: 14px;
-        font-family: "Shabnam", sans-serif;
-        opacity: 0.4;
-        transition: opacity 0.4s;
-      }
-
-      .card-button {
-        background: rgba(74, 144, 217, 0.12);
-        border: 1px solid rgba(74, 144, 217, 0.2);
-        color: var(--accent);
-        padding: 8px 0;
-        border-radius: var(--radius-sm);
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        width: 100%;
-        font-family: "Vazirmatn", sans-serif;
-        margin-top: auto;
-      }
-      .card-button:hover {
-        background: rgba(74, 144, 217, 0.22);
-        border-color: rgba(74, 144, 217, 0.4);
-        color: #fff;
-      }
-
-      /* ========================= CHART SECTION ========================= */
-      .chart-section {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 22px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 360px;
-        animation: fadeUp 0.45s 0.4s ease both;
-      }
-
-      .chart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-      .chart-title {
-        font-size: 13px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: var(--text);
-      }
-      .chart-title i {
-        color: var(--accent);
-      }
-
-      .chart-container {
-        position: relative;
-        flex: 1;
-        min-height: 0;
-      }
-
-      /* ========================= WELCOME VIEW ========================= */
-      .welcome-view {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 70vh;
-        text-align: center;
-        gap: 16px;
-        animation: fadeUp 0.5s ease;
-      }
-      .welcome-icon {
-        width: 100px;
-        height: 100px;
-        background: rgba(74, 144, 217, 0.12);
-        border: 2px solid rgba(74, 144, 217, 0.3);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        color: var(--accent);
-        margin-bottom: 8px;
-      }
-      .welcome-title {
-        font-size: 26px;
-        font-weight: 700;
-        color: #fff;
-      }
-      .welcome-role {
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.45);
-        background: rgba(255, 255, 255, 0.07);
-        padding: 4px 16px;
-        border-radius: 20px;
-      }
-      .welcome-hints {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 24px;
-        width: 100%;
-        max-width: 400px;
-      }
-      .welcome-hint {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        background: var(--bg-card2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 14px 18px;
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 14px;
-      }
-      .welcome-hint i {
-        color: var(--accent);
-        font-size: 18px;
-        width: 22px;
-        flex-shrink: 0;
-      }
-
-      /* ========================= ANIMATIONS ========================= */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(18px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .card {
-        animation: fadeUp 0.45s ease both;
-      }
-      .card:nth-child(1) {
-        animation-delay: 0.04s;
-      }
-      .card:nth-child(2) {
-        animation-delay: 0.09s;
-      }
-      .card:nth-child(3) {
-        animation-delay: 0.14s;
-      }
-      .card:nth-child(4) {
-        animation-delay: 0.19s;
-      }
-      .card:nth-child(5) {
-        animation-delay: 0.24s;
-      }
-      .card:nth-child(6) {
-        animation-delay: 0.29s;
-      }
-      .top-bar {
-        animation: fadeUp 0.4s 0.02s ease both;
-      }
-      .chart-section {
-        animation: fadeUp 0.45s 0.32s ease both;
-      }
-
-      /* ========================= RESPONSIVE ========================= */
-      @media (max-width: 1100px) {
-        .cards-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (max-width: 768px) {
-        .main-content {
-          padding: 68px 13px 26px;
-        }
-        .cards-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 9px;
-        }
-      }
-      @media (max-width: 480px) {
-        .cards-grid {
-          grid-template-columns: 1fr;
-        }
-        .card-number {
-          font-size: 26px;
-        }
-      }
-
-      .sidebar-close-btn {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        width: 32px;
-        height: 32px;
-        background: rgba(231, 76, 60, 0.12);
-        border: 1px solid rgba(231, 76, 60, 0.2);
-        border-radius: 50%;
-        color: var(--absent);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        transition: all 0.2s;
-      }
-      .sidebar-close-btn:hover {
-        background: var(--absent);
-        color: #fff;
-        transform: rotate(90deg);
-      }
-    </style>
-  </head>
-  <body>
-    <div id="pageLoader">
-      <div class="loader-spinner"></div>
-      <div class="loader-text">در حال بارگذاری...</div>
-      <div class="loader-sub">در حال دریافت اطلاعات...</div>
+  <div class="manager-block">
+    <div class="manager-avatar" id="managerAvatarLetter">م</div>
+    <div>
+      <div class="manager-name" id="managerName">محمد نوری</div>
+      <div class="manager-role" id="managerRole">مدیر کل سیستم</div>
+      <div class="manager-badge">هنرستان شهید بوربور</div>
     </div>
+  </div>
 
-    <!-- HAMBURGER -->
-    <button class="menu-toggle" id="menuToggle" title="منو">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="nav-section-label">منوی اصلی</div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">بور<span>بور</span></div>
-      <div class="logo-sub">سامانه مدیریت مدرسه</div>
-      <button class="sidebar-close-btn" id="sidebarCloseBtn" title="بستن">
-        <i class="fas fa-times"></i>
-      </button>
+  <div class="menu-item active">
+    <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
+  </div>
 
-      <div class="manager-block">
-        <div class="manager-avatar" id="managerAvatarLetter">م</div>
-        <div>
-          <div class="manager-name" id="managerName">در حال بارگذاری...</div>
-          <div class="manager-role" id="managerRole">مدیر سیستم</div>
-          <div class="manager-badge">هنرستان شهید بوربور</div>
-        </div>
-      </div>
-
-      <div class="nav-section-label">منوی اصلی</div>
-
-      <div class="menu-item active">
-        <a href="../html/dashbord.html"
-          ><i class="fas fa-chart-line"></i> داشبورد</a
-        >
-      </div>
-
-      <div class="menu-item has-submenu">
-        <a href="#" class="menu-link">
-          <i class="fas fa-users"></i> مدیریت کاربران
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
-        <div class="submenu">
-          <a href="../html/Assistant_management.html" class="submenu-item">
-            <i class="fas fa-user-tie"></i> مدیریت معاونان
-          </a>
-          <a href="../html/Teacher_management.html" class="submenu-item">
-            <i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین
-          </a>
-          <a href="../html/student.html" class="submenu-item">
-            <i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان
-          </a>
-
-        </div>
-      </div>
-
-      <div class="menu-item has-submenu">
-        <a href="#" class="menu-link">
-          <i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
-        <div class="submenu">
-          <a href="../html/Courses.html" class="submenu-item">
-            <i class="fas fa-list"></i> مدیریت دروس
-          </a>
-          <a href="../html/Class-schedule.html" class="submenu-item">
-            <i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی
-          </a>
-          <a href="../html/Attendance.html" class="submenu-item">
-            <i class="fas fa-clipboard-check"></i> حضور و غیاب
-          </a>
-          <a href="../html/grades.html" class="submenu-item">
-            <i class="fas fa-star"></i> نمرات
-          </a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <div class="nav-section-label">مدیریت</div>
-
-      <div class="menu-item">
-        <a href="../html/Pre-registration.html">
-          <i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها
-        </a>
-      </div>
-      <div class="menu-item">
-        <a href="../html/reports.html">
-          <i class="fas fa-file-alt"></i> گزارش‌ها
-        </a>
-      </div>
-      <div class="menu-item">
-        <a href="../html/notife.html">
-          <i class="fas fa-bell"></i> اطلاعیه‌ها
-        </a>
-      </div>
-      <div class="menu-item">
-        <a href="../html/archive.html">
-          <i class="fas fa-archive"></i> آرشیو
-        </a>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <div class="nav-section-label">سیستم</div>
-
-      <div class="menu-item">
-        <a href="../html/permissions.html">
-          <i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها
-        </a>
-      </div>
-
-       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی <span class="nav-badge">۵</span></a></div>
-      <div class="menu-item">
-        <a href="../html/settings.html"> <i class="fas fa-cog"></i> تنظیمات </a>
-      </div>
-      <div class="menu-item">
-        <a href="../api/logout.php">
-          <i class="fas fa-sign-out-alt"></i> خروج
-        </a>
-      </div>
-
-      <div class="sidebar-footer">بوربور v1.0<br />سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+  <div class="menu-item has-submenu">
+    <a href="#" class="menu-link">
+      <i class="fas fa-users"></i> مدیریت کاربران
+      <i class="fas fa-chevron-down submenu-arrow"></i>
+    </a>
+    <div class="submenu">
+      <a href="../html/Assistant_management.html" class="submenu-item">
+        <i class="fas fa-user-tie"></i> مدیریت معاونان
+      </a>
+      <a href="../html/Teacher_management.html" class="submenu-item">
+        <i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین
+      </a>
+      <a href="../html/student.html" class="submenu-item">
+        <i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان
+      </a>
     </div>
+  </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-      <!-- TOP BAR -->
-      <div class="top-bar">
-        <div class="greeting">
-          <h1>داشبورد <span>مدیریت</span></h1>
-          <div id="userHeader">
-            <span class="live-dot"></span>
-            در حال بارگذاری...
-          </div>
-        </div>
-        <div class="top-actions">
-          <div class="action-btn">
-            <i class="fas fa-bell"></i>
-            <div class="notif-dot"></div>
-          </div>
-          <div class="profile-btn" id="profileBtnLetter">م</div>
+  <div class="menu-item has-submenu">
+    <a href="#" class="menu-link">
+      <i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
+      <i class="fas fa-chevron-down submenu-arrow"></i>
+    </a>
+    <div class="submenu">
+      <a href="../html/Courses.html" class="submenu-item">
+        <i class="fas fa-list"></i> مدیریت دروس
+      </a>
+      <a href="../html/Class-schedule.html" class="submenu-item">
+        <i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی
+      </a>
+      <a href="../html/Attendance.html" class="submenu-item">
+        <i class="fas fa-clipboard-check"></i> حضور و غیاب
+      </a>
+      <a href="../html/grades.html" class="submenu-item">
+        <i class="fas fa-star"></i> نمرات
+      </a>
+    </div>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">مدیریت</div>
+
+  <div class="menu-item">
+    <a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a>
+  </div>
+  <div class="menu-item">
+    <a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش‌ها</a>
+  </div>
+  <div class="menu-item">
+    <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها <span class="nav-badge">۵</span></a>
+  </div>
+  <div class="menu-item">
+    <a href="../html/archive.html"><i class="fas fa-archive"></i> آرشیو</a>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">سیستم</div>
+
+  <div class="menu-item">
+    <a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a>
+  </div>
+  <div class="menu-item">
+    <a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی <span class="nav-badge">۵</span></a>
+  </div>
+  <div class="menu-item">
+    <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
+  </div>
+  <div class="menu-item">
+    <a href="../api/logout.php"><i class="fas fa-sign-out-alt"></i> خروج</a>
+  </div>
+
+  <div class="sidebar-footer">بوربور v1.0<br>سال تحصیلی ۱۴۰۴–۱۴۰۵</div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="greeting">
+      <h1>داشبورد <span>مدیر کل</span></h1>
+      <p><span class="live-dot"></span> <span id="dateTxt">سه‌شنبه، ۲۶ اردیبهشت ۱۴۰۴</span> — وضعیت زنده مدرسه</p>
+    </div>
+    <div class="top-actions">
+      <div class="action-btn"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+      <div class="profile-btn">م</div>
+    </div>
+  </div>
+
+  <!-- QUICK BAR -->
+  <div class="quick-bar">
+    <div class="qb-item"><i class="fas fa-clock" style="color:var(--accent)"></i><span>ساعت:</span><span class="qb-val" id="clockDisplay">—</span></div>
+    <div class="qb-item"><i class="fas fa-door-open" style="color:var(--accent3)"></i><span>کلاس در جریان:</span><span class="qb-val" style="color:var(--accent3)">۶</span></div>
+    <div class="qb-item"><i class="fas fa-user-check" style="color:var(--present)"></i><span>معلمان حاضر:</span><span class="qb-val" style="color:var(--present)">۱۸</span></div>
+    <div class="qb-item"><i class="fas fa-user-times" style="color:var(--absent)"></i><span>غیبت امروز:</span><span class="qb-val" style="color:var(--absent)">۱۲</span></div>
+    <div class="qb-item"><i class="fas fa-graduation-cap" style="color:var(--accent4)"></i><span>معدل کلی:</span><span class="qb-val" style="color:var(--accent4)">۱۶.۸</span></div>
+    <div class="qb-item"><i class="fas fa-school" style="color:var(--accent2)"></i><span>مدرسه:</span><span class="qb-val">هنرستان شهید بوربور</span></div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-grid">
+    <div class="s-card c1">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-clipboard-list"></i></div><span class="s-trend t-up"><i class="fas fa-arrow-up"></i> ۳</span></div>
+      <div class="s-val">۱۴</div><div class="s-label">پیش ثبت‌نام جدید</div>
+      <div class="s-sub"><i class="fas fa-circle" style="color:var(--accent3);font-size:7px"></i> ۴ در انتظار بررسی</div>
+    </div>
+    <div class="s-card c2">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-user-graduate"></i></div><span class="s-trend t-sm"><i class="fas fa-minus"></i> ثابت</span></div>
+      <div class="s-val">۳۸۶</div><div class="s-label">کل دانش‌آموزان</div>
+      <div class="s-sub"><i class="fas fa-circle" style="color:var(--present);font-size:7px"></i> ۳۷۴ نفر حاضر امروز</div>
+    </div>
+    <div class="s-card c3">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-user-times"></i></div><span class="s-trend t-dn"><i class="fas fa-arrow-down"></i> ۳ کمتر</span></div>
+      <div class="s-val">۱۲</div><div class="s-label">غیبت امروز</div>
+      <div class="s-sub"><i class="fas fa-clock" style="color:var(--late);font-size:9px"></i> ۴ تأخیر + ۲ مرخصی</div>
+    </div>
+    <div class="s-card c4">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-chalkboard-teacher"></i></div><span class="s-trend t-up"><i class="fas fa-check"></i> کامل</span></div>
+      <div class="s-val">۱۸</div><div class="s-label">معلمان حاضر</div>
+      <div class="s-sub"><i class="fas fa-exclamation-circle" style="color:var(--absent);font-size:9px"></i> ۲ نفر غایب — جانشین تعیین‌شده</div>
+    </div>
+    <div class="s-card c5">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-door-open"></i></div><span class="s-trend t-sm"><i class="fas fa-minus"></i> مثل دیروز</span></div>
+      <div class="s-val">۱۴</div><div class="s-label">کلاس امروز</div>
+      <div class="s-sub"><i class="fas fa-circle" style="color:var(--accent3);font-size:7px"></i> ۶ کلاس در حال برگزاری</div>
+    </div>
+    <div class="s-card c6">
+      <div class="s-card-top"><div class="s-icon"><i class="fas fa-bell"></i></div><span class="s-trend t-up"><i class="fas fa-plus"></i> ۲ جدید</span></div>
+      <div class="s-val">۵</div><div class="s-label">اطلاعیه جدید</div>
+      <div class="s-sub"><i class="fas fa-exclamation" style="color:var(--absent);font-size:9px"></i> ۱ اطلاعیه فوری</div>
+    </div>
+  </div>
+
+  <!-- ROW 1 -->
+  <div class="row1">
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-school"></i> خلاصه حضور کل مدرسه — امروز</div>
+        <a class="sec-link" href="#">گزارش کامل</a>
+      </div>
+      <div class="class-list" id="classSummaryList"></div>
+    </div>
+    <div class="card-base donut-card">
+      <div class="sec-hdr"><div class="sec-title"><i class="fas fa-chart-pie"></i> آمار حضور کلی</div></div>
+      <div class="donut-outer">
+        <svg class="donut-svg" viewBox="0 0 140 140">
+          <circle class="donut-track" cx="70" cy="70" r="54"/>
+          <circle class="donut-seg" cx="70" cy="70" r="54" stroke="#2ecc71" stroke-dasharray="308.1 339.3" stroke-dashoffset="0"/>
+          <circle class="donut-seg" cx="70" cy="70" r="54" stroke="#e74c3c" stroke-dasharray="20.4 339.3" stroke-dashoffset="-308.1"/>
+          <circle class="donut-seg" cx="70" cy="70" r="54" stroke="#f39c12" stroke-dasharray="6.8 339.3" stroke-dashoffset="-328.5"/>
+          <circle class="donut-seg" cx="70" cy="70" r="54" stroke="#8e5fd4" stroke-dasharray="3.4 339.3" stroke-dashoffset="-335.3"/>
+        </svg>
+        <div class="donut-center">
+          <div class="donut-pct">۹۱٪</div>
+          <div class="donut-sub">میانگین حضور</div>
         </div>
       </div>
-
-      <!-- STAT CARDS -->
-      <div class="cards-grid">
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-clipboard-list"></i></div>
-          <div class="card-title">پیش ثبت‌نام‌ها</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/Pre-registration.html'"
-          >
-            بررسی
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-          <div class="card-title">تعداد معلم‌ها</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/Teacher_management.html'"
-          >
-            بررسی
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
-          <div class="card-title">تعداد کل دانش‌آموزان</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/student.html'"
-          >
-            بررسی
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-door-open"></i></div>
-          <div class="card-title">تعداد کلاس‌ها</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/Class-schedule.html'"
-          >
-            بررسی
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
-          <div class="card-title">آمار حضور و غیاب</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/Attendance.html'"
-          >
-            بررسی
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-bell"></i></div>
-          <div class="card-title">پیام‌های جدید</div>
-          <div class="card-number">...</div>
-          <button
-            class="card-button"
-            onclick="location.href = '../html/notife.html'"
-          >
-            بررسی
-          </button>
-        </div>
-      </div>
-
-      <!-- CHART -->
-      <div class="chart-section">
-        <div class="chart-header">
-          <div class="chart-title">
-            <i class="fas fa-chart-line"></i>
-            میانگین نمرات کلاس‌ها
-          </div>
-        </div>
-        <div class="chart-container" id="chartWrapper">
-          <canvas id="gradesChart"></canvas>
-        </div>
-        <div
-          id="chartFallback"
-          style="
-            display: none;
-            color: var(--text-muted);
-            text-align: center;
-            padding: 30px;
-            font-size: 13px;
-          "
-        >
-          نمودار در این مرورگر قابل نمایش نیست.
-        </div>
+      <div class="donut-legend">
+        <div class="dl-row"><div class="dl-dot" style="background:#2ecc71"></div><span class="dl-label">حاضر</span><span class="dl-val" style="color:#2ecc71">۳۷۴</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#e74c3c"></div><span class="dl-label">غایب</span><span class="dl-val" style="color:#e74c3c">۱۲</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#f39c12"></div><span class="dl-label">تأخیر</span><span class="dl-val" style="color:#f39c12">۴</span></div>
+        <div class="dl-row"><div class="dl-dot" style="background:#8e5fd4"></div><span class="dl-label">مرخصی</span><span class="dl-val" style="color:#8e5fd4">۲</span></div>
       </div>
     </div>
-
-    <script>
-      /* ── Sidebar toggle ── */
-      document.getElementById("menuToggle").addEventListener("click", () => {
-        document.getElementById("sidebar").classList.toggle("active");
-        document.getElementById("sidebarOverlay").classList.toggle("active");
-      });
-      document
-        .getElementById("sidebarOverlay")
-        .addEventListener("click", () => {
-          document.getElementById("sidebar").classList.remove("active");
-          document.getElementById("sidebarOverlay").classList.remove("active");
-        });
-
-      /* ── Submenu accordion ── */
-      document.querySelectorAll(".menu-item.has-submenu").forEach((item) => {
-        item.querySelector(".menu-link")?.addEventListener("click", (e) => {
-          e.preventDefault();
-          document.querySelectorAll(".menu-item.has-submenu").forEach((o) => {
-            if (o !== item) o.classList.remove("open");
-          });
-          item.classList.toggle("open");
-        });
-      });
-      document.querySelectorAll(".submenu-item").forEach((si) => {
-        si.addEventListener("click", () => {
-          document
-            .querySelectorAll(".submenu-item")
-            .forEach((x) => x.classList.remove("active"));
-          si.classList.add("active");
-        });
-      });
-
-      /* ── ESC close ── */
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          document.getElementById("sidebar").classList.remove("active");
-          document.getElementById("sidebarOverlay").classList.remove("active");
-        }
-      });
-
-      /* ── Persian digits ── */
-      const fa = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
-
-      /* ── Loader ── */
-      let windowLoaded = false;
-      let statsLoaded = false;
-      function tryHideLoader() {
-        if (!windowLoaded || !statsLoaded) return;
-        const loader = document.getElementById("pageLoader");
-        if (loader) {
-          loader.classList.add("hide");
-          setTimeout(() => loader.remove(), 550);
-        }
-      }
-      window.addEventListener("load", () => {
-        windowLoaded = true;
-        tryHideLoader();
-      });
-
-      /* ── Chart ── */
-      const FULL_DASHBOARD_ROLES = [
-        "owner",
-        "manager",
-        "vice_principal",
-        "assistant",
-      ];
-      let gradesChart = null;
-      let apiData = null;
-      let chartJsLoaded = false;
-
-      function initChart() {
-        if (window.__chartJsFailed) {
-          document.getElementById("chartWrapper").style.display = "none";
-          document.getElementById("chartFallback").style.display = "block";
-          return;
-        }
-        const ctx = document.getElementById("gradesChart")?.getContext("2d");
-        if (!ctx) return;
-        gradesChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: "میانگین نمرات",
-                data: [],
-                borderColor: "#4a90d9",
-                backgroundColor: "rgba(74,144,217,0.1)",
-                borderWidth: 3,
-                pointRadius: 6,
-                pointBackgroundColor: "#4a90d9",
-                pointBorderColor: "#fff",
-                pointBorderWidth: 2,
-                pointHoverRadius: 8,
-                tension: 0.4,
-                fill: true,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: true,
-                position: "top",
-                labels: {
-                  color: "rgba(180,200,255,0.7)",
-                  font: { size: 13, family: "Vazirmatn" },
-                  padding: 15,
-                },
-              },
-              tooltip: {
-                backgroundColor: "rgba(11,17,32,0.95)",
-                titleColor: "#fff",
-                bodyColor: "rgba(180,200,255,0.8)",
-                borderColor: "rgba(74,144,217,0.4)",
-                borderWidth: 1,
-                padding: 12,
-                callbacks: {
-                  title: (c) => "کلاس " + c[0].label,
-                  label: (c) => "میانگین: " + c.parsed.y + " از ۲۰",
-                },
-              },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 20,
-                ticks: {
-                  color: "rgba(180,200,255,0.5)",
-                  font: { family: "Vazirmatn" },
-                  stepSize: 2,
-                },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
-              x: {
-                ticks: {
-                  color: "rgba(180,200,255,0.5)",
-                  font: { family: "Vazirmatn" },
-                },
-                grid: { color: "rgba(255,255,255,0.05)" },
-              },
-            },
-          },
-        });
-        chartJsLoaded = true;
-        if (apiData) applyChartData(apiData.chart);
-      }
-
-      function applyChartData(chart) {
-        if (!gradesChart) return;
-        const labels = chart?.labels ?? [];
-        const data = chart?.data ?? [];
-        if (!labels.length) return;
-        gradesChart.data.labels = labels;
-        gradesChart.data.datasets[0].data = data;
-        gradesChart.update();
-      }
-
-      function waitForChart(cb, n = 100) {
-        if (window.Chart) cb();
-        else if (n > 0) setTimeout(() => waitForChart(cb, n - 1), 50);
-        else {
-          window.__chartJsFailed = true;
-          document.getElementById("chartWrapper").style.display = "none";
-          document.getElementById("chartFallback").style.display = "block";
-        }
-      }
-
-      /* ── showWelcomeView ── */
-      function showWelcomeView(user) {
-        document.querySelector(".cards-grid")?.remove();
-        document.querySelector(".chart-section")?.remove();
-
-        const roleLabel =
-          { teacher: "معلم", student: "دانش‌آموز", parent: "ولی دانش‌آموز" }[
-            user.role
-          ] || user.role;
-        const icon =
-          {
-            teacher: "fa-chalkboard-teacher",
-            student: "fa-user-graduate",
-            parent: "fa-user-friends",
-          }[user.role] || "fa-user";
-        const hints =
-          {
-            teacher: [
-              {
-                icon: "fa-clipboard-check",
-                text: "حضور و غیاب کلاس‌هایتان را ثبت کنید",
-              },
-              { icon: "fa-star", text: "نمرات دانش‌آموزان را وارد کنید" },
-              {
-                icon: "fa-calendar-alt",
-                text: "برنامه کلاسی خود را مشاهده کنید",
-              },
-            ],
-            student: [
-              { icon: "fa-star", text: "نمرات خود را مشاهده کنید" },
-              {
-                icon: "fa-clipboard-check",
-                text: "وضعیت حضور و غیاب خود را ببینید",
-              },
-              {
-                icon: "fa-calendar-alt",
-                text: "برنامه هفتگی کلاس‌ها را مشاهده کنید",
-              },
-            ],
-            parent: [
-              { icon: "fa-star", text: "نمرات فرزندتان را مشاهده کنید" },
-              {
-                icon: "fa-clipboard-check",
-                text: "وضعیت حضور و غیاب فرزندتان را ببینید",
-              },
-              { icon: "fa-bell", text: "اطلاعیه‌های مدرسه را دنبال کنید" },
-            ],
-          }[user.role] || [];
-
-        const mainContent = document.querySelector(".main-content");
-        if (!mainContent) return;
-        const header = document.getElementById("userHeader");
-        mainContent.innerHTML = "";
-        if (header) mainContent.prepend(header);
-        mainContent.insertAdjacentHTML(
-          "beforeend",
-          `
-    <div class="welcome-view">
-      <div class="welcome-icon"><i class="fas ${icon}"></i></div>
-      <h1 class="welcome-title">خوش آمدید، ${user.name}</h1>
-      <p class="welcome-role">${roleLabel}</p>
-      <div class="welcome-hints">
-        ${hints.map((h) => `<div class="welcome-hint"><i class="fas ${h.icon}"></i><span>${h.text}</span></div>`).join("")}
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chalkboard-teacher"></i> وضعیت معلمان</div>
+        <a class="sec-link" href="#">همه</a>
+      </div>
+      <div class="teacher-stat-blocks">
+        <div class="tsb"><div class="tsb-val" style="color:var(--present)">۱۸</div><div class="tsb-label">حاضر</div></div>
+        <div class="tsb"><div class="tsb-val" style="color:var(--absent)">۲</div><div class="tsb-label">غایب</div></div>
+      </div>
+      <div class="teacher-list">
+        <div class="tl-item"><div class="tl-av" style="background:rgba(46,204,113,.2);color:#2ecc71">م</div><div class="tl-info"><div class="tl-name">مریم رضایی</div><div class="tl-sub">فیزیک — یازدهم</div></div><span class="tl-tag tag-p">حاضر</span></div>
+        <div class="tl-item"><div class="tl-av" style="background:rgba(231,76,60,.2);color:#e74c3c">ع</div><div class="tl-info"><div class="tl-name">علی محمدی</div><div class="tl-sub">ریاضی — دهم</div></div><span class="tl-tag tag-a">غایب</span></div>
+        <div class="tl-item"><div class="tl-av" style="background:rgba(74,144,217,.2);color:#4a90d9">ز</div><div class="tl-info"><div class="tl-name">زهرا حسینی</div><div class="tl-sub">ادبیات — دوازدهم</div></div><span class="tl-tag tag-p">حاضر</span></div>
+        <div class="tl-item"><div class="tl-av" style="background:rgba(243,156,18,.2);color:#f39c12">ر</div><div class="tl-info"><div class="tl-name">رضا صادقی</div><div class="tl-sub">شیمی — یازدهم</div></div><span class="tl-tag tag-l">تأخیر</span></div>
+        <div class="tl-item"><div class="tl-av" style="background:rgba(142,95,212,.2);color:#8e5fd4">ف</div><div class="tl-info"><div class="tl-name">فاطمه نوری</div><div class="tl-sub">زیست — دهم</div></div><span class="tl-tag tag-a">غایب</span></div>
       </div>
     </div>
-  `,
-        );
-      }
+  </div>
 
-      /* ── loadStats ── */
-      async function loadStats() {
-        try {
-          const res = await fetch("../api/stats.php");
-          const data = await res.json();
-          if (!data.success) throw new Error(data.message || "خطای سرور");
-          apiData = data;
-          statsLoaded = true;
-          tryHideLoader();
+  <!-- ROW 2 -->
+  <div class="row2">
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-calendar-day"></i> کلاس‌های امروز</div>
+        <a class="sec-link" href="#">برنامه کامل</a>
+      </div>
+      <div class="class-item now">
+        <div class="ci-time">۸:۲۰<br>۹:۰۵</div><div class="ci-dot" style="background:#4a90d9"></div>
+        <div class="ci-info"><div class="ci-name">فیزیک ۱ — یازدهم ب</div><div class="ci-meta">م. رضایی | کلاس ۲۰۵ | ۲۸ نفر</div></div>
+        <span class="ci-tag ct-now">الان</span>
+      </div>
+      <div class="class-item">
+        <div class="ci-time">۷:۳۰<br>۸:۱۵</div><div class="ci-dot" style="background:#2ecc71"></div>
+        <div class="ci-info"><div class="ci-name">ریاضی — دهم الف</div><div class="ci-meta">م. محمدی | کلاس ۱۰۲ | ۳۲ نفر</div></div>
+        <span class="ci-tag ct-done">پایان یافت</span>
+      </div>
+      <div class="class-item">
+        <div class="ci-time">۹:۱۵<br>۱۰:۰۰</div><div class="ci-dot" style="background:#f39c12"></div>
+        <div class="ci-info"><div class="ci-name">شیمی — یازدهم الف</div><div class="ci-meta">م. صادقی | آزمایشگاه | ۳۰ نفر</div></div>
+        <span class="ci-tag ct-pend">در انتظار</span>
+      </div>
+      <div class="class-item">
+        <div class="ci-time">۱۰:۱۵<br>۱۱:۰۰</div><div class="ci-dot" style="background:#06d6a0"></div>
+        <div class="ci-info"><div class="ci-name">زیست‌شناسی — دهم ب</div><div class="ci-meta">م. نوری | کلاس ۳۰۳ | ۲۸ نفر</div></div>
+        <span class="ci-tag ct-pend">در انتظار</span>
+      </div>
+      <div class="class-item">
+        <div class="ci-time">۱۱:۱۰<br>۱۱:۵۵</div><div class="ci-dot" style="background:#8e5fd4"></div>
+        <div class="ci-info"><div class="ci-name">ادبیات — دوازدهم الف</div><div class="ci-meta">م. حسینی | کلاس ۴۰۱ | ۲۶ نفر</div></div>
+        <span class="ci-tag ct-pend">در انتظار</span>
+      </div>
+    </div>
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-user-times" style="color:var(--absent)"></i> غیبت‌های امروز</div>
+        <a class="sec-link" href="#">همه (۱۲)</a>
+      </div>
+      <div class="abs-item"><div class="abs-av">س</div><div class="abs-info"><div class="abs-name">سارا احمدی</div><div class="abs-cls">یازدهم ب — فیزیک</div></div><div class="abs-time">۸:۲۰</div></div>
+      <div class="abs-item"><div class="abs-av">م</div><div class="abs-info"><div class="abs-name">محمد علوی</div><div class="abs-cls">دهم الف — ریاضی</div></div><div class="abs-time">۷:۳۰</div></div>
+      <div class="abs-item"><div class="abs-av">گ</div><div class="abs-info"><div class="abs-name">گلناز شکوهی</div><div class="abs-cls">یازدهم الف — فیزیک</div></div><div class="abs-time">۷:۳۰</div></div>
+      <div class="abs-item"><div class="abs-av">ر</div><div class="abs-info"><div class="abs-name">رامتین آذری</div><div class="abs-cls">دوازدهم ب — ادبیات</div></div><div class="abs-time">۸:۲۰</div></div>
+      <div class="abs-item"><div class="abs-av">ن</div><div class="abs-info"><div class="abs-name">نیکا وطنی</div><div class="abs-cls">دوازدهم ب — شیمی</div></div><div class="abs-time">۷:۳۰</div></div>
+      <div class="abs-item"><div class="abs-av">د</div><div class="abs-info"><div class="abs-name">دامون پیروزی</div><div class="abs-cls">دوازدهم ب — زیست</div></div><div class="abs-time">۸:۲۰</div></div>
+    </div>
+    <div class="card-base chart-card">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-chart-line"></i> روند میانگین نمرات کلاس‌ها</div>
+        <a class="sec-link" href="#">تحلیل کامل</a>
+      </div>
+      <div class="chart-wrap"><canvas id="gradesChart"></canvas></div>
+    </div>
+  </div>
 
-          const user = data.currentUser;
+  <!-- ROW 3 -->
+  <div class="row3">
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-star"></i> آخرین نمرات ثبت‌شده</div>
+        <a class="sec-link" href="#">همه</a>
+      </div>
+      <div class="grade-item">
+        <div class="grade-icon" style="background:rgba(74,144,217,.15);color:var(--accent)"><i class="fas fa-calculator"></i></div>
+        <div class="grade-info"><div class="grade-sub">ریاضی — دهم الف</div><div class="grade-date">۱۴۰۴/۰۲/۱۵</div></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:95%;background:var(--present)"></div></div>
+        <div class="grade-score g-ex">۱۹</div>
+      </div>
+      <div class="grade-item">
+        <div class="grade-icon" style="background:rgba(231,76,60,.15);color:var(--absent)"><i class="fas fa-atom"></i></div>
+        <div class="grade-info"><div class="grade-sub">فیزیک — یازدهم ب</div><div class="grade-date">۱۴۰۴/۰۲/۱۲</div></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:82%;background:var(--accent)"></div></div>
+        <div class="grade-score g-gd">۱۶.۵</div>
+      </div>
+      <div class="grade-item">
+        <div class="grade-icon" style="background:rgba(6,214,160,.15);color:var(--accent3)"><i class="fas fa-flask"></i></div>
+        <div class="grade-info"><div class="grade-sub">شیمی — یازدهم الف</div><div class="grade-date">۱۴۰۴/۰۲/۱۰</div></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:90%;background:var(--present)"></div></div>
+        <div class="grade-score g-ex">۱۸</div>
+      </div>
+      <div class="grade-item">
+        <div class="grade-icon" style="background:rgba(243,156,18,.15);color:var(--accent4)"><i class="fas fa-book"></i></div>
+        <div class="grade-info"><div class="grade-sub">ادبیات — دوازدهم الف</div><div class="grade-date">۱۴۰۴/۰۲/۰۸</div></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:70%;background:var(--accent4)"></div></div>
+        <div class="grade-score g-av">۱۴</div>
+      </div>
+      <div class="grade-item">
+        <div class="grade-icon" style="background:rgba(142,95,212,.15);color:var(--accent2)"><i class="fas fa-dna"></i></div>
+        <div class="grade-info"><div class="grade-sub">زیست — دهم ب</div><div class="grade-date">۱۴۰۴/۰۲/۰۵</div></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:88%;background:var(--accent2)"></div></div>
+        <div class="grade-score g-gd">۱۷.۵</div>
+      </div>
+    </div>
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-bell"></i> اطلاعیه‌های جدید</div>
+        <a class="sec-link" href="#">همه (۵)</a>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon n-r"><i class="fas fa-exclamation"></i></div>
+        <div class="notice-content"><div class="notice-title">جلسه شورای معلمان</div><div class="notice-body">جلسه فردا چهارشنبه ساعت ۱۲ در سالن اجتماعات — حضور الزامی.</div><div class="notice-time">۱ ساعت پیش</div></div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon n-b"><i class="fas fa-star"></i></div>
+        <div class="notice-content"><div class="notice-title">مهلت ثبت نمرات</div><div class="notice-body">مهلت تحویل نمرات پایان ترم تا ۳۱ اردیبهشت است.</div><div class="notice-time">دیروز</div></div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon n-g"><i class="fas fa-flask"></i></div>
+        <div class="notice-content"><div class="notice-title">کارگاه آموزشی</div><div class="notice-body">کارگاه تدریس نوین فیزیک پنجشنبه ۲۸ اردیبهشت برگزار می‌شود.</div><div class="notice-time">۲ روز پیش</div></div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon n-y"><i class="fas fa-calendar-times"></i></div>
+        <div class="notice-content"><div class="notice-title">تعطیلی هفته آینده</div><div class="notice-body">مدرسه چهارشنبه آینده به مناسبت تعطیل رسمی تعطیل است.</div><div class="notice-time">۳ روز پیش</div></div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon n-p"><i class="fas fa-file-alt"></i></div>
+        <div class="notice-content"><div class="notice-title">بخشنامه ارزشیابی</div><div class="notice-body">دستورالعمل جدید ارزشیابی توصیفی ابلاغ شد.</div><div class="notice-time">۴ روز پیش</div></div>
+      </div>
+    </div>
+    <div class="card-base">
+      <div class="sec-hdr">
+        <div class="sec-title"><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌های اخیر</div>
+        <a class="sec-link" href="#">همه (۱۴)</a>
+      </div>
+      <div class="reg-item"><div class="reg-av">ا</div><div class="reg-info"><div class="reg-name">امیرحسین رضوی</div><div class="reg-grade">درخواست پایه دهم تجربی</div></div><span class="reg-status rs-new">جدید</span></div>
+      <div class="reg-item"><div class="reg-av">ف</div><div class="reg-info"><div class="reg-name">فاطمه کمالی</div><div class="reg-grade">درخواست پایه دهم ریاضی</div></div><span class="reg-status rs-rev">در بررسی</span></div>
+      <div class="reg-item"><div class="reg-av">س</div><div class="reg-info"><div class="reg-name">سینا موسوی</div><div class="reg-grade">درخواست پایه دهم انسانی</div></div><span class="reg-status rs-ok">تأیید شد</span></div>
+      <div class="reg-item"><div class="reg-av">ن</div><div class="reg-info"><div class="reg-name">نگار احمدی</div><div class="reg-grade">درخواست پایه دهم تجربی</div></div><span class="reg-status rs-new">جدید</span></div>
+      <div class="reg-item"><div class="reg-av">ح</div><div class="reg-info"><div class="reg-name">حسین طاهری</div><div class="reg-grade">درخواست پایه دهم ریاضی</div></div><span class="reg-status rs-rev">در بررسی</span></div>
+      <div class="reg-item"><div class="reg-av">م</div><div class="reg-info"><div class="reg-name">مهدی پور</div><div class="reg-grade">درخواست پایه دهم تجربی</div></div><span class="reg-status rs-ok">تأیید شد</span></div>
+    </div>
+  </div>
 
-          /* Update sidebar profile */
-          if (user) {
-            const letter = user.name?.charAt(0) || "م";
-            const el = document.getElementById("managerName");
-            const rl = document.getElementById("managerRole");
-            const av = document.getElementById("managerAvatarLetter");
-            const pb = document.getElementById("profileBtnLetter");
-            if (el) el.textContent = user.name;
-            if (rl) rl.textContent = user.role_label || user.role;
-            if (av) av.textContent = letter;
-            if (pb) pb.textContent = letter;
-          }
+</div><!-- /main-content -->
 
-          /* Header */
-          const header = document.getElementById("userHeader");
-          if (header && user) {
-            header.innerHTML = `<span class="live-dot"></span>${user.role_label} : ${user.name}`;
-          }
+<script>
+function fa(n){return String(n).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];});}
 
-          if (!FULL_DASHBOARD_ROLES.includes(user?.role)) {
-            showWelcomeView(user);
-            return;
-          }
+function updateClock(){
+  var now=new Date(),h=String(now.getHours()).padStart(2,'0'),m=String(now.getMinutes()).padStart(2,'0');
+  var el=document.getElementById('clockDisplay');
+  if(el) el.textContent=fa(h)+':'+fa(m);
+}
+updateClock(); setInterval(updateClock,1000);
 
-          /* Cards */
-          const s = data.stats;
-          const values = [
-            s.registrations,
-            s.teachers,
-            s.students,
-            s.classes,
-            s.attendance,
-            s.messages,
-          ];
-          document.querySelectorAll(".card-number").forEach((el, i) => {
-            if (values[i] !== undefined && values[i] !== null) {
-              el.textContent = fa(String(values[i]));
-              el.style.opacity = "1";
-            }
-          });
+var summaryData=[
+  {grade:'دهم',name:'دهم — ۴ کلاس',color:'gb1',present:124,absent:3,late:1,total:128,pct:97},
+  {grade:'یازدهم',name:'یازدهم — ۵ کلاس',color:'gb2',present:148,absent:5,late:3,total:156,pct:95},
+  {grade:'دوازدهم',name:'دوازدهم — ۵ کلاس',color:'gb3',present:102,absent:4,late:2,total:108,pct:94},
+];
+var list=document.getElementById('classSummaryList');
+summaryData.forEach(function(d){
+  var pP=Math.round(d.present/d.total*100),pA=Math.round(d.absent/d.total*100),pL=Math.round(d.late/d.total*100);
+  var pc=d.pct>=96?'#2ecc71':d.pct>=90?'#f39c12':'#e74c3c';
+  var row=document.createElement('div'); row.className='cs-row';
+  row.innerHTML='<span class="grade-badge '+d.color+'">'+d.grade+'</span><div class="cs-info"><div class="cs-info-top"><span class="cs-name">'+d.name+'</span><span class="cs-pct" style="color:'+pc+'">'+fa(d.pct)+'٪</span></div><div class="cs-bar-track"><div class="cs-bar-fill" style="width:0%;background:#2ecc71" data-w="'+pP+'"></div><div class="cs-bar-fill" style="width:0%;background:#e74c3c;margin-right:2px" data-w="'+pA+'"></div><div class="cs-bar-fill" style="width:0%;background:#f39c12;margin-right:2px" data-w="'+pL+'"></div></div><div class="cs-meta"><span><span class="cdot" style="background:#2ecc71"></span>حاضر: '+fa(d.present)+'</span><span><span class="cdot" style="background:#e74c3c"></span>غایب: '+fa(d.absent)+'</span><span><span class="cdot" style="background:#f39c12"></span>تأخیر: '+fa(d.late)+'</span></div></div>';
+  list.appendChild(row);
+});
+setTimeout(function(){document.querySelectorAll('.cs-bar-fill').forEach(function(el){el.style.width=el.dataset.w+'%';});},300);
 
-          if (chartJsLoaded && gradesChart) applyChartData(data.chart);
-        } catch (err) {
-          console.error("خطا در بارگذاری آمار:", err);
-          statsLoaded = true;
-          tryHideLoader();
-          document.querySelectorAll(".card-number").forEach((el) => {
-            el.textContent = "—";
-            el.style.opacity = "1";
-          });
-          const header = document.getElementById("userHeader");
-          if (header)
-            header.innerHTML = `<span class="live-dot"></span>داشبورد`;
-        }
-      }
+new Chart(document.getElementById('gradesChart'),{
+  type:'line',
+  data:{
+    labels:['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت'],
+    datasets:[
+      {label:'دهم',data:[14.2,14.8,15.1,15.5,15.8,16.2,16.5,16.8],borderColor:'rgba(74,144,217,.9)',backgroundColor:'rgba(74,144,217,.07)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(74,144,217,1)',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:2},
+      {label:'یازدهم',data:[15.1,15.5,15.8,16.2,16.5,16.8,17,17.3],borderColor:'rgba(6,214,160,.9)',backgroundColor:'rgba(6,214,160,.05)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(6,214,160,1)',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:2},
+      {label:'دوازدهم',data:[15.8,16,16.4,16.7,17,17.2,17.5,17.8],borderColor:'rgba(142,95,212,.9)',backgroundColor:'rgba(142,95,212,.05)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'rgba(142,95,212,1)',pointBorderColor:'#fff',pointBorderWidth:1.5,borderWidth:2}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'rgba(232,237,248,.7)',font:{family:'Vazirmatn',size:11},boxWidth:10,padding:10}},
+      tooltip:{backgroundColor:'rgba(15,22,40,.95)',titleFont:{family:'Vazirmatn'},bodyFont:{family:'Vazirmatn'},callbacks:{title:function(c){return 'ماه: '+c[0].label;},label:function(c){return c.dataset.label+': '+c.parsed.y+' از ۲۰';}}}
+    },
+    scales:{
+      x:{ticks:{color:'rgba(232,237,248,.5)',font:{family:'Vazirmatn',size:9},maxRotation:0},grid:{color:'rgba(255,255,255,.04)'}},
+      y:{min:12,max:20,ticks:{color:'rgba(232,237,248,.5)',font:{family:'Vazirmatn',size:9},stepSize:2},grid:{color:'rgba(255,255,255,.05)'}}
+    },
+    animation:{duration:1200,easing:'easeInOutQuart'}
+  }
+});
 
-      document
-        .getElementById("sidebarCloseBtn")
-        .addEventListener("click", () => {
-          document.getElementById("sidebar").classList.remove("active");
-          document.getElementById("sidebarOverlay").classList.remove("active");
-        });
+/* ── Sidebar ── */
+function openSidebar(){document.getElementById('sidebar').classList.add('active');document.getElementById('sidebarOverlay').classList.add('active');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('active');document.getElementById('sidebarOverlay').classList.remove('active');document.body.style.overflow='';}
+document.getElementById('menuToggle').addEventListener('click',openSidebar);
+document.getElementById('sidebarCloseBtn').addEventListener('click',closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSidebar();});
 
-      waitForChart(initChart);
-      loadStats();
-    </script>
-  </body>
+/* ── Submenu accordion ── */
+document.querySelectorAll('.menu-item.has-submenu').forEach(function(item){
+  var link=item.querySelector('.menu-link');
+  if(link) link.addEventListener('click',function(e){
+    e.preventDefault();
+    document.querySelectorAll('.menu-item.has-submenu').forEach(function(o){if(o!==item)o.classList.remove('open');});
+    item.classList.toggle('open');
+  });
+});
+document.querySelectorAll('.submenu-item').forEach(function(si){
+  si.addEventListener('click',function(){
+    document.querySelectorAll('.submenu-item').forEach(function(x){x.classList.remove('active');});
+    si.classList.add('active');
+  });
+});
+</script>
+</body>
 </html>

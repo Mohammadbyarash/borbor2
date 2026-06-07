@@ -1602,14 +1602,8 @@ function toast(msg, type = 'success') {
     }, 3000);
 }
 
-document.getElementById('menuToggle')?.addEventListener('click', () => {
-    document.getElementById('sidebar')?.classList.toggle('active');
-    document.getElementById('sidebarOverlay')?.classList.toggle('active');
-});
-document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
-    document.getElementById('sidebar')?.classList.remove('active');
-    document.getElementById('sidebarOverlay')?.classList.remove('active');
-});
+
+
 
 ['enterGradesModal','viewGradesModal','studentDashboardModal',
  'examCalendarModal','addExamEventModal','overallStatsModal'].forEach(id => {

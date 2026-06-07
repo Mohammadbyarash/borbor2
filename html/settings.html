@@ -9,6 +9,109 @@
         <link rel="icon" href="../image/iconB.png" />
     
     <style>
+        #jdp-custom-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+  }
+  #jdp-custom-popup {
+    display: none; position: fixed; z-index: 10001; width: 300px;
+    background: linear-gradient(145deg, var(--bg-sidebar), var(--bg-card2));
+    border: 1px solid rgba(74,144,217,0.25); border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    direction: rtl; overflow: hidden; user-select: none; padding: 0;
+  }
+  .jdp-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+  }
+  .jdp-nav-btn {
+    background: rgba(255,255,255,0.06); border: none; color: var(--accent);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+    font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .jdp-nav-btn:hover { background: rgba(255,255,255,0.15); }
+  .jdp-month-year {
+    color: var(--text); font-size: 14px; font-weight: 700;
+    text-align: center; flex: 1; cursor: pointer;
+    padding: 4px 10px; border-radius: 8px; transition: background 0.2s;
+  }
+  .jdp-month-year:hover { background: rgba(255,255,255,0.07); }
+  .jdp-weekdays {
+    display: grid; grid-template-columns: repeat(7,1fr);
+    gap: 2px; padding: 10px 14px 6px;
+  }
+  .jdp-weekday {
+    text-align: center; color: var(--text-muted);
+    font-size: 11px; font-weight: 500; padding: 3px 0;
+  }
+  .jdp-days {
+    display: grid; grid-template-columns: repeat(7,1fr);
+    gap: 3px; padding: 0 14px 12px;
+  }
+  .jdp-day {
+    text-align: center; padding: 7px 2px; border-radius: 8px;
+    cursor: pointer; color: var(--text-muted); font-size: 12px;
+    font-weight: 500; transition: all 0.15s;
+    border: 1px solid transparent; background: rgba(255,255,255,0.02);
+  }
+  .jdp-day:hover { background: rgba(74,144,217,0.18); color: #fff; }
+  .jdp-day.today {
+    border: 1px solid rgba(74,144,217,0.5); color: var(--accent);
+    background: rgba(74,144,217,0.1); font-weight: 700;
+  }
+  .jdp-day.selected {
+    background: linear-gradient(135deg, var(--accent), #1a5fd4);
+    color: #fff; font-weight: 700; border-color: transparent;
+  }
+  .jdp-day.empty {
+    cursor: default; pointer-events: none;
+    background: transparent; border-color: transparent;
+  }
+  .jdp-year-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px 6px;
+  }
+  .jdp-year-range { color: var(--text-muted); font-size: 12px; font-weight: 600; }
+  .jdp-year-month-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 6px; padding: 0 14px 12px;
+  }
+  .jdp-ym-item {
+    text-align: center; padding: 10px 4px; border-radius: 10px;
+    cursor: pointer; color: var(--text-muted); font-size: 12px;
+    font-weight: 500; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s;
+  }
+  .jdp-ym-item:hover { background: rgba(74,144,217,0.2); color: #fff; }
+  .jdp-ym-item.active {
+    background: linear-gradient(135deg, var(--accent), #1a5fd4);
+    color: #fff; border-color: transparent; font-weight: 700;
+  }
+  .jdp-footer {
+    display: flex; gap: 8px; padding: 10px 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .jdp-today-btn {
+    flex: 1; padding: 8px; border-radius: 8px;
+    border: 1px solid rgba(74,144,217,0.3);
+    background: rgba(74,144,217,0.12); color: var(--accent);
+    font-size: 12px; font-family: "Vazirmatn",sans-serif;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .jdp-today-btn:hover { background: rgba(74,144,217,0.22); }
+  .jdp-clear-btn {
+    flex: 1; padding: 8px; border-radius: 8px;
+    border: 1px solid rgba(231,76,60,0.25);
+    background: rgba(231,76,60,0.1); color: #f08080;
+    font-size: 12px; font-family: "Vazirmatn",sans-serif;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .jdp-clear-btn:hover { background: rgba(231,76,60,0.2); }
+  .jdp-trigger { cursor: pointer; }
+
+
+
       @font-face {
         font-family: "Vazirmatn";
         src: url("../font/Vazirmatn-Regular.woff2") format("woff2");
@@ -1698,12 +1801,12 @@
               </div>
               <div class="form-group">
                 <label class="form-label">تاریخ تولد</label>
-                <input
-                  class="form-input"
-                  type="text"
-                  id="adminBirthday"
-                  placeholder="1360/01/01"
-                />
+<div style="position:relative; display:flex; align-items:center;">
+  <i class="fas fa-calendar-alt" style="position:absolute;left:11px;color:var(--accent);font-size:13px;pointer-events:none;z-index:2;"></i>
+  <input class="form-input jdp-trigger" type="text" id="adminBirthday"
+    placeholder="1360/01/01" autocomplete="off" readonly
+    style="padding-left:34px;cursor:pointer;" />
+</div>
               </div>
               <div class="form-group">
                 <label class="form-label">موبایل برای شارژ حساب</label>
@@ -3276,5 +3379,255 @@
 
       document.addEventListener("DOMContentLoaded", loadSavedSettings);
     </script>
+
+    <!-- JDP POPUP -->
+<div id="jdp-custom-overlay"></div>
+<div id="jdp-custom-popup">
+  <div class="jdp-header">
+    <button class="jdp-nav-btn" id="jdpPrevBtn">‹</button>
+    <div class="jdp-month-year" id="jdpMonthYear" onclick="jdpToggleMonthView()"></div>
+    <button class="jdp-nav-btn" id="jdpNextBtn">›</button>
+  </div>
+  <div id="jdpDayView">
+    <div class="jdp-weekdays">
+      <div class="jdp-weekday">ش</div><div class="jdp-weekday">ی</div>
+      <div class="jdp-weekday">د</div><div class="jdp-weekday">س</div>
+      <div class="jdp-weekday">چ</div><div class="jdp-weekday">پ</div>
+      <div class="jdp-weekday">ج</div>
+    </div>
+    <div class="jdp-days" id="jdpDaysGrid"></div>
+  </div>
+  <div id="jdpMonthView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearPrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpMonthGrid"></div>
+  </div>
+  <div id="jdpYearView" style="display:none">
+    <div class="jdp-year-nav">
+      <button class="jdp-nav-btn" id="jdpYearRangePrev">‹</button>
+      <span class="jdp-year-range" id="jdpYearRangeLabel"></span>
+      <button class="jdp-nav-btn" id="jdpYearRangeNext">›</button>
+    </div>
+    <div class="jdp-year-month-grid" id="jdpYearGrid"></div>
+  </div>
+  <div class="jdp-footer">
+    <button class="jdp-today-btn" onclick="jdpGoToday()">امروز</button>
+    <button class="jdp-clear-btn" onclick="jdpClear()">پاک کردن</button>
+  </div>
+</div>
+
+<script>
+/* ════════════ JALALI DATE PICKER ════════════ */
+(function(){
+  const JM=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+  let jYear,jMonth,jActiveInput=null,jMode='day',jYearPage=0;
+
+  function toJalali(gy,gm,gd){
+    var g_d_no,j_d_no,j_np,i;
+    gy-=1600;gm--;gd--;
+    g_d_no=365*gy+parseInt((gy+3)/4)-parseInt((gy+99)/100)+parseInt((gy+399)/400);
+    for(i=0;i<gm;i++)g_d_no+=[31,28+((gy%4==0&&gy%100!=0)||(gy+1600)%400==0?1:0),31,30,31,30,31,31,30,31,30,31][i];
+    g_d_no+=gd;
+    j_d_no=g_d_no-79;
+    j_np=parseInt(j_d_no/12053);j_d_no%=12053;
+    var jy=979+33*j_np+4*parseInt(j_d_no/1461);
+    j_d_no%=1461;
+    if(j_d_no>=366){jy+=parseInt((j_d_no-1)/365);j_d_no=(j_d_no-1)%365;}
+    for(i=0;i<11&&j_d_no>=[31,31,31,31,31,31,30,30,30,30,30][i];i++)j_d_no-=[31,31,31,31,31,31,30,30,30,30,30][i];
+    return{jy,jm:i+1,jd:j_d_no+1};
+  }
+
+  function jalaliDaysInMonth(y,m){return m<=6?31:m<=11?30:((y%4==3||y%4==3)?29:29);}
+
+  function firstWeekDay(jy,jm){
+    var g=jalaliToGregorian(jy,jm,1);
+    var d=new Date(g.gy,g.gm-1,g.gd);
+    var dw=d.getDay();
+    return dw===6?0:dw+1;
+  }
+
+  function jalaliToGregorian(jy,jm,jd){
+    jy+=1595;
+    var days=-355779+(365*jy)+(Math.floor(jy/33)*8)+Math.floor(((jy%33)+3)/4)+jd;
+    if(jm<=6)days+=(jm-1)*31;
+    else days+=((jm-7)*30)+186;
+    var gy=400*Math.floor(days/146097);days%=146097;
+    if(days>36524){gy+=100*Math.floor(--days/36524);days%=36524;if(days>=365)days++;}
+    gy+=4*Math.floor(days/1461);days%=1461;
+    if(days>364){gy+=Math.floor((days-1)/365);days=(days-1)%365;}
+    var gd=days+1;
+    var gDIM=[29,28,31,30,31,30,31,31,30,31,30,31];
+    if(gy%4===0&&(gy%100!==0||gy%400===0))gDIM[1]=29;
+    var gm=0;
+    for(var i=0;i<gDIM.length;i++){if(gd<=gDIM[i]){gm=i+1;break;}gd-=gDIM[i];}
+    return{gy,gm,gd};
+  }
+
+  function jdpOpen(input){
+    jActiveInput=input;
+    var today=todayJalali();
+    var val=input.value;
+    if(val&&/^\d{4}\/\d{2}\/\d{2}$/.test(val)){
+      var p=val.split('/');
+      jYear=parseInt(p[0]);jMonth=parseInt(p[1]);
+    } else {
+      jYear=today.jy;jMonth=today.jm;
+    }
+    jMode='day';
+    document.getElementById('jdpDayView').style.display='';
+    document.getElementById('jdpMonthView').style.display='none';
+    document.getElementById('jdpYearView').style.display='none';
+    jdpRenderDay();
+    var popup=document.getElementById('jdp-custom-popup');
+    var overlay=document.getElementById('jdp-custom-overlay');
+    var rect=input.getBoundingClientRect();
+    var top=rect.bottom+window.scrollY+6;
+    var right=window.innerWidth-rect.right;
+    if(top+380>window.innerHeight+window.scrollY)top=rect.top+window.scrollY-390;
+    popup.style.top=top+'px';
+    popup.style.right=right+'px';
+    popup.style.left='auto';
+    popup.style.display='block';
+    overlay.style.display='block';
+  }
+
+  function todayJalali(){
+    var n=new Date();
+    return toJalali(n.getFullYear(),n.getMonth()+1,n.getDate());
+  }
+
+  function jdpRenderDay(){
+    var today=todayJalali();
+    document.getElementById('jdpMonthYear').textContent=JM[jMonth-1]+' '+jYear;
+    var grid=document.getElementById('jdpDaysGrid');
+    grid.innerHTML='';
+    var firstDay=firstWeekDay(jYear,jMonth);
+    var daysInM=jalaliDaysInMonth(jYear,jMonth);
+    var selectedVal=jActiveInput?jActiveInput.value:'';
+    for(var i=0;i<firstDay;i++){var e=document.createElement('div');e.className='jdp-day empty';grid.appendChild(e);}
+    for(var d=1;d<=daysInM;d++){
+      var cell=document.createElement('div');
+      cell.className='jdp-day';
+      cell.textContent=d;
+      var ds=jYear+'/'+String(jMonth).padStart(2,'0')+'/'+String(d).padStart(2,'0');
+      if(today.jy===jYear&&today.jm===jMonth&&today.jd===d)cell.classList.add('today');
+      if(selectedVal===ds)cell.classList.add('selected');
+      (function(ds2){cell.addEventListener('click',function(){jdpSelect(ds2);});})(ds);
+      grid.appendChild(cell);
+    }
+  }
+
+  function jdpSelect(ds){
+    if(jActiveInput)jActiveInput.value=ds;
+    jdpClose();
+  }
+
+  window.jdpGoToday=function(){
+    var t=todayJalali();
+    var ds=t.jy+'/'+String(t.jm).padStart(2,'0')+'/'+String(t.jd).padStart(2,'0');
+    jdpSelect(ds);
+  };
+
+  window.jdpClear=function(){
+    if(jActiveInput)jActiveInput.value='';
+    jdpClose();
+  };
+
+  window.jdpToggleMonthView=function(){
+    if(jMode==='day'){
+      jMode='month';
+      document.getElementById('jdpDayView').style.display='none';
+      document.getElementById('jdpMonthView').style.display='';
+      document.getElementById('jdpYearView').style.display='none';
+      jdpRenderMonths();
+    } else if(jMode==='month'){
+      jMode='year';
+      jYearPage=Math.floor(jYear/12);
+      document.getElementById('jdpDayView').style.display='none';
+      document.getElementById('jdpMonthView').style.display='none';
+      document.getElementById('jdpYearView').style.display='';
+      jdpRenderYears();
+    } else {
+      jMode='day';
+      document.getElementById('jdpDayView').style.display='';
+      document.getElementById('jdpMonthView').style.display='none';
+      document.getElementById('jdpYearView').style.display='none';
+      jdpRenderDay();
+    }
+  };
+
+  function jdpRenderMonths(){
+    document.getElementById('jdpMonthYear').textContent='انتخاب ماه — '+jYear;
+    document.getElementById('jdpYearLabel').textContent=jYear;
+    var grid=document.getElementById('jdpMonthGrid');
+    grid.innerHTML='';
+    JM.forEach(function(m,i){
+      var el=document.createElement('div');
+      el.className='jdp-ym-item'+(jMonth===i+1?' active':'');
+      el.textContent=m;
+      el.addEventListener('click',function(){jMonth=i+1;jMode='day';
+        document.getElementById('jdpDayView').style.display='';
+        document.getElementById('jdpMonthView').style.display='none';
+        jdpRenderDay();});
+      grid.appendChild(el);
+    });
+  }
+
+  function jdpRenderYears(){
+    var base=jYearPage*12;
+    document.getElementById('jdpYearRangeLabel').textContent=base+' — '+(base+11);
+    document.getElementById('jdpMonthYear').textContent='انتخاب سال';
+    var grid=document.getElementById('jdpYearGrid');
+    grid.innerHTML='';
+    for(var y=base;y<base+12;y++){
+      var el=document.createElement('div');
+      el.className='jdp-ym-item'+(jYear===y?' active':'');
+      el.textContent=y;
+      (function(yr){el.addEventListener('click',function(){jYear=yr;jMode='month';
+        document.getElementById('jdpYearView').style.display='none';
+        document.getElementById('jdpMonthView').style.display='';
+        jdpRenderMonths();});})(y);
+      grid.appendChild(el);
+    }
+  }
+
+  document.getElementById('jdpPrevBtn').addEventListener('click',function(){
+    if(jMode==='day'){jMonth--;if(jMonth<1){jMonth=12;jYear--;}jdpRenderDay();}
+    else if(jMode==='month'){jYear--;jdpRenderMonths();}
+    else{jYearPage--;jdpRenderYears();}
+  });
+  document.getElementById('jdpNextBtn').addEventListener('click',function(){
+    if(jMode==='day'){jMonth++;if(jMonth>12){jMonth=1;jYear++;}jdpRenderDay();}
+    else if(jMode==='month'){jYear++;jdpRenderMonths();}
+    else{jYearPage++;jdpRenderYears();}
+  });
+  document.getElementById('jdpYearPrev').addEventListener('click',function(){jYear--;jdpRenderMonths();});
+  document.getElementById('jdpYearNext').addEventListener('click',function(){jYear++;jdpRenderMonths();});
+  document.getElementById('jdpYearRangePrev').addEventListener('click',function(){jYearPage--;jdpRenderYears();});
+  document.getElementById('jdpYearRangeNext').addEventListener('click',function(){jYearPage++;jdpRenderYears();});
+
+  function jdpClose(){
+    document.getElementById('jdp-custom-popup').style.display='none';
+    document.getElementById('jdp-custom-overlay').style.display='none';
+    jActiveInput=null;
+  }
+  document.getElementById('jdp-custom-overlay').addEventListener('click',jdpClose);
+
+  document.addEventListener('click',function(e){
+    var popup=document.getElementById('jdp-custom-popup');
+    if(!popup.contains(e.target)&&!e.target.classList.contains('jdp-trigger'))
+      jdpClose();
+  });
+
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.jdp-trigger').forEach(function(inp){
+      inp.addEventListener('click',function(){jdpOpen(inp);});
+    });
+  });
+})();
+</script>
   </body>
 </html>
