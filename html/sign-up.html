@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>پیش‌ثبت‌نام - مدرسه بوربور</title>
+    <!-- داخل <head> — قبل از بقیه CSS ها -->
+<script>document.documentElement.style.background='#050810';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style/borbor-loader.css">
     <link rel="stylesheet" href="../style/sign-up.css" />
     <link rel="icon" href="../image/iconB.png" />
       <link rel="stylesheet" href="../css/all.min.css">
     <link rel="stylesheet" href="../Vazirmatn-font-face.css">
+     <link rel="stylesheet" href="../style/scrollbar.css" />
   
     
     <style>
@@ -302,7 +308,25 @@ input[data-jdp] {
 }
     </style>
   </head>
+  <!-- اول <body> -->
+<?php include '_loader-snippet.php'; ?>
   <body dir="rtl">
+
+    <div id="bb-loader">
+  <canvas id="bb-bg"></canvas>
+  <div class="bb-center">
+    <div class="bb-word" id="bb-word"></div>
+    <div class="bb-tagline" id="bb-tag">داشبورد مدیر کل</div>
+    <div class="bb-strip" id="bb-strip">
+      <div class="bb-track"></div>
+      <div class="bb-dots">
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="background-decoration">
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
@@ -805,5 +829,7 @@ document.addEventListener('keydown', function(e) {
 });
 
     </script>
+    <!-- آخر <body> — بعد از همه script ها -->
+<script src="../javascript/borbor-loader.js"></script>
   </body>
 </html>

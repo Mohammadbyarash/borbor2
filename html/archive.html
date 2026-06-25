@@ -1615,6 +1615,7 @@
           <option value="assistant">معاونان</option>
           <option value="student">دانش‌آموزان</option>
           <option value="class">کلاس‌ها</option>
+          <option value="registration">پیش‌ثبت‌نام‌ها</option>
         </select>
         <select class="filter-select" id="yearFilter">
           <option value="all">همه سال‌ها</option>
@@ -2022,24 +2023,13 @@
       }
 
       function buildCard(item) {
-        const cfg = {
-          teacher: {
-            label: "معلم",
-            cls: "avatar-teacher",
-            icon: "fa-user-tie",
-          },
-          assistant: {
-            label: "معاون",
-            cls: "avatar-assistant",
-            icon: "fa-user-cog",
-          },
-          student: {
-            label: "دانش‌آموز",
-            cls: "avatar-student",
-            icon: "fa-user-graduate",
-          },
-          class: { label: "کلاس", cls: "avatar-class", icon: "fa-chalkboard" },
-        }[item.type] || { label: "", cls: "", icon: "fa-question" };
+const cfg = {
+  teacher:      { label: 'معلم',          cls: 'avatar-teacher',  icon: 'fa-user-tie' },
+  assistant:    { label: 'معاون',         cls: 'avatar-assistant', icon: 'fa-user-cog' },
+  student:      { label: 'دانش‌آموز',     cls: 'avatar-student',   icon: 'fa-user-graduate' },
+  class:        { label: 'کلاس',          cls: 'avatar-class',     icon: 'fa-chalkboard' },
+  registration: { label: 'پیش‌ثبت‌نام',  cls: 'avatar-student',   icon: 'fa-clipboard-list' },
+}[item.type] || { label: '', cls: '', icon: 'fa-question' };
 
         const card = document.createElement("div");
         card.className = "archive-card";
@@ -2061,6 +2051,14 @@
       <div class="detail-row"><span class="detail-label">پایه</span><span class="detail-value">${item.grade || "-"}</span></div>
       <div class="detail-row"><span class="detail-label">دانش‌آموزان</span><span class="detail-value">${item.student_count || 0} نفر</span></div>`;
         }
+        else if (item.type === 'registration') {
+  detailsHTML = `
+    <div class="detail-row"><span class="detail-label">پایه</span><span class="detail-value">${item.grade || '-'}</span></div>
+    <div class="detail-row"><span class="detail-label">وضعیت</span><span class="detail-value">${item.status || '-'}</span></div>`;
+}
+
+
+        
 
         const archivedDate = item.archived_at
           ? new Date(item.archived_at).toLocaleDateString("fa-IR")
@@ -2122,92 +2120,102 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
+
       /* ═══════════════════ DELETE ═══════════════════ */
-      function openDeleteModal(itemJson) {
-        itemToDelete = JSON.parse(
-          typeof itemJson === "string" ? itemJson : JSON.stringify(itemJson),
-        );
-        const label =
-          {
-            teacher: "معلم",
-            assistant: "معاون",
-            student: "دانش‌آموز",
-            class: "کلاس",
-          }[itemToDelete.type] || "";
-        document.getElementById("deleteText").innerHTML =
-          `آیا مطمئن هستید که می‌خواهید ${label} <strong>${itemToDelete.name}</strong> را به صورت دائمی حذف کنید؟`;
-        document.getElementById("deleteModal").classList.add("active");
-      }
-      function closeDeleteModal() {
-        document.getElementById("deleteModal").classList.remove("active");
-        itemToDelete = null;
-      }
-      async function confirmDelete() {
-        if (!itemToDelete) return;
-        const { name, type, id } = itemToDelete;
-        closeDeleteModal();
-        try {
-          const r = await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "delete", type, id }),
-          });
-          const txt = await r.text();
-          const m = txt.match(/\{[\s\S]*\}/);
-          const d = m ? JSON.parse(m[0]) : { success: r.ok };
-          if (d.success) {
-            showToast(`${name} با موفقیت حذف شد`, "error");
+function openDeleteModal(itemJson) {
+    itemToDelete = JSON.parse(
+        typeof itemJson === 'string' ? itemJson : JSON.stringify(itemJson)
+    );
+    const labelMap = {
+        teacher: 'معلم', assistant: 'معاون',
+        student: 'دانش‌آموز', class: 'کلاس', registration: 'پیش‌ثبت‌نام'
+    };
+    const label = labelMap[itemToDelete.type] || '';
+    document.getElementById('deleteText').innerHTML =
+        `آیا مطمئن هستید که می‌خواهید ${label} <strong>${itemToDelete.name}</strong> را به صورت دائمی حذف کنید؟`;
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function closeDeleteModal() {
+    const m = document.getElementById('deleteModal');
+    if (m) m.classList.remove('active');
+}
+
+async function confirmDelete() {
+    if (!itemToDelete) return;
+    const { name, type, id } = itemToDelete;
+    itemToDelete = null;
+    closeDeleteModal();
+
+    try {
+        const r = await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', type, id }),
+        });
+        let d;
+        try { d = await r.json(); }
+        catch { d = { success: false, message: 'پاسخ سرور نامعتبر' }; }
+
+        if (d.success) {
+            showToast(`${name} با موفقیت حذف شد`);
             await loadStats();
             await loadArchiveItems();
-          } else showToast(d.message || "خطا در حذف", "error");
-        } catch (e) {
-          showToast("خطا در ارتباط با سرور", "error");
+        } else {
+            showToast(d.message || 'خطا در حذف', 'error');
         }
-      }
+    } catch (e) {
+        showToast('خطا: ' + e.message, 'error');
+    }
+}
 
-      /* ═══════════════════ RESTORE ═══════════════════ */
-      function openRestoreModal(itemJson) {
-        itemToRestore = JSON.parse(
-          typeof itemJson === "string" ? itemJson : JSON.stringify(itemJson),
-        );
-        const label =
-          {
-            teacher: "معلم",
-            assistant: "معاون",
-            student: "دانش‌آموز",
-            class: "کلاس",
-          }[itemToRestore.type] || "";
-        document.getElementById("restoreText").innerHTML =
-          `آیا مطمئن هستید که می‌خواهید ${label} <strong>${itemToRestore.name}</strong> را بازگردانی کنید؟`;
-        document.getElementById("restoreModal").classList.add("active");
-      }
-      function closeRestoreModal() {
-        document.getElementById("restoreModal").classList.remove("active");
-        itemToRestore = null;
-      }
-      async function confirmRestore() {
-        if (!itemToRestore) return;
-        const { name, type, id } = itemToRestore;
-        closeRestoreModal();
-        try {
-          const r = await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "restore", type, id }),
-          });
-          const txt = await r.text();
-          const m = txt.match(/\{[\s\S]*\}/);
-          const d = m ? JSON.parse(m[0]) : { success: r.ok };
-          if (d.success) {
-            showToast(`${name} با موفقیت بازگردانی شد`, "success");
+/* ═══════════════════ RESTORE ═══════════════════ */
+function openRestoreModal(itemJson) {
+    itemToRestore = JSON.parse(
+        typeof itemJson === 'string' ? itemJson : JSON.stringify(itemJson)
+    );
+    const labelMap = {
+        teacher: 'معلم', assistant: 'معاون',
+        student: 'دانش‌آموز', class: 'کلاس', registration: 'پیش‌ثبت‌نام'
+    };
+    const label = labelMap[itemToRestore.type] || '';
+    document.getElementById('restoreText').innerHTML =
+        `آیا مطمئن هستید که می‌خواهید ${label} <strong>${itemToRestore.name}</strong> را بازگردانی کنید؟`;
+    document.getElementById('restoreModal').classList.add('active');
+}
+
+function closeRestoreModal() {
+    const m = document.getElementById('restoreModal');
+    if (m) m.classList.remove('active');
+}
+
+async function confirmRestore() {
+    if (!itemToRestore) return;
+    const { name, type, id } = itemToRestore;
+    itemToRestore = null;
+    closeRestoreModal();
+
+    try {
+        const r = await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'restore', type, id }),
+        });
+        let d;
+        try { d = await r.json(); }
+        catch { d = { success: false, message: 'پاسخ سرور نامعتبر' }; }
+
+        if (d.success) {
+            showToast(`${name} با موفقیت بازگردانی شد`);
             await loadStats();
             await loadArchiveItems();
-          } else showToast(d.message || "خطا در بازگردانی", "error");
-        } catch (e) {
-          showToast("خطا در ارتباط با سرور", "error");
+        } else {
+            showToast(d.message || 'خطا در بازگردانی', 'error');
         }
-      }
-
+    } catch (e) {
+        showToast('خطا: ' + e.message, 'error');
+    }
+}
       /* ═══════════════════ DETAILS MODAL ═══════════════════ */
       function openDetailsModal(itemJson) {
         const item = JSON.parse(
@@ -2370,23 +2378,22 @@
       }
 
       /* ═══════════════════ BACKDROP CLOSE ═══════════════════ */
-      [
-        "deleteModal",
-        "restoreModal",
-        "detailsModal",
-        "studentsModal",
-        "excelModal",
-      ].forEach((id) => {
-        document.getElementById(id).addEventListener("click", function (e) {
-          if (e.target === this) {
-            if (id === "deleteModal") closeDeleteModal();
-            else if (id === "restoreModal") closeRestoreModal();
-            else if (id === "detailsModal") closeDetailsModal();
-            else if (id === "studentsModal") closeStudentsModal();
-            else if (id === "excelModal") closeExcelModal();
-          }
-        });
-      });
+/* ═══════════════════ BACKDROP CLOSE ═══════════════════ */
+['deleteModal', 'restoreModal', 'detailsModal', 'studentsModal', 'excelModal'].forEach((id) => {
+    document.getElementById(id).addEventListener('click', function (e) {
+        if (e.target === this) {
+            if (id === 'deleteModal') {
+                itemToDelete = null;
+                closeDeleteModal();
+            } else if (id === 'restoreModal') {
+                itemToRestore = null;
+                closeRestoreModal();
+            } else if (id === 'detailsModal') closeDetailsModal();
+            else if (id === 'studentsModal') closeStudentsModal();
+            else if (id === 'excelModal') closeExcelModal();
+        }
+    });
+});
 
       /* ═══════════════════ START ═══════════════════ */
       init();

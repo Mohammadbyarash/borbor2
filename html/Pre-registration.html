@@ -2744,27 +2744,24 @@
           <option value="accepted">قبول شده</option>
           <option value="rejected">رد شده</option>
         </select>
+
         <div class="auto-archive-group">
-          <label class="auto-archive-label"
-            ><i class="fas fa-clock"></i>آرشیو خودکار پس از:</label
-          >
-          <input
-            type="number"
-            id="autoArchiveDays"
-            class="auto-archive-days"
-            min="1"
-            max="365"
-            value="30"
-          />
-          <span class="auto-archive-days-label">روز</span>
-          <button
-            class="auto-archive-save-btn"
-            id="autoArchiveSaveBtn"
-            onclick="saveAutoArchiveDays()"
-          >
-            <i class="fas fa-save"></i>ذخیره
-          </button>
-        </div>
+  <label class="auto-archive-label"><i class="fas fa-clock"></i>آرشیو خودکار پس از:</label>
+  <input type="number" id="autoArchiveDays" class="auto-archive-days" min="1" max="365" value="30"/>
+  <span class="auto-archive-days-label">روز</span>
+  <button class="auto-archive-save-btn" id="autoArchiveSaveBtn" onclick="saveAutoArchiveDays()">
+    <i class="fas fa-save"></i>ذخیره
+  </button>
+  <button id="autoArchiveToggleBtn" onclick="toggleAutoArchive()" style="
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 13px;border-radius:8px;border:1px solid var(--border);
+    font-size:12px;font-weight:700;font-family:'Vazirmatn',sans-serif;
+    cursor:pointer;transition:all 0.25s;white-space:nowrap;
+    background:rgba(255,255,255,0.06);color:var(--text-muted);">
+    <i class="fas fa-toggle-off"></i> غیرفعال
+  </button>
+</div>
+
         <div class="filter-actions">
           <button class="btn-excel" onclick="openExportModal()">
             <i class="fas fa-file-excel"></i>Excel
@@ -3425,8 +3422,14 @@
       /* ════════════ INIT ════════════ */
       document.addEventListener("DOMContentLoaded", () => {
         loadSmsBalance();
-        loadSmsTemplates();
-        loadAutoArchiveDays();
+    loadSmsTemplates();
+    loadAutoArchiveDays();
+
+        
+       
+
+        
+        
         fetchRegistrations();
         loadRegistrationToggle();
         setupFilters();
@@ -4111,47 +4114,56 @@
 
       /* ════════════ ARCHIVE ════════════ */
       function openArchiveModal(reg) {
-        pendingArchiveReg = reg;
-        const isArch = reg.archived === true || reg.archived == 1;
-        const fullName = `${reg.studentName} ${reg.studentFamily}`;
-        const icon = document.getElementById("archiveModalIcon");
-        const iconIn = document.getElementById("archiveModalIconInner");
-        const title = document.getElementById("archiveModalTitle");
-        const desc = document.getElementById("archiveModalDesc");
-        const confirmBtn = document.getElementById("archiveConfirmBtn");
-        document.getElementById("archiveModalStudentName").textContent =
-          fullName;
-        if (isArch) {
-          icon.className = "archive-modal-icon undo-archive";
-          iconIn.className = "fas fa-box-open";
-          title.textContent = "خارج کردن از آرشیو";
-          desc.textContent =
-            "آیا می‌خواهید این پیش‌ثبت‌نام را از آرشیو خارج کنید؟";
-          confirmBtn.className = "btn-primary";
-          confirmBtn.innerHTML =
-            '<i class="fas fa-box-open"></i>از آرشیو خارج کن';
+    // اگه قبلاً آرشیو شده، نادیده بگیر
+    if (reg.archived === true || reg.archived == 1) return;
+    
+    pendingArchiveReg = reg;
+    const fullName = `${reg.studentName} ${reg.studentFamily}`;
+    
+    document.getElementById('archiveModalIcon').className = 'archive-modal-icon do-archive';
+    document.getElementById('archiveModalIconInner').className = 'fas fa-archive';
+    document.getElementById('archiveModalTitle').textContent = 'آرشیو کردن';
+    document.getElementById('archiveModalStudentName').textContent = fullName;
+    document.getElementById('archiveModalDesc').textContent = 'آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟';
+    
+    const confirmBtn = document.getElementById('archiveConfirmBtn');
+    confirmBtn.className = 'btn-danger';
+    confirmBtn.innerHTML = '<i class="fas fa-archive"></i>آرشیو کن';
+    
+    openModal('archiveModal');
+}
+      
+
+      async function confirmArchive() {
+    if (!pendingArchiveReg) return;
+    const fullName = `${pendingArchiveReg.studentName} ${pendingArchiveReg.studentFamily}`;
+    closeModal('archiveModal');
+
+    try {
+        const r = await fetch(`${API_BASE}/archive_registration.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'archive',
+                id: pendingArchiveReg.registrationId
+            })
+        });
+        const d = await r.json();
+        if (d.success) {
+            // حذف کارت از لیست بدون رفرش
+            registrations = registrations.filter(x => x.registrationId !== pendingArchiveReg.registrationId);
+            filtered = filtered.filter(x => x.registrationId !== pendingArchiveReg.registrationId);
+            renderCards();
+            fetchStats();
+            showToast(`${fullName} آرشیو شد`);
         } else {
-          icon.className = "archive-modal-icon do-archive";
-          iconIn.className = "fas fa-archive";
-          title.textContent = "آرشیو کردن";
-          desc.textContent = "آیا می‌خواهید این پیش‌ثبت‌نام را آرشیو کنید؟";
-          confirmBtn.className = "btn-danger";
-          confirmBtn.innerHTML = '<i class="fas fa-archive"></i>آرشیو کن';
+            showToast(d.message || 'خطا', true);
         }
-        openModal("archiveModal");
-      }
-      function confirmArchive() {
-        if (!pendingArchiveReg) return;
-        const isArch =
-          pendingArchiveReg.archived === true ||
-          pendingArchiveReg.archived == 1;
-        const fullName = `${pendingArchiveReg.studentName} ${pendingArchiveReg.studentFamily}`;
-        closeModal("archiveModal");
-        showToast(
-          isArch ? `${fullName} از آرشیو خارج شد` : `${fullName} آرشیو شد`,
-        );
-        pendingArchiveReg = null;
-      }
+    } catch {
+        showToast('خطا در ارتباط با سرور', true);
+    }
+    pendingArchiveReg = null;
+}
 
       /* ════════════ IMAGE PREVIEW ════════════ */
       function openImgPreview(src) {
@@ -4196,29 +4208,88 @@
 
       /* ════════════ AUTO ARCHIVE ════════════ */
       function loadAutoArchiveDays() {
-        const v = localStorage.getItem("autoArchiveDays") || "30";
-        const el = document.getElementById("autoArchiveDays");
-        if (el) el.value = v;
-      }
+    const v = localStorage.getItem('autoArchiveDays') || '30';
+    const el = document.getElementById('autoArchiveDays');
+    if (el) el.value = v;
+    loadAutoArchiveToggle();
+}
+      
       function saveAutoArchiveDays() {
-        const el = document.getElementById("autoArchiveDays");
-        const btn = document.getElementById("autoArchiveSaveBtn");
-        const v = parseInt(el?.value);
-        if (!v || v < 1 || v > 365) {
-          showToast("عدد روز باید بین ۱ تا ۳۶۵ باشد", true);
-          return;
-        }
-        localStorage.setItem("autoArchiveDays", v.toString());
-        btn.classList.add("saved");
-        btn.innerHTML = '<i class="fas fa-check"></i>ذخیره شد';
-        setTimeout(() => {
-          btn.classList.remove("saved");
-          btn.innerHTML = '<i class="fas fa-save"></i>ذخیره';
-        }, 2000);
-        showToast(`آرشیو خودکار پس از ${fa(v)} روز تنظیم شد`);
-      }
 
-      /* ════════════ SMS BALANCE ════════════ */
+    const el = document.getElementById('autoArchiveDays');
+    const btn = document.getElementById('autoArchiveSaveBtn');
+    const toggleBtn = document.getElementById('autoArchiveToggleBtn');
+    const v = parseInt(el?.value);
+    if (!v || v < 1 || v > 365) {
+        showToast('عدد روز باید بین ۱ تا ۳۶۵ باشد', true);
+        return;
+    }
+    localStorage.setItem('autoArchiveDays', v.toString());
+    btn.classList.add('saved');
+    btn.innerHTML = '<i class="fas fa-check"></i>ذخیره شد';
+    setTimeout(() => {
+        btn.classList.remove('saved');
+        btn.innerHTML = '<i class="fas fa-save"></i>ذخیره';
+    }, 2000);
+    showToast(`آرشیو خودکار پس از ${fa(v)} روز تنظیم شد`);
+    // اگه فعال بود دوباره اجرا کن
+    if (localStorage.getItem('autoArchiveEnabled') === '1') {
+        runAutoArchive();
+    }
+}
+
+
+/* ════════════ AUTO ARCHIVE ════════════ */
+function loadAutoArchiveToggle() {
+    const enabled = localStorage.getItem('autoArchiveEnabled') === '1';
+    updateAutoArchiveToggleUI(enabled);
+    if (enabled) runAutoArchive();
+}
+
+function updateAutoArchiveToggleUI(enabled) {
+    const btn = document.getElementById('autoArchiveToggleBtn');
+    if (!btn) return;
+    if (enabled) {
+        btn.innerHTML = '<i class="fas fa-toggle-on"></i> فعال';
+        btn.style.background = 'rgba(6,214,160,0.18)';
+        btn.style.color = 'var(--accent3)';
+        btn.style.borderColor = 'rgba(6,214,160,0.3)';
+    } else {
+        btn.innerHTML = '<i class="fas fa-toggle-off"></i> غیرفعال';
+        btn.style.background = 'rgba(255,255,255,0.06)';
+        btn.style.color = 'var(--text-muted)';
+        btn.style.borderColor = 'var(--border)';
+    }
+}
+
+function toggleAutoArchive() {
+    const current = localStorage.getItem('autoArchiveEnabled') === '1';
+    const next = !current;
+    localStorage.setItem('autoArchiveEnabled', next ? '1' : '0');
+    updateAutoArchiveToggleUI(next);
+    if (next) {
+        runAutoArchive();
+        showToast('آرشیو خودکار فعال شد');
+    } else {
+        showToast('آرشیو خودکار غیرفعال شد');
+    }
+}
+
+async function runAutoArchive() {
+    const days = parseInt(localStorage.getItem('autoArchiveDays') || '30');
+    try {
+        const r = await fetch(`${API_BASE}/auto_archive.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ days })
+        });
+        const d = await r.json();
+        if (d.success && d.archived_count > 0) {
+            showToast(`${fa(d.archived_count)} پیش‌ثبت‌نام به‌صورت خودکار آرشیو شد`);
+            fetchRegistrations();
+        }
+    } catch {}
+}
       function loadSmsBalance() {
         const s = localStorage.getItem("smsBal");
         smsBalance = s ? parseInt(s) : 50000;

@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>هنرستان بوربور | آینده از اینجا شروع می‌شود</title>
+<!-- داخل <head> — قبل از بقیه CSS ها -->
+<script>document.documentElement.style.background='#050810';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style/borbor-loader.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="icon" href="../image/iconB.png">
@@ -12,9 +20,28 @@
 
 
 </head>
+<!-- اول <body> -->
+<?php include '_loader-snippet.php'; ?>
 <body>
 
 
+
+<!-- لودر — مستقیم اینجا بنویس، نه include -->
+<div id="bb-loader">
+  <canvas id="bb-bg"></canvas>
+  <div class="bb-center">
+    <div class="bb-word" id="bb-word"></div>
+    <div class="bb-tagline" id="bb-tag">داشبورد مدیر کل</div>
+    <div class="bb-strip" id="bb-strip">
+      <div class="bb-track"></div>
+      <div class="bb-dots">
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- بک‌گراند انیمیشنی -->
 <div id="animated-bg">
@@ -662,5 +689,8 @@ function animate(){
 }
 animate();
 </script>
+
+<!-- آخر <body> — بعد از همه script ها -->
+<script src="../javascript/borbor-loader.js"></script>
 </body>
 </html>

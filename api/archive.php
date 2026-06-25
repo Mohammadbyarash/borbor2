@@ -42,27 +42,32 @@ if ($method === 'GET') {
             exit;
         }
 
+        // ---------- stats ----------
         if ($action === 'stats') {
-            $t = $pdo->prepare("SELECT COUNT(*) FROM users  WHERE school_id=? AND role='teacher'   AND is_archived=1");
+            $t = $pdo->prepare("SELECT COUNT(*) FROM users WHERE school_id=? AND role='teacher' AND is_archived=1");
             $t->execute([$school_id]);
-            $a = $pdo->prepare("SELECT COUNT(*) FROM users  WHERE school_id=? AND role='assistant' AND is_archived=1");
+            $a = $pdo->prepare("SELECT COUNT(*) FROM users WHERE school_id=? AND role='assistant' AND is_archived=1");
             $a->execute([$school_id]);
-            $s = $pdo->prepare("SELECT COUNT(*) FROM users  WHERE school_id=? AND role='student'   AND is_archived=1");
+            $s = $pdo->prepare("SELECT COUNT(*) FROM users WHERE school_id=? AND role='student' AND is_archived=1");
             $s->execute([$school_id]);
             $c = $pdo->prepare("SELECT COUNT(*) FROM classes WHERE school_id=? AND is_archived=1");
             $c->execute([$school_id]);
+            $reg = $pdo->prepare("SELECT COUNT(*) FROM registration WHERE (school_id=? OR school_id IS NULL) AND is_archived=1");
+            $reg->execute([$school_id]);
 
             ob_clean();
             echo json_encode([
-                'success'    => true,
-                'teachers'   => (int)$t->fetchColumn(),
-                'assistants' => (int)$a->fetchColumn(),
-                'students'   => (int)$s->fetchColumn(),
-                'classes'    => (int)$c->fetchColumn(),
+                'success'       => true,
+                'teachers'      => (int)$t->fetchColumn(),
+                'assistants'    => (int)$a->fetchColumn(),
+                'students'      => (int)$s->fetchColumn(),
+                'classes'       => (int)$c->fetchColumn(),
+                'registrations' => (int)$reg->fetchColumn(),
             ], JSON_UNESCAPED_UNICODE);
             exit;
         }
 
+        // ---------- list ----------
         if ($action === 'list') {
             $type    = $_GET['type']   ?? 'all';
             $search  = trim($_GET['search'] ?? '');
@@ -91,7 +96,6 @@ if ($method === 'GET') {
                         WHERE u.teacher_id=? AND c.school_id=?
                     ");
                     $sub->execute([$row['id'], $school_id]);
-
                     $gr = $pdo->prepare("
                         SELECT DISTINCT g.title FROM units u
                         JOIN classes c ON c.id = u.class_id
@@ -99,7 +103,6 @@ if ($method === 'GET') {
                         WHERE u.teacher_id=? AND c.school_id=?
                     ");
                     $gr->execute([$row['id'], $school_id]);
-
                     $items[] = [
                         'id'          => $row['id'],
                         'type'        => 'teacher',
@@ -210,7 +213,6 @@ if ($method === 'GET') {
                         'mobile'      => $s['mobile'],
                         'photo'       => $s['photo'],
                     ], $stu->fetchAll(PDO::FETCH_ASSOC));
-
                     $items[] = [
                         'id'            => $row['id'],
                         'type'          => 'class',
@@ -222,6 +224,33 @@ if ($method === 'GET') {
                         'students'      => $students,
                         'archived_at'   => $row['archived_at'],
                         'reason'        => $row['archived_reason'] ?? 'نامشخص',
+                    ];
+                }
+            }
+
+            // ---- پیش‌ثبت‌نام‌ها ----
+            if ($type === 'all' || $type === 'registration') {
+                $sql    = "SELECT * FROM registration WHERE (school_id=? OR school_id IS NULL) AND is_archived=1";
+                $params = [$school_id];
+                if ($search !== '') {
+                    $sql .= " AND (first_name LIKE ? OR last_name LIKE ? OR national_code LIKE ?)";
+                    $like = "%$search%";
+                    array_push($params, $like, $like, $like);
+                }
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $gradeDisplay = ['tenth'=>'دهم','eleventh'=>'یازدهم','twelfth'=>'دوازدهم'];
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                    $items[] = [
+                        'id'          => $row['id'],
+                        'type'        => 'registration',
+                        'name'        => trim($row['first_name'].' '.$row['last_name']),
+                        'national_id' => $row['national_code'],
+                        'mobile'      => $row['mobile1'],
+                        'grade'       => $gradeDisplay[$row['grade']] ?? $row['grade'],
+                        'status'      => $row['status'],
+                        'archived_at' => $row['archived_at'],
+                        'reason'      => $row['archived_reason'] ?? 'نامشخص',
                     ];
                 }
             }
@@ -325,6 +354,12 @@ if ($method === 'POST') {
                     WHERE id=? AND school_id=? AND is_archived=1
                 ");
                 $stmt->execute([$id, $school_id]);
+            } elseif ($type === 'registration') {
+                $stmt = $pdo->prepare("
+                    UPDATE registration SET is_archived=0, archived_at=NULL, archived_reason=NULL
+                    WHERE id=? AND (school_id=? OR school_id IS NULL) AND is_archived=1
+                ");
+                $stmt->execute([$id, $school_id]);
             } else {
                 ob_clean(); http_response_code(400);
                 echo json_encode(['success'=>false,'message'=>'نوع نامعتبر'], JSON_UNESCAPED_UNICODE);
@@ -364,30 +399,33 @@ if ($method === 'POST') {
             } elseif ($type === 'student') {
                 $pdo->prepare("DELETE FROM student_classes WHERE student_id=?")->execute([$id]);
                 $pdo->prepare("DELETE FROM scores WHERE student_id=?")->execute([$id]);
-                // حذف attendance از طریق schedule_id های مربوط به این دانش‌آموز
                 $pdo->prepare("DELETE FROM attendance WHERE student_id=?")->execute([$id]);
                 $stmt = $pdo->prepare("DELETE FROM users WHERE id=? AND school_id=? AND is_archived=1");
                 $stmt->execute([$id, $school_id]);
 
             } elseif ($type === 'class') {
-                // اول attendance های مربوط به schedule های این کلاس حذف می‌شن
                 $pdo->prepare("
                     DELETE a FROM attendance a
                     JOIN schedules s ON a.schedule_id = s.id
                     JOIN units u ON s.class_lesson_id = u.id
                     WHERE u.class_id = ?
                 ")->execute([$id]);
-
                 $pdo->prepare("
                     DELETE s FROM schedules s
                     JOIN units u ON s.class_lesson_id = u.id
                     WHERE u.class_id = ?
                 ")->execute([$id]);
-
                 $pdo->prepare("DELETE FROM units WHERE class_id=?")->execute([$id]);
                 $pdo->prepare("DELETE FROM student_classes WHERE class_id=?")->execute([$id]);
                 $pdo->prepare("DELETE FROM exam_events WHERE class_id=?")->execute([$id]);
                 $stmt = $pdo->prepare("DELETE FROM classes WHERE id=? AND school_id=? AND is_archived=1");
+                $stmt->execute([$id, $school_id]);
+
+            } elseif ($type === 'registration') {
+                $stmt = $pdo->prepare("
+                    DELETE FROM registration
+                    WHERE id=? AND (school_id=? OR school_id IS NULL) AND is_archived=1
+                ");
                 $stmt->execute([$id, $school_id]);
 
             } else {

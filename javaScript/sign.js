@@ -52,17 +52,10 @@ function validateJalaliDate(dateStr, type = 'student') {
 }
 
 // ===== بررسی ثبت‌نام قبلی =====
-function checkPreviousRegistration() {
-  const registered = localStorage.getItem('bourbour_registered');
-  if (registered) {
-    const trackingCode = localStorage.getItem('bourbour_tracking_code');
-    if (trackingCode) sessionStorage.setItem('tracking_code', trackingCode);
-    window.location.href = '../html/pending.html';
-  }
-}
+
 
 document.addEventListener('DOMContentLoaded', async () => {
-  checkPreviousRegistration();
+ 
 
   const form = document.getElementById('registerForm');
   if (!form) return;

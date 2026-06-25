@@ -1,6 +1,4 @@
 <?php
-// api/get_registrations.php
-// مهم: session_start باید قبل از هر header باشه
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/config.php';
@@ -11,26 +9,22 @@ $user      = requireAuth();
 $pdo       = getDB();
 $school_id = (int)$user['school_id'];
 
-// ===== فقط آمار =====
 if (!empty($_GET['stats_only'])) {
     echo json_encode(['success' => true, 'stats' => getStats($pdo, $school_id)]);
     exit;
 }
 
-// ===== فیلترها =====
 $search = trim($_GET['search'] ?? '');
 $grade  = trim($_GET['grade']  ?? '');
 $status = trim($_GET['status'] ?? '');
 
-// نگاشت پایه فارسی → انگلیسی (برای فیلتر)
 $gradeMap = [
     'دهم'     => 'tenth',
     'یازدهم'  => 'eleventh',
     'دوازدهم' => 'twelfth',
 ];
 
-// ===== کوئری — school_id مدرسه + NULL (ثبت‌نام عمومی) =====
-$conditions = ['(r.school_id = :school_id OR r.school_id IS NULL)'];
+$conditions = ['(r.school_id = :school_id OR r.school_id IS NULL)', 'r.is_archived = 0'];
 $params     = [':school_id' => $school_id];
 
 if ($search !== '') {
@@ -55,7 +49,6 @@ $stmt  = $pdo->prepare("SELECT * FROM registration r WHERE {$where} ORDER BY r.c
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// ===== نگاشت‌ها =====
 $gradeDisplay = [
     'tenth'    => 'دهم',
     'eleventh' => 'یازدهم',
@@ -80,9 +73,6 @@ $eduDisplay = [
     'fawq_doktori'          => 'فوق دکتری',
 ];
 
-// ===== مسیر فایل‌های آپلودی =====
-// فایل‌ها در: /borbor/uploads/registrations/
-// از دید HTML (html/ یا api/): ../uploads/registrations/
 $uploadBase = '../uploads/registrations/';
 
 $registrations = array_map(fn($r) => [
@@ -110,8 +100,8 @@ $registrations = array_map(fn($r) => [
     'motherPhone'       => $r['mobile3']           ?? '',
     'secondPhone'       => $r['mobile2']           ?? '',
     'status'            => $r['status']            ?? 'pending',
+    'archived'          => (bool)($r['is_archived'] ?? false),  // ← اضافه شد
     'createdAt'         => $r['created_at']        ?? '',
-    // فایل‌ها — null اگه آپلود نشده
     'photo'      => $r['photo_file']    ? $uploadBase . $r['photo_file']   : null,
     'reportCard' => $r['karname_file']  ? $uploadBase . $r['karname_file'] : null,
     'guidanceDoc'=> $r['hedayat_file']  ? $uploadBase . $r['hedayat_file'] : null,
@@ -123,7 +113,6 @@ echo json_encode([
     'stats'         => getStats($pdo, $school_id),
 ], JSON_UNESCAPED_UNICODE);
 
-// ===== تابع آمار =====
 function getStats(PDO $pdo, int $school_id): array {
     $stmt = $pdo->prepare("
         SELECT

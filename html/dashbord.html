@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>بوربور — داشبورد مدیر کل</title>
+
+<!-- داخل <head> — قبل از بقیه CSS ها -->
+<script>document.documentElement.style.background='#050810';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style/borbor-loader.css">
+
+
+
+
 <link rel="stylesheet" href="../css/all.min.css">
     <link rel="icon" href="../image/iconB.png" />
     <link rel="stylesheet" href="../style/scrollbar.css" />
@@ -388,7 +399,27 @@ body::after{
 }
 </style>
 </head>
+<!-- اول <body> -->
+<?php include '_loader-snippet.php'; ?>
 <body>
+
+  <div id="bb-loader">
+  <canvas id="bb-bg"></canvas>
+  <div class="bb-center">
+    <div class="bb-word" id="bb-word"></div>
+    <div class="bb-tagline" id="bb-tag">داشبورد مدیر کل</div>
+    <div class="bb-strip" id="bb-strip">
+      <div class="bb-track"></div>
+      <div class="bb-dots">
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
 
 <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -806,5 +837,7 @@ document.querySelectorAll('.submenu-item').forEach(function(si){
   });
 });
 </script>
+<!-- آخر <body> — بعد از همه script ها -->
+<script src="../javascript/borbor-loader.js"></script>
 </body>
 </html>
