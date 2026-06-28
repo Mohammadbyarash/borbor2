@@ -1,23 +1,22 @@
 * {
     scrollbar-width: thin;
-    scrollbar-color: #3498db #172047;
+    scrollbar-color: var(--accent) var(--bg-sidebar);
 }
 
-/* کروم، سافاری، اج و مرورگرهای مبتنی بر Webkit */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #172047;
+    background: var(--bg-sidebar);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #3498db;
+    background: var(--accent);
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #2980b9;
+    background: var(--accent2);
 }

@@ -1,349 +1,354 @@
-/**
- * theme-loader.js
- * فایل مشترک برای اعمال تنظیمات تم در تمام صفحات
- * کافیه این فایل رو به همه صفحات HTML اضافه کنی
- */
+<?php
+// ==========================================
+//  تنظیمات مدیر سیستم
+//  فایل: api/settings.php
+// ==========================================
 
-(function () {
-  'use strict';
+error_reporting(0);
+ini_set('display_errors', 0);
 
-  // ─── آدرس API ───
-  const API_URL = '../api/settings.php';
+require_once 'config.php';
+require_once 'auth_check.php';
 
-  // ─── تنظیمات پیش‌فرض (fallback) ───
-  const DEFAULT_SETTINGS = {
-    bgColor:           '#202b59',
-    sidebarColor:      '#172047',
-    textColor:         '#ffffff',
-    inputColor:        '#1e2957',
-    activeMenuColor:   '#202b59',
-    hoverColor:        '#2a3f6b',
-    buttonColor:       '#139781',
-    dangerButtonColor: '#e74c3c',
-    scrollbarColor:    '#3498db',
-    font:              'Vazirmatn',
-    enableShadow:      true,
-    shadowColor:       '#000000',
-    shadowOpacity:     30,
-    logoDisplayMode:   'text',
-    logoDirection:     'rtl',
-    logoTextColor:     '#ffffff',
-    pageDirection:     'rtl',
-    schoolName:        'بوربور',
-  };
+setHeaders();
 
-  // ─── ابزارها ───
-  const hexToRgb = (h) => {
-    const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
-    return r
-      ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) }
-      : { r: 32, g: 43, b: 89 };
-  };
+$pdo    = getDB();
+$userId = $_SESSION['user_id'];
+$action = $_GET['action'] ?? ($_POST['action'] ?? '');
 
-  const applyStyleTag = (id, css) => {
-    let el = document.getElementById(id);
-    if (el) el.remove();
-    if (!css) return;
-    el = document.createElement('style');
-    el.id = id;
-    el.textContent = css;
-    document.head.appendChild(el);
-  };
+switch ($action) {
+    case 'get_profile':     getProfile($pdo, $userId);     break;
+    case 'save_profile':    saveProfile($pdo, $userId);    break;
+    case 'change_password': changePassword($pdo, $userId); break;
+    case 'upload_photo':    uploadPhoto($pdo, $userId);    break;
+    case 'save_theme':      saveTheme($pdo, $userId);      break;
+    case 'get_theme':       getTheme($pdo, $userId);       break;
+    default:
+        echo json_encode(['success' => false, 'message' => 'action نامعتبر است']);
+}
 
-  // ─── اعمال تنظیمات به صفحه ───
-  const applySettings = (settings) => {
-    const s = { ...DEFAULT_SETTINGS, ...settings };
 
-    // فونت
-    document.body.style.fontFamily = `"${s.font}", "Vazirmatn", sans-serif`;
+// ══════════════════════════════════════════════════════════
+//  ۱. دریافت اطلاعات پروفایل
+// ══════════════════════════════════════════════════════════
+function getProfile(PDO $pdo, int $userId): void
+{
+    $stmt = $pdo->prepare("
+        SELECT id, first_name, last_name, username, national_code,
+               mobile, birth_date, photo, role, school_id
+        FROM users
+        WHERE id = ? AND is_archived = 0
+    ");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
 
-    // جهت صفحه
-    document.body.setAttribute('dir', s.pageDirection);
-    document.documentElement.setAttribute('dir', s.pageDirection);
-
-    // رنگ پس‌زمینه
-    document.body.style.background = s.bgColor;
-
-    // بخش‌های کارت/سکشن
-    document.querySelectorAll(
-      '.settings-section, .card, .dashboard-card, .stat-card, .section-box'
-    ).forEach((el) => {
-      const rgb = hexToRgb(s.bgColor);
-      el.style.background = `rgba(${rgb.r},${rgb.g},${rgb.b},0.3)`;
-    });
-
-    // Sidebar
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) sidebar.style.background = s.sidebarColor;
-
-    // جهت sidebar
-    applySidebarDirection(s.pageDirection);
-
-    // رنگ متن
-    document.querySelectorAll(
-      '.page-title, .section-title, .form-label, .menu-item a, .card-title, .stat-title'
-    ).forEach((el) => (el.style.color = s.textColor));
-
-    // رنگ input ها
-    applyStyleTag(
-      'tl-input-style',
-      `.form-input, .form-select, .search-input, input[type="text"], input[type="tel"], input[type="email"], select, textarea {
-         background: ${s.inputColor} !important;
-         color: #fff !important;
-      }`
-    );
-
-    // آیتم منوی فعال
-    applyStyleTag(
-      'tl-active-menu-style',
-      `.menu-item.active a, .menu-item.active > a { background: ${s.activeMenuColor} !important; }`
-    );
-
-    // hover منو
-    applyStyleTag(
-      'tl-hover-style',
-      `.menu-item a:hover { background: ${s.hoverColor} !important; }`
-    );
-
-    // دکمه‌های اصلی
-    if (s.buttonColor) {
-      const rgb = hexToRgb(s.buttonColor);
-      const darker = `rgb(${Math.max(0, rgb.r - 30)},${Math.max(0, rgb.g - 30)},${Math.max(0, rgb.b - 30)})`;
-      applyStyleTag(
-        'tl-button-style',
-        `.btn-save, .btn-primary, .btn-add, .btn-submit, .modal-btn-confirm {
-           background: linear-gradient(90deg, ${s.buttonColor}, ${darker}) !important;
-           color: #fff !important;
-         }
-         .btn-save:hover, .btn-primary:hover, .btn-add:hover, .btn-submit:hover, .modal-btn-confirm:hover {
-           background: linear-gradient(90deg, ${darker}, ${s.buttonColor}) !important;
-         }`
-      );
+    if (!$user) {
+        echo json_encode(['success' => false, 'message' => 'کاربر یافت نشد']);
+        return;
     }
 
-    // دکمه‌های خطر
-    if (s.dangerButtonColor) {
-      const rgb = hexToRgb(s.dangerButtonColor);
-      const darker = `rgb(${Math.max(0, rgb.r - 30)},${Math.max(0, rgb.g - 30)},${Math.max(0, rgb.b - 30)})`;
-      applyStyleTag(
-        'tl-danger-button-style',
-        `.btn-delete, .btn-danger, .btn-reset {
-           background: linear-gradient(90deg, ${s.dangerButtonColor}, ${darker}) !important;
-           color: #fff !important;
-         }
-         .btn-delete:hover, .btn-danger:hover, .btn-reset:hover {
-           background: linear-gradient(90deg, ${darker}, ${s.dangerButtonColor}) !important;
-         }`
-      );
+    $user['photo_url'] = $user['photo'] ? getPhotoUrl($user['photo']) : null;
+    echo json_encode(['success' => true, 'user' => $user]);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  ۲. ذخیره اطلاعات پروفایل
+// ══════════════════════════════════════════════════════════
+function saveProfile(PDO $pdo, int $userId): void
+{
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) $input = $_POST;
+
+    $firstName    = trim($input['first_name']    ?? '');
+    $lastName     = trim($input['last_name']     ?? '');
+    $nationalCode = trim($input['national_code'] ?? '');
+    $mobile       = trim($input['mobile']        ?? '');
+    $birthDate    = trim($input['birth_date']    ?? '');
+
+    if ($firstName === '' || $lastName === '') {
+        echo json_encode(['success' => false, 'message' => 'نام و نام خانوادگی الزامی است']);
+        return;
+    }
+    if ($nationalCode !== '' && !preg_match('/^\d{10}$/', $nationalCode)) {
+        echo json_encode(['success' => false, 'message' => 'کد ملی باید ۱۰ رقم باشد']);
+        return;
+    }
+    if ($mobile !== '' && !preg_match('/^09\d{9}$/', $mobile)) {
+        echo json_encode(['success' => false, 'message' => 'شماره موبایل معتبر نیست']);
+        return;
     }
 
-    // اسکرول‌بار
-    applyStyleTag(
-      'tl-scrollbar-style',
-      `* { scrollbar-color: ${s.scrollbarColor} ${s.sidebarColor} !important; }
-       ::-webkit-scrollbar-thumb { background: ${s.scrollbarColor} !important; }
-       ::-webkit-scrollbar-track { background: ${s.sidebarColor} !important; }`
-    );
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET first_name = ?, last_name = ?, national_code = ?, mobile = ?, birth_date = ?
+        WHERE id = ?
+    ");
+    $stmt->execute([$firstName, $lastName, $nationalCode, $mobile, $birthDate, $userId]);
 
-    // سایه
-    if (s.enableShadow && s.shadowColor) {
-      const rgb = hexToRgb(s.shadowColor);
-      const opacity = (parseInt(s.shadowOpacity) || 30) / 100;
-      applyStyleTag(
-        'tl-shadow-style',
-        `.btn-save:hover, .btn-primary:hover, .btn-add:hover, .btn-delete:hover, .btn-danger:hover {
-           box-shadow: 0 5px 15px rgba(${rgb.r},${rgb.g},${rgb.b},${opacity}) !important;
-         }`
-      );
-    } else {
-      applyStyleTag('tl-shadow-style', '');
+    $updated = $pdo->prepare("SELECT first_name, last_name, photo, role FROM users WHERE id = ?");
+    $updated->execute([$userId]);
+    $u = $updated->fetch();
+
+    echo json_encode([
+        'success'    => true,
+        'message'    => 'اطلاعات پروفایل با موفقیت ذخیره شد',
+        'first_name' => $u['first_name'],
+        'last_name'  => $u['last_name'],
+        'photo_url'  => $u['photo'] ? getPhotoUrl($u['photo']) : null,
+        'role'       => $u['role'],
+    ]);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  ۳. تغییر نام کاربری و رمز عبور
+// ══════════════════════════════════════════════════════════
+function changePassword(PDO $pdo, int $userId): void
+{
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) $input = $_POST;
+
+    $newUsername = trim($input['new_username']     ?? '');
+    $currentPass = trim($input['current_password'] ?? '');
+    $newPass     = trim($input['new_password']     ?? '');
+    $confirmPass = trim($input['confirm_password'] ?? '');
+
+    $stmt = $pdo->prepare("SELECT username, password FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        echo json_encode(['success' => false, 'message' => 'کاربر یافت نشد']);
+        return;
     }
 
-    // لوگو sidebar
-    applyLogoToSidebar(s);
-  };
+    $passOk = password_verify($currentPass, $user['password'])
+           || $currentPass === $user['password'];
 
-  // ─── اعمال لوگو به sidebar اصلی ───
-  const applyLogoToSidebar = (s) => {
-    const mainLogo = document.querySelector('.sidebar .logo, .sidebar #mainLogo');
-    if (!mainLogo) return;
-
-    // آدرس تصویر و تنظیمات لوگو از localStorage
-    const logoImage = localStorage.getItem('logoImage');
-    const favicon   = localStorage.getItem('favicon');
-    const mode      = s.logoDisplayMode || 'text';
-    const direction = s.logoDirection   || 'rtl';
-    const color     = s.logoTextColor   || '#ffffff';
-    const name      = s.schoolName      || 'بوربور';
-
-    mainLogo.style.flexDirection = direction === 'ltr' ? 'row-reverse' : 'row';
-    mainLogo.style.display       = 'flex';
-    mainLogo.style.alignItems    = 'center';
-    mainLogo.style.justifyContent= 'center';
-    mainLogo.style.gap           = '10px';
-    mainLogo.style.flexWrap      = 'wrap';
-
-    // ساخت ساختار داخلی اگر وجود نداره
-    let imgEl  = mainLogo.querySelector('img.logo-image,  #mainLogoImage');
-    let textEl = mainLogo.querySelector('span.logo-text, #mainLogoText');
-
-    if (!imgEl) {
-      imgEl = document.createElement('img');
-      imgEl.className = 'logo-image';
-      imgEl.alt = '';
-      imgEl.style.maxWidth  = '50px';
-      imgEl.style.maxHeight = '50px';
-      imgEl.style.objectFit = 'contain';
-      mainLogo.appendChild(imgEl);
-    }
-    if (!textEl) {
-      textEl = document.createElement('span');
-      textEl.className = 'logo-text';
-      mainLogo.appendChild(textEl);
+    if (!$passOk) {
+        echo json_encode(['success' => false, 'message' => 'رمز عبور فعلی اشتباه است']);
+        return;
     }
 
-    // اعمال محتوا
-    textEl.textContent  = name;
-    textEl.style.color  = color;
-    textEl.style.fontSize   = '32px';
-    textEl.style.fontWeight = '700';
+    $fields = [];
+    $params = [];
 
-    if (mode === 'text') {
-      imgEl.style.display  = 'none';
-      textEl.style.display = 'inline';
-    } else if (mode === 'image') {
-      imgEl.style.display  = logoImage ? 'inline' : 'none';
-      textEl.style.display = 'none';
-      if (logoImage) imgEl.src = logoImage;
-    } else { // both
-      imgEl.style.display  = logoImage ? 'inline' : 'none';
-      textEl.style.display = 'inline';
-      if (logoImage) imgEl.src = logoImage;
-    }
-
-    // favicon
-    if (favicon) {
-      const link = document.querySelector("link[rel*='icon']");
-      if (link) link.href = favicon;
-    }
-
-    // عنوان صفحه
-    const currentTitle = document.title;
-    const schoolPart   = `مدرسه ${name}`;
-    // اگه قبلاً نام مدرسه دیگه‌ای داشت جایگزین میشه
-    document.title = currentTitle.replace(/مدرسه\s+\S+/, schoolPart);
-    if (!document.title.includes(name)) {
-      document.title = `${currentTitle} - ${name}`;
-    }
-  };
-
-  // ─── جهت Sidebar بر اساس direction ───
-  const applySidebarDirection = (direction) => {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) return;
-
-    const sidebar     = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const menuToggle  = document.querySelector('.menu-toggle');
-
-    if (direction === 'ltr') {
-      if (sidebar) {
-        sidebar.style.right      = 'auto';
-        sidebar.style.left       = '0';
-        sidebar.style.borderLeft = 'none';
-        sidebar.style.borderRight= '1px solid rgba(255,255,255,0.1)';
-      }
-      if (mainContent) {
-        mainContent.style.marginRight = '0';
-        mainContent.style.marginLeft  = '280px';
-      }
-      if (menuToggle) {
-        menuToggle.style.right = 'auto';
-        menuToggle.style.left  = '20px';
-      }
-    } else {
-      if (sidebar) {
-        sidebar.style.right       = '0';
-        sidebar.style.left        = 'auto';
-        sidebar.style.borderRight = 'none';
-        sidebar.style.borderLeft  = '1px solid rgba(255,255,255,0.1)';
-      }
-      if (mainContent) {
-        mainContent.style.marginLeft  = '0';
-        mainContent.style.marginRight = '280px';
-      }
-      if (menuToggle) {
-        menuToggle.style.left  = 'auto';
-        menuToggle.style.right = '20px';
-      }
-    }
-  };
-
-  // ─── بارگذاری تنظیمات ───
-  const loadSettings = async () => {
-    // ابتدا از localStorage بخون (سریع و بدون delay)
-    const cached = localStorage.getItem('themeSettings');
-    if (cached) {
-      try {
-        const settings = JSON.parse(cached);
-        applySettings(settings);
-      } catch (_) {}
-    } else {
-      // اگه cache نیست، پیش‌فرض رو اعمال کن
-      applySettings(DEFAULT_SETTINGS);
-    }
-
-    // سپس از سرور بخون و آپدیت کن (async)
-    try {
-      const res  = await fetch(`${API_URL}?action=get_theme`, { credentials: 'include' });
-      const data = await res.json();
-
-      if (data.success && data.theme) {
-        let serverSettings = DEFAULT_SETTINGS;
-        try {
-          serverSettings = JSON.parse(data.theme.name || '{}');
-        } catch (_) {}
-
-        if (data.school_name) {
-          serverSettings.schoolName = data.school_name;
+    if ($newUsername !== '' && $newUsername !== $user['username']) {
+        if (strlen($newUsername) < 4) {
+            echo json_encode(['success' => false, 'message' => 'نام کاربری باید حداقل ۴ کاراکتر باشد']);
+            return;
         }
-
-        // ذخیره در localStorage برای دفعات بعد
-        localStorage.setItem('themeSettings', JSON.stringify(serverSettings));
-        if (data.school_name) {
-          localStorage.setItem('schoolName', data.school_name);
+        $check = $pdo->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+        $check->execute([$newUsername, $userId]);
+        if ($check->fetch()) {
+            echo json_encode(['success' => false, 'message' => 'این نام کاربری قبلاً استفاده شده است']);
+            return;
         }
-
-        // اعمال تنظیمات سرور
-        applySettings(serverSettings);
-      }
-    } catch (err) {
-      // اگه سرور در دسترس نبود، از localStorage استفاده میشه (قبلاً اعمال شده)
-      console.warn('ThemeLoader: Could not fetch from server, using cache.');
+        $fields[] = 'username = ?';
+        $params[] = $newUsername;
     }
-  };
 
-  // ─── اجرا ───
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadSettings);
-  } else {
-    loadSettings();
-  }
-
-  // re-apply on resize (برای مدیریت direction در موبایل)
-  window.addEventListener('resize', () => {
-    const cached = localStorage.getItem('themeSettings');
-    if (cached) {
-      try {
-        const s = JSON.parse(cached);
-        applySidebarDirection(s.pageDirection || 'rtl');
-      } catch (_) {}
+    if ($newPass !== '') {
+        if (strlen($newPass) < 6) {
+            echo json_encode(['success' => false, 'message' => 'رمز جدید باید حداقل ۶ کاراکتر باشد']);
+            return;
+        }
+        if ($newPass !== $confirmPass) {
+            echo json_encode(['success' => false, 'message' => 'رمز جدید و تکرار آن یکسان نیستند']);
+            return;
+        }
+        $fields[] = 'password = ?';
+        $params[] = password_hash($newPass, PASSWORD_BCRYPT);
     }
-  });
 
-  // ─── صادر کردن برای استفاده در settings.js ───
-  window.ThemeLoader = {
-    applySettings,
-    loadSettings,
-  };
-})();
+    if (empty($fields)) {
+        echo json_encode(['success' => false, 'message' => 'هیچ تغییری ثبت نشد']);
+        return;
+    }
+
+    $params[] = $userId;
+    $pdo->prepare('UPDATE users SET ' . implode(', ', $fields) . ' WHERE id = ?')->execute($params);
+
+    if ($newUsername !== '' && $newUsername !== $user['username']) {
+        $_SESSION['username'] = $newUsername;
+    }
+
+    echo json_encode(['success' => true, 'message' => 'اطلاعات ورود با موفقیت تغییر کرد']);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  ۴. آپلود عکس پروفایل
+// ══════════════════════════════════════════════════════════
+function uploadPhoto(PDO $pdo, int $userId): void
+{
+    if (!isset($_FILES['photo'])) {
+        echo json_encode(['success' => false, 'message' => 'فایلی ارسال نشده']);
+        return;
+    }
+
+    $file    = $_FILES['photo'];
+    $maxSize = 1 * 1024 * 1024;
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        echo json_encode(['success' => false, 'message' => 'خطا در آپلود فایل']);
+        return;
+    }
+    if ($file['size'] > $maxSize) {
+        echo json_encode(['success' => false, 'message' => 'حجم فایل بیشتر از ۱ مگابایت است']);
+        return;
+    }
+
+    $finfo    = new finfo(FILEINFO_MIME_TYPE);
+    $mimeType = $finfo->file($file['tmp_name']);
+    $allowed  = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!in_array($mimeType, $allowed)) {
+        echo json_encode(['success' => false, 'message' => 'فقط فرمت‌های JPG، PNG و WebP مجاز هستند']);
+        return;
+    }
+
+    $uploadDir = __DIR__ . '/../uploads/profiles/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    $old = $pdo->prepare("SELECT photo FROM users WHERE id = ?");
+    $old->execute([$userId]);
+    $oldPhoto = $old->fetchColumn();
+    if ($oldPhoto && file_exists(__DIR__ . '/../' . $oldPhoto)) {
+        @unlink(__DIR__ . '/../' . $oldPhoto);
+    }
+
+    $ext = match($mimeType) {
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp',
+    };
+    $filename = 'user_' . $userId . '_' . time() . '.' . $ext;
+    $destPath = $uploadDir . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+        echo json_encode(['success' => false, 'message' => 'خطا در ذخیره فایل روی سرور']);
+        return;
+    }
+
+    $relativePath = 'uploads/profiles/' . $filename;
+    $pdo->prepare("UPDATE users SET photo = ? WHERE id = ?")->execute([$relativePath, $userId]);
+
+    echo json_encode([
+        'success'   => true,
+        'message'   => 'عکس پروفایل با موفقیت ذخیره شد',
+        'photo_url' => getPhotoUrl($relativePath),
+    ]);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  ۵. ذخیره تم
+// ══════════════════════════════════════════════════════════
+function saveTheme(PDO $pdo, int $userId): void
+{
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) $input = $_POST;
+
+    $stmt = $pdo->prepare("SELECT school_id FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $schoolId = $stmt->fetchColumn();
+
+    if (!$schoolId) {
+        echo json_encode(['success' => false, 'message' => 'مدرسه‌ای برای این کاربر تعریف نشده']);
+        return;
+    }
+
+    $themeName      = trim($input['name']             ?? 'سفارشی');
+    $primaryColor   = trim($input['primary_color']    ?? '#4a90d9');
+    $secondaryColor = trim($input['secondary_color']  ?? '#0f1629');
+    $font           = trim($input['font']             ?? 'Vazirmatn');
+
+    foreach ([$primaryColor, $secondaryColor] as $color) {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            echo json_encode(['success' => false, 'message' => 'فرمت رنگ نامعتبر است: ' . $color]);
+            return;
+        }
+    }
+
+    $pdo->prepare("UPDATE themes SET is_active = 0 WHERE school_id = ?")->execute([$schoolId]);
+
+    $existing = $pdo->prepare("SELECT id FROM themes WHERE school_id = ? AND name = ?");
+    $existing->execute([$schoolId, $themeName]);
+    $existingId = $existing->fetchColumn();
+
+    if ($existingId) {
+        $pdo->prepare("
+            UPDATE themes
+            SET primary_color = ?, secondary_color = ?, font = ?, is_active = 1
+            WHERE id = ?
+        ")->execute([$primaryColor, $secondaryColor, $font, $existingId]);
+    } else {
+        // ✅ باگ کاما اضافه برطرف شد
+        $pdo->prepare("
+            INSERT INTO themes (school_id, name, primary_color, secondary_color, font, is_active)
+            VALUES (?, ?, ?, ?, ?, 1)
+        ")->execute([$schoolId, $themeName, $primaryColor, $secondaryColor, $font]);
+    }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم با موفقیت ذخیره شد',
+        'theme'   => [
+            'name'            => $themeName,
+            'primary_color'   => $primaryColor,
+            'secondary_color' => $secondaryColor,
+            'font'            => $font,
+        ],
+    ]);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  ۶. دریافت تم فعال
+// ══════════════════════════════════════════════════════════
+function getTheme(PDO $pdo, int $userId): void
+{
+    $stmt = $pdo->prepare("SELECT school_id FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $schoolId = $stmt->fetchColumn();
+
+    if (!$schoolId) {
+        echo json_encode(['success' => true, 'theme' => null]);
+        return;
+    }
+
+    $theme = $pdo->prepare("
+        SELECT name, primary_color, secondary_color, font
+        FROM themes
+        WHERE school_id = ? AND is_active = 1
+        ORDER BY id DESC
+        LIMIT 1
+    ");
+    $theme->execute([$schoolId]);
+    $result = $theme->fetch();
+
+    echo json_encode(['success' => true, 'theme' => $result ?: null]);
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  Helper
+// ══════════════════════════════════════════════════════════
+function getPhotoUrl(string $path): string
+{
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    // مسیر فعلی اسکریپت رو پیدا میکنیم
+    // api/settings.php → باید بره به ریشه پروژه
+    $scriptDir   = dirname($_SERVER['SCRIPT_NAME']); // مثلاً /borbor/api
+    $projectRoot = dirname($scriptDir);              // مثلاً /borbor
+
+    // اطمینان از اینکه / آخرش داره
+    $projectRoot = rtrim($projectRoot, '/') . '/';
+
+    return $protocol . '://' . $host . $projectRoot . ltrim($path, '/');
+}

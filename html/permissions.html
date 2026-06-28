@@ -11,6 +11,22 @@
     <script src="../javaScript/auth.js"></script>
     <script src="../javaScript/permission-guard.js"></script>
     <script src="../javaScript/sidebar-permissions.js"></script>
+    <script>
+      /* switchTab باید قبل از permissions.js تعریف بشه
+         تا onclick روی تب‌ها کار کنه */
+      function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        var key = tab === 'perms' ? 'Perms' : 'Users';
+        var btn = document.getElementById('tabBtn' + key);
+        var pnl = document.getElementById('tab'    + key);
+        if(btn) btn.classList.add('active');
+        if(pnl) pnl.classList.add('active');
+        if(tab === 'users' && window.usersLoaded === false) {
+          if(typeof loadUsers === 'function') loadUsers();
+        }
+      }
+    </script>
   </head>
   <body>
     <!-- PAGE LOADER -->
@@ -43,59 +59,57 @@
       </div>
       <div class="nav-section-label">منوی اصلی</div>
       <div class="menu-item">
-        <a href="../html/dashbord.html"
-          ><i class="fas fa-chart-line"></i> داشبورد</a
-        >
+        <a href="../html/dashbord.html"><i class="fas fa-chart-line"></i> داشبورد</a>
       </div>
-      <div class="menu-item has-submenu">
+
+      <!-- مدیریت کاربران — پیش‌فرض باز -->
+      <div class="menu-item has-submenu open">
         <a href="#" class="menu-link">
           <i class="fas fa-users"></i> مدیریت کاربران
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
         <div class="submenu">
-          <a href="../html/Assistant_management.html" class="submenu-item"
-            ><i class="fas fa-user-tie"></i> مدیریت معاونان</a
-          >
-          <a href="../html/Teacher_management.html" class="submenu-item"
-            ><i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین</a
-          >
-          <a href="../html/student.html" class="submenu-item"
-            ><i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان</a
-          >
-
+          <a href="../html/Assistant_management.html" class="submenu-item">
+            <i class="fas fa-user-tie"></i> مدیریت معاونان
+          </a>
+          <a href="../html/Teacher_management.html" class="submenu-item">
+            <i class="fas fa-chalkboard-teacher"></i> مدیریت معلمین
+          </a>
+          <a href="../html/student.html" class="submenu-item">
+            <i class="fas fa-user-graduate"></i> مدیریت دانش‌آموزان
+          </a>
         </div>
       </div>
-      <div class="menu-item has-submenu">
+
+      <!-- مدیریت کلاس‌ها — پیش‌فرض باز -->
+      <div class="menu-item has-submenu open">
         <a href="#" class="menu-link">
           <i class="fas fa-chalkboard-teacher"></i> مدیریت کلاس‌ها
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
         <div class="submenu">
-          <a href="../html/Courses.html" class="submenu-item"
-            ><i class="fas fa-list"></i> مدیریت دروس</a
-          >
-          <a href="../html/Class-schedule.html" class="submenu-item"
-            ><i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی</a
-          >
-          <a href="../html/Attendance.html" class="submenu-item"
-            ><i class="fas fa-clipboard-check"></i> حضور و غیاب</a
-          >
-          <a href="../html/grades.html" class="submenu-item"
-            ><i class="fas fa-star"></i> نمرات</a
-          >
+          <a href="../html/Courses.html" class="submenu-item">
+            <i class="fas fa-list"></i> مدیریت دروس
+          </a>
+          <a href="../html/Class-schedule.html" class="submenu-item">
+            <i class="fas fa-calendar-alt"></i> برنامه و لیست کلاسی
+          </a>
+          <a href="../html/Attendance.html" class="submenu-item">
+            <i class="fas fa-clipboard-check"></i> حضور و غیاب
+          </a>
+          <a href="../html/grades.html" class="submenu-item">
+            <i class="fas fa-star"></i> نمرات
+          </a>
         </div>
       </div>
+
       <div class="nav-divider"></div>
       <div class="nav-section-label">مدیریت</div>
       <div class="menu-item">
-        <a href="../html/Pre-registration.html"
-          ><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a
-        >
+        <a href="../html/Pre-registration.html"><i class="fas fa-clipboard-list"></i> پیش ثبت‌نام‌ها</a>
       </div>
       <div class="menu-item">
-        <a href="../html/reports.html"
-          ><i class="fas fa-file-alt"></i> گزارش‌ها</a
-        >
+        <a href="../html/reports.html"><i class="fas fa-file-alt"></i> گزارش‌ها</a>
       </div>
       <div class="menu-item">
         <a href="../html/notife.html"><i class="fas fa-bell"></i> اطلاعیه‌ها</a>
@@ -106,11 +120,11 @@
       <div class="nav-divider"></div>
       <div class="nav-section-label">سیستم</div>
       <div class="menu-item active">
-        <a href="../html/permissions.html"
-          ><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a
-        >
+        <a href="../html/permissions.html"><i class="fas fa-shield-alt"></i> مدیریت دسترسی‌ها</a>
       </div>
-       <div class="menu-item"><a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی </a></div>
+      <div class="menu-item">
+        <a href="../html/principal_support.html"><i class="fas fa-headset"></i> پشتیبانی</a>
+      </div>
       <div class="menu-item">
         <a href="../html/settings.html"><i class="fas fa-cog"></i> تنظیمات</a>
       </div>
@@ -149,10 +163,7 @@
         <!-- STATS -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div
-              class="stat-icon"
-              style="background: linear-gradient(135deg, #667eea, #764ba2)"
-            >
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2)">
               <i class="fas fa-shield-alt"></i>
             </div>
             <div class="stat-info">
@@ -161,22 +172,16 @@
             </div>
           </div>
           <div class="stat-card">
-            <div
-              class="stat-icon"
-              style="background: linear-gradient(135deg, #f093fb, #f5576c)"
-            >
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c)">
               <i class="fas fa-users"></i>
             </div>
             <div class="stat-info">
               <div class="stat-label">نقش‌های کاربری</div>
-              <div class="stat-value">۴</div>
+              <div class="stat-value">۳</div>
             </div>
           </div>
           <div class="stat-card">
-            <div
-              class="stat-icon"
-              style="background: linear-gradient(135deg, #4facfe, #00f2fe)"
-            >
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe)">
               <i class="fas fa-check-circle"></i>
             </div>
             <div class="stat-info">
@@ -185,10 +190,7 @@
             </div>
           </div>
           <div class="stat-card">
-            <div
-              class="stat-icon"
-              style="background: linear-gradient(135deg, #fa709a, #fee140)"
-            >
+            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a, #fee140)">
               <i class="fas fa-lock"></i>
             </div>
             <div class="stat-info">
@@ -200,11 +202,7 @@
 
         <!-- ═══════════ TABS ═══════════ -->
         <div class="tabs-bar">
-          <button
-            class="tab-btn active"
-            id="tabBtnPerms"
-            onclick="switchTab('perms')"
-          >
+          <button class="tab-btn active" id="tabBtnPerms" onclick="switchTab('perms')">
             <i class="fas fa-shield-alt"></i> تعریف دسترسی‌ها
           </button>
           <button class="tab-btn" id="tabBtnUsers" onclick="switchTab('users')">
@@ -225,12 +223,7 @@
                 placeholder="جستجو در دسترسی‌ها..."
                 autocomplete="off"
               />
-              <button
-                class="search-clear-btn"
-                id="searchClearBtn"
-                onclick="clearSearch()"
-                title="پاک کردن"
-              >
+              <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="پاک کردن">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -245,7 +238,6 @@
                 <option value="teacher">معلمین</option>
                 <option value="vice_principal">معاونین</option>
                 <option value="student">دانش‌آموزان</option>
-                <option value="parent">اولیا</option>
               </select>
               <select class="filter-select" id="accessTypeFilter">
                 <option value="">همه سطوح دسترسی</option>
@@ -264,11 +256,7 @@
           <!-- TABLE -->
           <div class="table-container">
             <div class="action-row">
-              <button
-                class="btn-add-permission"
-                id="createPermissionBtn"
-                onclick="openCreatePermissionModal()"
-              >
+              <button class="btn-add-permission" id="createPermissionBtn" onclick="openCreatePermissionModal()">
                 <i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید
               </button>
             </div>
@@ -289,9 +277,6 @@
                 <div class="header-cell">
                   <i class="fas fa-user-graduate"></i> دانش‌آموزان
                 </div>
-                <div class="header-cell">
-                  <i class="fas fa-user-friends"></i> اولیا
-                </div>
               </div>
               <div class="table-body" id="permissionsTableBody"></div>
             </div>
@@ -301,34 +286,20 @@
 
         <!-- ══════ TAB 2: USERS ══════ -->
         <div class="tab-panel" id="tabUsers">
+
+          <!-- فیلتر نقش + جستجو -->
           <div class="users-filter-bar">
             <div class="role-filter-btns">
-              <button
-                class="role-filter-btn active"
-                data-role="all"
-                onclick="filterUserRole('all')"
-              >
+              <button class="role-filter-btn active" data-role="all" onclick="filterUserRole('all')">
                 <i class="fas fa-users"></i> همه
               </button>
-              <button
-                class="role-filter-btn"
-                data-role="teacher"
-                onclick="filterUserRole('teacher')"
-              >
+              <button class="role-filter-btn" data-role="teacher" onclick="filterUserRole('teacher')">
                 <i class="fas fa-chalkboard-teacher"></i> معلمین
               </button>
-              <button
-                class="role-filter-btn"
-                data-role="vice_principal"
-                onclick="filterUserRole('vice_principal')"
-              >
+              <button class="role-filter-btn" data-role="vice_principal" onclick="filterUserRole('vice_principal')">
                 <i class="fas fa-user-shield"></i> معاونان
               </button>
-              <button
-                class="role-filter-btn"
-                data-role="student"
-                onclick="filterUserRole('student')"
-              >
+              <button class="role-filter-btn" data-role="student" onclick="filterUserRole('student')">
                 <i class="fas fa-user-graduate"></i> دانش‌آموزان
               </button>
             </div>
@@ -342,6 +313,27 @@
             />
           </div>
 
+          <!-- آمار سریع کاربران -->
+          <div class="users-quick-stats" id="usersQuickStats" style="display:none">
+            <div class="uqs-item">
+              <span class="uqs-val" id="uqsTotal">0</span>
+              <span class="uqs-lbl">کل کاربران</span>
+            </div>
+            <div class="uqs-item">
+              <span class="uqs-val" id="uqsTeacher">0</span>
+              <span class="uqs-lbl">معلمین</span>
+            </div>
+            <div class="uqs-item">
+              <span class="uqs-val" id="uqsVP">0</span>
+              <span class="uqs-lbl">معاونان</span>
+            </div>
+            <div class="uqs-item">
+              <span class="uqs-val" id="uqsStudent">0</span>
+              <span class="uqs-lbl">دانش‌آموزان</span>
+            </div>
+          </div>
+
+          <!-- گرید کاربران -->
           <div class="users-grid" id="usersGrid">
             <div class="no-users-state">
               <i class="fas fa-spinner fa-spin"></i>
@@ -350,128 +342,78 @@
           </div>
         </div>
         <!-- /tabUsers -->
-      </div>
-      <!-- /main-content -->
-    </div>
-    <!-- /container -->
+
+      </div><!-- /main-content -->
+    </div><!-- /container -->
 
     <!-- ══════════════════ MODALS ══════════════════ -->
 
     <!-- Explanation Modal -->
     <div class="modal" id="explanationModal">
       <div class="modal-content explanation-modal-content">
-        <button class="close-btn" onclick="closeExplanationModal()">
-          <i class="fas fa-times"></i>
-        </button>
-        <h2 class="modal-title">
-          <i class="fas fa-question-circle"></i> توضیحات دسترسی
-        </h2>
+        <button class="close-btn" onclick="closeExplanationModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title"><i class="fas fa-question-circle"></i> توضیحات دسترسی</h2>
         <div class="explanation-content">
           <div class="explanation-header">
-            <div class="explanation-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
+            <div class="explanation-icon"><i class="fas fa-shield-alt"></i></div>
             <div>
               <h3 class="explanation-name" id="explanationName">نام دسترسی</h3>
-              <span class="explanation-category" id="explanationCategory"
-                >دسته‌بندی</span
-              >
+              <span class="explanation-category" id="explanationCategory">دسته‌بندی</span>
             </div>
           </div>
           <div class="explanation-section">
-            <div class="explanation-section-title">
-              <i class="fas fa-info-circle"></i> این دسترسی چیست؟
-            </div>
+            <div class="explanation-section-title"><i class="fas fa-info-circle"></i> این دسترسی چیست؟</div>
             <p class="explanation-text" id="explanationDescription"></p>
           </div>
           <div class="explanation-section">
-            <div class="explanation-section-title">
-              <i class="fas fa-cogs"></i> چه کاری انجام می‌دهد؟
-            </div>
+            <div class="explanation-section-title"><i class="fas fa-cogs"></i> چه کاری انجام می‌دهد؟</div>
             <p class="explanation-text" id="explanationFunction"></p>
           </div>
           <div class="explanation-section warning">
-            <div class="explanation-section-title">
-              <i class="fas fa-exclamation-triangle"></i> نکات مهم
-            </div>
+            <div class="explanation-section-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم</div>
             <p class="explanation-text" id="explanationWarning"></p>
           </div>
           <div class="explanation-section example">
-            <div class="explanation-section-title">
-              <i class="fas fa-lightbulb"></i> مثال عملی
-            </div>
+            <div class="explanation-section-title"><i class="fas fa-lightbulb"></i> مثال عملی</div>
             <p class="explanation-text" id="explanationExample"></p>
           </div>
           <div class="explanation-section meta-info">
-            <div class="explanation-section-title">
-              <i class="fas fa-info"></i> اطلاعات تکمیلی
-            </div>
+            <div class="explanation-section-title"><i class="fas fa-info"></i> اطلاعات تکمیلی</div>
             <div class="meta-info-grid">
               <div class="meta-item" id="explanationCreatedByWrap">
-                <span class="meta-label"
-                  ><i class="fas fa-user-plus"></i> ایجادکننده:</span
-                >
+                <span class="meta-label"><i class="fas fa-user-plus"></i> ایجادکننده:</span>
                 <span class="meta-value" id="explanationCreatedBy">-</span>
               </div>
-              <div
-                class="meta-item"
-                id="explanationLockedByWrap"
-                style="display: none"
-              >
-                <span class="meta-label"
-                  ><i class="fas fa-lock"></i> قفل‌کننده:</span
-                >
+              <div class="meta-item" id="explanationLockedByWrap" style="display:none">
+                <span class="meta-label"><i class="fas fa-lock"></i> قفل‌کننده:</span>
                 <span class="meta-value" id="explanationLockedBy">-</span>
               </div>
-              <div
-                class="meta-item"
-                id="explanationOwnerOnlyWrap"
-                style="display: none"
-              >
-                <span class="meta-label"
-                  ><i class="fas fa-crown"></i> وضعیت:</span
-                >
+              <div class="meta-item" id="explanationOwnerOnlyWrap" style="display:none">
+                <span class="meta-label"><i class="fas fa-crown"></i> وضعیت:</span>
                 <span class="meta-value owner-badge-text">فقط مدیر ارشد</span>
               </div>
             </div>
           </div>
         </div>
-        <button class="modal-btn-close" onclick="closeExplanationModal()">
-          <i class="fas fa-check"></i> متوجه شدم
-        </button>
+        <button class="modal-btn-close" onclick="closeExplanationModal()"><i class="fas fa-check"></i> متوجه شدم</button>
       </div>
     </div>
 
     <!-- Create Permission Modal -->
     <div class="modal" id="createPermissionModal">
       <div class="modal-content create-permission-content">
-        <button class="close-btn" onclick="closeCreatePermissionModal()">
-          <i class="fas fa-times"></i>
-        </button>
-        <h2 class="modal-title">
-          <i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید
-        </h2>
+        <button class="close-btn" onclick="closeCreatePermissionModal()"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title"><i class="fas fa-plus-circle"></i> ایجاد دسترسی جدید</h2>
         <div class="create-form">
           <div class="form-section">
-            <div class="form-section-title">
-              <i class="fas fa-info"></i> اطلاعات اولیه
-            </div>
+            <div class="form-section-title"><i class="fas fa-info"></i> اطلاعات اولیه</div>
             <div class="form-grid">
               <div class="form-group full-width">
-                <label class="form-label"
-                  >نام دسترسی <span class="required">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-input"
-                  id="newPermissionName"
-                  placeholder="مثال: مشاهده کارنامه"
-                />
+                <label class="form-label">نام دسترسی <span class="required">*</span></label>
+                <input type="text" class="form-input" id="newPermissionName" placeholder="مثال: مشاهده کارنامه" />
               </div>
               <div class="form-group full-width">
-                <label class="form-label"
-                  >دسته‌بندی <span class="required">*</span></label
-                >
+                <label class="form-label">دسته‌بندی <span class="required">*</span></label>
                 <select class="form-input" id="newPermissionCategory">
                   <option value="">انتخاب کنید...</option>
                   <optgroup label="── صفحات ──">
@@ -480,10 +422,7 @@
                   <optgroup label="── مدیریت کاربران ──">
                     <option value="مدیریت معاونین">مدیریت معاونین</option>
                     <option value="مدیریت معلمین">مدیریت معلمین</option>
-                    <option value="مدیریت دانش‌آموزان">
-                      مدیریت دانش‌آموزان
-                    </option>
-                    <option value="مدیریت اولیاء">مدیریت اولیاء</option>
+                    <option value="مدیریت دانش‌آموزان">مدیریت دانش‌آموزان</option>
                     <option value="مدیریت کاربران">مدیریت کاربران</option>
                   </optgroup>
                   <optgroup label="── کلاس و آموزش ──">
@@ -509,75 +448,36 @@
                 </select>
               </div>
               <div class="form-group full-width">
-                <label class="form-label"
-                  >توضیحات <span class="required">*</span></label
-                >
-                <textarea
-                  class="form-input"
-                  id="newPermissionDescription"
-                  rows="3"
-                  placeholder="توضیح کاملی از دسترسی..."
-                ></textarea>
+                <label class="form-label">توضیحات <span class="required">*</span></label>
+                <textarea class="form-input" id="newPermissionDescription" rows="3" placeholder="توضیح کاملی از دسترسی..."></textarea>
               </div>
               <div class="form-group full-width">
                 <label class="form-label">عملکرد</label>
-                <textarea
-                  class="form-input"
-                  id="newPermissionFunction"
-                  rows="2"
-                  placeholder="این دسترسی چه کارهایی را امکان‌پذیر می‌کند؟"
-                ></textarea>
+                <textarea class="form-input" id="newPermissionFunction" rows="2" placeholder="این دسترسی چه کارهایی را امکان‌پذیر می‌کند؟"></textarea>
               </div>
               <div class="form-group full-width">
                 <label class="form-label">نکات مهم</label>
-                <textarea
-                  class="form-input"
-                  id="newPermissionWarning"
-                  rows="2"
-                  placeholder="هشدارها یا نکات امنیتی..."
-                ></textarea>
+                <textarea class="form-input" id="newPermissionWarning" rows="2" placeholder="هشدارها یا نکات امنیتی..."></textarea>
               </div>
               <div class="form-group full-width">
                 <label class="form-label">مثال کاربردی</label>
-                <textarea
-                  class="form-input"
-                  id="newPermissionExample"
-                  rows="2"
-                  placeholder="یک مثال عملی..."
-                ></textarea>
+                <textarea class="form-input" id="newPermissionExample" rows="2" placeholder="یک مثال عملی..."></textarea>
               </div>
-              <div
-                class="form-group full-width"
-                id="ownerOnlyFieldWrap"
-                style="display: none"
-              >
-                <label class="form-label"
-                  ><i class="fas fa-crown"></i> ویژگی‌های مدیر ارشد:</label
-                >
+              <div class="form-group full-width" id="ownerOnlyFieldWrap" style="display:none">
+                <label class="form-label"><i class="fas fa-crown"></i> ویژگی‌های مدیر ارشد:</label>
                 <label class="checkbox-toggle-label">
-                  <input
-                    type="checkbox"
-                    id="newPermissionOwnerOnly"
-                    class="checkbox-toggle"
-                  />
+                  <input type="checkbox" id="newPermissionOwnerOnly" class="checkbox-toggle" />
                   <span class="checkbox-toggle-track"></span>
-                  <span class="checkbox-toggle-text"
-                    >فقط مدیر ارشد می‌تواند این دسترسی را ببیند و ویرایش
-                    کند</span
-                  >
+                  <span class="checkbox-toggle-text">فقط مدیر ارشد می‌تواند این دسترسی را ببیند و ویرایش کند</span>
                 </label>
               </div>
             </div>
           </div>
           <div class="form-section">
-            <div class="form-section-title">
-              <i class="fas fa-users"></i> تنظیم دسترسی‌های پیش‌فرض
-            </div>
+            <div class="form-section-title"><i class="fas fa-users"></i> تنظیم دسترسی‌های پیش‌فرض</div>
             <div class="default-access-grid">
               <div class="default-access-item">
-                <label class="access-role-label"
-                  ><i class="fas fa-chalkboard-teacher"></i> معلمین</label
-                >
+                <label class="access-role-label"><i class="fas fa-chalkboard-teacher"></i> معلمین</label>
                 <select class="form-input" id="defaultAccessTeacher">
                   <option value="none">بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -586,9 +486,7 @@
                 </select>
               </div>
               <div class="default-access-item">
-                <label class="access-role-label"
-                  ><i class="fas fa-user-shield"></i> معاونین</label
-                >
+                <label class="access-role-label"><i class="fas fa-user-shield"></i> معاونین</label>
                 <select class="form-input" id="defaultAccessVicePrincipal">
                   <option value="none">بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
@@ -597,21 +495,8 @@
                 </select>
               </div>
               <div class="default-access-item">
-                <label class="access-role-label"
-                  ><i class="fas fa-user-graduate"></i> دانش‌آموزان</label
-                >
+                <label class="access-role-label"><i class="fas fa-user-graduate"></i> دانش‌آموزان</label>
                 <select class="form-input" id="defaultAccessStudent">
-                  <option value="none" selected>بدون دسترسی</option>
-                  <option value="read">فقط خواندن</option>
-                  <option value="write">فقط نوشتن</option>
-                  <option value="both">خواندن و نوشتن</option>
-                </select>
-              </div>
-              <div class="default-access-item">
-                <label class="access-role-label"
-                  ><i class="fas fa-user-friends"></i> اولیا</label
-                >
-                <select class="form-input" id="defaultAccessParent">
                   <option value="none" selected>بدون دسترسی</option>
                   <option value="read">فقط خواندن</option>
                   <option value="write">فقط نوشتن</option>
@@ -622,16 +507,10 @@
           </div>
         </div>
         <div class="modal-buttons">
-          <button
-            class="modal-btn modal-btn-confirm"
-            onclick="createNewPermission()"
-          >
+          <button class="modal-btn modal-btn-confirm" onclick="createNewPermission()">
             <i class="fas fa-plus"></i> ایجاد دسترسی
           </button>
-          <button
-            class="modal-btn modal-btn-cancel"
-            onclick="closeCreatePermissionModal()"
-          >
+          <button class="modal-btn modal-btn-cancel" onclick="closeCreatePermissionModal()">
             <i class="fas fa-times"></i> انصراف
           </button>
         </div>
@@ -641,16 +520,11 @@
     <!-- Delete Confirm Modal -->
     <div class="modal" id="deleteConfirmModal">
       <div class="modal-content delete-confirm-content">
-        <button class="close-btn" onclick="closeDeleteModal()">
-          <i class="fas fa-times"></i>
-        </button>
-        <div class="delete-confirm-icon">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
+        <button class="close-btn" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+        <div class="delete-confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <h2 class="modal-title delete-title">حذف دسترسی</h2>
         <p class="delete-confirm-text">
-          آیا از حذف دسترسی <strong id="deletePermissionName">-</strong> مطمئن
-          هستید؟
+          آیا از حذف دسترسی <strong id="deletePermissionName">-</strong> مطمئن هستید؟
         </p>
         <p class="delete-confirm-warning">
           <i class="fas fa-exclamation-circle"></i> این عملیات برگشت‌پذیر نیست.
@@ -659,38 +533,53 @@
           <button class="modal-btn modal-btn-danger" id="deleteConfirmBtn">
             <i class="fas fa-trash"></i> بله، حذف شود
           </button>
-          <button
-            class="modal-btn modal-btn-cancel"
-            onclick="closeDeleteModal()"
-          >
+          <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
             <i class="fas fa-times"></i> انصراف
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ▶ RESET CONFIRM MODAL (جدید) -->
+    <!-- Reset Confirm Modal -->
     <div class="modal" id="resetConfirmModal">
       <div class="modal-content reset-confirm-content">
-        <button class="close-btn" onclick="closeResetConfirm()">
-          <i class="fas fa-times"></i>
-        </button>
+        <button class="close-btn" onclick="closeResetConfirm()"><i class="fas fa-times"></i></button>
         <div class="reset-confirm-icon"><i class="fas fa-undo"></i></div>
         <div class="reset-confirm-title">بازنشانی اطلاعات</div>
         <p class="reset-confirm-text">
           آیا مطمئن هستید؟<br />
-          اطلاعات مجدداً از سرور بارگذاری می‌شود و تغییرات ذخیره‌نشده از بین
-          می‌روند.
+          اطلاعات مجدداً از سرور بارگذاری می‌شود و تغییرات ذخیره‌نشده از بین می‌روند.
         </p>
         <div class="modal-buttons">
           <button class="modal-btn modal-btn-confirm" onclick="confirmReset()">
             <i class="fas fa-undo"></i> بله، بازنشانی شود
           </button>
-          <button
-            class="modal-btn modal-btn-cancel"
-            onclick="closeResetConfirm()"
-          >
+          <button class="modal-btn modal-btn-cancel" onclick="closeResetConfirm()">
             <i class="fas fa-times"></i> انصراف
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: دسترسی‌های یک کاربر خاص -->
+    <div class="modal" id="userPermModal">
+      <div class="modal-content user-perm-modal-content">
+        <button class="close-btn" onclick="closeUserPermModal()"><i class="fas fa-times"></i></button>
+        <div class="upm-header">
+          <div class="upm-avatar" id="upmAvatar">؟</div>
+          <div class="upm-info">
+            <div class="upm-name" id="upmName">نام کاربر</div>
+            <div class="upm-role" id="upmRole">نقش</div>
+          </div>
+        </div>
+        <div class="upm-search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="upmSearch" placeholder="جستجو در دسترسی‌ها..." oninput="renderUPMList()" />
+        </div>
+        <div class="upm-list" id="upmList"></div>
+        <div class="modal-buttons" style="margin-top:16px">
+          <button class="modal-btn modal-btn-cancel" onclick="closeUserPermModal()">
+            <i class="fas fa-times"></i> بستن
           </button>
         </div>
       </div>
@@ -701,414 +590,341 @@
       <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
       <div class="toast-content">
         <div class="toast-title">موفقیت‌آمیز!</div>
-        <div class="toast-message" id="toastMessage">
-          عملیات با موفقیت انجام شد
-        </div>
+        <div class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد</div>
       </div>
-      <button class="toast-close" onclick="closeToast()">
-        <i class="fas fa-times"></i>
-      </button>
+      <button class="toast-close" onclick="closeToast()"><i class="fas fa-times"></i></button>
     </div>
 
     <script src="../javaScript/permissions.js"></script>
     <script>
       /* ═══════════════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════════════ */
-      var menuToggle = document.getElementById("menuToggle");
-      var sidebar = document.getElementById("sidebar");
-      var sidebarOverlay = document.getElementById("sidebarOverlay");
-      var sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
-
-      function openSidebar() {
-        sidebar.classList.add("active");
-        sidebarOverlay.classList.add("active");
-        menuToggle.classList.add("sidebar-open"); // ← مخفی کردن دکمه همبرگر
-        document.body.style.overflow = "hidden";
-      }
-      function closeSidebar() {
-        sidebar.classList.remove("active");
-        sidebarOverlay.classList.remove("active");
-        menuToggle.classList.remove("sidebar-open"); // ← نمایش دوباره دکمه
-        document.body.style.overflow = "";
-      }
-
-      menuToggle.addEventListener("click", openSidebar);
-      sidebarCloseBtn.addEventListener("click", closeSidebar);
-      sidebarOverlay.addEventListener("click", closeSidebar);
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") closeSidebar();
+         SIDEBAR — فقط accordion ساب‌منو
+         باز/بسته sidebar توسط sidebar-permissions.js انجام می‌شود
+      ═══════════════════════════════════════════════ */
+      document.querySelectorAll('.menu-item.has-submenu').forEach(function(item){
+        item.querySelector('.menu-link').addEventListener('click', function(e){
+          e.preventDefault();
+          document.querySelectorAll('.menu-item.has-submenu').forEach(function(o){
+            if(o !== item) o.classList.remove('open');
+          });
+          item.classList.toggle('open');
+        });
       });
 
-      /* submenu accordion */
-      document
-        .querySelectorAll(".menu-item.has-submenu")
-        .forEach(function (item) {
-          item
-            .querySelector(".menu-link")
-            .addEventListener("click", function (e) {
-              e.preventDefault();
-              document
-                .querySelectorAll(".menu-item.has-submenu")
-                .forEach(function (o) {
-                  if (o !== item) o.classList.remove("open");
-                });
-              item.classList.toggle("open");
-            });
-        });
-
       /* ═══════════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════════ */
-      function switchTab(tab) {
-        document.querySelectorAll(".tab-btn").forEach(function (b) {
-          b.classList.remove("active");
-        });
-        document.querySelectorAll(".tab-panel").forEach(function (p) {
-          p.classList.remove("active");
-        });
-        document
-          .getElementById("tabBtn" + (tab === "perms" ? "Perms" : "Users"))
-          .classList.add("active");
-        document
-          .getElementById("tab" + (tab === "perms" ? "Perms" : "Users"))
-          .classList.add("active");
-        if (tab === "users" && window.usersLoaded === false) loadUsers();
-      }
-
-      /* ═══════════════════════════════════════════════
-   SEARCH CLEAR
-═══════════════════════════════════════════════ */
-      document
-        .getElementById("permissionSearch")
-        .addEventListener("input", function () {
-          document
-            .getElementById("searchClearBtn")
-            .classList.toggle("visible", this.value.length > 0);
-        });
+         SEARCH CLEAR
+      ═══════════════════════════════════════════════ */
+      document.getElementById('permissionSearch').addEventListener('input', function(){
+        document.getElementById('searchClearBtn').classList.toggle('visible', this.value.length > 0);
+      });
       function clearSearch() {
-        var inp = document.getElementById("permissionSearch");
-        inp.value = "";
-        document.getElementById("searchClearBtn").classList.remove("visible");
-        inp.dispatchEvent(new Event("input"));
+        var inp = document.getElementById('permissionSearch');
+        inp.value = '';
+        document.getElementById('searchClearBtn').classList.remove('visible');
+        inp.dispatchEvent(new Event('input'));
         inp.focus();
       }
 
       /* ═══════════════════════════════════════════════
-   RESET CONFIRM MODAL
-═══════════════════════════════════════════════ */
-      function openResetConfirm() {
-        document.getElementById("resetConfirmModal").classList.add("active");
-      }
-      function closeResetConfirm() {
-        document.getElementById("resetConfirmModal").classList.remove("active");
-      }
-      function confirmReset() {
+         RESET CONFIRM
+      ═══════════════════════════════════════════════ */
+      function openResetConfirm(){ document.getElementById('resetConfirmModal').classList.add('active'); }
+      function closeResetConfirm(){ document.getElementById('resetConfirmModal').classList.remove('active'); }
+      function confirmReset(){
         closeResetConfirm();
-        if (typeof fetchPermissions === "function") fetchPermissions();
+        if(typeof fetchPermissions==='function') fetchPermissions();
       }
-      document
-        .getElementById("resetConfirmModal")
-        .addEventListener("click", function (e) {
-          if (e.target === this) closeResetConfirm();
-        });
+      document.getElementById('resetConfirmModal').addEventListener('click', function(e){
+        if(e.target===this) closeResetConfirm();
+      });
 
       /* ═══════════════════════════════════════════════
-   USERS TAB
-═══════════════════════════════════════════════ */
-      window.usersLoaded = false;
-      window.usersData = []; // [{id, name, role, photo, username}]
-      window.currentRoleFilter = "all";
-      var USERS_API = "/borbor/api/users-list.php"; // باید این endpoint وجود داشته باشه
+         USERS TAB — بارگذاری و رندر
+      ═══════════════════════════════════════════════ */
+      window.usersLoaded      = false;
+      window.usersData        = [];
+      window.currentRoleFilter= 'all';
+      window.activeUserId     = null; /* کاربری که مودال دسترسی برایش باز است */
+
+      var USERS_API = '/borbor/api/users-list.php';
 
       function loadUsers() {
-        var grid = document.getElementById("usersGrid");
-        grid.innerHTML =
-          '<div class="no-users-state"><i class="fas fa-spinner fa-spin"></i><p>در حال بارگذاری...</p></div>';
+        var grid = document.getElementById('usersGrid');
+        grid.innerHTML = '<div class="no-users-state"><i class="fas fa-spinner fa-spin"></i><p>در حال بارگذاری...</p></div>';
 
-        fetch(USERS_API, { credentials: "include" })
-          .then(function (r) {
-            return r.json();
-          })
-          .then(function (data) {
-            if (!data.success) throw new Error(data.message || "خطا");
-            window.usersData = data.users || [];
+        fetch(USERS_API, { credentials:'include' })
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            if(!data.success) throw new Error(data.message || 'خطا');
+            window.usersData   = data.users || [];
             window.usersLoaded = true;
+            updateUsersQuickStats();
             renderUsersGrid();
           })
-          .catch(function (err) {
+          .catch(function(err){
             grid.innerHTML =
               '<div class="no-users-state"><i class="fas fa-exclamation-circle"></i><p>' +
-              (err.message || "خطا در بارگذاری کاربران") +
-              "</p></div>";
+              (err.message || 'خطا در بارگذاری کاربران') + '</p></div>';
           });
+      }
+
+      /* آمار سریع */
+      function updateUsersQuickStats() {
+        var all = window.usersData || [];
+        document.getElementById('uqsTotal'  ).textContent = all.length;
+        document.getElementById('uqsTeacher').textContent = all.filter(function(u){ return u.role==='teacher'; }).length;
+        document.getElementById('uqsVP'     ).textContent = all.filter(function(u){ return u.role==='vice_principal'; }).length;
+        document.getElementById('uqsStudent').textContent = all.filter(function(u){ return u.role==='student'; }).length;
+        document.getElementById('usersQuickStats').style.display = 'flex';
       }
 
       function filterUserRole(role) {
         window.currentRoleFilter = role;
-        document.querySelectorAll(".role-filter-btn").forEach(function (b) {
-          b.classList.toggle("active", b.dataset.role === role);
+        document.querySelectorAll('.role-filter-btn').forEach(function(b){
+          b.classList.toggle('active', b.dataset.role === role);
         });
         renderUsersGrid();
       }
 
+      /* ──────────────────────────────────────────────
+         رندر گرید کاربران به صورت کارت‌های مینیمال
+         با دکمه «مشاهده دسترسی‌ها» که مودال را باز می‌کند
+      ────────────────────────────────────────────── */
       function renderUsersGrid() {
-        var grid = document.getElementById("usersGrid");
-        var search = (document.getElementById("usersSearch").value || "")
-          .trim()
-          .toLowerCase();
-        var roleF = window.currentRoleFilter;
-        // اگر permissions هنوز لود نشده
-        var perms = typeof permissions !== "undefined" ? permissions : [];
+        var grid   = document.getElementById('usersGrid');
+        var search = (document.getElementById('usersSearch').value || '').trim().toLowerCase();
+        var roleF  = window.currentRoleFilter;
 
-        var filtered = (window.usersData || []).filter(function (u) {
-          var matchRole = roleF === "all" || u.role === roleF;
-          var matchSearch =
-            !search ||
+        var filtered = (window.usersData || []).filter(function(u){
+          var matchRole   = roleF === 'all' || u.role === roleF;
+          var matchSearch = !search ||
             u.name.toLowerCase().includes(search) ||
-            (u.username || "").toLowerCase().includes(search);
+            (u.username||'').toLowerCase().includes(search);
           return matchRole && matchSearch;
         });
 
-        if (filtered.length === 0) {
-          grid.innerHTML =
-            '<div class="no-users-state"><i class="fas fa-users-slash"></i><p>کاربری یافت نشد</p></div>';
+        if(filtered.length === 0){
+          grid.innerHTML = '<div class="no-users-state"><i class="fas fa-users-slash"></i><p>کاربری یافت نشد</p></div>';
           return;
         }
 
-        var roleMap = {
-          teacher: "معلم",
-          vice_principal: "معاون",
-          student: "دانش‌آموز",
-          parent: "ولی",
-        };
+        var roleMap = { teacher:'معلم', vice_principal:'معاون', student:'دانش‌آموز' };
+        var perms   = typeof permissions !== 'undefined' ? permissions : [];
 
-        // فیلتر پرمیشن‌های مرتبط با نقش کاربر
-        function permsForRole(role) {
-          return perms.filter(function (p) {
-            return p.roles && typeof p.roles[role] !== "undefined";
-          });
-        }
+        var html = '';
+        filtered.forEach(function(user){
+          var letter   = (user.name || '؟').charAt(0);
+          var roleLbl  = roleMap[user.role] || user.role;
+          var badgeCls = 'badge-' + user.role;
+          var avatarCls= user.role + '-av';
 
-        var html = "";
-        filtered.forEach(function (user) {
-          var letter = (user.name || "?").charAt(0);
-          var roleLbl = roleMap[user.role] || user.role;
-          var badgeCls = "badge-" + user.role;
-          var avatarCls = user.role + "-av";
-          var rolePerms = permsForRole(user.role);
+          /* تعداد دسترسی‌های فعال این کاربر */
+          var activeCount = perms.filter(function(p){
+            var a = p.roles && p.roles[user.role];
+            return a && a !== 'none';
+          }).length;
+
           var avatarHTML = user.photo
-            ? '<img src="' + user.photo + '" alt="عکس" />'
+            ? '<img src="'+ user.photo +'" alt="عکس" />'
             : letter;
 
-          var permRows = "";
-          if (rolePerms.length === 0) {
-            permRows =
-              '<div class="user-perms-empty"><i class="fas fa-shield-alt"></i><span>دسترسی‌ای تعریف نشده</span></div>';
-          } else {
-            rolePerms.forEach(function (p) {
-              var access =
-                p.roles && p.roles[user.role] ? p.roles[user.role] : "none";
-              var hasRead = access === "read" || access === "both";
-              var hasWrite = access === "write" || access === "both";
-              var locked =
-                p.is_locked ||
-                (p.is_owner_only &&
-                  !(typeof isOwner !== "undefined" && isOwner));
-              var dis = locked ? " disabled" : "";
-              var lockBadge = locked
-                ? '<i class="fas fa-lock" style="color:rgba(255,193,7,0.6);font-size:10px;margin-right:4px" title="قفل شده"></i>'
-                : "";
-
-              permRows +=
-                '<div class="user-perm-row">' +
-                '<div class="user-perm-name">' +
-                lockBadge +
-                "<strong>" +
-                p.name +
-                "</strong>" +
-                "<span>" +
-                (p.category || "") +
-                "</span>" +
-                "</div>" +
-                '<div class="mini-access-group">' +
-                '<button class="mini-btn read ' +
-                (hasRead ? "on" : "") +
-                '"' +
-                dis +
-                ' onclick="userToggleBit(' +
-                p.id +
-                ",'" +
-                user.role +
-                "','read'," +
-                user.id +
-                ')"' +
-                ' title="خواندن"><i class="fas fa-eye"></i></button>' +
-                '<button class="mini-btn write ' +
-                (hasWrite ? "on" : "") +
-                '"' +
-                dis +
-                ' onclick="userToggleBit(' +
-                p.id +
-                ",'" +
-                user.role +
-                "','write'," +
-                user.id +
-                ')"' +
-                ' title="نوشتن"><i class="fas fa-pen"></i></button>' +
-                '<button class="mini-btn both ' +
-                (access === "both" ? "on" : "") +
-                '"' +
-                dis +
-                ' onclick="userToggleBoth(' +
-                p.id +
-                ",'" +
-                user.role +
-                "'," +
-                user.id +
-                ')"' +
-                ' title="هر دو"><i class="fas fa-check-double"></i></button>' +
-                '<button class="mini-btn none ' +
-                (access === "none" ? "on" : "") +
-                '"' +
-                dis +
-                ' onclick="userSetNone(' +
-                p.id +
-                ",'" +
-                user.role +
-                "'," +
-                user.id +
-                ')"' +
-                ' title="بدون دسترسی"><i class="fas fa-ban"></i></button>' +
-                "</div>" +
-                "</div>";
-            });
-          }
-
           html +=
-            '<div class="user-perm-card" id="ucard-' +
-            user.id +
-            '">' +
-            '<div class="user-card-header" onclick="toggleUserCard(' +
-            user.id +
-            ')">' +
-            '<div class="user-avatar ' +
-            avatarCls +
-            '">' +
-            avatarHTML +
-            "</div>" +
-            '<div class="user-info">' +
-            '<div class="user-name">' +
-            user.name +
-            "</div>" +
-            '<span class="user-role-badge ' +
-            badgeCls +
-            '">' +
-            '<i class="fas ' +
-            roleIcon(user.role) +
-            '"></i>' +
-            roleLbl +
-            "</span>" +
-            "</div>" +
-            '<div class="user-card-toggle"><i class="fas fa-chevron-down"></i></div>' +
-            "</div>" +
-            '<div class="user-perms-body">' +
-            '<div class="user-perms-list">' +
-            permRows +
-            "</div>" +
-            "</div>" +
-            "</div>";
+            '<div class="user-perm-card" id="ucard-' + user.id + '">' +
+              '<div class="user-card-header">' +
+                '<div class="user-avatar ' + avatarCls + '">' + avatarHTML + '</div>' +
+                '<div class="user-info">' +
+                  '<div class="user-name">' + user.name + '</div>' +
+                  '<span class="user-role-badge ' + badgeCls + '">' +
+                    '<i class="fas ' + roleIcon(user.role) + '"></i> ' + roleLbl +
+                  '</span>' +
+                '</div>' +
+                '<div class="user-card-meta">' +
+                  '<span class="active-perms-badge">' +
+                    '<i class="fas fa-shield-alt"></i> ' + activeCount + ' دسترسی فعال' +
+                  '</span>' +
+                  '<button class="btn-open-perms" onclick="openUserPermModal(' + user.id + ')">' +
+                    '<i class="fas fa-sliders-h"></i> مدیریت دسترسی‌ها' +
+                  '</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
         });
 
         grid.innerHTML = html;
       }
 
       function roleIcon(role) {
-        var icons = {
-          teacher: "fa-chalkboard-teacher",
-          vice_principal: "fa-user-shield",
-          student: "fa-user-graduate",
-          parent: "fa-user-friends",
-        };
-        return icons[role] || "fa-user";
-      }
-
-      function toggleUserCard(userId) {
-        var card = document.getElementById("ucard-" + userId);
-        if (!card) return;
-        card.classList.toggle("open");
-      }
-
-      /* تغییر دسترسی روی role (نه user خاص) — چون سیستم role-based است */
-      function userToggleBit(permId, role, bit, userId) {
-        if (typeof toggleBit === "function") {
-          toggleBit(permId, role, bit);
-          /* بعد از ذخیره، grid رو رفرش کن */
-          setTimeout(renderUsersGrid, 300);
-        }
-      }
-      function userToggleBoth(permId, role, userId) {
-        if (typeof toggleBoth === "function") {
-          toggleBoth(permId, role);
-          setTimeout(renderUsersGrid, 300);
-        }
-      }
-      function userSetNone(permId, role, userId) {
-        var perm = typeof getById === "function" ? getById(permId) : null;
-        if (!perm) return;
-        if (perm.roles[role] === "none") return;
-        if (!canWrite()) {
-          showToast("دسترسی ویرایش ندارید", "error");
-          return;
-        }
-        perm.roles[role] = "none";
-        if (typeof saveAccessChange === "function") saveAccessChange(perm);
-        setTimeout(renderUsersGrid, 300);
+        var icons = { teacher:'fa-chalkboard-teacher', vice_principal:'fa-user-shield', student:'fa-user-graduate' };
+        return icons[role] || 'fa-user';
       }
 
       /* ═══════════════════════════════════════════════
-   PROFILE INFO
-═══════════════════════════════════════════════ */
-      fetch("../api/stats.php")
-        .then(function (r) {
-          return r.json();
-        })
-        .then(function (d) {
-          if (d.success && d.currentUser) {
+         مودال دسترسی‌های یک کاربر خاص
+      ═══════════════════════════════════════════════ */
+      function openUserPermModal(userId) {
+        var user = (window.usersData || []).find(function(u){ return u.id == userId; });
+        if(!user) return;
+
+        window.activeUserId = userId;
+
+        /* هدر مودال */
+        var letter = (user.name||'؟').charAt(0);
+        var av = document.getElementById('upmAvatar');
+        if(user.photo){
+          av.innerHTML = '<img src="'+ user.photo +'" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';
+        } else {
+          av.textContent = letter;
+        }
+        av.className = 'upm-avatar ' + user.role + '-av';
+        document.getElementById('upmName').textContent = user.name;
+        var roleMap = { teacher:'معلم', vice_principal:'معاون', student:'دانش‌آموز' };
+        document.getElementById('upmRole').textContent = roleMap[user.role] || user.role;
+
+        /* پاک کردن جستجو */
+        document.getElementById('upmSearch').value = '';
+
+        renderUPMList();
+        document.getElementById('userPermModal').classList.add('active');
+      }
+
+      function closeUserPermModal() {
+        document.getElementById('userPermModal').classList.remove('active');
+        window.activeUserId = null;
+      }
+
+      /* رندر لیست دسترسی‌ها در مودال */
+      function renderUPMList() {
+        var userId = window.activeUserId;
+        var user   = (window.usersData || []).find(function(u){ return u.id == userId; });
+        if(!user) return;
+
+        var perms  = typeof permissions !== 'undefined' ? permissions : [];
+        var search = (document.getElementById('upmSearch').value || '').trim().toLowerCase();
+        var list   = document.getElementById('upmList');
+
+        var rolePerms = perms.filter(function(p){
+          return p.roles && typeof p.roles[user.role] !== 'undefined';
+        });
+
+        if(search){
+          rolePerms = rolePerms.filter(function(p){
+            return (p.name||'').toLowerCase().includes(search) ||
+                   (p.category||'').toLowerCase().includes(search);
+          });
+        }
+
+        if(rolePerms.length === 0){
+          list.innerHTML = '<div class="upm-empty"><i class="fas fa-shield-alt"></i><p>دسترسی‌ای یافت نشد</p></div>';
+          return;
+        }
+
+        /* گروه‌بندی بر اساس category */
+        var groups = {};
+        rolePerms.forEach(function(p){
+          var cat = p.category || 'سایر';
+          if(!groups[cat]) groups[cat] = [];
+          groups[cat].push(p);
+        });
+
+        var html = '';
+        Object.keys(groups).forEach(function(cat){
+          html += '<div class="upm-group-label">' + cat + '</div>';
+          groups[cat].forEach(function(p){
+            var access  = (p.roles && p.roles[user.role]) ? p.roles[user.role] : 'none';
+            var hasRead = access === 'read'  || access === 'both';
+            var hasWrite= access === 'write' || access === 'both';
+            var locked  = p.is_locked || (p.is_owner_only && !(typeof isOwner!=='undefined' && isOwner));
+            var dis     = locked ? ' disabled title="قفل شده"' : '';
+            var lockIco = locked ? '<i class="fas fa-lock upm-lock-ico" title="قفل شده"></i>' : '';
+
+            html +=
+              '<div class="upm-perm-row' + (locked?' upm-locked':'') + '">' +
+                '<div class="upm-perm-info">' +
+                  lockIco +
+                  '<span class="upm-perm-name">' + p.name + '</span>' +
+                '</div>' +
+                '<div class="upm-access-btns">' +
+                  '<button class="upm-btn read'  + (hasRead ?  ' on':'') + '"' + dis +
+                    ' onclick="upmToggle('+ p.id +',\''+ user.role +'\',\'read\')"  title="خواندن">' +
+                    '<i class="fas fa-eye"></i><span>خواندن</span></button>' +
+                  '<button class="upm-btn write' + (hasWrite ? ' on':'') + '"' + dis +
+                    ' onclick="upmToggle('+ p.id +',\''+ user.role +'\',\'write\')" title="نوشتن">' +
+                    '<i class="fas fa-pen"></i><span>نوشتن</span></button>' +
+                  '<button class="upm-btn both'  + (access==='both'?' on':'') + '"' + dis +
+                    ' onclick="upmSetBoth('+ p.id +',\''+ user.role +'\')" title="هر دو">' +
+                    '<i class="fas fa-check-double"></i><span>هر دو</span></button>' +
+                  '<button class="upm-btn none'  + (access==='none'?' on':'') + '"' + dis +
+                    ' onclick="upmSetNone('+ p.id +',\''+ user.role +'\')" title="بدون دسترسی">' +
+                    '<i class="fas fa-ban"></i><span>هیچ</span></button>' +
+                '</div>' +
+              '</div>';
+          });
+        });
+
+        list.innerHTML = html;
+      }
+
+      /* توابع تغییر دسترسی از داخل مودال */
+      function upmToggle(permId, role, bit) {
+        if(typeof toggleBit==='function'){
+          toggleBit(permId, role, bit);
+          setTimeout(function(){ renderUPMList(); renderUsersGrid(); }, 300);
+        }
+      }
+      function upmSetBoth(permId, role) {
+        if(typeof toggleBoth==='function'){
+          toggleBoth(permId, role);
+          setTimeout(function(){ renderUPMList(); renderUsersGrid(); }, 300);
+        }
+      }
+      function upmSetNone(permId, role) {
+        var perm = typeof getById==='function' ? getById(permId) : null;
+        if(!perm) return;
+        if(perm.roles[role]==='none') return;
+        if(!canWrite()){ showToast('دسترسی ویرایش ندارید','error'); return; }
+        perm.roles[role] = 'none';
+        if(typeof saveAccessChange==='function') saveAccessChange(perm);
+        setTimeout(function(){ renderUPMList(); renderUsersGrid(); }, 300);
+      }
+
+      /* بستن مودال کاربر با کلیک بیرون */
+      document.getElementById('userPermModal').addEventListener('click', function(e){
+        if(e.target===this) closeUserPermModal();
+      });
+
+      /* ═══════════════════════════════════════════════
+         PROFILE INFO
+      ═══════════════════════════════════════════════ */
+      fetch('../api/stats.php')
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if(d.success && d.currentUser){
             var u = d.currentUser;
-            var letter = (u.name || "م").charAt(0);
-            var nm = document.getElementById("managerName");
-            var rl = document.getElementById("managerRole");
-            var av = document.getElementById("managerAvatarLetter");
-            var pb = document.getElementById("profileBtnLetter");
-            var ai = document.getElementById("adminInfoDisplay");
-            if (nm) nm.textContent = u.name || "";
-            if (rl) rl.textContent = u.role_label || u.role || "";
-            if (av) av.textContent = letter;
-            if (pb) pb.textContent = letter;
-            if (ai)
-              ai.innerHTML =
-                '<span class="live-dot"></span>' +
-                (u.role_label || "") +
-                ": " +
-                (u.name || "");
+            var letter = (u.name||'م').charAt(0);
+            var nm = document.getElementById('managerName');
+            var rl = document.getElementById('managerRole');
+            var av = document.getElementById('managerAvatarLetter');
+            var pb = document.getElementById('profileBtnLetter');
+            var ai = document.getElementById('adminInfoDisplay');
+            if(nm) nm.textContent = u.name || '';
+            if(rl) rl.textContent = u.role_label || u.role || '';
+            if(av) av.textContent = letter;
+            if(pb) pb.textContent = letter;
+            if(ai) ai.innerHTML = '<span class="live-dot"></span>' + (u.role_label||'') + ': ' + (u.name||'');
           }
         })
-        .catch(function () {});
+        .catch(function(){});
 
       /* بستن مودال‌ها با کلیک بیرون */
-      [
-        "explanationModal",
-        "createPermissionModal",
-        "deleteConfirmModal",
-        "resetConfirmModal",
-      ].forEach(function (id) {
+      ['explanationModal','createPermissionModal','deleteConfirmModal','resetConfirmModal'].forEach(function(id){
         var el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener("click", function (e) {
-          if (e.target === this) this.classList.remove("active");
-        });
+        if(!el) return;
+        el.addEventListener('click', function(e){ if(e.target===this) this.classList.remove('active'); });
       });
     </script>
+
+    <script src="../javaScript/apply-settings.js"></script>
+<script src="../javaScript/borbor-loader.js"></script>
+ <script src="../javaScript/Logout_modal.js"></script>
   </body>
 </html>

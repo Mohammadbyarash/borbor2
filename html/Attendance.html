@@ -3989,9 +3989,43 @@
       function generateComparisonReport() {
         toast("در حال توسعه...", "info");
       }
+
+
+      function _fillUser() {
+  const nameEl = document.getElementById('managerName') || document.getElementById('adminName');
+  const roleEl = document.getElementById('managerRole') || document.getElementById('adminRole');
+  // عکس از avatar
+  const avEl   = document.getElementById('managerAvatar') || document.getElementById('managerAvatarLetter');
+
+  const name = nameEl?.textContent?.trim();
+  const role = roleEl?.textContent?.trim();
+
+  if (name && name !== 'در حال بارگذاری...') {
+    document.getElementById('lmUserName').textContent = name;
+    // حرف اول
+    const lmAv = document.getElementById('lmUserAv');
+    const img = avEl?.querySelector('img');
+    if (img) {
+      // اگه عکس داره نشونش بده
+      lmAv.innerHTML = '<img src="'+img.src+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    } else {
+      lmAv.textContent = name.charAt(0);
+    }
+  }
+  if (role && role !== 'در حال بارگذاری...') {
+    document.getElementById('lmUserRole').textContent = role;
+  }
+}
     </script>
 
     <!-- MAIN JS — original attendance.js goes here -->
     <script src="../javaScript/attendance.js"></script>
+
+
+
+    <script src="../javaScript/apply-settings.js"></script>
+<script src="../javaScript/borbor-loader.js"></script>
+
+ <script src="../javaScript/Logout_modal.js"></script>
   </body>
 </html>

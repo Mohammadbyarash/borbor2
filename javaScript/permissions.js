@@ -158,8 +158,7 @@ function renderPermissionsTable() {
             '<div class="explanation-cell">' + actionBtns + '</div>' +
             buildRoleCell(permission, 'teacher') +
             buildRoleCell(permission, 'vice_principal') +
-            buildRoleCell(permission, 'student') +
-            buildRoleCell(permission, 'parent');
+            buildRoleCell(permission, 'student');
 
         tbody.appendChild(row);
     });
@@ -195,7 +194,7 @@ function buildRoleCell(permission, role) {
     if (access === 'write') stateLabel = '<span class="access-state-write"><i class="fas fa-pen"></i> فقط نوشتن</span>';
     if (access === 'both')  stateLabel = '<span class="access-state-both"><i class="fas fa-check-double"></i> خواندن و نوشتن</span>';
 
-    var roleLabels = { 'teacher':'معلمین', 'vice_principal':'معاونین', 'student':'دانش‌آموزان', 'parent':'اولیا' };
+    var roleLabels = { 'teacher':'معلمین', 'vice_principal':'معاونین', 'student':'دانش‌آموزان' };
     return '<div class="role-cell" data-role="' + (roleLabels[role] || role) + '">' +
         '<div class="access-control">' +
             '<div class="access-btn-group">' +
@@ -272,8 +271,7 @@ function saveAccessChange(permission) {
         id:                    permission.id,
         teacher_access:        permission.roles.teacher,
         vice_principal_access: permission.roles.vice_principal,
-        student_access:        permission.roles.student,
-        parent_access:         permission.roles.parent
+        student_access:        permission.roles.student
     }).then(function(data) {
         if (!data.success) throw new Error(data.message);
     }).catch(function(err) { showToast(err.message || 'خطا در ذخیره', 'error'); fetchPermissions(); });
@@ -342,7 +340,7 @@ function openCreatePermissionModal() {
         var el = document.getElementById(id); if (el) el.value = '';
     });
     var vp = document.getElementById('defaultAccessVicePrincipal'); if (vp) vp.value = 'both';
-    ['defaultAccessTeacher','defaultAccessStudent','defaultAccessParent'].forEach(function(id){
+    ['defaultAccessTeacher','defaultAccessStudent'].forEach(function(id){
         var el = document.getElementById(id); if (el) el.value = 'none';
     });
     var ownerWrap = document.getElementById('ownerOnlyFieldWrap');
@@ -362,7 +360,6 @@ function createNewPermission() {
     var teacherA = document.getElementById("defaultAccessTeacher").value;
     var vpA      = document.getElementById("defaultAccessVicePrincipal").value;
     var studentA = document.getElementById("defaultAccessStudent").value;
-    var parentA  = document.getElementById("defaultAccessParent").value;
     var ownerOnly = (document.getElementById("newPermissionOwnerOnly") && document.getElementById("newPermissionOwnerOnly").checked) ? 1 : 0;
 
     var btn = document.querySelector('#createPermissionModal .modal-btn-confirm');
@@ -372,7 +369,7 @@ function createNewPermission() {
         action: 'create', name: name, category: category, description: desc,
         is_owner_only: ownerOnly,
         teacher_access: teacherA, vice_principal_access: vpA,
-        student_access: studentA, parent_access: parentA
+        student_access: studentA
     }).then(function(data) {
         if (!data.success) throw new Error(data.message);
         closeCreatePermissionModal();
@@ -399,7 +396,7 @@ function updateStatistics() {
 
     permissions.forEach(function(p) {
         var roles = p.roles || {};
-        var roleValues = ['teacher', 'vice_principal', 'student', 'parent'];
+        var roleValues = ['teacher', 'vice_principal', 'student'];
         var hasAny = roleValues.some(function(role) {
             var val = roles[role];
             return val && val !== 'none';
